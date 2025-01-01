@@ -34,15 +34,6 @@
 #include "Importers/Types/DataAssetImporter.h"
 #include "Importers/Types/CurveTableImporter.h"
 
-// Particle System Importing is not finalized
-#ifndef JSONASASSET_PARTICLESYSTEM_ALLOW
-#define JSONASASSET_PARTICLESYSTEM_ALLOW 0
-#endif
-
-#if JSONASASSET_PARTICLESYSTEM_ALLOW
-#include "Importers/Types/ParticleSystemImporter.h"
-#endif
-
 // <---- Importers
 
 // Templated Class

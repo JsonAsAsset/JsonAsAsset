@@ -7,6 +7,9 @@
 #if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 4
 #include "PhysicsEngine/PhysicsConstraintTemplate.h"
 #include "PhysicsEngine/SkeletalBodySetup.h"
+#elif ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION == 4
+#include "PhysicsEngine/PhysicsConstraintTemplate.h"
+#include "PhysicsEngine/PhysicsAsset.h"
 #endif
 
 class IPhysicsAssetImporter : public IImporter {

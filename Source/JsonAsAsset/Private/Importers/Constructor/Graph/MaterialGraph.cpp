@@ -52,6 +52,43 @@ TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(UObject* Parent, const 
 	return EditorOnlyData->GetObjectField(TEXT("Properties"));
 }
 
+TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialParameters(UObject* Parent, const FString& Type, const FString& Outer, FUObjectExportContainer& Container)
+{
+	TSharedPtr<FJsonObject> EditorOnlyData;
+
+	/* Filter array if needed */
+	for (const TSharedPtr<FJsonValue> Value : AllJsonObjects) {
+		TSharedPtr<FJsonObject> Object = TSharedPtr<FJsonObject>(Value->AsObject());
+
+		FString ExportType = Object->GetStringField(TEXT("Type"));
+		FName ExportName(Object->GetStringField(TEXT("Name")));
+
+		/* If an editor only data object is found, just set it */
+		if (ExportType == Type + "EditorOnlyData") {
+			EditorOnlyData = Object;
+			continue;
+		}
+
+		/* For older versions, the "editor" data is in the main UMaterial/UMaterialFunction export */
+		if (ExportType == Type) {
+			EditorOnlyData = Object;
+			continue;
+		}
+
+		/* Add to the list of expressions */
+		Container.Exports.Add(FUObjectExport(
+			ExportName,
+			FName(ExportType),
+			FName(Outer),
+			Object,
+			nullptr,
+			Parent
+		));
+	}
+
+	return EditorOnlyData->GetObjectField(TEXT("CachedExpressionData"));
+}
+
 void IMaterialGraph::ConstructExpressions(FUObjectExportContainer& Container) {
 	/* Go through each expression, and create the expression */
 	for (FUObjectExport& Export : Container.Exports) {

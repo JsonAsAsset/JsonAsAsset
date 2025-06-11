@@ -10,6 +10,7 @@
 #include "Dom/JsonObject.h"
 #include "Animation/AnimSequence.h"
 #include "ClothingSystemRuntimeCommon/Public/ClothingAsset.h"
+#include "Engine/SkeletalMeshSocket.h"
 
 #if ENGINE_UE5
 #include "Engine/SkinnedAssetCommon.h"
@@ -129,16 +130,26 @@ void FSkeletalMeshData::Execute() {
 
 				ObjectSerializer->SetExportForDeserialization(JsonObject, SkeletalMesh);
 				ObjectSerializer->ParentAsset = SkeletalMesh;
-
-				// ObjectSerializer->DeserializeExports(Exports);
 				
+				SkeletalMesh->GetMeshOnlySocketList().Empty();
+
+				ObjectSerializer->DeserializeExports(Exports);
+
+				for (const FUObjectExport UObjectExport : ObjectSerializer->GetPropertySerializer()->ExportsContainer.Exports) {
+					if (USkeletalMeshSocket* Socket = Cast<USkeletalMeshSocket>(UObjectExport.Object)) {
+						SkeletalMesh->GetMeshOnlySocketList().Add(Socket);
+					}
+				}
+
 				ObjectSerializer->DeserializeObjectProperties(KeepPropertiesShared(Properties, {
 					// "MeshClothingAssets"
 					"PhysicsAsset",
 					"PostProcessAnimBlueprint",
 					"ShadowPhysicsAsset",
 					"PositiveBoundsExtension",
-					"NegativeBoundsExtension"
+					"NegativeBoundsExtension",
+
+					"Sockets"
 				}), SkeletalMesh);
 				
 				SkeletalMesh->Modify();
@@ -153,11 +164,10 @@ void FSkeletalMeshData::Execute() {
 							for (FClothLODDataCommon& LodData : ClothingAsset->LodData) {
 								LodData.PointWeightMaps.Empty();
 
-								for (TMap<uint32, FPointWeightMap>::TConstIterator Iterator(LodData.PhysicalMeshData.WeightMaps); Iterator; ++Iterator)
-								{
+								for (TMap<uint32, FPointWeightMap>::TConstIterator Iterator(LodData.PhysicalMeshData.WeightMaps); Iterator; ++Iterator) {
 									const uint32 Key = Iterator.Key();
 									FPointWeightMap PointWeightMap = Iterator.Value();
-									
+
 									PointWeightMap.Name = FName(*FString::FromInt(Key));
 									PointWeightMap.CurrentTarget = 1;
 									LodData.PointWeightMaps.Add(PointWeightMap);

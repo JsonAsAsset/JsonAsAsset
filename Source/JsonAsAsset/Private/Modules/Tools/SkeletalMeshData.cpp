@@ -9,7 +9,14 @@
 
 #include "Dom/JsonObject.h"
 #include "Animation/AnimSequence.h"
+
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 3
+#include "ClothingAsset.h"
+#include "ClothLODData.h"
+#else
 #include "ClothingSystemRuntimeCommon/Public/ClothingAsset.h"
+#endif
+
 #include "Engine/SkeletalMeshSocket.h"
 
 #if ENGINE_UE5

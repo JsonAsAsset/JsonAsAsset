@@ -248,24 +248,16 @@ Thanks go to these wonderful people:
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="25.28%"><a href="https://github.com/Tectors"><img src="https://github.com/Tectors.png" width="100px;" alt="Tector"/><br /><sub><b>Tector</b></sub></a><br/>Developer</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/GMatrixGames"><img src="https://github.com/GMatrixGames.png" width="100px;" alt="GMatrixGames"/><br /><sub><b>GMatrixGames</b></sub></a><br/>Developer</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/zyloxmods"><img src="https://github.com/zyloxmods.png" width="80px;" alt="Zylox"/><br /><sub><b>Zylox</b></sub></a><br/>Maintainer</a></td>
-  </tbody>
-</table>
-
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="6.28%" height="50px">
-        <a href="https://github.com/NathanFelipeRH">
-          <br/><b>Nathan Felipe</b>
-        </a>
-        <br/><span>Help with SoundCue Code</span>
-      </td>
-  </tbody>
+  <tr>
+    <td align="center"><a href="https://github.com/Tectors"><img src="https://github.com/Tectors.png" width="100px"/><br/><sub><b>Tector</b></sub></a><br/>Developer</td>
+    <td align="center"><a href="https://github.com/GMatrixGames"><img src="https://github.com/GMatrixGames.png" width="100px"/><br/><sub><b>GMatrixGames</b></sub></a><br/>Developer</td>
+    <td align="center"><a href="https://github.com/zyloxmods"><img src="https://github.com/zyloxmods.png" width="80px"/><br/><sub><b>Zylox</b></sub></a><br/>Maintainer</td>
+  </tr>
+  <tr>
+    <td align="center" colspan="3">
+      <a href="https://github.com/NathanFelipeRH"><b>Nathan Felipe</b></a><br/><span>Help with SoundCue Code</span>
+    </td>
+  </tr>
 </table>
 
 - Thanks to the people who contributed to [UEAssetToolkit](https://github.com/Buckminsterfullerene02/UEAssetToolkit-Fixes)! They have helped a lot.

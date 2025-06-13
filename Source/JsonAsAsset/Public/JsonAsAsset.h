@@ -19,6 +19,8 @@ public:
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
 
+    bool bAlreadyTriedOpeningLocalFetch;
+
     /* Execute File Dialog */
     void PluginButtonClicked();
 

@@ -148,7 +148,14 @@ void FJsonAsAssetModule::PluginButtonClicked() {
 					SavePluginConfig(Settings);
 				}
 
-				PluginButtonClicked();
+				if (!bAlreadyTriedOpeningLocalFetch)
+				{
+					PluginButtonClicked();
+					bAlreadyTriedOpeningLocalFetch = true;
+				} else
+				{
+					bAlreadyTriedOpeningLocalFetch = false;
+				}
 			});
 
 			return;

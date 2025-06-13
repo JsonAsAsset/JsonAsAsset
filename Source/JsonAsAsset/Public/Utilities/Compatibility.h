@@ -147,6 +147,6 @@ bool IsObjectPtrValid(TObjectPtr<T> ObjectPtr) {
 #if ENGINE_UE5
 	return ObjectPtr.Get() != nullptr;
 #else
-	return LoadedObject.IsValid();
+	return ObjectPtr.IsValid();
 #endif
 }

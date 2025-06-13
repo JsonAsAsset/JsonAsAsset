@@ -141,7 +141,7 @@ public:
 };
 
 /* A user-friendly Unreal Engine plugin designed to import assets from packaged games through JSON files */
-UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig)
+UCLASS(Config = EditorPerProjectUserSettings)
 class JSONASASSET_API UJsonAsAssetSettings : public UDeveloperSettings {
 	GENERATED_BODY()
 

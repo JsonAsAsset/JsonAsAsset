@@ -1,4 +1,4 @@
-# JsonAsAsset - FModel to Unreal Engine Plugin
+# JsonAsAsset - FModel to Unreal Engine Asset Importer
 
 [![Discord](https://img.shields.io/badge/Join%20Discord-Collector?color=0363ff&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/xXEw4jc2UT)
 [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/JsonAsAsset/JsonAsAsset/total?style=for-the-badge&label=DOWNLOADS&color=#03ffc8)](https://github.com/JsonAsAsset/JsonAsAsset/releases)
@@ -17,12 +17,12 @@ A user friendly plugin for [Unreal Engine](https://www.unrealengine.com/en-US) t
 
 ### Example Use:
 
-- Porting **materials**, data assets, data tables *[(see more here)](#introduction)*
-- Porting **physics assets** for skeletal meshes
-- Porting **sound effects** to Unreal Engine
-- Automating the porting process for users
+* Importing **materials**, data assets, and data tables — [see more](#introduction)
+* Porting **physics assets** for skeletal meshes
+* Porting **sound effects** to Unreal Engine
+* Automating asset porting workflows
 
-The goal of this project is to simplify the process for the porting and modding communities, enabling them to more easily port over assets into Unreal Engine.
+This project aims to streamline the porting and modding experience, making it easier to bring game assets into Unreal Engine.
 
 -----------------
 
@@ -250,7 +250,7 @@ Thanks go to these wonderful people:
 <table>
   <tr>
     <td align="center"><a href="https://github.com/Tectors"><img src="https://github.com/Tectors.png" width="100px"/><br/><sub><b>Tector</b></sub></a><br/>Developer</td>
-    <td align="center"><a href="https://github.com/GMatrixGames"><img src="https://github.com/GMatrixGames.png" width="100px"/><br/><sub><b>GMatrixGames</b></sub></a><br/>Developer</td>
+    <td align="center"><a href="https://github.com/GMatrixGames"><img src="https://github.com/GMatrixGames.png" width="100px"/><br/><sub><b>GMatrixGames</b></sub></a><br/>Collaborator</td>
     <td align="center"><a href="https://github.com/zyloxmods"><img src="https://github.com/zyloxmods.png" width="80px"/><br/><sub><b>Zylox</b></sub></a><br/>Maintainer</td>
   </tr>
   <tr>

@@ -2,8 +2,6 @@
 
 #include "JsonAsAsset.h"
 
-#include "./Importers/Constructor/Importer.h"
-
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #if !ENGINE_UE5
@@ -17,9 +15,6 @@
 #endif
 
 #include "Settings/JsonAsAssetSettings.h"
-#include "Widgets/Notifications/SNotificationList.h"
-#include "Framework/Notifications/NotificationManager.h"
-#include "ISettingsModule.h"
 #include "MessageLogModule.h"
 
 /* Settings */
@@ -41,10 +36,6 @@
 #undef GetObject
 #endif
 
-#if PLATFORM_WINDOWS
-    static TWeakPtr<SNotificationItem> ImportantNotificationPtr;
-#endif
-
 void FJsonAsAssetModule::StartupModule() {
     /* Initialize plugin style, reload textures, and register commands */
     FJsonAsAssetStyle::Initialize();
@@ -57,58 +48,7 @@ void FJsonAsAssetModule::StartupModule() {
     /* Register menus on startup */
     UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FJsonAsAssetModule::RegisterMenus));
 
-    /* Check for export directory in settings */
     Settings = GetMutableDefault<UJsonAsAssetSettings>();
-	
-	if (!IsSetup(Settings)) {
-	    const FText TitleText = FText::FromString("Setup JsonAsAsset Settings");
-	    const FText MessageText = FText::FromString(
-	        "JsonAsAsset requires a proper setup to run properly.\n\nOpen the documentation for JsonAsAsset for more information."
-	    );
-
-	    FNotificationInfo Info(TitleText);
-		SetNotificationSubText(Info, MessageText);
-		
-	    /* Notification settings */
-	    Info.bFireAndForget = false;
-	    Info.FadeOutDuration = 3.0f;
-	    Info.ExpireDuration = 0.0f;
-	    Info.bUseLargeFont = false;
-	    Info.bUseThrobber = false;
-
-		Info.ButtonDetails.Add(
-			FNotificationButtonInfo(
-				FText::FromString("Open Documentation"),
-				FText::GetEmpty(),
-				FSimpleDelegate::CreateStatic([]() {
-					const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset";
-					FPlatformProcess::LaunchURL(*URL, nullptr, nullptr); 
-				})
-			)
-		);
-
-		/* Add button to open plugin settings */
-	    Info.ButtonDetails.Add(
-	        FNotificationButtonInfo(
-	            FText::FromString("Open Settings"),
-	            FText::GetEmpty(),
-	            FSimpleDelegate::CreateStatic([]() {
-	                const TSharedPtr<SNotificationItem> NotificationItem = ImportantNotificationPtr.Pin();
-	                if (NotificationItem.IsValid()) {
-	                    NotificationItem->Fadeout();
-	                    ImportantNotificationPtr.Reset();
-	                }
-
-	                /* Navigate to plugin settings */
-	                FModuleManager::LoadModuleChecked<ISettingsModule>("Settings")
-	                    .ShowViewer("Editor", "Plugins", "JsonAsAsset");
-	            })
-	        )
-	    );
-
-	    ImportantNotificationPtr = FSlateNotificationManager::Get().AddNotification(Info);
-	    ImportantNotificationPtr.Pin()->SetCompletionState(SNotificationItem::CS_Pending);
-	}
 
     /* Set up message log for JsonAsAsset */
     {
@@ -163,18 +103,5 @@ void FJsonAsAssetModule::AddToolbarExtension(FToolBarBuilder& Builder) {
 	Toolbar.UE4Register(Builder);
 }
 #endif
-
-bool FJsonAsAssetModule::IsSetup(const UJsonAsAssetSettings* SettingsReference, TArray<FString>& Params) {
-	if (SettingsReference->ExportDirectory.Path.IsEmpty()) {
-		Params.Add("Export Directory is missing");
-	}
-
-	return !SettingsReference->ExportDirectory.Path.IsEmpty();
-}
-
-bool FJsonAsAssetModule::IsSetup(const UJsonAsAssetSettings* SettingsReference) {
-	TArray<FString> Params;
-	return IsSetup(SettingsReference, Params);
-}
 
 IMPLEMENT_MODULE(FJsonAsAssetModule, JsonAsAsset)

@@ -21,9 +21,6 @@ public:
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
 
-    static bool IsSetup(const UJsonAsAssetSettings* SettingsReference, TArray<FString>& Params);
-    static bool IsSetup(const UJsonAsAssetSettings* SettingsReference);
-
     void RegisterMenus();
 
     TSharedPtr<FUICommandList> PluginCommands;

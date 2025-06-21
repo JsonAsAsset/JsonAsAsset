@@ -56,8 +56,8 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					);
 
 					InnerMenuBuilder.AddMenuEntry(
-						FText::FromString("Terminate"),
-						FText::FromString("Terminates the Local Fetch API"),
+						FText::FromString("Shutdown"),
+						FText::FromString("Shutdown the Local Fetch API"),
 						FSlateIcon(FAppStyle::GetAppStyleSetName(), "MainFrame.RemoveLayout"),
 						FUIAction(
 							FExecuteAction::CreateLambda([this]() {

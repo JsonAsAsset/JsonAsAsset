@@ -7,14 +7,22 @@
 /* Structures, Enumerations, used for Local Fetch */
 #include "LocalFetchModule.generated.h"
 
+#if PLATFORM_WINDOWS
+	static TWeakPtr<SNotificationItem> LocalFetchNotification;
+#endif
+
 class UJsonAsAssetSettings;
 
 class LocalFetchModule {
 public:
 	static bool LaunchLocalFetch();
+	static bool TryLaunchingLocalFetch(const UJsonAsAssetSettings* Settings);
 	static void CloseLocalFetch();
 
-	static bool IsSetup(const UJsonAsAssetSettings* Settings, TArray<FString>& Params);
+	/* If GameName isn't set, try getting it from the API */
+	static void EnsureGameName(const UJsonAsAssetSettings* Settings);
+
+	static bool IsSetup(const UJsonAsAssetSettings* Settings, TArray<FString>& Reasons);
 	static bool IsSetup(const UJsonAsAssetSettings* Settings);
 };
 

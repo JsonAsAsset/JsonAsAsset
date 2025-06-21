@@ -19,8 +19,10 @@
 #include "AssetUtilities.h"
 #include "PluginUtils.h"
 #include "HttpModule.h"
+#include "IMessageLogListing.h"
 #include "TlHelp32.h"
 #include "Json.h"
+#include "MessageLogModule.h"
 
 #if (ENGINE_MAJOR_VERSION != 4 || ENGINE_MINOR_VERSION < 27)
 #include "Engine/DeveloperSettings.h"
@@ -993,13 +995,11 @@ inline UClass* LoadClass(const TSharedPtr<FJsonObject>& SuperStruct) {
 	/* It's a C++ class if it has Script in it */
 	if (ObjectPath.Contains("/Script/")) {
 		return LoadClassFromPath(ObjectName, ObjectPath);
-	} else {
-		ObjectPath.Split(".", &ObjectPath, nullptr);
-
-		return LoadBlueprintClass(ObjectPath);
 	}
+	
+	ObjectPath.Split(".", &ObjectPath, nullptr);
 
-	return nullptr;
+	return LoadBlueprintClass(ObjectPath);
 }
 
 inline void RedirectPath(FString& OutPath) {
@@ -1008,4 +1008,29 @@ inline void RedirectPath(FString& OutPath) {
 	for (FJPathRedirector Redirector : Settings->AssetSettings.PathRedirectors) {
 		OutPath = OutPath.Replace(*Redirector.Source, *Redirector.Target);
 	}
+}
+
+inline TSharedRef<IMessageLogListing> GetMessageLog() {
+	FMessageLogModule& MessageLogModule = FModuleManager::GetModuleChecked<FMessageLogModule>("MessageLog");
+	const TSharedRef<IMessageLogListing> LogListing = MessageLogModule.GetLogListing("JsonAsAsset");
+
+	return LogListing;
+}
+
+inline void EmptyMessageLog() {
+	GetMessageLog()->ClearMessages();
+}
+
+inline void RemoveNotification(TWeakPtr<SNotificationItem> Notification) {
+	const TSharedPtr<SNotificationItem> Item = Notification.Pin();
+
+	if (Item.IsValid()) {
+		Item->SetFadeOutDuration(0.001);
+		Item->Fadeout();
+		Notification.Reset();
+	}
+}
+
+inline UJsonAsAssetSettings* GetSettings() {
+	return GetMutableDefault<UJsonAsAssetSettings>();
 }

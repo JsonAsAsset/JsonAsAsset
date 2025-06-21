@@ -1,0 +1,165 @@
+﻿/* Copyright JsonAsAsset Contributors 2024-2025 */
+
+#include "Toolbar/Dropdowns/LocalFetchDropdownBuilder.h"
+
+#include "Modules/LocalFetchModule.h"
+#include "Utilities/EngineUtilities.h"
+
+#include "Modules/Tools/AnimationData.h"
+#include "Modules/Tools/ClearImportData.h"
+#include "Modules/Tools/ConvexCollision.h"
+#include "Modules/Tools/SkeletalMeshData.h"
+
+void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
+	UJsonAsAssetSettings* Settings = GetSettings();
+	
+	/* Local Fetch must be enabled, and if there is an action required, don't create Local Fetch's dropdown */
+	if (!Settings->bEnableLocalFetch || !UJsonAsAssetSettings::IsSetup(Settings) || !LocalFetchModule::IsSetup(Settings)) {
+		return;
+	}
+	
+	MenuBuilder.BeginSection("JsonAsAssetSection", FText::FromString("Local Fetch"));
+	MenuBuilder.AddSubMenu(
+		FText::FromString("Asset Types"),
+		FText::FromString("List of supported classes that can be locally fetched using the API"),
+		FNewMenuDelegate::CreateLambda([this](FMenuBuilder& InnerMenuBuilder) {
+			DisplaySupportedAssetsMenu(InnerMenuBuilder, true);
+		}),
+		false,
+		FSlateIcon()
+	);
+
+	MenuBuilder.AddSubMenu(
+		FText::FromString("Command-line Application"),
+		FText::FromString(""),
+		FNewMenuDelegate::CreateLambda([this](FMenuBuilder& InnerMenuBuilder) {
+			InnerMenuBuilder.BeginSection("JsonAsAssetSection", FText::FromString("Console"));
+			{
+				if (IsProcessRunning("LocalFetch.exe")) {
+					InnerMenuBuilder.AddMenuEntry(
+						FText::FromString("Restart Local Fetch (.EXE)"),
+						FText::FromString(""),
+						FSlateIcon(),
+						FUIAction(
+							FExecuteAction::CreateLambda([this]() {
+								LocalFetchModule::CloseLocalFetch();
+								LocalFetchModule::LaunchLocalFetch();
+							}),
+							FCanExecuteAction::CreateLambda([this]() {
+								return IsProcessRunning("LocalFetch.exe");
+							})
+						)
+					);
+
+					InnerMenuBuilder.AddMenuEntry(
+						FText::FromString("Shutdown Local Fetch (.EXE)"),
+						FText::FromString(""),
+						FSlateIcon(),
+						FUIAction(
+							FExecuteAction::CreateLambda([this]() {
+								LocalFetchModule::CloseLocalFetch();
+							}),
+							FCanExecuteAction::CreateLambda([this]() {
+								return IsProcessRunning("LocalFetch.exe");
+							})
+						)
+					);
+				} else {
+					InnerMenuBuilder.AddMenuEntry(
+						FText::FromString("Execute Local Fetch (.EXE)"),
+						FText::FromString(""),
+						FSlateIcon(),
+						FUIAction(
+							FExecuteAction::CreateLambda([this]() {
+								const TSharedPtr<SNotificationItem> NotificationItem = LocalFetchNotification.Pin();
+
+								RemoveNotification(NotificationItem);
+
+								LocalFetchModule::LaunchLocalFetch();
+							}),
+							FCanExecuteAction::CreateLambda([this]() {
+								return !IsProcessRunning("LocalFetch.exe");
+							})
+						)
+					);
+				}
+			}
+			InnerMenuBuilder.EndSection();
+		}),
+		false,
+		FSlateIcon()
+	);
+
+	/* Left just in case we want to make it a setting again */
+	if (true) {
+		MenuBuilder.AddSeparator();
+		MenuBuilder.AddSubMenu(
+			FText::FromString("Fetch Tools"),
+			FText::FromString("Extra tools to use with Local Fetch"),
+			FNewMenuDelegate::CreateLambda([this](FMenuBuilder& InnerMenuBuilder) {
+				InnerMenuBuilder.BeginSection("JsonAsAssetToolsSection", FText::FromString("Tools"));
+				{
+					InnerMenuBuilder.AddMenuEntry(
+						FText::FromString("Import Static Mesh Properties from Local Fetch"),
+						FText::FromString("Imports collision, properties and more using Local Fetch and applies it to the corresponding assets in the content browser folder."),
+						FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+
+						FUIAction(
+							FExecuteAction::CreateStatic(&FToolConvexCollision::Execute),
+							FCanExecuteAction::CreateLambda([this] {
+								return IsProcessRunning("LocalFetch.exe");
+							})
+						),
+						NAME_None
+					);
+
+					InnerMenuBuilder.AddMenuEntry(
+						FText::FromString("Import Animation Data from Local Fetch"),
+						FText::FromString("Imports animation data using Local Fetch and applies it to the corresponding assets in the content browser folder."),
+						FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+
+						FUIAction(
+							FExecuteAction::CreateStatic(&FToolAnimationData::Execute),
+							FCanExecuteAction::CreateLambda([this] {
+								return IsProcessRunning("LocalFetch.exe");
+							})
+						),
+						NAME_None
+					);
+
+					InnerMenuBuilder.AddMenuEntry(
+						FText::FromString("Import Skeletal Mesh Data from Local Fetch"),
+						FText::FromString("Imports skeletal mesh data using Local Fetch and applies it to the corresponding assets in the content browser folder."),
+						FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+
+						FUIAction(
+							FExecuteAction::CreateStatic(&FSkeletalMeshData::Execute),
+							FCanExecuteAction::CreateLambda([this] {
+								return IsProcessRunning("LocalFetch.exe");
+							})
+						),
+						NAME_None
+					);
+					
+					InnerMenuBuilder.AddMenuEntry(
+						FText::FromString("Clear Import Data"),
+						FText::FromString(""),
+						FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+
+						FUIAction(
+							FExecuteAction::CreateStatic(&FToolClearImportData::Execute),
+							FCanExecuteAction::CreateLambda([this] {
+								return IsProcessRunning("LocalFetch.exe");
+							})
+						),
+						NAME_None
+					);
+				}
+				InnerMenuBuilder.EndSection();
+			}),
+			false
+		);
+	}
+	
+	MenuBuilder.EndSection();
+}

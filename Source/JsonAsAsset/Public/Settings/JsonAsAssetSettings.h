@@ -6,6 +6,7 @@
 #include "Engine/EngineTypes.h"
 #include "Engine/DeveloperSettings.h"
 #include "Modules/LocalFetchModule.h"
+#include "Utilities/Compatibility.h"
 #include "JsonAsAssetSettings.generated.h"
 
 /* Settings for materials */
@@ -220,4 +221,49 @@ public:
 	 */
 	UPROPERTY(EditAnywhere, Config, Category = "Local Fetch", meta=(EditCondition="bEnableLocalFetch", DisplayName = "Local Fetch URL"), AdvancedDisplay)
 	FString LocalFetchUrl = "http://localhost:1500";
+
+	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings) {
+		const FString ExportDirectoryPath = Settings->ExportDirectory.Path;
+	
+		if (ExportDirectoryPath.IsEmpty()) {
+			return false;
+		}
+
+		/* Invalid Export Directory */
+		if (ExportDirectoryPath.Contains("\\")) {
+			/* Fix up export directory */
+			Settings->ExportDirectory.Path = ExportDirectoryPath.Replace(TEXT("\\"), TEXT("/"));
+		
+			Settings->SaveConfig();
+	
+#if ENGINE_UE5
+			Settings->TryUpdateDefaultConfigFile();
+			Settings->ReloadConfig(nullptr, nullptr, UE::LCPF_PropagateToInstances);
+#else
+			Settings->UpdateDefaultConfigFile();
+			Settings->ReloadConfig(nullptr, nullptr, UE4::LCPF_PropagateToInstances);
+#endif
+        	
+			Settings->LoadConfig();
+		}
+	
+		return true;
+	}
+
+	static bool IsSetup(UJsonAsAssetSettings* Settings, TArray<FString>& Reasons) {
+		const bool IsExportDirectoryValid = EnsureExportDirectoryIsValid(Settings);
+		
+		if (!IsExportDirectoryValid) {
+			Reasons.Add("Export Directory is missing");
+		}
+
+		return IsExportDirectoryValid;
+	}
+	
+	static bool IsSetup(UJsonAsAssetSettings* Settings) {
+		if (Settings == nullptr) return false;
+		
+		TArray<FString> Params;
+		return IsSetup(Settings, Params);
+	}
 };

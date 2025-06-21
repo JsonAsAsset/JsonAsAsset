@@ -11,7 +11,7 @@
 
 ### Description:
 
-A user friendly plugin for [Unreal Engine](https://www.unrealengine.com/en-US) that reads [JSON](https://www.json.org/json-en.html) files extracted from CUE4Parse [(often FModel)](https://fmodel.app), and regenerates assets as they were from the game's files.
+A user-friendly plugin for [Unreal Engine](https://www.unrealengine.com/en-US) that reads [JSON](https://www.json.org/json-en.html) files extracted from CUE4Parse [(often FModel)](https://fmodel.app), and regenerates assets as they were from the game's files.
 
 ✨ [Contributors](#contribute)
 

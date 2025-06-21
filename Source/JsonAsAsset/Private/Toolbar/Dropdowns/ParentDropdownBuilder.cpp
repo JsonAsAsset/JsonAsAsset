@@ -12,7 +12,7 @@ void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	
 	MenuBuilder.BeginSection(
 		"JsonAsAssetSection", 
-		FText::FromString("JsonAsAsset v" + Plugin->GetDescriptor().VersionName)
+		FText::FromString(Plugin->GetDescriptor().VersionName)
 	);
 
 	/* Start Of Section ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -115,6 +115,7 @@ void IParentDropdownBuilder::DisplaySupportedAssetsMenu(FMenuBuilder& InnerMenuB
 				FSlateIconFinder::FindCustomIconForClass(Class, TEXT("ClassThumbnail")),
 				FUIAction(
 					FExecuteAction::CreateLambda([] {
+						SpawnPrompt("Display Purposes Only", "The menu is for display purposes only, JsonAsAsset will determine your asset based on the JSON.");
 						return;
 					})
 				)

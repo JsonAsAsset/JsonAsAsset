@@ -5,13 +5,10 @@
 #include "CoreMinimal.h"
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
+#include "Interfaces/IPluginManager.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "Utilities/EngineUtilities.h"
-
-#if ENGINE_UE4
-#include "Interfaces/IPluginManager.h"
-#endif
 
 struct FJsonAsAssetVersioning {
 	bool bNewVersionAvailable = false;

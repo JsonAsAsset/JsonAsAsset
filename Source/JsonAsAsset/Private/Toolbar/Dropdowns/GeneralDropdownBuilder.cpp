@@ -28,7 +28,7 @@ void IGeneralDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	);
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Open Message Log"),
-		FText::FromString("View logs of JsonAsAsset"),
+		FText::FromString("View message logs of JsonAsAsset"),
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "MessageLog.TabIcon"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this] {

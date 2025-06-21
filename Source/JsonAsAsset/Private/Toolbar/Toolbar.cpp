@@ -150,7 +150,7 @@ void FJsonAsAssetToolbar::ImportAction() {
 	LocalFetchModule::EnsureGameName(Settings);
 
 	/* Dialog for a JSON File */
-	TArray<FString> OutFileNames = OpenFileDialog("Open JSON file", "JSON Files|*.json");
+	TArray<FString> OutFileNames = OpenFileDialog("Select a JSON File", "JSON Files|*.json");
 	if (OutFileNames.Num() == 0) {
 		return;
 	}

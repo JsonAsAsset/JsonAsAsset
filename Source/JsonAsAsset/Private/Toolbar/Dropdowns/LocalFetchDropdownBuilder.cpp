@@ -33,13 +33,17 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FText::FromString("Command-line Application"),
 		FText::FromString(""),
 		FNewMenuDelegate::CreateLambda([this](FMenuBuilder& InnerMenuBuilder) {
-			InnerMenuBuilder.BeginSection("JsonAsAssetSection", FText::FromString("Console"));
+			InnerMenuBuilder.BeginSection("JsonAsAssetSection", FText::FromString("Local Fetch (.EXE)"));
 			{
 				if (IsProcessRunning("LocalFetch.exe")) {
 					InnerMenuBuilder.AddMenuEntry(
-						FText::FromString("Restart Local Fetch (.EXE)"),
-						FText::FromString(""),
-						FSlateIcon(),
+						FText::FromString("Restart"),
+						FText::FromString("Restarts the Local Fetch API"),
+#if ENGINE_UE5
+						FSlateIcon(FAppStyle::GetAppStyleSetName(), "Blueprint.CompileStatus.Background", NAME_None),
+#else
+						FSlateIcon(FEditorStyle::GetStyleSetName(), "MainFrame.CreditsUnrealEd"),
+#endif
 						FUIAction(
 							FExecuteAction::CreateLambda([this]() {
 								LocalFetchModule::CloseLocalFetch();
@@ -52,9 +56,9 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					);
 
 					InnerMenuBuilder.AddMenuEntry(
-						FText::FromString("Shutdown Local Fetch (.EXE)"),
-						FText::FromString(""),
-						FSlateIcon(),
+						FText::FromString("Terminate"),
+						FText::FromString("Terminates the Local Fetch API"),
+						FSlateIcon(FAppStyle::GetAppStyleSetName(), "MainFrame.RemoveLayout"),
 						FUIAction(
 							FExecuteAction::CreateLambda([this]() {
 								LocalFetchModule::CloseLocalFetch();
@@ -66,9 +70,13 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					);
 				} else {
 					InnerMenuBuilder.AddMenuEntry(
-						FText::FromString("Execute Local Fetch (.EXE)"),
-						FText::FromString(""),
-						FSlateIcon(),
+						FText::FromString("Launch"),
+						FText::FromString("Launches the Local Fetch API"),
+#if ENGINE_UE5
+						FSlateIcon(FAppStyle::GetAppStyleSetName(), "Blueprint.CompileStatus.Background", NAME_None),
+#else
+						FSlateIcon(FEditorStyle::GetStyleSetName(), "MainFrame.CreditsUnrealEd"),
+#endif
 						FUIAction(
 							FExecuteAction::CreateLambda([this]() {
 								const TSharedPtr<SNotificationItem> NotificationItem = LocalFetchNotification.Pin();
@@ -90,8 +98,7 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FSlateIcon()
 	);
 
-	/* Left just in case we want to make it a setting again */
-	if (true) {
+	if (Settings->bEnableExperiments) {
 		MenuBuilder.AddSeparator();
 		MenuBuilder.AddSubMenu(
 			FText::FromString("Fetch Tools"),

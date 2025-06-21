@@ -16,7 +16,7 @@ void IVersioningDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 #if ENGINE_UE5
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "Blueprint.CompileStatus.Background", NAME_None);
 #else
-			FSlateIcon(FEditorStyle::GetStyleSetName(), "MainFrame.CreditsUnrealEd");
+		FSlateIcon(FEditorStyle::GetStyleSetName(), "MainFrame.CreditsUnrealEd");
 #endif
 
 	/* A new release is available */

@@ -18,6 +18,7 @@ public:
 	static bool LaunchLocalFetch();
 	static bool TryLaunchingLocalFetch(const UJsonAsAssetSettings* Settings);
 	static void CloseLocalFetch();
+	static bool IsLocalFetchRunning();
 
 	/* If GameName isn't set, try getting it from the API */
 	static void EnsureGameName(const UJsonAsAssetSettings* Settings);

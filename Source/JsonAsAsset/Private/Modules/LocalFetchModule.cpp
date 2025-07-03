@@ -32,14 +32,14 @@ bool LocalFetchModule::LaunchLocalFetch() {
 #else
 	FPlatformProcess::LaunchFileInDefaultExternalApplication(*FullPath, *Params, ELaunchVerb::Open);
 	
-	return IsProcessRunning("LocalFetch.exe");
+	return IsLocalFetchRunning();
 #endif
 }
 
 bool LocalFetchModule::TryLaunchingLocalFetch(const UJsonAsAssetSettings* Settings) {
 	const bool bIsLocalHost = Settings->LocalFetchUrl.StartsWith("http://localhost");
 
-	if (bIsLocalHost && !IsProcessRunning("LocalFetch.exe")) {
+	if (bIsLocalHost && !IsLocalFetchRunning()) {
 		const bool bLocalFetchLaunched = LaunchLocalFetch();
 
 		if (!bLocalFetchLaunched) {
@@ -88,6 +88,11 @@ bool LocalFetchModule::TryLaunchingLocalFetch(const UJsonAsAssetSettings* Settin
 
 void LocalFetchModule::CloseLocalFetch() {
 	CloseApplicationByProcessName("LocalFetch.exe");
+}
+
+bool LocalFetchModule::IsLocalFetchRunning()
+{
+	return IsProcessRunning("LocalFetch.exe") || IsProcessRunning("j0.dev.exe");
 }
 
 void LocalFetchModule::EnsureGameName(const UJsonAsAssetSettings* Settings) {

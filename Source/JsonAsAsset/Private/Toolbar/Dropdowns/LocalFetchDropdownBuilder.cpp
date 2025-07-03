@@ -35,7 +35,7 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FNewMenuDelegate::CreateLambda([this](FMenuBuilder& InnerMenuBuilder) {
 			InnerMenuBuilder.BeginSection("JsonAsAssetSection", FText::FromString("Local Fetch (.EXE)"));
 			{
-				if (IsProcessRunning("LocalFetch.exe")) {
+				if (LocalFetchModule::IsLocalFetchRunning()) {
 					InnerMenuBuilder.AddMenuEntry(
 						FText::FromString("Restart"),
 						FText::FromString("Restarts the Local Fetch API"),
@@ -50,7 +50,7 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 								LocalFetchModule::LaunchLocalFetch();
 							}),
 							FCanExecuteAction::CreateLambda([this]() {
-								return IsProcessRunning("LocalFetch.exe");
+								return LocalFetchModule::IsLocalFetchRunning();
 							})
 						)
 					);
@@ -64,7 +64,7 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 								LocalFetchModule::CloseLocalFetch();
 							}),
 							FCanExecuteAction::CreateLambda([this]() {
-								return IsProcessRunning("LocalFetch.exe");
+								return LocalFetchModule::IsLocalFetchRunning();
 							})
 						)
 					);
@@ -86,7 +86,7 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 								LocalFetchModule::LaunchLocalFetch();
 							}),
 							FCanExecuteAction::CreateLambda([this]() {
-								return !IsProcessRunning("LocalFetch.exe");
+								return !LocalFetchModule::IsLocalFetchRunning();
 							})
 						)
 					);
@@ -114,7 +114,7 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 						FUIAction(
 							FExecuteAction::CreateStatic(&FToolConvexCollision::Execute),
 							FCanExecuteAction::CreateLambda([this] {
-								return IsProcessRunning("LocalFetch.exe");
+								return LocalFetchModule::IsLocalFetchRunning();
 							})
 						),
 						NAME_None
@@ -128,7 +128,7 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 						FUIAction(
 							FExecuteAction::CreateStatic(&FToolAnimationData::Execute),
 							FCanExecuteAction::CreateLambda([this] {
-								return IsProcessRunning("LocalFetch.exe");
+								return LocalFetchModule::IsLocalFetchRunning();
 							})
 						),
 						NAME_None
@@ -142,7 +142,7 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 						FUIAction(
 							FExecuteAction::CreateStatic(&FSkeletalMeshData::Execute),
 							FCanExecuteAction::CreateLambda([this] {
-								return IsProcessRunning("LocalFetch.exe");
+								return LocalFetchModule::IsLocalFetchRunning();
 							})
 						),
 						NAME_None
@@ -156,7 +156,7 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 						FUIAction(
 							FExecuteAction::CreateStatic(&FToolClearImportData::Execute),
 							FCanExecuteAction::CreateLambda([this] {
-								return IsProcessRunning("LocalFetch.exe");
+								return LocalFetchModule::IsLocalFetchRunning();
 							})
 						),
 						NAME_None

@@ -8,6 +8,4 @@
 struct IParentDropdownBuilder {
 	virtual ~IParentDropdownBuilder() = default;
 	virtual void Build(FMenuBuilder& MenuBuilder) const;
-
-	static void DisplaySupportedAssetsMenu(FMenuBuilder& InnerMenuBuilder, const bool IsLocalFetch = false);
 };

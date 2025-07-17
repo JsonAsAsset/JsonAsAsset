@@ -19,14 +19,16 @@ void ILocalFetchDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	}
 	
 	MenuBuilder.BeginSection("JsonAsAssetSection", FText::FromString("Local Fetch"));
-	MenuBuilder.AddSubMenu(
+	MenuBuilder.AddMenuEntry(
 		FText::FromString("Asset Types"),
 		FText::FromString("List of supported classes that can be locally fetched using the API"),
-		FNewMenuDelegate::CreateLambda([this](FMenuBuilder& InnerMenuBuilder) {
-			DisplaySupportedAssetsMenu(InnerMenuBuilder, true);
-		}),
-		false,
-		FSlateIcon()
+		FSlateIcon(),
+		FUIAction(
+			FExecuteAction::CreateLambda([this]() {
+				const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#4-local-fetch";
+				FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
+			})
+		)
 	);
 
 	MenuBuilder.AddSubMenu(

@@ -189,21 +189,6 @@ This is a known issue in our code that we haven't fully resolved yet. While prev
 - Re-launch your Unreal Engine project, go to JsonAsAsset's plugin settings and enable ***"Skip Result Node Connection"***. Also enable ***"Allow Package Saving"***.
 </details>
 
-<details>
-  <summary>Local Fetch closes instantly when executing</summary>
-
-------------
-
-There may be a few reasons why the application automatically closes, but mostly the issue stems from something missing:
-
-### 1. Your settings aren't correct, and need modifications
-> Make sure all the information about your game is set in the settings.
-
-### 2. ASP.NET 8.0 not installed
-> Running the API requires ASP.NET 8.0 to be installed, please install this [here](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-8.0.1-windows-x64-installer).
-
-</details>
-
 <a name="licensing"></a>
 ## Licensing 📗
 

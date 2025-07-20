@@ -127,7 +127,7 @@ template bool FAssetUtilities::ConstructAsset<UMaterialFunctionInterface>(const 
 template bool FAssetUtilities::ConstructAsset<USoundNode>(const FString& Path, const FString& Type, TObjectPtr<USoundNode>& OutObject, bool& bSuccess);
 template bool FAssetUtilities::ConstructAsset<UCurveLinearColor>(const FString& Path, const FString& Type, TObjectPtr<UCurveLinearColor>& OutObject, bool& bSuccess);
 
-/* Importing assets from Local Fetch */
+/* Importing assets from Cloud */
 template <typename T>
 bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& Type, TObjectPtr<T>& OutObject, bool& bSuccess) {
 	/* Skip if no type provided */
@@ -233,7 +233,7 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 		const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = HttpModule->CreateRequest();
 #endif
 
-		HttpRequest->SetURL(Settings->LocalFetchUrl + "/api/export?path=" + FetchPath);
+		HttpRequest->SetURL(Settings->CloudURL + "/api/export?path=" + FetchPath);
 		HttpRequest->SetHeader("content-type", "application/octet-stream");
 		HttpRequest->SetVerb(TEXT("GET"));
 
@@ -334,7 +334,7 @@ TSharedPtr<FJsonObject> FAssetUtilities::API_RequestExports(const FString& Path,
 #else
 	const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> NewRequest = HttpModule->CreateRequest();
 #endif
-	NewRequest->SetURL(Settings->LocalFetchUrl + FetchPath + Path);
+	NewRequest->SetURL(Settings->CloudURL + FetchPath + Path);
 	NewRequest->SetVerb(TEXT("GET"));
 
 #if ENGINE_UE5

@@ -16,7 +16,7 @@ public:
 	static UPackage* CreateAssetPackage(const FString& Name, const FString& OutputPath, UPackage*& OutOutermostPkg);
 	
 public:
-	/* Importing assets from Local Fetch */
+	/* Importing assets from Cloud */
 	template <class T = UObject>
 	static bool ConstructAsset(const FString& Path, const FString& Type, TObjectPtr<T>& OutObject, bool& bSuccess);
 	

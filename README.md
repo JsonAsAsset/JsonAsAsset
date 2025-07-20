@@ -1,14 +1,22 @@
-# JsonAsAsset - FModel to Unreal Engine Asset Importer
+<h1 align="center">JsonAsAsset</h1>
 
-[![Discord](https://img.shields.io/badge/Join%20Discord-Collector?color=0363ff&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/xXEw4jc2UT)
+<p align="center">
+    Powerful Unreal Engine plugin that imports assets from FModel
+</p>
+
+<div align="center">
+
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Ko--fi?color=29abe0&logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/t4ctor)
+[![Discord](https://img.shields.io/badge/Join%20Discord-Collector?color=0363ff&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/xXEw4jc2UT)
 [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/JsonAsAsset/JsonAsAsset/total?style=for-the-badge&label=DOWNLOADS&color=#03ffc8)](https://github.com/JsonAsAsset/JsonAsAsset/releases)
 [![GitHub Repo stars](https://img.shields.io/github/stars/JsonAsAsset/JsonAsAsset?style=for-the-badge&logo=&color=gold)](https://github.com/JsonAsAsset/JsonAsAsset/stargazers)
 
 [![Unreal Engine 5 Supported)](https://img.shields.io/badge/UE5.0+-black?logo=unrealengine&style=for-the-badge&labelColor=grey)](#install)
- [![Unreal Engine 4.27.2 Supported)](https://img.shields.io/badge/4.27.2-black?logo=unrealengine&style=for-the-badge&labelColor=grey)](#install)
- [![Unreal Engine 4.26.2 Supported)](https://img.shields.io/badge/4.26.2-black?logo=unrealengine&style=for-the-badge&labelColor=grey)](#install)
- [![Unreal Engine 4.26.0 Supported)](https://img.shields.io/badge/4.26.0-black?logo=unrealengine&style=for-the-badge&labelColor=grey)](#install)
+[![Unreal Engine 4.27.2 Supported)](https://img.shields.io/badge/4.27.2-black?logo=unrealengine&style=for-the-badge&labelColor=grey)](#install)
+[![Unreal Engine 4.26.2 Supported)](https://img.shields.io/badge/4.26.2-black?logo=unrealengine&style=for-the-badge&labelColor=grey)](#install)
+[![Unreal Engine 4.26.0 Supported)](https://img.shields.io/badge/4.26.0-black?logo=unrealengine&style=for-the-badge&labelColor=grey)](#install)
+
+</div>
 
 ### Description:
 
@@ -31,13 +39,11 @@ This project aims to streamline the porting and modding experience, making it ea
 
 > 1. [Introduction to JsonAsAsset](#introduction)  
 >    1.1 [Supported Asset Types](#supported-asset-types)
-> 3. [→ Installation](#install)  
+> 2. [→ Installation](#install)  
 >    2.1 [FModel](#setup-fmodel)  
 >    2.2 [Settings](#setup-settings)
 > 4. [→ Using JsonAsAsset](#plugin-usage)
-> 5. [Local Fetch](#local-fetch)  
->    4.1 [Setup Local Fetch Settings](#setup-local-fetch)  
->    4.2 [Launching Local Fetch](#launch-local-fetch)  
+> 5. [→ Cloud Server](#cloud-server)  
 
 **Extras**:
 <br>
@@ -65,7 +71,7 @@ JsonAsAsset is a user-friendly Unreal Engine plugin for importing assets from pa
 | Data Asset Types | DataAsset, SlateBrushAsset, SlateWidgetStyleAsset, AnimBoneCompressionSettings, AnimCurveCompressionSettings, UserDefinedEnum, UserDefinedStruct |
 | Table Types | CurveTable, DataTable, StringTable |
 | Materials | Material, MaterialFunction, MaterialInstanceConstant, MaterialParameterCollection, SubsurfaceProfile |
-| Sound Classes | Most/all sound classes are supported. SoundWave is downloaded by [Local Fetch](#local-fetch). |
+| Sound Classes | Most/all sound classes are supported. SoundWave is downloaded by a [Cloud Server](#cloud-server). |
 | Animation Asset Types | PoseAsset, Skeleton, SkeletalMeshLODSettings, BlendSpace, BlendSpace1D, AimOffsetBlendSpace, AimOffsetBlendSpace1D |
 | Physics Asset Types | PhysicsAsset, PhysicalMaterial |
 | Sequencer Asset Types | CameraAnim |
@@ -132,12 +138,12 @@ The JSON format/file has to be from a program that fits the format of FModel's J
    
    If not, copy your export directory from FModel.
 
+That's the basic setup! Here's how to use JsonAsAsset.
+
 ----------
 
-That’s the basic setup! Here's how to use JsonAsAsset.
-
 <a name="plugin-usage"></a>
-##### Using JsonAsAsset
+## 4. Using JsonAsAsset
 
 1. Find a asset in [FModel](https://fmodel.app), and save it by right clicking and pressing `Save Properties`. Locate the file on your computer and copy the location.
 
@@ -147,54 +153,16 @@ That’s the basic setup! Here's how to use JsonAsAsset.
 
 4. The asset will import, and bring you to the created asset in the content browser. (if the asset type is supported)
 
-To bulk import assets and **what they reference**, you must set up [`Local Fetch`](#setup-local-fetch)!
+To bulk import assets and **what they reference**, you must set up a [`Cloud Server`](#cloud-server)!
 
-<a name="local-fetch"></a>
-## 4. Local Fetch
+<a name="cloud-server"></a>
+## 4. Cloud Server
 
-[Local Fetch](https://github.com/JsonAsAsset/LocalFetch) is a way to automate importing assets that other assets reference, built into JsonAsAsset. **It supports all asset types except AnimSequence/AnimMontages.** Learn how to [set up Local Fetch](#setup-local-fetch).
+A `Cloud Server` is a server that hosts a Web API, allowing JsonAsAsset to communicate directly with the game files. JsonAsAsset will automate importing assets that assets reference. **It supports all asset types except AnimSequence/AnimMontages.** Use and setup a app that has a built-in cloud server.
 
-------------------------
+The following apps can host a Cloud Server:
 
-<a name="setup-local-fetch"></a>
-#### 4.1 Local Fetch Settings
-
-1. **Open Plugin Settings:**  
-   Click on the JsonAsAsset dropdown, then select Open Plugin Settings.
-
-<img align="right" width="452" height="84" src=https://github.com/user-attachments/assets/1747162c-81df-442c-a6ce-d88e563a4ca2>
-
-2. **Enable Local Fetch:**  
-   Locate the property **Enable Local Fetch** and turn it on.
-
-3. **Setup Local Fetch's Settings:**  
-    Make sure to set these in your settings:
-   - **Directory**: specific Paks folder of your game
-   - **Unreal Engine**: version that your game is running
-   - **Mappings File**: file path to your mappings file
-   - **Encryption Keys**: if your game needs AES Keys, set them
-
-###### Fetch Encryption from an API
-You can automatically have your AES Keys changed if your game has a API ran by someone else, you can fetch aes keys and mappings from an API in the section **Local Fetch - Encryption**.
-
-------------
-
-<a name="launch-local-fetch"></a>
-#### 4.2 Launch Local Fetch
-
-<img align="right" width="240" height="145" src=https://github.com/user-attachments/assets/290b8ea3-6777-443f-bacf-b8df5738ec8f>
-
-Running the API requires ASP.NET 8.0 to be installed; please install this [here](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-8.0.1-windows-x64-installer).
-
-Go ahead and click on the JsonAsAsset logo and hover over the list `"Command-line Application"` and press `"Execute Local Fetch (.EXE)"`.
-
-A window should pop-up, and once the console says `[CORE] Running API`, Local Fetch has been successfully started! 
-
-Make sure to keep this window open until you are done with JsonAsAsset.
-
-</details>
-
-JsonAsAsset will now use Local Fetch to import if a missing asset is referenced.
+<a href="https://github.com/Tectors/j0.dev"><img src="https://github.com/user-attachments/assets/2c450d60-6573-4545-8b20-f6190a87827e" width="126" height="126"/></a>
 
 <a name="common-errors"></a>
 ## Common Errors 🐛

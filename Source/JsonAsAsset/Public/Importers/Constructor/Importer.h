@@ -12,7 +12,7 @@
 /* AssetType/Category ~ Defined in CPP */
 extern TMap<FString, TArray<FString>> ImporterTemplatedTypes;
 
-inline TArray<FString> BlacklistedLocalFetchTypes = {
+inline TArray<FString> BlacklistedCloudTypes = {
     "AnimSequence",
     "AnimMontage",
     // "AnimBlueprintGeneratedClass"
@@ -125,8 +125,8 @@ public:
 
 public:
     /* Accepted Types ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    static bool CanImportWithLocalFetch(const FString& ImporterType) {
-        if (BlacklistedLocalFetchTypes.Contains(ImporterType)) {
+    static bool CanImportWithCloud(const FString& ImporterType) {
+        if (BlacklistedCloudTypes.Contains(ImporterType)) {
             return false;
         }
 
@@ -141,10 +141,10 @@ public:
         return true;
     }
     
-    static bool CanImport(const FString& ImporterType, const bool IsLocalFetch = false, const UClass* Class = nullptr) {
-        /* Blacklists for Local Fetch importing */
-        if (IsLocalFetch) {
-            if (!CanImportWithLocalFetch(ImporterType)) {
+    static bool CanImport(const FString& ImporterType, const bool IsCloud = false, const UClass* Class = nullptr) {
+        /* Blacklists for Cloud importing */
+        if (IsCloud) {
+            if (!CanImportWithCloud(ImporterType)) {
                 return false;
             }
         }

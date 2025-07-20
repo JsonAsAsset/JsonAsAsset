@@ -118,7 +118,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			*ObjectPtr = FSoftObjectPath(PathString);
 
 			if (!ObjectPtr->LoadSynchronous()) {
-				/* Try importing it using Local Fetch */
+				/* Try importing it using Cloud */
 				FString PackagePath;
 				FString AssetName;
 				PathString.Split(".", &PackagePath, &AssetName);
@@ -282,7 +282,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				*ObjectPtr = FSoftObjectPath(PathString);
 
 				if (!ObjectPtr->LoadSynchronous()) {
-					/* Try importing it using Local Fetch */
+					/* Try importing it using Cloud */
 					FString PackagePath;
 					FString AssetName;
 					PathString.Split(".", &PackagePath, &AssetName);

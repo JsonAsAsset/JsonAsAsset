@@ -5,20 +5,18 @@
 #include "CoreMinimal.h"
 
 /* Structures, Enumerations, used for Local Fetch */
-#include "LocalFetchModule.generated.h"
+#include "CloudModule.generated.h"
 
 #if PLATFORM_WINDOWS
-	static TWeakPtr<SNotificationItem> LocalFetchNotification;
+	static TWeakPtr<SNotificationItem> CloudNotification;
 #endif
 
 class UJsonAsAssetSettings;
 
-class LocalFetchModule {
+class CloudModule {
 public:
-	static bool LaunchLocalFetch();
-	static bool TryLaunchingLocalFetch(const UJsonAsAssetSettings* Settings);
-	static void CloseLocalFetch();
-	static bool IsLocalFetchRunning();
+	static bool TryLaunchingCloud(const UJsonAsAssetSettings* Settings);
+	static bool IsCloudRunning();
 
 	/* If GameName isn't set, try getting it from the API */
 	static void EnsureGameName(const UJsonAsAssetSettings* Settings);
@@ -28,14 +26,14 @@ public:
 };
 
 USTRUCT()
-struct FLocalFetchAES
+struct FCloudAES
 {
 	GENERATED_BODY()
 public:
-	FLocalFetchAES() {
+	FCloudAES() {
 	}
 
-	FLocalFetchAES(FString NewGUID, FString NewKey) {
+	FCloudAES(FString NewGUID, FString NewKey) {
 		Value = NewKey;
 		Guid = NewGUID;
 	}

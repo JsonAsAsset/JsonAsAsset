@@ -1,6 +1,6 @@
 # Key information for contributors: 🎓
 
-Local Fetch's API is located at [JsonAsAsset/LocalFetch](https://github.com/JsonAsAsset/LocalFetch)
+Cloud Server's API is located at [Tectors/j0.dev](https://github.com/Tectors/j0.dev/tree/main/Source/vj0.Cloud)
 It uses CUE4Parse to read game files, and it interacts with the config files inside of the project.
 
 ##### Adding Asset Types

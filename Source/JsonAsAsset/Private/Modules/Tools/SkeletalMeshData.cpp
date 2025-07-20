@@ -23,6 +23,7 @@
 #include "Engine/SkinnedAssetCommon.h"
 #endif
 
+#include "MaterialStatsCommon.h"
 #include "Importers/Constructor/Importer.h"
 
 #if ENGINE_UE5
@@ -91,6 +92,7 @@ void FSkeletalMeshData::Execute() {
 			if (Type == "SkeletalMesh") {
 				bool UseClothingAssets = false;
 
+#if ENGINE_UE4 && ENGINE_MINOR_VERSION > 27
 				TArray<UClothingAssetBase*> ClothingAssets = SkeletalMesh->GetMeshClothingAssets();
 
 				if (UseClothingAssets) {
@@ -101,6 +103,7 @@ void FSkeletalMeshData::Execute() {
 						SkeletalMesh->GetMeshClothingAssets().Remove(ClothingAsset);
 					}
 				}
+#endif
 
 				TArray<TSharedPtr<FJsonValue>> SkeletalMaterials = JsonObject->GetArrayField("SkeletalMaterials");
 
@@ -113,8 +116,8 @@ void FSkeletalMeshData::Execute() {
 
 					const TSharedPtr<FJsonObject> SkeletalMaterialObject = SkeletalMaterialExport->AsObject();
 
-					if (SkeletalMesh->GetMaterials().IsValidIndex(SkeletalMaterialIndex)) {
-						FSkeletalMaterial& MaterialSlot = SkeletalMesh->GetMaterials()[SkeletalMaterialIndex];
+					if (GetMaterials(SkeletalMesh).IsValidIndex(SkeletalMaterialIndex)) {
+						FSkeletalMaterial& MaterialSlot = GetMaterials(SkeletalMesh)[SkeletalMaterialIndex];
 						
 						MaterialSlot.MaterialSlotName = FName(*SkeletalMaterialObject->GetStringField("MaterialSlotName"));
 						MaterialSlot.ImportedMaterialSlotName = MaterialSlot.MaterialSlotName;
@@ -162,6 +165,7 @@ void FSkeletalMeshData::Execute() {
 				SkeletalMesh->Modify();
 				
 				if (UseClothingAssets) {
+#if ENGINE_UE4 && ENGINE_MINOR_VERSION > 27
 					ClothingAssets = SkeletalMesh->GetMeshClothingAssets();
 				
 					for (UClothingAssetBase* ClothingAssetBase : ClothingAssets) {
@@ -182,6 +186,7 @@ void FSkeletalMeshData::Execute() {
 							}
 						}
 					}
+#endif
 				}
 
 				const TArray<FAssetData>& Assets = { Asset };
@@ -201,4 +206,12 @@ void FSkeletalMeshData::Execute() {
 			}
 		}
 	}
+}
+
+TArray<FSkeletalMaterial> FSkeletalMeshData::GetMaterials(USkeletalMesh* Mesh) {
+#if ENGINE_UE4 && ENGINE_MINOR_VERSION > 27
+	return Mesh->GetMaterials();
+#else
+	return Mesh->Materials;
+#endif
 }

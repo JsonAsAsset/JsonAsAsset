@@ -4,6 +4,6 @@
 
 #include "ParentDropdownBuilder.h"
 
-struct ILocalFetchDropdownBuilder final : IParentDropdownBuilder {
+struct ICloudDropdownBuilder final : IParentDropdownBuilder {
 	virtual void Build(FMenuBuilder& MenuBuilder) const override;
 };

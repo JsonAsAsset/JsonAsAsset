@@ -11,10 +11,11 @@
 #endif
 
 #include "Interfaces/IPluginManager.h"
+#include "Modules/CloudModule.h"
 #include "Modules/UI/StyleModule.h"
 #include "Toolbar/Dropdowns/ActionRequiredDropdownBuilder.h"
 #include "Toolbar/Dropdowns/GeneralDropdownBuilder.h"
-#include "Toolbar/Dropdowns/LocalFetchDropdownBuilder.h"
+#include "Toolbar/Dropdowns/CloudDropdownBuilder.h"
 #include "Toolbar/Dropdowns/ParentDropdownBuilder.h"
 #include "Toolbar/Dropdowns/VersioningDropdownBuilder.h"
 #include "Utilities/EngineUtilities.h"
@@ -127,14 +128,14 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 bool FJsonAsAssetToolbar::IsActionEnabled() const {
 	UJsonAsAssetSettings* Settings = GetSettings();
 	
-	return UJsonAsAssetSettings::IsSetup(Settings) && LocalFetchModule::IsSetup(Settings);
+	return UJsonAsAssetSettings::IsSetup(Settings) && CloudModule::IsSetup(Settings);
 }
 
 /* ReSharper disable once CppMemberFunctionMayBeStatic */
 FText FJsonAsAssetToolbar::GetTooltipText() const {
 	UJsonAsAssetSettings* Settings = GetSettings();
 	
-	return !UJsonAsAssetSettings::IsSetup(Settings) || !LocalFetchModule::IsSetup(Settings)
+	return !UJsonAsAssetSettings::IsSetup(Settings) || !CloudModule::IsSetup(Settings)
 		? FText::FromString("The button is disabled due to your settings being improperly setup. Please modify your settings to execute JsonAsAsset.")
 	
 		: FText::FromString("Execute JsonAsAsset");
@@ -146,8 +147,8 @@ void FJsonAsAssetToolbar::ImportAction() {
 
 	/* Conditional Settings Checks */
 	if (!UJsonAsAssetSettings::EnsureExportDirectoryIsValid(Settings)) return;
-	if (!LocalFetchModule::TryLaunchingLocalFetch(Settings)) return;
-	LocalFetchModule::EnsureGameName(Settings);
+	if (!CloudModule::TryLaunchingCloud(Settings)) return;
+	CloudModule::EnsureGameName(Settings);
 
 	/* Dialog for a JSON File */
 	TArray<FString> OutFileNames = OpenFileDialog("Select a JSON File", "JSON Files|*.json");
@@ -169,7 +170,7 @@ TSharedRef<SWidget> FJsonAsAssetToolbar::CreateMenuDropdown() {
 	TArray<TSharedRef<IParentDropdownBuilder>> Dropdowns = {
 		MakeShared<IParentDropdownBuilder>(),
 		MakeShared<IActionRequiredDropdownBuilder>(),
-		MakeShared<ILocalFetchDropdownBuilder>(),
+		MakeShared<ICloudDropdownBuilder>(),
 		MakeShared<IGeneralDropdownBuilder>(),
 		MakeShared<IVersioningDropdownBuilder>()
 	};

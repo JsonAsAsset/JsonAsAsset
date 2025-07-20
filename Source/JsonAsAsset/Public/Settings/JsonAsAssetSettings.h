@@ -3,9 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Engine/EngineTypes.h"
 #include "Engine/DeveloperSettings.h"
-#include "Modules/LocalFetchModule.h"
 #include "Utilities/Compatibility.h"
 #include "JsonAsAssetSettings.generated.h"
 
@@ -64,7 +62,7 @@ public:
 	 * Enables re-downloading of textures even if they already exist in the Unreal Engine project.
 	 *
 	 * Use Case:
-	 * This option is useful when you need to re-import textures that have been updated in a newer version of your Local Fetch build.
+	 * This option is useful when you need to re-import textures that have been updated in a newer version of your Cloud build.
 	 */
 	UPROPERTY(EditAnywhere, Config, AdvancedDisplay, Category = "Texture Import Settings")
 	bool bDownloadExistingTextures;
@@ -130,15 +128,15 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
 	FJAnimationBlueprintImportSettings AnimationBlueprintImportSettings;
 
+	/* Game's Project Name (Set by Cloud) */
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
-	TArray<FJPathRedirector> PathRedirectors;
+	FString GameName;
 
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings, meta = (DisplayName = "Save Assets On Import"))
 	bool bSavePackagesOnImport;
-
-	/* Unreal Engine Game's Project Name (Set by Local Fetch) */
+	
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
-	FString GameName;
+	TArray<FJPathRedirector> PathRedirectors;
 };
 
 /* A user-friendly Unreal Engine plugin designed to import assets from packaged games through JSON files */
@@ -168,60 +166,24 @@ public:
 	bool bEnableExperiments;
 
 	/**
-	 * Retrieves assets from a locally hosted API and imports them directly into your project.
+	 * Retrieves assets from a Web API and imports references directly into your project.
 	 *
-	 * Before initiating the Local Fetch, ensure that all configuration settings are properly set.
 	 * For further instructions, please refer to the README.md file found on GitHub.
 	 */
-	UPROPERTY(EditAnywhere, Config, Category = "Local Fetch")
-	bool bEnableLocalFetch;
+	UPROPERTY(EditAnywhere, Config, Category = CloudServer)
+	bool bEnableCloudServer;
 
 	/**
-	 * Specific Paks folder of your game
-	 */
-	UPROPERTY(EditAnywhere, Config, Category = "Local Fetch - Configuration", meta=(EditCondition="bEnableLocalFetch", DisplayName="Directory"))
-	FDirectoryPath ArchiveDirectory;
-
-	/**
-	 * Unreal Engine version of your game
-	 */
-	UPROPERTY(EditAnywhere, Config, Category = "Local Fetch - Configuration", meta=(EditCondition="bEnableLocalFetch", DisplayName="Unreal Engine"))
-	TEnumAsByte<ECUE4ParseVersion> UnrealVersion = GAME_UE5_LATEST;
-
-	/**
-	 * Specifies the file path to your mappings file
-	 */
-	UPROPERTY(EditAnywhere, Config, Category = "Local Fetch - Configuration", meta=(EditCondition="bEnableLocalFetch", FilePathFilter="usmap", RelativeToGameDir, DisplayName="Mappings File .usmap"))
-	FFilePath MappingFilePath;
-
-	/**
-	 * Specifies the main encryption key used for decrypting encrypted game files.
+	 * DO NOT MODIFY UNLESS YOU KNOW WHAT YOU'RE DOING.
 	 *
-	 * Default value:
-	 *   AES Key: 0x0000000000000000000000000000000000000000000000000000000000000000
-	 *
-	 * Note: This key is optional for most Unreal Engine games. Override it only if your build uses encryption.
+	 * URL used to fetch from the Cloud.
 	 */
-	UPROPERTY(EditAnywhere, Config, Category = "Local Fetch - Encryption", meta=(EditCondition="bEnableLocalFetch", DisplayName="Encryption Key"))
-	FString ArchiveKey = "0x0000000000000000000000000000000000000000000000000000000000000000";
+	UPROPERTY(EditAnywhere, Config, Category = Cloud, meta=(EditCondition="bCustomCloudServer", DisplayName = "Cloud Server URL"), AdvancedDisplay)
+	FString CloudURL = "http://localhost:1500";
 
-	/**
-	 * Specifies additional encryption keys used for decrypting encrypted game files.
-	 *
-	 * Note: These keys are optional for most Unreal Engine games. Override them only if your build uses encryption.
-	 */
-	UPROPERTY(EditAnywhere, Config, Category = "Local Fetch - Encryption", meta=(EditCondition="bEnableLocalFetch", DisplayName="Dynamic Keys"))
-	TArray<FLocalFetchAES> DynamicKeys;
+	UPROPERTY(EditAnywhere, meta=(PinHiddenByDefault, InlineEditConditionToggle))
+	uint8 bCustomCloudServer : 1;
 	
-	/**
-	 * Local Fetch URL
-	 *
-	 * Default: "http://localhost:1500"
-	 * Note: This setting is intended for advanced users. It is recommended to leave it unchanged unless you are certain of your requirements.
-	 */
-	UPROPERTY(EditAnywhere, Config, Category = "Local Fetch", meta=(EditCondition="bEnableLocalFetch", DisplayName = "Local Fetch URL"), AdvancedDisplay)
-	FString LocalFetchUrl = "http://localhost:1500";
-
 	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings) {
 		const FString ExportDirectoryPath = Settings->ExportDirectory.Path;
 	

@@ -11,7 +11,6 @@
 #include "Serialization/JsonSerializer.h"
 #include "Misc/FileHelper.h"
 #include "Dom/JsonObject.h"
-#include "Modules/LocalFetchModule.h"
 #include "Utilities/EngineUtilities.h"
 
 #if ENGINE_UE4
@@ -66,44 +65,6 @@ void FJsonAsAssetSettingsDetails::EditConfiguration(IDetailLayoutBuilder& Detail
                 if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid()) {
                     /* Load the PropertiesDirectory and GameDirectory */
                     PluginSettings->ExportDirectory.Path = JsonObject->GetStringField(TEXT("PropertiesDirectory")).Replace(TEXT("\\"), TEXT("/"));
-                    PluginSettings->ArchiveDirectory.Path = JsonObject->GetStringField(TEXT("GameDirectory")).Replace(TEXT("\\"), TEXT("/"));
-
-					const FString GameDirectory = JsonObject->GetStringField(TEXT("GameDirectory"));
-
-                    /* Handling AES Keys */
-                    if (JsonObject->HasField(TEXT("PerDirectory"))) {
-                        const TSharedPtr<FJsonObject> PerDirectoryObject = JsonObject->GetObjectField(TEXT("PerDirectory"));
-
-                        if (PerDirectoryObject->HasField(GameDirectory)) {
-                            const TSharedPtr<FJsonObject> PakSettings = PerDirectoryObject->GetObjectField(GameDirectory);
-
-                            if (PakSettings->HasField(TEXT("AesKeys"))) {
-                                const TSharedPtr<FJsonObject> AesKeysObject = PakSettings->GetObjectField(TEXT("AesKeys"));
-
-                                if (AesKeysObject->HasField(TEXT("mainKey"))) {
-                                    PluginSettings->ArchiveKey = AesKeysObject->GetStringField(TEXT("mainKey"));
-                                }
-
-                                if (AesKeysObject->HasField(TEXT("dynamicKeys"))) {
-                                    const TArray<TSharedPtr<FJsonValue>> DynamicKeysArray = AesKeysObject->GetArrayField(TEXT("dynamicKeys"));
-                                    PluginSettings->DynamicKeys.Empty();
-
-                                    for (const auto& KeyValue : DynamicKeysArray) {
-                                        const TSharedPtr<FJsonObject> KeyObject = KeyValue->AsObject();
-
-                                        if (KeyObject.IsValid()) {
-                                            FLocalFetchAES NewKey;
-                                        	
-                                            NewKey.Guid = KeyObject->GetStringField(TEXT("guid"));
-                                            NewKey.Value = KeyObject->GetStringField(TEXT("key"));
-                                        	
-                                            PluginSettings->DynamicKeys.Add(NewKey);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
                 }
             }
 

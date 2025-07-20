@@ -3,13 +3,13 @@
 #include "Toolbar/Dropdowns/ActionRequiredDropdownBuilder.h"
 
 #include "ISettingsModule.h"
-#include "Modules/LocalFetchModule.h"
+#include "Modules/CloudModule.h"
 #include "Utilities/EngineUtilities.h"
 
 void IActionRequiredDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	UJsonAsAssetSettings* Settings = GetSettings();
 
-	if (!UJsonAsAssetSettings::IsSetup(Settings) || !LocalFetchModule::IsSetup(Settings)) {
+	if (!UJsonAsAssetSettings::IsSetup(Settings) || !CloudModule::IsSetup(Settings)) {
 		MenuBuilder.BeginSection("JsonAsAssetActionRequired", FText::FromString("Action Required"));
 		
 		TArray<FString> RequiredActions;
@@ -19,11 +19,11 @@ void IActionRequiredDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 			RequiredActions.Add("Missing Export Directory");
 		}
 		
-		if (Settings->bEnableLocalFetch) {
-			TArray<FString> LocalFetchRequiredActions;
+		if (Settings->bEnableCloudServer) {
+			TArray<FString> CloudRequiredActions;
 			
-			if (!LocalFetchModule::IsSetup(Settings, LocalFetchRequiredActions)) {
-				for (FString RequiredAction : LocalFetchRequiredActions) {
+			if (!CloudModule::IsSetup(Settings, CloudRequiredActions)) {
+				for (FString RequiredAction : CloudRequiredActions) {
 					RequiredActions.Add(RequiredAction);
 				}
 			}

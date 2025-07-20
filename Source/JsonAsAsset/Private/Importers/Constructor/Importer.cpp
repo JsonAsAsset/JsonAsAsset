@@ -311,7 +311,7 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
 
 	FMessageLog MessageLogger = FMessageLog(FName("JsonAsAsset"));
 
-	if (Settings->bEnableLocalFetch && (
+	if (Settings->bEnableCloudServer && (
 		InObject == nullptr ||
 			Settings->AssetSettings.TextureImportSettings.bDownloadExistingTextures &&
 			Type == "Texture2D"
@@ -419,7 +419,7 @@ void IImporter::LoadObject(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 
 	Object = LoadedObject;
 
-	/* If object is still null, send off to Local Fetch to download */
+	/* If object is still null, send off to Cloud to download */
 	if (!Object) {
 		Object = DownloadWrapper(LoadedObject, ObjectType, ObjectName, ObjectPath);
 	}

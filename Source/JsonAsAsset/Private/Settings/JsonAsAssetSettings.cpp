@@ -9,8 +9,7 @@
 UJsonAsAssetSettings::UJsonAsAssetSettings():
 	/* Default initializers */
 	bEnableExperiments(false),
-	bEnableLocalFetch(false),
-	UnrealVersion()
+	bEnableCloudServer(false)
 {
 	CategoryName = TEXT("Plugins");
 	SectionName = TEXT("JsonAsAsset");

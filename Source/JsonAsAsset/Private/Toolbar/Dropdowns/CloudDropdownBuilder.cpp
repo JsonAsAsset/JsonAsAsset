@@ -26,7 +26,7 @@ void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FSlateIcon(),
 		FUIAction(
 			FExecuteAction::CreateLambda([this]() {
-				const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#4-cloud";
+				const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#4-cloud-server";
 				FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
 			})
 		)

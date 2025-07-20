@@ -20,7 +20,7 @@ bool CloudModule::TryLaunchingCloud(const UJsonAsAssetSettings* Settings) {
 
 		Info.HyperlinkText = FText::FromString("Documentation");
 		Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
-			const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset";
+			const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#4-cloud-server";
 			FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
 		});
 

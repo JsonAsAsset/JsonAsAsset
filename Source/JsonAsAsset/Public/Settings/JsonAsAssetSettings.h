@@ -178,10 +178,10 @@ public:
 	 *
 	 * URL used to fetch from the Cloud.
 	 */
-	UPROPERTY(EditAnywhere, Config, Category = Cloud, meta=(EditCondition="bCustomCloudServer", DisplayName = "Cloud Server URL"), AdvancedDisplay)
+	UPROPERTY(EditAnywhere, Config, Category = CloudServer, meta=(EditCondition="bCustomCloudServer", DisplayName = "Cloud Server URL"), AdvancedDisplay)
 	FString CloudURL = "http://localhost:1500";
 
-	UPROPERTY(EditAnywhere, meta=(PinHiddenByDefault, InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, Category = CloudServer, meta=(PinHiddenByDefault, InlineEditConditionToggle))
 	uint8 bCustomCloudServer : 1;
 	
 	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings) {

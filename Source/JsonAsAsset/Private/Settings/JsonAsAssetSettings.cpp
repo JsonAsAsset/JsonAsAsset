@@ -9,7 +9,8 @@
 UJsonAsAssetSettings::UJsonAsAssetSettings():
 	/* Default initializers */
 	bEnableExperiments(false),
-	bEnableCloudServer(false)
+	bEnableCloudServer(false),
+	bCustomCloudServer(false)
 {
 	CategoryName = TEXT("Plugins");
 	SectionName = TEXT("JsonAsAsset");

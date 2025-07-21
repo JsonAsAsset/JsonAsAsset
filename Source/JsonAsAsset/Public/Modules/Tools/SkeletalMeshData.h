@@ -7,4 +7,6 @@
 
 struct FSkeletalMeshData : FToolBase {
 	static void Execute();
+
+	static TArray<FSkeletalMaterial> GetMaterials(USkeletalMesh* Mesh);
 };

@@ -111,10 +111,18 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 		ClassName = ReadPathFromObject(&TemplateObject).Replace(TEXT("Default__"), TEXT(""));
 	}
 
+#if UE5_7_BEYOND
+	UClass* Class = FindFirstObject<UClass>(*ClassName);
+#else
 	UClass* Class = FindObject<UClass>(ANY_PACKAGE, *ClassName);
-
+#endif
+	
 	if (!Class) {
+#if UE5_7_BEYOND
+		Class = FindFirstObject<UClass>(*Type);
+#else
 		Class = FindObject<UClass>(ANY_PACKAGE, *Type);
+#endif
 	}
 
 	if (!Class) return;

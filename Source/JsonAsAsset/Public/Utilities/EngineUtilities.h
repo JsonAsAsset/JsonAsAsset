@@ -867,7 +867,12 @@ inline FStructProperty* LoadStructProperty(const TSharedPtr<FJsonObject>& JsonOb
 
     FString ObjectPath = JsonObject->GetStringField(TEXT("ObjectPath"));
 
-    const UStruct* StructDef = FindObject<UStruct>(ANY_PACKAGE, *StructName);
+#if UE5_7_BEYOND
+    const UStruct* StructDef = FindFirstObject<UStruct>(*StructName);
+#else
+	const UStruct* StructDef = FindObject<UStruct>(ANY_PACKAGE, *StructName);
+#endif
+	
     if (!StructDef) {
         return nullptr;
     }

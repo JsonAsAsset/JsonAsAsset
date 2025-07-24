@@ -18,6 +18,12 @@
 	#define ENGINE_UE5 0
 #endif
 
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 7
+	#define UE5_7_BEYOND 1
+#else
+	#define UE5_7_BEYOND 0
+#endif
+
 #if ENGINE_MAJOR_VERSION == 4
 	#define ENGINE_UE4 1
 #else

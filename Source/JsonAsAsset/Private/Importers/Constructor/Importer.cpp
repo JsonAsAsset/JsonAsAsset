@@ -149,9 +149,12 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 		if (Type.Contains("BlueprintGeneratedClass")) {
 			Name.Split("_C", &Name, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
 		}
-
+#if UE5_7_BEYOND
+		UClass* Class = FindFirstObject<UClass>(*Type);
+#else
 		UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type);
-
+#endif
+		
 		if (Class == nullptr) continue;
 
 		/* Check if this export can be imported */

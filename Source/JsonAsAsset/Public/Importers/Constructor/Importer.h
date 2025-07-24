@@ -160,7 +160,11 @@ public:
         }
 
         if (!Class) {
-            Class = FindObject<UClass>(ANY_PACKAGE, *ImporterType);
+#if UE5_7_BEYOND
+            Class = FindFirstObject<UClass>(*ImporterType);
+#else
+        	Class = FindObject<UClass>(ANY_PACKAGE, *ImporterType);
+#endif
         }
 
         if (Class == nullptr) return false;

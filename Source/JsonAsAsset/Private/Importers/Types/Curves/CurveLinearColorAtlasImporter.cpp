@@ -9,6 +9,7 @@ bool ICurveLinearColorAtlasImporter::Import() {
 	float Height = 256;
 
 	UCurveLinearColorAtlas* Object = NewObject<UCurveLinearColorAtlas>(Package, UCurveLinearColorAtlas::StaticClass(), *AssetName, RF_Public | RF_Standalone);
+#if !UE5_7_BEYOND
 	Object->Source.Init(Width, Height, 1, 1, TSF_RGBA16F);
 	const int32 TextureDataSize = Object->Source.CalcMipSize(0);
 	Object->SrcData.AddUninitialized(TextureDataSize);
@@ -40,8 +41,12 @@ bool ICurveLinearColorAtlasImporter::Import() {
 	}
 
 	bool bSquareResolution = false;
-
-#if !UE4_27_ONLY_BELOW
+#else
+	Object->TextureSize = FMath::Max(Width,2);
+	Object->UpdateTextures();
+#endif
+	
+#if !UE4_27_ONLY_BELOW && !UE5_7_BEYOND
 	if (AssetData->TryGetBoolField(TEXT("bSquareResolution"), bSquareResolution)) {
 		Object->bSquareResolution = bSquareResolution;
 	}
@@ -59,7 +64,7 @@ bool ICurveLinearColorAtlasImporter::Import() {
 		Object->TextureSize = TextureSize;
 	}
 
-#if !UE4_27_ONLY_BELOW
+#if !UE4_27_ONLY_BELOW && !UE5_7_BEYOND
 	if (AssetData->TryGetNumberField(TEXT("TextureHeight"), TextureHeight)) {
 		Object->TextureHeight = TextureHeight;
 	}

@@ -3,8 +3,11 @@
 #pragma once
 
 #include "Importers/Constructor/Importer.h"
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 5
+#include "StructUtils/UserDefinedStruct.h"
+#else
 #include "Engine/UserDefinedStruct.h"
-
+#endif
 class IUserDefinedStructImporter : public IImporter {
 public:
 	IUserDefinedStructImporter(const FString& AssetName, const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPkg, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects, UClass* AssetClass):

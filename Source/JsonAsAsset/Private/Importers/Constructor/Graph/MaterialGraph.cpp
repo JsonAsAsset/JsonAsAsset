@@ -250,8 +250,12 @@ UMaterialExpression* IMaterialGraph::CreateEmptyExpression(FUObjectExport& Expor
 	const FName Type = Export.Type;
 	const FName Name = Export.Name;
 	
+#if UE5_7_BEYOND
+	const UClass* Class = FindFirstObject<UClass>(*Type.ToString());
+#else
 	const UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type.ToString());
-
+#endif
+	
 	/* Material/MaterialFunction Parent */
 	UObject* Parent = Export.Parent;
 
@@ -269,7 +273,11 @@ UMaterialExpression* IMaterialGraph::CreateEmptyExpression(FUObjectExport& Expor
 #endif
 
 		if (!Class) {
+#if UE5_7_BEYOND
+			Class = FindFirstObject<UClass>(*Type.ToString().Replace(TEXT("MaterialExpressionPhysicalMaterialOutput"), TEXT("MaterialExpressionLandscapePhysicalMaterialOutput")));
+#else
 			Class = FindObject<UClass>(ANY_PACKAGE, *Type.ToString().Replace(TEXT("MaterialExpressionPhysicalMaterialOutput"), TEXT("MaterialExpressionLandscapePhysicalMaterialOutput")));
+#endif
 		}
 	}
 

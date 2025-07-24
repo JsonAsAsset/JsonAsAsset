@@ -119,13 +119,13 @@ bool IMaterialInstanceConstantImporter::Import() {
 }
 
 void IMaterialInstanceConstantImporter::ReadStaticParameters(const TSharedPtr<FJsonObject>& StaticParameters, TArray<TSharedPtr<FJsonValue>>& StaticSwitchParameters, TArray<TSharedPtr<FJsonValue>>& StaticComponentMaskParameters) {
-	if (StaticParameters->HasField("StaticSwitchParameters")) {
+	if (StaticParameters->HasField(TEXT("StaticSwitchParameters"))) {
 		for (TSharedPtr<FJsonValue> Parameter : StaticParameters->GetArrayField(TEXT("StaticSwitchParameters"))) {
 			StaticSwitchParameters.Add(TSharedPtr<FJsonValue>(Parameter));
 		}
 	}
 
-	if (StaticParameters->HasField("StaticComponentMaskParameters")) {
+	if (StaticParameters->HasField(TEXT("StaticComponentMaskParameters"))) {
 		for (TSharedPtr<FJsonValue> Parameter : StaticParameters->GetArrayField(TEXT("StaticComponentMaskParameters"))) {
 			StaticComponentMaskParameters.Add(TSharedPtr<FJsonValue>(Parameter));
 		}

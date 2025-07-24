@@ -214,7 +214,11 @@ bool ReadAnimationData(const TSharedPtr<FJsonObject>& Properties, const TArray<T
 
 #if UE5_2_BEYOND
 	if (ITargetPlatform* RunningPlatform = GetTargetPlatformManagerRef().GetRunningTargetPlatform()) {
+#if UE5_6_BEYOND
+		CastedAnimSequence->CacheDerivedDataForPlatform(RunningPlatform);
+#else
 		CastedAnimSequence->CacheDerivedData(RunningPlatform);
+#endif
 	}
 #else
 	if (CastedAnimSequence) {

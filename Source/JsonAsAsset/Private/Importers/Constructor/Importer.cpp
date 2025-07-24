@@ -38,7 +38,7 @@ IImporter::IImporter(const FString& AssetName, const FString& FilePath,
 		  UPackage* OutermostPkg, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects,
 		  UClass* AssetClass)
 	: USerializerContainer(Package, OutermostPkg), AllJsonObjects(AllJsonObjects), JsonObject(JsonObject),
-	  AssetName(AssetName), FilePath(FilePath), AssetClass(AssetClass),
+	  FilePath(FilePath), AssetClass(AssetClass), AssetName(AssetName),
 	  ParentObject(nullptr)
 {
 	/* Create Properties field if it doesn't exist */
@@ -149,7 +149,7 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 		if (Type.Contains("BlueprintGeneratedClass")) {
 			Name.Split("_C", &Name, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
 		}
-#if UE5_7_BEYOND
+#if UE5_6_BEYOND
 		UClass* Class = FindFirstObject<UClass>(*Type);
 #else
 		UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type);
@@ -320,7 +320,7 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
 			Type == "Texture2D"
 		)
 	) {
-		const UObject* DefaultObject = T::StaticClass()->ClassDefaultObject;
+		const UObject* DefaultObject = GetClassDefaultObject(T::StaticClass());
 
 		if (DefaultObject != nullptr && !Name.IsEmpty() && !Path.IsEmpty()) {
 			bool bRemoteDownloadStatus = false;

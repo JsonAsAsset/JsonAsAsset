@@ -8,6 +8,7 @@
 #include "Structs/StructSerializer.h"
 #include "UObject/Object.h"
 #include "UObject/UnrealType.h"
+#include "Utilities/Compatibility.h"
 #include "PropertyUtilities.generated.h"
 
 class UObjectSerializer;
@@ -105,7 +106,7 @@ inline bool PassthroughPropertyHandler(FProperty* Property, const FString& Prope
 
 		/* Array elements is filled up, now we set them in the property value */
 		for (int32 ArrayIndex = 0; ArrayIndex < ArrayElements.Num(); ArrayIndex++) {
-			uint8* ArrayPropertyValue = static_cast<uint8*>(PropertyValue) + Property->ElementSize * ArrayIndex;
+			uint8* ArrayPropertyValue = static_cast<uint8*>(PropertyValue) + GetElementSize(Property) * ArrayIndex;
 
 			if (!ArrayElements.IsValidIndex(ArrayIndex)) continue;
 

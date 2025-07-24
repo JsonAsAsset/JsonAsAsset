@@ -31,7 +31,7 @@ bool IAnimationBlueprintImporter::Import() {
 	
 	AnimBlueprint = GetSelectedAsset<UAnimBlueprint>(true);
 	if (!AnimBlueprint) {
-		const TSharedPtr<FJsonObject> SuperStruct = AssetData->GetObjectField("SuperStruct");
+		const TSharedPtr<FJsonObject> SuperStruct = AssetData->GetObjectField(TEXT("SuperStruct"));
 		UClass* ParentClass = LoadClass(SuperStruct);
 
 		AnimBlueprint = CreateAnimBlueprint(ParentClass);
@@ -432,7 +432,7 @@ void IAnimationBlueprintImporter::CreateAnimGraphNodes(UEdGraph* AnimGraph, cons
 			if (!NodeGuid.IsValid()) NodeGuid = FGuid();
 		}
 
-#if UE5_7_BEYOND
+#if UE5_6_BEYOND
 		const UClass* Class = FindFirstObject<UClass>(*NodeType);
 #else
 		const UClass* Class = FindObject<UClass>(ANY_PACKAGE, *NodeType);
@@ -496,7 +496,7 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 
 		/* UE5+ games use PhysicsBodyDefinitions for AnimGraphNode_AnimDynamics */
 		if (NodeProperties->HasField(TEXT("PhysicsBodyDefinitions"))) {
-			TSharedPtr<FJsonObject> PhysicsBodyDefinition = NodeProperties->GetArrayField("PhysicsBodyDefinitions")[0]->AsObject();
+			TSharedPtr<FJsonObject> PhysicsBodyDefinition = NodeProperties->GetArrayField(TEXT("PhysicsBodyDefinitions"))[0]->AsObject();
 			if (PhysicsBodyDefinition.IsValid()) {
 				for (const auto& Pair : PhysicsBodyDefinition->Values) {
 					NodeExport.JsonObject->SetField(Pair.Key, Pair.Value);

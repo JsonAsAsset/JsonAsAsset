@@ -160,7 +160,7 @@ public:
         }
 
         if (!Class) {
-#if UE5_7_BEYOND
+#if UE5_6_BEYOND
             Class = FindFirstObject<UClass>(*ImporterType);
 #else
         	Class = FindObject<UClass>(ANY_PACKAGE, *ImporterType);

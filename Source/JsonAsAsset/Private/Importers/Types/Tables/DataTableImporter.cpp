@@ -16,7 +16,7 @@ bool IDataTableImporter::Import() {
 	}
 
 	/* Find Table Row Struct */
-#if UE5_7_BEYOND
+#if UE5_6_BEYOND
 	UScriptStruct* TableRowStruct = FindFirstObject<UScriptStruct>(*TableStruct); {
 #else
 	UScriptStruct* TableRowStruct = FindObject<UScriptStruct>(ANY_PACKAGE, *TableStruct); {

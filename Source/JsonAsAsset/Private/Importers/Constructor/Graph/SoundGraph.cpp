@@ -31,7 +31,7 @@ void ISoundGraph::ConstructNodes(USoundCue* SoundCue, TArray<TSharedPtr<FJsonVal
 }
 
 USoundNode* ISoundGraph::CreateEmptyNode(FName Name, const FName Type, USoundCue* SoundCue) {
-#if UE5_7_BEYOND
+#if UE5_6_BEYOND
 	UClass* Class = FindFirstObject<UClass>(*Type.ToString());
 #else
 	UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type.ToString());

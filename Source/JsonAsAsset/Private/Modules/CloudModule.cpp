@@ -53,9 +53,9 @@ void CloudModule::EnsureGameName(const UJsonAsAssetSettings* Settings) {
 	if (Settings->bEnableCloudServer) {
 		if (Settings->AssetSettings.GameName.IsEmpty()) {
 			const auto MetadataResponse = RequestObjectURL("http://localhost:1500/api/metadata");
-			if (!MetadataResponse->HasField("name")) return;
+			if (!MetadataResponse->HasField(TEXT("name"))) return;
 			
-			FString Name = MetadataResponse->GetStringField("name");
+			FString Name = MetadataResponse->GetStringField(TEXT("name"));
 			UJsonAsAssetSettings* MutableSettings = GetMutableDefault<UJsonAsAssetSettings>();
 
 			MutableSettings->AssetSettings.GameName = Name;

@@ -123,8 +123,12 @@ inline auto SpawnYesNoPrompt = [](const FString& Title, const FString& Text, con
 	const FText DialogTitle = FText::FromString(Title);
 	const FText DialogMessage = FText::FromString(Text);
 
+#if UE5_3_BEYOND
+	const EAppReturnType::Type Response = FMessageDialog::Open(EAppMsgType::YesNo, DialogMessage, DialogTitle);
+#else
 	const EAppReturnType::Type Response = FMessageDialog::Open(EAppMsgType::YesNo, DialogMessage, &DialogTitle);
-
+#endif
+	
 	OnResponse(Response == EAppReturnType::Yes);
 };
 
@@ -867,7 +871,7 @@ inline FStructProperty* LoadStructProperty(const TSharedPtr<FJsonObject>& JsonOb
 
     FString ObjectPath = JsonObject->GetStringField(TEXT("ObjectPath"));
 
-#if UE5_7_BEYOND
+#if UE5_6_BEYOND
     const UStruct* StructDef = FindFirstObject<UStruct>(*StructName);
 #else
 	const UStruct* StructDef = FindObject<UStruct>(ANY_PACKAGE, *StructName);
@@ -994,8 +998,8 @@ inline TSubclassOf<UObject> LoadBlueprintClass(FString& ObjectPath) {
 }
 
 inline UClass* LoadClass(const TSharedPtr<FJsonObject>& SuperStruct) {
-	const FString ObjectName = SuperStruct->GetStringField("ObjectName").Replace(TEXT("Class'"), TEXT("")).Replace(TEXT("'"), TEXT(""));
-	FString ObjectPath = SuperStruct->GetStringField("ObjectPath");
+	const FString ObjectName = SuperStruct->GetStringField(TEXT("ObjectName")).Replace(TEXT("Class'"), TEXT("")).Replace(TEXT("'"), TEXT(""));
+	FString ObjectPath = SuperStruct->GetStringField(TEXT("ObjectPath"));
 
 	/* It's a C++ class if it has Script in it */
 	if (ObjectPath.Contains("/Script/")) {

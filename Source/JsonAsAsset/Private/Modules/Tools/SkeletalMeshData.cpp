@@ -105,7 +105,7 @@ void FSkeletalMeshData::Execute() {
 				}
 #endif
 
-				TArray<TSharedPtr<FJsonValue>> SkeletalMaterials = JsonObject->GetArrayField("SkeletalMaterials");
+				TArray<TSharedPtr<FJsonValue>> SkeletalMaterials = JsonObject->GetArrayField(TEXT("SkeletalMaterials"));
 
 				int SkeletalMaterialIndex = 0;
 				
@@ -119,10 +119,10 @@ void FSkeletalMeshData::Execute() {
 					if (GetMaterials(SkeletalMesh).IsValidIndex(SkeletalMaterialIndex)) {
 						FSkeletalMaterial& MaterialSlot = GetMaterials(SkeletalMesh)[SkeletalMaterialIndex];
 						
-						MaterialSlot.MaterialSlotName = FName(*SkeletalMaterialObject->GetStringField("MaterialSlotName"));
+						MaterialSlot.MaterialSlotName = FName(*SkeletalMaterialObject->GetStringField(TEXT("MaterialSlotName")));
 						MaterialSlot.ImportedMaterialSlotName = MaterialSlot.MaterialSlotName;
 
-						TSharedPtr<FJsonObject> SkeletalMaterial = SkeletalMaterialObject->GetObjectField("Material");
+						TSharedPtr<FJsonObject> SkeletalMaterial = SkeletalMaterialObject->GetObjectField(TEXT("Material"));
 
 						IImporter* Importer = new IImporter();
 						

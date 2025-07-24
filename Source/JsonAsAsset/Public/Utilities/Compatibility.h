@@ -18,10 +18,22 @@
 	#define ENGINE_UE5 0
 #endif
 
-#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 7
-	#define UE5_7_BEYOND 1
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 6
+	#define UE5_6_BEYOND 1
 #else
-	#define UE5_7_BEYOND 0
+	#define UE5_6_BEYOND 0
+#endif
+
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 6
+	#define UE5_6_BEYOND 1
+#else
+	#define UE5_6_BEYOND 0
+#endif
+
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 3
+	#define UE5_3_BEYOND 1
+#else
+	#define UE5_3_BEYOND 0
 #endif
 
 #if ENGINE_MAJOR_VERSION == 4
@@ -154,5 +166,21 @@ bool IsObjectPtrValid(TObjectPtr<T> ObjectPtr) {
 	return ObjectPtr.Get() != nullptr;
 #else
 	return ObjectPtr.IsValid();
+#endif
+}
+
+inline int32 GetElementSize(FProperty* Property) {
+#if ENGINE_UE5 && UE5_6_BEYOND
+	return Property->GetElementSize();
+#else
+	return Property->ElementSize;
+#endif
+}
+
+inline const UObject* GetClassDefaultObject(UClass* Class) {
+#if UE5_6_BEYOND
+	return GetDefault<UObject>(Class);
+#else
+	return Class->ClassDefaultObject;
 #endif
 }

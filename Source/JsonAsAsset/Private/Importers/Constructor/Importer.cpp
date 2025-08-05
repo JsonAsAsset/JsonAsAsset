@@ -402,13 +402,15 @@ void IImporter::LoadObject(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 	/* Try to load object using the object path and the object name combined */
 	TObjectPtr<T> LoadedObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *(ObjectPath + "." + ObjectName)));
 
-	if (!Outer.IsEmpty() && ParentObject->IsA(AActor::StaticClass())) {
-		const AActor* NewLoadedObject = Cast<AActor>(ParentObject);
-		auto Components = NewLoadedObject->GetComponents();
+	if (ParentObject != nullptr) {
+		if (!Outer.IsEmpty() && ParentObject->IsA(AActor::StaticClass())) {
+			const AActor* NewLoadedObject = Cast<AActor>(ParentObject);
+			auto Components = NewLoadedObject->GetComponents();
 		
-		for (UActorComponent* Component : Components) {
-			if (ObjectName == Component->GetName()) {
-				LoadedObject = Cast<T>(Component);
+			for (UActorComponent* Component : Components) {
+				if (ObjectName == Component->GetName()) {
+					LoadedObject = Cast<T>(Component);
+				}
 			}
 		}
 	}

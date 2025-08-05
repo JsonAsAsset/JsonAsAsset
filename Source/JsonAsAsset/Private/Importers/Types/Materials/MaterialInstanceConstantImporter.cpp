@@ -9,6 +9,21 @@
 bool IMaterialInstanceConstantImporter::Import() {
 	UMaterialInstanceConstant* MaterialInstanceConstant = NewObject<UMaterialInstanceConstant>(Package, UMaterialInstanceConstant::StaticClass(), *AssetName, RF_Public | RF_Standalone);
 
+	/* Specific fix for 4.16 engines */
+	const TArray<FString> ParameterFields = {
+		TEXT("ScalarParameterValues"),
+		TEXT("TextureParameterValues"),
+		TEXT("VectorParameterValues")
+	};
+
+	for (const FString& FieldName : ParameterFields) {
+		if (AssetData->HasField(FieldName)) {
+			TArray<TSharedPtr<FJsonValue>> Params = AssetData->GetArrayField(FieldName);
+			ConvertParameterNamesToInfos(Params);
+			AssetData->SetArrayField(FieldName, Params);
+		}
+	}
+	
 	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(AssetData,
 	{
 		"CachedReferencedTextures"
@@ -120,14 +135,37 @@ bool IMaterialInstanceConstantImporter::Import() {
 
 void IMaterialInstanceConstantImporter::ReadStaticParameters(const TSharedPtr<FJsonObject>& StaticParameters, TArray<TSharedPtr<FJsonValue>>& StaticSwitchParameters, TArray<TSharedPtr<FJsonValue>>& StaticComponentMaskParameters) {
 	if (StaticParameters->HasField(TEXT("StaticSwitchParameters"))) {
-		for (TSharedPtr<FJsonValue> Parameter : StaticParameters->GetArrayField(TEXT("StaticSwitchParameters"))) {
+		TArray<TSharedPtr<FJsonValue>> Params = StaticParameters->GetArrayField("StaticSwitchParameters");
+		ConvertParameterNamesToInfos(Params);
+		
+		for (TSharedPtr<FJsonValue> Parameter : Params) {
 			StaticSwitchParameters.Add(TSharedPtr<FJsonValue>(Parameter));
 		}
 	}
 
 	if (StaticParameters->HasField(TEXT("StaticComponentMaskParameters"))) {
-		for (TSharedPtr<FJsonValue> Parameter : StaticParameters->GetArrayField(TEXT("StaticComponentMaskParameters"))) {
+		TArray<TSharedPtr<FJsonValue>> Params = StaticParameters->GetArrayField("StaticComponentMaskParameters");
+		ConvertParameterNamesToInfos(Params);
+		
+		for (TSharedPtr<FJsonValue> Parameter : Params) {
 			StaticComponentMaskParameters.Add(TSharedPtr<FJsonValue>(Parameter));
+		}
+	}
+}
+
+void IMaterialInstanceConstantImporter::ConvertParameterNamesToInfos(TArray<TSharedPtr<FJsonValue>>& Input) {
+	/* Convert ParameterName to be inside ParameterInfo */
+	for (const TSharedPtr<FJsonValue>& Parameter : Input) {
+		const TSharedPtr<FJsonObject>& ParameterObject = Parameter->AsObject();
+
+		if (ParameterObject->HasField(TEXT("ParameterName"))) {
+			TSharedPtr<FJsonObject> ParameterInfo = MakeShared<FJsonObject>();
+			
+			ParameterInfo->SetStringField(TEXT("Name"), ParameterObject->GetStringField(TEXT("ParameterName")));
+			ParameterObject->SetObjectField("ParameterInfo", ParameterInfo);
+
+			/* Cleanup */
+			ParameterObject->RemoveField("ParameterName");
 		}
 	}
 }

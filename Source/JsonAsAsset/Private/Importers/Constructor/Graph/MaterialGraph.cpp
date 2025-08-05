@@ -297,6 +297,8 @@ UMaterialExpression* IMaterialGraph::CreateEmptyExpression(FUObjectExport& Expor
 	}
 #endif
 
+	if (!Class->IsChildOf<UMaterialExpression>()) return nullptr;
+
 	return NewObject<UMaterialExpression>
 	(
 		Parent,

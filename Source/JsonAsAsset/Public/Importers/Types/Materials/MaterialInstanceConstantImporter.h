@@ -13,6 +13,7 @@ public:
 	virtual bool Import() override;
 
 	static void ReadStaticParameters(const TSharedPtr<FJsonObject>& StaticParameters, TArray<TSharedPtr<FJsonValue>>& StaticSwitchParameters, TArray<TSharedPtr<FJsonValue>>& StaticComponentMaskParameters);
+	static void ConvertParameterNamesToInfos(TArray<TSharedPtr<FJsonValue>>& Input);
 };
 
 REGISTER_IMPORTER(IMaterialInstanceConstantImporter, {

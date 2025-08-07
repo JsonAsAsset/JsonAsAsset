@@ -1,11 +1,21 @@
-<h1 align="center">JsonAsAsset</h1>
+<br/>
+<div align="center">
+  <a href="https://github.com/JsonAsAsset/JsonAsAsset">
+    <img src="https://github.com/user-attachments/assets/91b216ba-7bb3-4f48-bf96-69c645451d26" alt="Logo" width="250" height="250">
+  </a>
 
-<p align="center">
+  <h3 align="center">JsonAsAsset</h3>
+
+  <p align="center">
     Powerful Unreal Engine plugin that imports assets from FModel
-</p>
+    <br />
+    <a href="#table-of-contents"><strong>Explore the docs »</strong></a>
+  </p>
+</div>
 
 <div align="center">
-
+<br />
+    
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Ko--fi?color=29abe0&logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/t4ctor)
 [![Discord](https://img.shields.io/badge/Join%20Discord-Collector?color=0363ff&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/xXEw4jc2UT)
 [![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/JsonAsAsset/JsonAsAsset/total?style=for-the-badge&label=DOWNLOADS&color=#03ffc8)](https://github.com/JsonAsAsset/JsonAsAsset/releases)
@@ -26,7 +36,7 @@ A user-friendly plugin for [Unreal Engine](https://www.unrealengine.com/en-US) t
 
 ### Example Use:
 
-* Importing **materials**, data assets, and data tables — [see more](#introduction)
+* Importing **materials**, data assets, and data tables — [see more](#supported-asset-types)
 * Porting **physics assets** for skeletal meshes
 * Porting **sound effects** to Unreal Engine
 * Automating asset porting workflows
@@ -35,10 +45,14 @@ This project aims to streamline the porting and modding experience, making it ea
 
 -----------------
 
+> [!WARNING]
+> Please note that this plugin is intended solely for **personal and educational use**. Do not use it to create or distribute **commercial products** without obtaining the necessary **licenses and permissions**. It is important to respect **intellectual property rights** and only use assets that you are **authorized to use**. We do not assume any responsibility for the way the created content is used.
+
+-----------------
+
 ### **Table of Contents**:
 
-> 1. [Introduction to JsonAsAsset](#introduction)  
->    1.1 [Supported Asset Types](#supported-asset-types)
+> 1. [Supported Asset Types](#supported-asset-types)  
 > 2. [→ Installation](#install)  
 >    2.1 [FModel](#setup-fmodel)  
 >    2.2 [Settings](#setup-settings)
@@ -53,17 +67,8 @@ This project aims to streamline the porting and modding experience, making it ea
 
 -----------------
 
-<a name="introduction"></a>
-## 1. Introduction to JsonAsAsset
-> [!WARNING]
-> Please note that this plugin is intended solely for **personal and educational use**. Do not use it to create or distribute **commercial products** without obtaining the necessary **licenses and permissions**. It is important to respect **intellectual property rights** and only use assets that you are **authorized to use**. We do not assume any responsibility for the way the created content is used.
-
-JsonAsAsset is a user-friendly Unreal Engine plugin for importing assets from packaged games using JSON files. Primarily from CUE4Parse and the use of the application [FModel](https://fmodel.app) to export JSON files.
-
-------------------
-
 <a name="supported-asset-types"></a>
-#### 1.1 Supported Asset Types
+## 1. Supported Asset Types
 
 | Asset Category | Asset Types / Description |
 |--------------------------------|------------------------------------------------------------------------------------------------------------------------|
@@ -89,9 +94,6 @@ JsonAsAsset is a user-friendly Unreal Engine plugin for importing assets from pa
 
 <a name="install"></a>
 ## 2. Installation
-> [!NOTE]
-> JsonAsAsset may not work with every Unreal Engine version. Please check the [Releases page](/../../releases) for compatibility details.
-
 Follow these steps to install **JsonAsAsset**:
 
 1. **Visit the Releases Page:**  
@@ -218,3 +220,4 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+

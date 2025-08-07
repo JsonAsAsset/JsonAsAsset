@@ -7,14 +7,14 @@
   <h3 align="center">JsonAsAsset</h3>
 
   <p align="center">
-    Powerful Unreal Engine plugin that imports assets from FModel
+    Powerful Unreal Engine Plugin that imports assets from FModel
     <br />
     <a href="#table-of-contents"><strong>Explore the docs »</strong></a>
   </p>
 </div>
 
 <div align="center">
-<br />
+<br/>
     
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Ko--fi?color=29abe0&logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/t4ctor)
 [![Discord](https://img.shields.io/badge/Join%20Discord-Collector?color=0363ff&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/xXEw4jc2UT)
@@ -69,6 +69,7 @@ This project aims to streamline the porting and modding experience, making it ea
 
 <a name="supported-asset-types"></a>
 ## 1. Supported Asset Types
+Here are the supported asset types for **JsonAsAsset**:
 
 | Asset Category | Asset Types / Description |
 |--------------------------------|------------------------------------------------------------------------------------------------------------------------|
@@ -220,4 +221,5 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+
 

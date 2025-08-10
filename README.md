@@ -161,7 +161,7 @@ To bulk import assets and **what they reference**, you must set up a [`Cloud Ser
 <a name="cloud-server"></a>
 ## 4. Cloud Server
 
-A `Cloud Server` is a server that hosts a Web API, allowing JsonAsAsset to communicate directly with the game files. JsonAsAsset will automate importing assets that assets reference. **It supports all asset types except AnimSequence/AnimMontages.** Use and setup a app that has a built-in cloud server.
+A `Cloud Server` is a server that hosts a Web API, allowing JsonAsAsset to communicate directly with the game files. JsonAsAsset will automate importing assets that assets reference. **It supports all supported asset types except AnimSequence/AnimMontages.** Use and setup a app that has a built-in cloud server.
 
 The following apps can host a Cloud Server:
 
@@ -221,5 +221,3 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
-
-

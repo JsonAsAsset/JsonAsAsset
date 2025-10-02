@@ -64,6 +64,10 @@ bool FTextureCreatorUtilities::CreateTexture2D(UTexture*& OutTexture2D, TArray<u
 	FMemory::Memcpy(Dest, DecompressedData, Size);
 	Texture2D->Source.UnlockMip(0);
 
+	if (Texture2D->LODGroup == 255) {
+		Texture2D->LODGroup = TextureGroup::TEXTUREGROUP_World;
+	}
+
 	Texture2D->UpdateResource();
 
 	if (Texture2D && Texture2D->IsValidLowLevel() && Texture2D != nullptr) {

@@ -109,6 +109,10 @@ void IMaterialGraph::PropagateExpressions(FUObjectExportContainer& Container) {
 			/* SubgraphExpression is only on Unreal Engine 5 */
 			Expression->SubgraphExpression = SubGraphExpression;
 #else
+
+			/* Not implemented yet */
+			continue;
+			
 			/* Add it to the subgraph function ~ UE4 ONLY */
 			UMaterialFunction* ParentSubgraphFunction = SubgraphFunctions[SubGraphExpressionName];
 
@@ -119,71 +123,10 @@ void IMaterialGraph::PropagateExpressions(FUObjectExportContainer& Container) {
 			ParentSubgraphFunction->FunctionExpressions.Add(Expression);
 
 			bAddToParentExpression = false;
-
-			continue;
 #endif
 		}
 
-		/* Sets 99% of properties for nodes */
 		GetObjectSerializer()->DeserializeObjectProperties(Properties, Expression);
-
-		/* Material Nodes with edited properties (ex: 9 objects with the same name ---> array of objects) */
-		if (Type == "MaterialExpressionQualitySwitch") {
-			UMaterialExpressionQualitySwitch* QualitySwitch = Cast<UMaterialExpressionQualitySwitch>(Expression);
-
-			const TArray<TSharedPtr<FJsonValue>>* InputsPtr;
-			
-			if (ExportJsonObject->TryGetArrayField(TEXT("Inputs"), InputsPtr)) {
-				int i = 0;
-				for (const TSharedPtr<FJsonValue> InputValue : *InputsPtr) {
-					FJsonObject* InputObject = InputValue->AsObject().Get();
-					FName InputExpressionName = GetExpressionName(InputObject);
-					
-					if (Container.Contains(InputExpressionName)) {
-						FExpressionInput Input = PopulateExpressionInput(InputObject, Container.Find<UMaterialExpression>(InputExpressionName));
-						QualitySwitch->Inputs[i] = Input;
-					}
-					i++;
-				}
-			}
-		} else if (Type == "MaterialExpressionShadingPathSwitch") {
-			UMaterialExpressionShadingPathSwitch* ShadingPathSwitch = Cast<UMaterialExpressionShadingPathSwitch>(Expression);
-
-			const TArray<TSharedPtr<FJsonValue>>* InputsPtr;
-			
-			if (ExportJsonObject->TryGetArrayField(TEXT("Inputs"), InputsPtr)) {
-				int i = 0;
-				for (const TSharedPtr<FJsonValue> InputValue : *InputsPtr) {
-					FJsonObject* InputObject = InputValue->AsObject().Get();
-					FName InputExpressionName = GetExpressionName(InputObject);
-					
-					if (Container.Contains(InputExpressionName)) {
-						FExpressionInput Input = PopulateExpressionInput(InputObject, Container.Find<UMaterialExpression>(InputExpressionName));
-						ShadingPathSwitch->Inputs[i] = Input;
-					}
-					i++;
-				}
-			}
-		} else if (Type == "MaterialExpressionFeatureLevelSwitch") {
-			UMaterialExpressionFeatureLevelSwitch* FeatureLevelSwitch = Cast<UMaterialExpressionFeatureLevelSwitch>(Expression);
-
-			const TArray<TSharedPtr<FJsonValue>>* InputsPtr;
-			
-			if (ExportJsonObject->TryGetArrayField(TEXT("Inputs"), InputsPtr)) {
-				int i = 0;
-				for (const TSharedPtr<FJsonValue> InputValue : *InputsPtr) {
-					FJsonObject* InputObject = InputValue->AsObject().Get();
-					FName InputExpressionName = GetExpressionName(InputObject);
-					
-					if (Container.Contains(InputExpressionName)) {
-						FExpressionInput Input = PopulateExpressionInput(InputObject, Container.Find<UMaterialExpression>(InputExpressionName));
-						FeatureLevelSwitch->Inputs[i] = Input;
-					}
-					i++;
-				}
-			}
-		}
-
 		SetExpressionParent(Parent, Expression, Properties);
 
 		if (bAddToParentExpression) {

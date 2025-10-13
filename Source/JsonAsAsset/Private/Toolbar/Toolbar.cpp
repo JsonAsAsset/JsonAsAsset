@@ -85,7 +85,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 			FCanExecuteAction(),
 			FGetActionCheckState(),
 			FIsActionButtonVisible::CreateLambda([this]() {
-				static const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Plugin.HideActions"));
+				static const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"));
 
 				if (CVar) {
 					return CVar && CVar->GetInt() == 0;
@@ -106,7 +106,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 			FCanExecuteAction(),
 			FGetActionCheckState(),
 			FIsActionButtonVisible::CreateLambda([this]() {
-				static const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Plugin.HideActions"));
+				static const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"));
 
 				if (CVar) {
 					return CVar && CVar->GetInt() == 0;

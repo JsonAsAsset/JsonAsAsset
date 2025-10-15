@@ -36,7 +36,7 @@ A user-friendly plugin for [Unreal Engine](https://www.unrealengine.com/en-US) t
 
 ### Example Use:
 
-* Importing **materials**, data assets, and data tables — [see more](#supported-asset-types)
+* Importing **materials**, data assets, and data tables — [see more](#asset-types)
 * Porting **physics assets** for skeletal meshes
 * Porting **sound effects** to Unreal Engine
 * Automating asset porting workflows
@@ -56,9 +56,9 @@ This project aims to streamline the porting and modding experience, making it ea
 
 ### **Table of Contents**:
 
-> 1. [Supported Asset Types](#supported-asset-types)  
+> 1. [Asset Types](#asset-types)  
 > 2. [Installation](#installation)  
->    2.1 [FModel](#setup-fmodel)  
+>    2.1 [FModel](#fmodel)  
 >    2.2 [Settings](#setup-settings)
 > 4. [→ Using JsonAsAsset](#plugin-usage)
 
@@ -71,8 +71,8 @@ This project aims to streamline the porting and modding experience, making it ea
 
 -----------------
 
-<a name="supported-asset-types"></a>
-## 1. Supported Asset Types
+<a name="asset-types"></a>
+## 1. Asset Types
 If an asset type isn't listed below, **it's not currently supported by the plugin**.
 
 |  | Asset Types |
@@ -90,7 +90,7 @@ If an asset type isn't listed below, **it's not currently supported by the plugi
 #### The following asset types add onto a pre-existing asset
 |  | Asset Types |
 |-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| **Animation Types** | AnimSequence, AnimMontage [Animation Curves] |
+| **Animation Types** | AnimSequence, AnimMontage **[Animation Curves]** |
 
 #### Material Data Prerequisites
 Unreal Engine games made below 4.12 (a guess) will have material data, *any games made above that version will most definitely not have any material data*, and therefore the actual data will be stripped and cannot be imported. **Unless you are using a User Generated Content editor**, then it's possible material data will be there.
@@ -122,7 +122,7 @@ Follow these steps to install **JsonAsAsset**:
 
 --------------------
 
-<a name="setup-fmodel"></a>
+<a name="fmodel"></a>
 #### 2.1 Setup FModel
 
 [<img align="left" width="150" height="150" src="https://github.com/user-attachments/assets/d8e4f9c9-1268-4aee-ab1a-dabee31b3069?raw=true">](https://fmodel.app)
@@ -225,3 +225,4 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+

@@ -7,7 +7,7 @@
   <h3 align="center">JsonAsAsset</h3>
 
   <p align="center">
-    Powerful Unreal Engine Plugin that imports assets from FModel
+    Powerful Unreal Engine Plugin that imports assets from CUEParse
     <br />
     <a href="#table-of-contents"><strong>Explore the docs »</strong></a>
   </p>
@@ -225,4 +225,5 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+
 

@@ -212,7 +212,7 @@ FEdGraphPinType IUserDefinedStructImporter::ResolvePropertyPinType(const TShared
     if (const FName* TypeCategory = PropertyCategoryMap.Find(Type)) {
         ResolvedType.PinCategory = *TypeCategory;
     } else {
-        UE_LOG(LogJson, Warning, TEXT("Type '%s' not found in PropertyCategoryMap, defaulting to 'Byte'"), *Type);
+        UE_LOG(LogJsonAsAsset, Warning, TEXT("Type '%s' not found in PropertyCategoryMap, defaulting to 'Byte'"), *Type);
         ResolvedType.PinCategory = TEXT("byte");
     }
 
@@ -238,7 +238,7 @@ UObject* IUserDefinedStructImporter::LoadObjectFromJsonReference(const TSharedPt
     const TSharedPtr<FJsonObject> ReferenceObject = ParentJsonObject->GetObjectField(ReferenceKey);
     
     if (!ReferenceObject) {
-        UE_LOG(LogJson, Error, TEXT("Failed to load Object from property %s: property not found"), *ReferenceKey);
+        UE_LOG(LogJsonAsAsset, Error, TEXT("Failed to load Object from property %s: property not found"), *ReferenceKey);
         return nullptr;
     }
 

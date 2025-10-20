@@ -14,7 +14,7 @@
 #include "Utilities/EngineUtilities.h"
 
 /* ReSharper disable once CppDeclaratorNeverUsed */
-DECLARE_LOG_CATEGORY_CLASS(LogObjectSerializer, All, All);
+DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAssetObjectSerializer, All, All);
 PRAGMA_DISABLE_OPTIMIZATION
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

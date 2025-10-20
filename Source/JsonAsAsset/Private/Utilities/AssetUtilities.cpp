@@ -175,7 +175,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& Type, T
 		if (Response == nullptr || Path.IsEmpty()) return true;
 
 		if (Response->HasField(TEXT("errored"))) {
-			UE_LOG(LogJson, Log, TEXT("Error from response \"%s\""), *Path);
+			UE_LOG(LogJsonAsAsset, Log, TEXT("Error from response \"%s\""), *Path);
 			return true;
 		}
 

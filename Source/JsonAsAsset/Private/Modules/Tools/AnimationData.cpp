@@ -63,7 +63,7 @@ bool ReadAnimationData(const TSharedPtr<FJsonObject>& Properties, const TArray<T
 	ensure(Skeleton);
 	if (!Skeleton)
 	{
-		UE_LOG(LogJson, Error, TEXT("Could not get valid Skeleton"));
+		UE_LOG(LogJsonAsAsset, Error, TEXT("Could not get valid Skeleton"));
 		return false;
 	}
 	

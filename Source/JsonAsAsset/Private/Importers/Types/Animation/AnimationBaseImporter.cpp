@@ -27,7 +27,7 @@ bool IAnimationBaseImporter::Import() {
 	}
 
 	if (!AnimSequenceBase) {
-		UE_LOG(LogJson, Error, TEXT("Could not get valid AnimSequenceBase"));
+		UE_LOG(LogJsonAsAsset, Error, TEXT("Could not get valid AnimSequenceBase"));
 		const FText DialogText = FText::Format(
 			FText::FromString(TEXT("Importing an asset of type '{0}' requires a base asset selected to modify. Select one in your content browser.")),
 			FText::FromString("AnimationBaseImporter")
@@ -72,7 +72,7 @@ bool IAnimationBaseImporter::Import() {
 	USkeleton* Skeleton = AnimSequenceBase->GetSkeleton();
 	ensure(Skeleton);
 	if (!Skeleton) {
-		UE_LOG(LogJson, Error, TEXT("Could not get valid Skeleton"));
+		UE_LOG(LogJsonAsAsset, Error, TEXT("Could not get valid Skeleton"));
 		return false;
 	}
 	

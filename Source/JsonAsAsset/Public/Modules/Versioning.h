@@ -80,7 +80,7 @@ struct FJsonAsAssetVersioning {
 		Request->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, const FHttpResponsePtr& Resp, const bool bSuccess) {
 			/* Check if the request was successful and the response is valid */
 			if (!bSuccess || !Resp.IsValid()) {
-				UE_LOG(LogTemp, Warning, TEXT("HTTP request failed or no internet connection."));
+				UE_LOG(LogJsonAsAsset, Warning, TEXT("HTTP request failed or no internet connection."));
         			
 				return;
 			}

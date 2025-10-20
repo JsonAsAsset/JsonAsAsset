@@ -27,6 +27,7 @@
 #include "Engine/SubsurfaceProfile.h"
 #include "Curves/CurveLinearColor.h"
 #include "Logging/MessageLog.h"
+#include "Modules/LogCategory.h"
 #include "Sound/SoundNode.h"
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -235,7 +236,7 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 			try {
 				Successful = Importer->Import();
 			} catch (const char* Exception) {
-				UE_LOG(LogJson, Error, TEXT("Importer exception: %s"), *FString(Exception));
+				UE_LOG(LogJsonAsAsset, Error, TEXT("Importer exception: %s"), *FString(Exception));
 			}
 		}
 
@@ -244,7 +245,7 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 		}
 
 		if (Successful) {
-			UE_LOG(LogJson, Log, TEXT("Successfully imported \"%s\" as \"%s\""), *Name, *Type);
+			UE_LOG(LogJsonAsAsset, Log, TEXT("Successfully imported \"%s\" as \"%s\""), *Name, *Type);
 			
 			if (!(Type == "AnimSequence" || Type == "AnimMontage"))
 			{
@@ -538,7 +539,7 @@ void IImporter::SavePackage() const {
 
 	/* Ensure the package is valid before proceeding */
 	if (Package == nullptr) {
-		UE_LOG(LogTemp, Error, TEXT("Package is null"));
+		UE_LOG(LogJsonAsAsset, Error, TEXT("Package is null"));
 		return;
 	}
 

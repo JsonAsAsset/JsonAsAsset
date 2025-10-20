@@ -12,7 +12,7 @@
 #include "Utilities/Serializers/Structs/FallbackStructSerializer.h"
 #include "Utilities/Serializers/Structs/TimespanSerializer.h"
 
-DECLARE_LOG_CATEGORY_CLASS(LogPropertySerializer, Error, Log);
+DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAssetPropertySerializer, Error, Log);
 PRAGMA_DISABLE_OPTIMIZATION
 
 UPropertySerializer::UPropertySerializer() {
@@ -390,7 +390,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 		*static_cast<FFieldPath*>(OutValue) = FieldPath;
 	}
 	else {
-		UE_LOG(LogPropertySerializer, Fatal, TEXT("Found unsupported property type when deserializing value: %s"), *Property->GetClass()->GetName());
+		UE_LOG(LogJsonAsAssetPropertySerializer, Fatal, TEXT("Found unsupported property type when deserializing value: %s"), *Property->GetClass()->GetName());
 	}
 }
 

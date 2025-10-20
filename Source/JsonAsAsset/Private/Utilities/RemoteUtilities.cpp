@@ -4,6 +4,7 @@
 
 #include "HttpManager.h"
 #include "HttpModule.h"
+#include "Modules/LogCategory.h"
 #include "Serialization/JsonSerializer.h"
 
 #if ENGINE_UE5
@@ -15,7 +16,7 @@ TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> FRemoteUtilities::ExecuteRequestS
 	const bool bStartedRequest = HttpRequest->ProcessRequest();
 	if (!bStartedRequest)
 	{
-		UE_LOG(LogJson, Error, TEXT("Failed to start HTTP Request."));
+		UE_LOG(LogJsonAsAsset, Error, TEXT("Failed to start HTTP Request."));
 		return nullptr;
 	}
 

@@ -23,6 +23,7 @@
 #include "TlHelp32.h"
 #include "Json.h"
 #include "MessageLogModule.h"
+#include "Modules/LogCategory.h"
 
 #if (ENGINE_MAJOR_VERSION != 4 || ENGINE_MINOR_VERSION < 27)
 #include "Engine/DeveloperSettings.h"
@@ -143,7 +144,7 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 	ContentBrowserModule.Get().GetSelectedPathViewFolders(SelectedFolders);
 
 	if (SelectedFolders.Num() == 0) {
-		UE_LOG(LogTemp, Warning, TEXT("No folder selected in the Content Browser."));
+		UE_LOG(LogJsonAsAsset, Warning, TEXT("No folder selected in the Content Browser."));
 		return AssetDataList; 
 	}
 
@@ -162,7 +163,7 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 		);
 
 		if (!bContinue) {
-			UE_LOG(LogTemp, Warning, TEXT("Action cancelled by user."));
+			UE_LOG(LogJsonAsAsset, Warning, TEXT("Action cancelled by user."));
 			return AssetDataList;
 		}
 	}
@@ -184,7 +185,7 @@ inline TArray<TSharedPtr<FJsonValue>> RequestExports(const FString& Path) {
 	if (Response == nullptr || Path.IsEmpty()) return Exports;
 
 	if (Response->HasField(TEXT("errored"))) {
-		UE_LOG(LogJson, Log, TEXT("Error from response \"%s\""), *Path);
+		UE_LOG(LogJsonAsAsset, Log, TEXT("Error from response \"%s\""), *Path);
 		return Exports;
 	}
 
@@ -657,7 +658,7 @@ static void CreatePlugin(FString PluginName) {
 inline void SendHttpRequest(const FString& URL, TFunction<void(FHttpRequestPtr, FHttpResponsePtr, bool)> OnComplete, const FString& Verb = "GET", const FString& ContentType = "", const FString& Content = "") {
 	FHttpModule* Http = &FHttpModule::Get();
 	if (!Http) {
-		UE_LOG(LogTemp, Error, TEXT("HTTP module not available"));
+		UE_LOG(LogJsonAsAsset, Error, TEXT("HTTP module not available"));
 		return;
 	}
 

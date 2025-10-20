@@ -11,8 +11,6 @@
 #include "Utilities/Compatibility.h"
 #include "PropertyUtilities.generated.h"
 
-class UObjectSerializer;
-
 USTRUCT()
 struct FFailedPropertyInfo
 {

@@ -44,8 +44,7 @@ bool CloudModule::TryLaunchingCloud(const UJsonAsAssetSettings* Settings) {
 	return true;
 }
 
-bool CloudModule::IsCloudRunning()
-{
+bool CloudModule::IsCloudRunning() {
 	return IsProcessRunning("j0.dev.exe");
 }
 

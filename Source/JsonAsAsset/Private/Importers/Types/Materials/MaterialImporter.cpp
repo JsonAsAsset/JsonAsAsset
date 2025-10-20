@@ -59,7 +59,9 @@ bool IMaterialImporter::Import() {
 		const TSharedPtr<FJsonObject> RawConnectionData = TSharedPtr<FJsonObject>(Props);
 		for (FString Property : IgnoredProperties) {
 			if (RawConnectionData->HasField(Property))
+			{
 				RawConnectionData->RemoveField(Property);
+			}
 		}
 		
 		/* Connect all pins using deserializer */

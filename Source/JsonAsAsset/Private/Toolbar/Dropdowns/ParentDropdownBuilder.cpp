@@ -20,7 +20,7 @@ void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FSlateIcon(FAppStyle::Get().GetStyleSetName(), "LevelEditor.Tabs.Viewports"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this]() {
-				const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#11-supported-asset-types";
+				const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#asset-types";
 				FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
 			})
 		)

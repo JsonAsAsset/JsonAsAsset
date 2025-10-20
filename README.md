@@ -114,7 +114,7 @@ Follow these steps to install **JsonAsAsset**:
 7. **Open Your Project**  
    Launch your Unreal Engine project.
 8. **Access the Plugins Window:**  
-   Navigate to **Edit → Plugins**. <img align="right" width="387.4" height="75.4" src=https://github.com/user-attachments/assets/c0867324-5129-49e4-9f9c-9804c93cdf73>
+   Navigate to **Edit → Plugins**.
 10. **Enable JsonAsAsset:**  
    In the Plugins window, search for `JsonAsAsset` and enable it.
 11. **Restart the Editor:**  
@@ -137,7 +137,7 @@ Follow these steps to install **JsonAsAsset**:
 
 -------------------
 
-<img align="right" width="315" height="190.4" src=https://github.com/user-attachments/assets/909e2db1-e0d9-4aae-9b8b-7190cf6718b3>
+<img align="right" width="226" height="181" src=https://github.com/user-attachments/assets/69190903-7740-4815-9d5f-cedce349a3f0>
 
 <a name="setup-settings"></a>
 #### 2.2 Setup Settings
@@ -155,7 +155,7 @@ Follow these steps to install **JsonAsAsset**:
 
 1. Find a asset in [FModel](https://fmodel.app), and save it by right clicking and pressing `Save Properties`. Locate the file on your computer and copy the location.
 
-2. Press onto the [JsonAsAsset](https://github.com/JsonAsAsset/JsonAsAsset) button on your tool-bar, and a file import should pop-up. <img align="right" width="220" height="98" src=https://github.com/user-attachments/assets/514d7661-f2f6-4343-8c9c-ed875ddb5156>
+2. Press onto the [JsonAsAsset](https://github.com/JsonAsAsset/JsonAsAsset) button on your tool-bar, and a file import should pop-up. <img align="right" width="206" height="96" src=https://github.com/user-attachments/assets/6a9bf925-484b-4c23-b0ed-c59d58c5d07c>
 
 3. Paste in the file's path, select the file and press open.
 
@@ -225,6 +225,7 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+
 
 
 

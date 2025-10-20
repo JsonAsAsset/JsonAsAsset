@@ -175,11 +175,9 @@ public:
 
 	/**
 	 * DO NOT MODIFY UNLESS YOU KNOW WHAT YOU'RE DOING.
-	 *
-	 * URL used to fetch from the Cloud.
 	 */
-	UPROPERTY(EditAnywhere, Config, Category = CloudServer, meta=(EditCondition="bCustomCloudServer", DisplayName = "Cloud Server URL"), AdvancedDisplay)
-	FString CloudURL = "http://localhost:1500";
+	UPROPERTY(EditAnywhere, Config, Category = CloudServer, meta=(EditCondition="bCustomCloudServer", DisplayName = "Use Custom Cloud URL"), AdvancedDisplay)
+	FString CustomCloudURL = "http://localhost:1500";
 
 	UPROPERTY(EditAnywhere, Category = CloudServer, meta=(PinHiddenByDefault, InlineEditConditionToggle))
 	uint8 bCustomCloudServer : 1;

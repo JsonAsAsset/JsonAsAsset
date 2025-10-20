@@ -240,7 +240,7 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 		const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = HttpModule->CreateRequest();
 #endif
 
-		HttpRequest->SetURL(Settings->CloudURL + "/api/export?path=" + FetchPath);
+		HttpRequest->SetURL(Settings->CustomCloudURL + "/api/export?path=" + FetchPath);
 		HttpRequest->SetHeader("content-type", "application/octet-stream");
 		HttpRequest->SetVerb(TEXT("GET"));
 
@@ -341,7 +341,7 @@ TSharedPtr<FJsonObject> FAssetUtilities::API_RequestExports(const FString& Path,
 #else
 	const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> NewRequest = HttpModule->CreateRequest();
 #endif
-	NewRequest->SetURL(Settings->CloudURL + FetchPath + Path);
+	NewRequest->SetURL(Settings->CustomCloudURL + FetchPath + Path);
 	NewRequest->SetVerb(TEXT("GET"));
 
 #if ENGINE_UE5

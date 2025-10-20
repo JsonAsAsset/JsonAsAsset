@@ -12,12 +12,9 @@ class UJsonAsAssetSettings;
 
 class CloudModule {
 public:
-	static bool TryLaunchingCloud(const UJsonAsAssetSettings* Settings);
-	static bool IsCloudRunning();
+	static bool VerifyActivity(const UJsonAsAssetSettings* Settings);
+	static bool IsRunning();
 
 	/* If GameName isn't set, try getting it from the API */
 	static void EnsureGameName(const UJsonAsAssetSettings* Settings);
-
-	static bool IsSetup(const UJsonAsAssetSettings* Settings, TArray<FString>& Reasons);
-	static bool IsSetup(const UJsonAsAssetSettings* Settings);
 };

@@ -144,7 +144,7 @@ void ISoundGraph::SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*
 					const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
 					/* Import SoundWave */
-					FString AudioURL = FString::Format(*(Settings->CloudURL + "/api/export?raw=false&path={0}"), { AssetPtr });
+					FString AudioURL = FString::Format(*(Settings->CustomCloudURL + "/api/export?raw=false&path={0}"), { AssetPtr });
 					FString AbsoluteSavePath = FString::Format(*("{0}Cache/{1}." + Settings->AssetSettings.SoundImportSettings.AudioFileExtension), { FPaths::ProjectDir(), FPaths::GetBaseFilename(AssetPtr) });
 
 					ImportSoundWave(AudioURL, AbsoluteSavePath, AssetPtr, WavePlayerNode);

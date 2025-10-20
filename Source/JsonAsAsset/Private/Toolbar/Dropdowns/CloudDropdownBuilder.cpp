@@ -14,7 +14,7 @@ void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	UJsonAsAssetSettings* Settings = GetSettings();
 	
 	/* Cloud must be enabled, and if there is an action required, don't create Cloud's dropdown */
-	if (!Settings->bEnableCloudServer || !UJsonAsAssetSettings::IsSetup(Settings) || !CloudModule::IsSetup(Settings)) {
+	if (!Settings->bEnableCloudServer || !UJsonAsAssetSettings::IsSetup(Settings)) {
 		return;
 	}
 	
@@ -48,7 +48,7 @@ void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 						FUIAction(
 							FExecuteAction::CreateStatic(&FToolConvexCollision::Execute),
 							FCanExecuteAction::CreateLambda([this] {
-								return CloudModule::IsCloudRunning();
+								return CloudModule::IsRunning();
 							})
 						),
 						NAME_None
@@ -62,7 +62,7 @@ void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 						FUIAction(
 							FExecuteAction::CreateStatic(&FToolAnimationData::Execute),
 							FCanExecuteAction::CreateLambda([this] {
-								return CloudModule::IsCloudRunning();
+								return CloudModule::IsRunning();
 							})
 						),
 						NAME_None
@@ -76,7 +76,7 @@ void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 						FUIAction(
 							FExecuteAction::CreateStatic(&FSkeletalMeshData::Execute),
 							FCanExecuteAction::CreateLambda([this] {
-								return CloudModule::IsCloudRunning();
+								return CloudModule::IsRunning();
 							})
 						),
 						NAME_None
@@ -90,7 +90,7 @@ void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 						FUIAction(
 							FExecuteAction::CreateStatic(&FToolClearImportData::Execute),
 							FCanExecuteAction::CreateLambda([this] {
-								return CloudModule::IsCloudRunning();
+								return CloudModule::IsRunning();
 							})
 						),
 						NAME_None

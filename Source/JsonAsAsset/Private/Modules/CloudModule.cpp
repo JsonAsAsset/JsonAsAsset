@@ -10,8 +10,8 @@
 #undef GetObject
 #endif
 
-bool CloudModule::TryLaunchingCloud(const UJsonAsAssetSettings* Settings) {
-	if (Settings->bEnableCloudServer && !Settings->bCustomCloudServer && !IsCloudRunning()) {
+bool CloudModule::VerifyActivity(const UJsonAsAssetSettings* Settings) {
+	if (Settings->bEnableCloudServer && !Settings->bCustomCloudServer && !IsRunning()) {
 		FNotificationInfo Info(FText::FromString("No Cloud Servers are active"));
 		
 		SetNotificationSubText(Info, FText::FromString(
@@ -44,7 +44,7 @@ bool CloudModule::TryLaunchingCloud(const UJsonAsAssetSettings* Settings) {
 	return true;
 }
 
-bool CloudModule::IsCloudRunning() {
+bool CloudModule::IsRunning() {
 	return IsProcessRunning("j0.dev.exe");
 }
 
@@ -61,13 +61,4 @@ void CloudModule::EnsureGameName(const UJsonAsAssetSettings* Settings) {
 			SavePluginConfig(MutableSettings);
 		}
 	}
-}
-
-bool CloudModule::IsSetup(const UJsonAsAssetSettings* Settings, TArray<FString>& Reasons) {
-	return true;
-}
-
-bool CloudModule::IsSetup(const UJsonAsAssetSettings* Settings) {
-	TArray<FString> Params;
-	return IsSetup(Settings, Params);
 }

@@ -128,14 +128,14 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 bool FJsonAsAssetToolbar::IsActionEnabled() const {
 	UJsonAsAssetSettings* Settings = GetSettings();
 	
-	return UJsonAsAssetSettings::IsSetup(Settings) && CloudModule::IsSetup(Settings);
+	return UJsonAsAssetSettings::IsSetup(Settings);
 }
 
 /* ReSharper disable once CppMemberFunctionMayBeStatic */
 FText FJsonAsAssetToolbar::GetTooltipText() const {
 	UJsonAsAssetSettings* Settings = GetSettings();
 	
-	return !UJsonAsAssetSettings::IsSetup(Settings) || !CloudModule::IsSetup(Settings)
+	return !UJsonAsAssetSettings::IsSetup(Settings)
 		? FText::FromString("The button is disabled due to your settings being improperly setup. Please modify your settings to execute JsonAsAsset.")
 	
 		: FText::FromString("Execute JsonAsAsset");
@@ -147,7 +147,7 @@ void FJsonAsAssetToolbar::ImportAction() {
 
 	/* Conditional Settings Checks */
 	if (!UJsonAsAssetSettings::EnsureExportDirectoryIsValid(Settings)) return;
-	if (!CloudModule::TryLaunchingCloud(Settings)) return;
+	if (!CloudModule::VerifyActivity(Settings)) return;
 	CloudModule::EnsureGameName(Settings);
 
 	/* Dialog for a JSON File */

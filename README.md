@@ -81,7 +81,7 @@ If an asset type isn't listed below, **it's not currently supported by the plugi
 | **Data Asset Types** | DataAsset, SlateBrushAsset, SlateWidgetStyleAsset, AnimBoneCompressionSettings, AnimCurveCompressionSettings, UserDefinedEnum, UserDefinedStruct |
 | **Table Types** | CurveTable, DataTable, StringTable |
 | **Material Types** | Material, MaterialFunction, MaterialInstanceConstant, MaterialParameterCollection, SubsurfaceProfile |
-| **Sound Types** | Most/all sound classes are supported. SoundWave is downloaded by the [Cloud](#cloud). |
+| **Sound Types** | Most/all sound classes are supported. SoundWave is downloaded by a [Cloud Server](#cloud)! |
 | **Animation Asset Types** | PoseAsset, Skeleton, SkeletalMeshLODSettings, BlendSpace, BlendSpace1D, AimOffsetBlendSpace, AimOffsetBlendSpace1D |
 | **Physics Asset Types** | PhysicsAsset, PhysicalMaterial |
 | **Sequencer Asset Types** | CameraAnim |
@@ -225,6 +225,7 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+
 
 
 

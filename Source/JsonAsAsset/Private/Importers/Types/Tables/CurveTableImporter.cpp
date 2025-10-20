@@ -3,6 +3,8 @@
 #include "Importers/Types/Tables/CurveTableImporter.h"
 #include "Dom/JsonObject.h"
 
+/* TODO: Rewrite? */
+
 void CCurveTableDerived::ChangeTableMode(const ECurveTableMode Mode) {
 	CurveTableMode = Mode;
 }

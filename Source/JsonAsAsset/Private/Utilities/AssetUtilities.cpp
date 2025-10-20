@@ -178,7 +178,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& Type, T
 		Path.Split(".", &PackagePath, &AssetName);
 
 		if (JsonObject) {
-			FString NewPath = PackagePath;
+			const FString NewPath = PackagePath;
 
 			FString RootName; {
 				NewPath.Split("/", nullptr, &RootName, ESearchCase::IgnoreCase, ESearchDir::FromStart);

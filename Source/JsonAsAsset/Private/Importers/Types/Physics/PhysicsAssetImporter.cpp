@@ -8,7 +8,7 @@
 bool IPhysicsAssetImporter::Import() {
 	/* CollisionDisableTable is required to port physics assets */
 	if (!AssetData->HasField(TEXT("CollisionDisableTable"))) {
-		SpawnPrompt("Missing CollisionDisableTable", "The provided physics asset json file is missing the 'CollisionDisableTable' property. This property is required.\n\nPlease use the FModel available on JsonAsAsset's Discord Server to correctly import the physics asset.");
+		SpawnPrompt("Missing CollisionDisableTable", "The provided physics asset json file is missing the 'CollisionDisableTable' property. This property is required.");
 
 		return false;
 	}

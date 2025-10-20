@@ -22,21 +22,28 @@ bool IDataTableImporter::Import() {
 	UScriptStruct* TableRowStruct = FindObject<UScriptStruct>(ANY_PACKAGE, *TableStruct); {
 #endif
 		if (TableRowStruct == nullptr) {
-			AppendNotification(FText::FromString("DataTable Struct Missing: " + TableStruct), FText::FromString("You need the parent's data table structure defined exactly where it's supposed to."), 2.0f, SNotificationItem::CS_Fail, true, 350.0f);
+			AppendNotification(
+				FText::FromString("DataTable Struct Missing: " + TableStruct),
+				FText::FromString("The parent DataTable's struct definition could not be found. Ensure the correct struct is defined and referenced by this table."),
+				2.0f,
+				SNotificationItem::CS_Fail,
+				true,
+				350.0f
+			);
 
 			return false;
-		} else {
-			DataTable->RowStruct = TableRowStruct;
 		}
+		
+		DataTable->RowStruct = TableRowStruct;
 	}
 
 	/* Access Property Serializer */
-	UPropertySerializer* ObjectPropertySerializer = GetObjectSerializer()->GetPropertySerializer();
-	TSharedPtr<FJsonObject> RowData = AssetData->GetObjectField(TEXT("Rows"));
+	const UPropertySerializer* ObjectPropertySerializer = GetObjectSerializer()->GetPropertySerializer();
+	const TSharedPtr<FJsonObject> RowData = AssetData->GetObjectField(TEXT("Rows"));
 
 	/* Loop throughout row data, and deserialize */
 	for (TPair<FString, TSharedPtr<FJsonValue>>& Pair : RowData->Values) {
-		TSharedPtr<FStructOnScope> ScopedStruct = MakeShareable(new FStructOnScope(TableRowStruct));
+		const TSharedPtr<FStructOnScope> ScopedStruct = MakeShareable(new FStructOnScope(TableRowStruct));
 		TSharedPtr<FJsonObject> StructData = Pair.Value->AsObject();
 
 		/* Deserialize, add row */

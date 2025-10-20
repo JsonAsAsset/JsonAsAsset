@@ -44,7 +44,7 @@ struct FJsonAsAssetVersioning {
 		bIsValid = bValid;
 	}
 
-	void Reset(int InVersion, int InLatestVersion, const FString& InHTMLUrl, const FString& InVersionName, const FString& InCurrentVersionName) {
+	void Reset(const int InVersion, const int InLatestVersion, const FString& InHTMLUrl, const FString& InVersionName, const FString& InCurrentVersionName) {
 		Version = InVersion;
 		LatestVersion = InLatestVersion;
 		VersionName = InVersionName;

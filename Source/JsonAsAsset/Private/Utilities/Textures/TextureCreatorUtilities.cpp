@@ -13,6 +13,8 @@
 #include "Utilities/JsonUtilities.h"
 #include "Utilities/Textures/TextureDecode/TextureNVTT.h"
 
+/* TODO: [Refactor] Still uses manual property deserialization */
+
 bool FTextureCreatorUtilities::CreateTexture2D(UTexture*& OutTexture2D, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const {
 	const TSharedPtr<FJsonObject> SubObjectProperties = Properties->GetObjectField(TEXT("Properties"));
 

@@ -15,7 +15,7 @@ extern TMap<FString, TArray<FString>> ImporterTemplatedTypes;
 inline TArray<FString> BlacklistedCloudTypes = {
     "AnimSequence",
     "AnimMontage",
-    // "AnimBlueprintGeneratedClass"
+    "AnimBlueprintGeneratedClass"
 };
 
 inline const TArray<FString> ExperimentalAssetTypes = {

@@ -153,7 +153,7 @@ public:
 
 	/**
 	 * Specifies the directory path for exported assets.
-	 * (e.g., Output/Exports)
+	 * (e.g. Output/Exports)
 	 */
 	UPROPERTY(EditAnywhere, Config, Category = Configuration)
 	FDirectoryPath ExportDirectory;
@@ -166,7 +166,7 @@ public:
 	bool bEnableExperiments;
 
 	/**
-	 * Retrieves assets from a Web API and imports references directly into your project.
+	 * Retrieves assets from an API and imports references directly into your project.
 	 *
 	 * For further instructions, please refer to the README.md file found on GitHub.
 	 */

@@ -35,7 +35,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& FullPath) {
 	return Package;
 }
 
-UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString& OutputPath, UPackage*& OutOutermostPkg) {
+UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString& OutputPath, UPackage*& OutOutermostPkg, FString& FailureReason) {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 	
 	FString ModifiablePath = OutputPath;
@@ -102,6 +102,12 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 	}
 
 	const FString PathWithGame = ModifiablePath + Name;
+
+	if (PathWithGame.Contains(TEXT("//"), ESearchCase::CaseSensitive)) {
+		FailureReason = "Attempted to create a package with name containing double slashes.\n\nUpdate your configuration to use a valid Export Directory.";
+		return nullptr;
+	}
+	
 	UPackage* Package = CreateAssetPackage(*PathWithGame);
 	OutOutermostPkg = Package->GetOutermost();
 	Package->FullyLoad();
@@ -111,8 +117,9 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 
 UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString& OutputPath) {
 	UPackage* Ignore = nullptr; /* Put here because &nullptr doesn't work */
+	FString StringIgnore = "";
 	
-	return CreateAssetPackage(Name, OutputPath, Ignore);
+	return CreateAssetPackage(Name, OutputPath, Ignore, StringIgnore);
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

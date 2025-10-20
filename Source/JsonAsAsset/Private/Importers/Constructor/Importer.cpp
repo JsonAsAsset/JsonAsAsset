@@ -166,8 +166,49 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 
 		RedirectPath(File);
 
+		FString FailureReason;
 		UPackage* LocalOutermostPkg;
-		UPackage* LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg);
+		UPackage* LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
+
+		if (LocalPackage == nullptr) {
+			/* Try fixing our Export Directory Settings using the provided File directory if local package not found */
+            UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
+
+			FString ExportDirectoryCache = PluginSettings->ExportDirectory.Path;
+			FString DirectoryPathFix;
+			
+			if (File.Split(TEXT("Output/Exports/"), &DirectoryPathFix, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd)) {
+				DirectoryPathFix = DirectoryPathFix + TEXT("Output/Exports");
+
+				PluginSettings->ExportDirectory.Path = DirectoryPathFix;
+
+				SavePluginConfig(PluginSettings);
+
+				/* Retry creating the asset package */
+				LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
+
+				/* Undo the change if unsuccessful */
+				if (LocalPackage == nullptr) {
+					PluginSettings->ExportDirectory.Path = ExportDirectoryCache;
+
+					SavePluginConfig(PluginSettings);
+				}
+			}
+		}
+
+		if (LocalPackage == nullptr) {
+			AppendNotification(
+				FText::FromString("Import Failed: " + Type),
+				FText::FromString(FailureReason),
+				4.0f,
+				FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
+				SNotificationItem::CS_Fail,
+				false,
+				350.0f
+			);
+
+			return false;
+		}
 
 		/* Importer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 		IImporter* Importer = nullptr;
@@ -182,9 +223,7 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 			Importer = new IDataAssetImporter(Name, File, DataObject, LocalPackage, LocalOutermostPkg, Exports, Class);
 		}
 
-		/*
-		 * By default, (with no existing importer) use the templated importer with the asset class.
-		 */
+		/* By default, (with no existing importer) use the templated importer with the asset class. */
 		if (Importer == nullptr) {
 			Importer = new ITemplatedImporter<UObject>(
 				Name, File, DataObject, LocalPackage, LocalOutermostPkg, Exports, Class
@@ -208,7 +247,9 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 			UE_LOG(LogJson, Log, TEXT("Successfully imported \"%s\" as \"%s\""), *Name, *Type);
 			
 			if (!(Type == "AnimSequence" || Type == "AnimMontage"))
+			{
 				Importer->SavePackage();
+			}
 
 			/* Import Successful Notification */
 			AppendNotification(

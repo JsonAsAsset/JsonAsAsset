@@ -13,7 +13,7 @@ public:
 	*/
 	static UPackage* CreateAssetPackage(const FString& FullPath);
 	static UPackage* CreateAssetPackage(const FString& Name, const FString& OutputPath);
-	static UPackage* CreateAssetPackage(const FString& Name, const FString& OutputPath, UPackage*& OutOutermostPkg);
+	static UPackage* CreateAssetPackage(const FString& Name, const FString& OutputPath, UPackage*& OutOutermostPkg, FString& FailureReason);
 	
 public:
 	/* Importing assets from Cloud */

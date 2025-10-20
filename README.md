@@ -65,7 +65,7 @@ This project aims to streamline the porting and modding experience, making it ea
 **Extras**:
 <br>
 
-> - [`☁️ Cloud Server`](#cloud-server)  
+> - [`☁️ Cloud Server`](#cloud)  
 > - [`🐛 Common Errors`](#common-errors)
 > - [`📗 Licensing`](#licensing)
 
@@ -81,7 +81,7 @@ If an asset type isn't listed below, **it's not currently supported by the plugi
 | **Data Asset Types** | DataAsset, SlateBrushAsset, SlateWidgetStyleAsset, AnimBoneCompressionSettings, AnimCurveCompressionSettings, UserDefinedEnum, UserDefinedStruct |
 | **Table Types** | CurveTable, DataTable, StringTable |
 | **Material Types** | Material, MaterialFunction, MaterialInstanceConstant, MaterialParameterCollection, SubsurfaceProfile |
-| **Sound Types** | Most/all sound classes are supported. SoundWave is downloaded by a [Cloud Server](#cloud-server). |
+| **Sound Types** | Most/all sound classes are supported. SoundWave is downloaded by the [Cloud](#cloud). |
 | **Animation Asset Types** | PoseAsset, Skeleton, SkeletalMeshLODSettings, BlendSpace, BlendSpace1D, AimOffsetBlendSpace, AimOffsetBlendSpace1D |
 | **Physics Asset Types** | PhysicsAsset, PhysicalMaterial |
 | **Sequencer Asset Types** | CameraAnim |
@@ -161,11 +161,11 @@ Follow these steps to install **JsonAsAsset**:
 
 4. The asset will import, and bring you to the created asset in the content browser.
 
-To bulk import assets and **what they reference**, you must set up a [`☁️ Cloud Server`](#cloud-server)!
+To bulk import assets and **what they reference**, you must set up a [`☁️ Cloud Server`](#cloud)!
 
 ------------
 
-<a name="cloud-server"></a>
+<a name="cloud"></a>
 ## ☁️ Cloud Server
 
 A **Cloud Server** hosts a Web API that lets JsonAsAsset communicate directly with game files. It automatically imports referenced assets for all supported types, except **AnimSequence** and **AnimMontage**. 
@@ -225,6 +225,7 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+
 
 
 

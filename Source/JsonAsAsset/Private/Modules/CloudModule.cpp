@@ -18,9 +18,9 @@ bool CloudModule::VerifyActivity(const UJsonAsAssetSettings* Settings) {
 			"Read documentation on how to start one."
 		));
 
-		Info.HyperlinkText = FText::FromString("Documentation");
+		Info.HyperlinkText = FText::FromString("Learn how to setup");
 		Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
-			const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#4-cloud-server";
+			const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#cloud";
 			FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
 		});
 

@@ -7,11 +7,12 @@
 
 class UJsonAsAssetSettings;
 
-/* Details Widget For JsonAsAssetSettings */
+/* Details Widget for JsonAsAssetSettings */
 class FJsonAsAssetSettingsDetails final : public IDetailCustomization {
 public:
 	static TSharedRef<IDetailCustomization> MakeInstance();
 
 	virtual void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder) override;
 	void EditConfiguration(IDetailLayoutBuilder& DetailBuilder);
+	static void ReadConfiguration();
 };

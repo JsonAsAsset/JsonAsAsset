@@ -2,9 +2,9 @@
 
 #include "Toolbar/Dropdowns/GeneralDropdownBuilder.h"
 
-#include "ISettingsModule.h"
 #include "Logging/MessageLog.h"
 #include "Utilities/Compatibility.h"
+#include "Utilities/EngineUtilities.h"
 
 void IGeneralDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	MenuBuilder.AddSeparator();
@@ -19,9 +19,7 @@ void IGeneralDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 #endif
 		FUIAction(
 			FExecuteAction::CreateLambda([this]() {
-				/* Send user to plugin settings */
-				FModuleManager::LoadModuleChecked<ISettingsModule>("Settings")
-					.ShowViewer("Editor", "Plugins", "JsonAsAsset");
+				OpenPluginSettings();
 			})
 		),
 		NAME_None
@@ -32,8 +30,7 @@ void IGeneralDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "MessageLog.TabIcon"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this] {
-				FMessageLog MessageLogger = FMessageLog(FName("JsonAsAsset"));
-				MessageLogger.Open(EMessageSeverity::Info, true);
+				OpenMessageLog();
 			})
 		),
 		NAME_None

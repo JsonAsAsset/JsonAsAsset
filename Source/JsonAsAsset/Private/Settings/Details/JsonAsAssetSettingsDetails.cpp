@@ -47,32 +47,34 @@ void FJsonAsAssetSettingsDetails::EditConfiguration(IDetailLayoutBuilder& Detail
         /* Now we define the value/content of the row */
         SNew(SButton)
         .Text(LOCTEXT("UseFModelAppSettings_Text", "FModel Settings"))
-    	.ToolTipText(LOCTEXT("UseFModelAppSettings_Tooltip", "Imports settings from AppData/Roaming/FModel/AppSettings.json"))
         .OnClicked_Lambda([this]()
         {
-            UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
-
-            /* Get the path to AppData\Roaming */
-            FString AppDataPath = FPlatformMisc::GetEnvironmentVariable(TEXT("APPDATA"));
-            AppDataPath = FPaths::Combine(AppDataPath, TEXT("FModel/AppSettings.json"));
-
-        	FString JsonContent;
-        	
-            if (FFileHelper::LoadFileToString(JsonContent, *AppDataPath)) {
-                const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonContent);
-            	TSharedPtr<FJsonObject> JsonObject;
-
-                if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid()) {
-                    /* Load the PropertiesDirectory and GameDirectory */
-                    PluginSettings->ExportDirectory.Path = JsonObject->GetStringField(TEXT("PropertiesDirectory")).Replace(TEXT("\\"), TEXT("/"));
-                }
-            }
-
-        	SavePluginConfig(PluginSettings);
-
+        	ReadConfiguration();
             return FReply::Handled();
         })
     ];
+}
+
+void FJsonAsAssetSettingsDetails::ReadConfiguration() {
+	UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
+
+	/* Get the path to AppData\Roaming */
+	FString AppDataPath = FPlatformMisc::GetEnvironmentVariable(TEXT("APPDATA"));
+	AppDataPath = FPaths::Combine(AppDataPath, TEXT("FModel/AppSettings.json"));
+
+	FString JsonContent;
+        	
+	if (FFileHelper::LoadFileToString(JsonContent, *AppDataPath)) {
+		const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonContent);
+		TSharedPtr<FJsonObject> JsonObject;
+
+		if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid()) {
+			/* Load the PropertiesDirectory and GameDirectory */
+			PluginSettings->ExportDirectory.Path = JsonObject->GetStringField(TEXT("PropertiesDirectory")).Replace(TEXT("\\"), TEXT("/"));
+		}
+	}
+
+	SavePluginConfig(PluginSettings);
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -117,7 +117,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 		),
 		FOnGetContent::CreateRaw(this, &FJsonAsAssetToolbar::CreateMenuDropdown),
 		FText::FromString(Plugin->GetDescriptor().VersionName),
-		FText::FromString("Open JsonAsAsset Tool-bar"),
+		FText::FromString("Open JsonAsAsset's Menu"),
 		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("JsonAsAsset.Toolbar.Icon")),
 		true
 	);

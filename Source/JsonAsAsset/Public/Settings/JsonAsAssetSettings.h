@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
-#include "Utilities/Compatibility.h"
 #include "JsonAsAssetSettings.generated.h"
 
 /* Settings for materials */
@@ -170,45 +169,19 @@ public:
 	 *
 	 * For further instructions, please refer to the README.md file found on GitHub.
 	 */
-	UPROPERTY(EditAnywhere, Config, Category = CloudServer)
+	UPROPERTY(EditAnywhere, Config, Category = Cloud, DisplayName = "Enable Cloud")
 	bool bEnableCloudServer;
 
 	/**
 	 * DO NOT MODIFY UNLESS YOU KNOW WHAT YOU'RE DOING.
 	 */
-	UPROPERTY(EditAnywhere, Config, Category = CloudServer, meta=(EditCondition="bCustomCloudServer", DisplayName = "Use Custom Cloud URL"), AdvancedDisplay)
+	UPROPERTY(EditAnywhere, Config, Category = Cloud, DisplayName = "Use Custom Cloud URL", meta=(EditCondition="bCustomCloudServer"), AdvancedDisplay)
 	FString CustomCloudURL = "http://localhost:1500";
 
-	UPROPERTY(EditAnywhere, Category = CloudServer, meta=(PinHiddenByDefault, InlineEditConditionToggle))
+	UPROPERTY(EditAnywhere, Category = Cloud, meta=(PinHiddenByDefault, InlineEditConditionToggle))
 	uint8 bCustomCloudServer : 1;
 	
-	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings) {
-		const FString ExportDirectoryPath = Settings->ExportDirectory.Path;
-	
-		if (ExportDirectoryPath.IsEmpty()) {
-			return false;
-		}
-
-		/* Invalid Export Directory */
-		if (ExportDirectoryPath.Contains("\\")) {
-			/* Fix up export directory */
-			Settings->ExportDirectory.Path = ExportDirectoryPath.Replace(TEXT("\\"), TEXT("/"));
-		
-			Settings->SaveConfig();
-	
-#if ENGINE_UE5
-			Settings->TryUpdateDefaultConfigFile();
-			Settings->ReloadConfig(nullptr, nullptr, UE::LCPF_PropagateToInstances);
-#else
-			Settings->UpdateDefaultConfigFile();
-			Settings->ReloadConfig(nullptr, nullptr, UE4::LCPF_PropagateToInstances);
-#endif
-        	
-			Settings->LoadConfig();
-		}
-	
-		return true;
-	}
+	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings);
 
 	static bool IsSetup(UJsonAsAssetSettings* Settings, TArray<FString>& Reasons) {
 		const bool IsExportDirectoryValid = EnsureExportDirectoryIsValid(Settings);

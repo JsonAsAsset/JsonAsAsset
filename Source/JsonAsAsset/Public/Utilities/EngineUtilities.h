@@ -20,9 +20,11 @@
 #include "PluginUtils.h"
 #include "HttpModule.h"
 #include "IMessageLogListing.h"
+#include "ISettingsModule.h"
 #include "TlHelp32.h"
 #include "Json.h"
 #include "MessageLogModule.h"
+#include "Logging/MessageLog.h"
 #include "Modules/LogCategory.h"
 
 #if (ENGINE_MAJOR_VERSION != 4 || ENGINE_MINOR_VERSION < 27)
@@ -503,6 +505,10 @@ inline void SavePluginConfig(UDeveloperSettings* EditorSettings) {
 #endif
         	
 	EditorSettings->LoadConfig();
+}
+
+inline void OpenPluginSettings() {
+	FModuleManager::LoadModuleChecked<ISettingsModule>("Settings").ShowViewer("Editor", "Plugins", "JsonAsAsset");
 }
 
 /* Simple handler for JsonArray */
@@ -1025,6 +1031,11 @@ inline TSharedRef<IMessageLogListing> GetMessageLog() {
 	const TSharedRef<IMessageLogListing> LogListing = MessageLogModule.GetLogListing("JsonAsAsset");
 
 	return LogListing;
+}
+
+inline void OpenMessageLog() {
+	FMessageLog MessageLogger = FMessageLog(FName("JsonAsAsset"));
+	MessageLogger.Open(EMessageSeverity::Info, true);
 }
 
 inline void EmptyMessageLog() {

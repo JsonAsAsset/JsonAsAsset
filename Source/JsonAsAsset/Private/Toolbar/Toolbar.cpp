@@ -82,7 +82,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 	Builder.AddToolBarButton(
 		FUIAction(
 			FExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::ImportAction),
-			FCanExecuteAction(),
+			FCanExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::IsActionEnabled),
 			FGetActionCheckState(),
 			FIsActionButtonVisible::CreateLambda([this]() {
 				static const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"));

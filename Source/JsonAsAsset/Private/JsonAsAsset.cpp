@@ -61,8 +61,9 @@ void FJsonAsAssetModule::StartupModule() {
     }
 
 #if ENGINE_UE4
-	FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor"); {
-    	TSharedPtr<FExtender> ToolbarExtender = MakeShareable(new FExtender);
+    {
+	    FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
+	    const TSharedPtr<FExtender> ToolbarExtender = MakeShareable(new FExtender);
     	ToolbarExtender->AddToolBarExtension("Settings", EExtensionHook::After, PluginCommands, FToolBarExtensionDelegate::CreateRaw(this, &FJsonAsAssetModule::AddToolbarExtension));
 
     	LevelEditorModule.GetToolBarExtensibilityManager()->AddExtender(ToolbarExtender);

@@ -275,7 +275,8 @@ UMaterialExpression* IMaterialGraph::OnMissingNodeClass(FUObjectExport& Export, 
 		SubgraphFunctionPath = SubgraphFunctionPath + "/";
 		
 		UPackage* SubgraphLocalOutermostPkg;
-		FAssetUtilities::CreateAssetPackage(SubgraphFunctionName, SubgraphFunctionPath, SubgraphLocalOutermostPkg);
+		FString FailureReason;
+		FAssetUtilities::CreateAssetPackage(SubgraphFunctionName, SubgraphFunctionPath, SubgraphLocalOutermostPkg, FailureReason);
 
 		UMaterialFunctionFactoryNew* SubgraphMaterialFunctionFactory = NewObject<UMaterialFunctionFactoryNew>();
 		UMaterialFunction* SubgraphMaterialFunction = Cast<UMaterialFunction>(SubgraphMaterialFunctionFactory->FactoryCreateNew(UMaterialFunction::StaticClass(), SubgraphLocalOutermostPkg, *SubgraphFunctionName, RF_Standalone | RF_Public, nullptr, GWarn));

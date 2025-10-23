@@ -131,9 +131,13 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
 	FString GameName;
 
+	/* If imported assets are from UE5. (Set by Cloud) */
+	UPROPERTY(Config)
+	bool bUE5Target;
+	
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings, meta = (DisplayName = "Save Assets On Import"))
 	bool bSavePackagesOnImport;
-	
+
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
 	TArray<FJPathRedirector> PathRedirectors;
 };

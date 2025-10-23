@@ -15,6 +15,6 @@ public:
 	static bool VerifyActivity(const UJsonAsAssetSettings* Settings);
 	static bool IsRunning();
 
-	/* If GameName isn't set, try getting it from the API */
-	static void EnsureGameName(const UJsonAsAssetSettings* Settings);
+	/* API Metadata */
+	static void RetrieveMetadata();
 };

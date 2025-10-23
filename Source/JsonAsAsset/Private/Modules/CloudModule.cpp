@@ -48,17 +48,24 @@ bool CloudModule::IsRunning() {
 	return IsProcessRunning("j0.dev.exe");
 }
 
-void CloudModule::EnsureGameName(const UJsonAsAssetSettings* Settings) {
-	if (Settings->bEnableCloudServer) {
-		if (Settings->AssetSettings.GameName.IsEmpty()) {
-			const auto MetadataResponse = RequestObjectURL("http://localhost:1500/api/metadata");
-			if (!MetadataResponse->HasField(TEXT("name"))) return;
-			
+void CloudModule::RetrieveMetadata() {
+	UJsonAsAssetSettings* MutableSettings = GetMutableDefault<UJsonAsAssetSettings>();
+	
+	if (MutableSettings->bEnableCloudServer) {
+		const auto MetadataResponse = RequestObjectURL("http://localhost:1500/api/metadata");
+		if (MetadataResponse->HasField("reason")) return;
+		
+		if (MetadataResponse->HasField(TEXT("name"))) {
 			FString Name = MetadataResponse->GetStringField(TEXT("name"));
-			UJsonAsAssetSettings* MutableSettings = GetMutableDefault<UJsonAsAssetSettings>();
-
 			MutableSettings->AssetSettings.GameName = Name;
-			SavePluginConfig(MutableSettings);
 		}
+
+		if (MetadataResponse->HasField(TEXT("major_version"))) {
+			const int MajorVersion = MetadataResponse->GetIntegerField(TEXT("major_version"));
+				
+			MutableSettings->AssetSettings.bUE5Target = MajorVersion == 5;
+		}
+
+		SavePluginConfig(MutableSettings);
 	}
 }

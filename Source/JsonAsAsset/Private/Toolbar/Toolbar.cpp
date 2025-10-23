@@ -148,7 +148,7 @@ void FJsonAsAssetToolbar::ImportAction() {
 	/* Conditional Settings Checks */
 	if (!UJsonAsAssetSettings::EnsureExportDirectoryIsValid(Settings)) return;
 	if (!CloudModule::VerifyActivity(Settings)) return;
-	CloudModule::EnsureGameName(Settings);
+	CloudModule::RetrieveMetadata();
 
 	/* Dialog for a JSON File */
 	TArray<FString> OutFileNames = OpenFileDialog("Select a JSON File", "JSON Files|*.json");

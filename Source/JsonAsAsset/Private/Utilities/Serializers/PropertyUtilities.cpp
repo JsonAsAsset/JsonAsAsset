@@ -311,6 +311,25 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 
 		/* To serialize struct, we need its type and value pointer, because struct value doesn't contain type information */
 		DeserializeStruct(StructProperty->Struct, NewJsonValue->AsObject().ToSharedRef(), OutValue);
+
+#if ENGINE_UE4
+		/* If we're importing from UE5 to UE4, adjust the material attribute nodes to adjust for attributes that don't exist */
+		if (Property->GetCPPType(nullptr, CPPF_None) == TEXT("FExpressionInput")) {
+			UJsonAsAssetSettings* Settings = GetSettings();
+			
+			if (Settings->AssetSettings.bUE5Target) {
+				FExpressionInput* ExpressionInput = static_cast<FExpressionInput*>(OutValue);
+
+				if (ExpressionInput &&
+					ExpressionInput->OutputIndex > 10
+					&& ExpressionInput->Expression
+					&& ExpressionInput->Expression->GetFName().ToString().Contains("MaterialExpressionBreakMaterialAttributes")) {
+
+					ExpressionInput->OutputIndex += 2;
+				}
+			}
+		}
+#endif
 	}
 	else if (const FByteProperty* ByteProperty = CastField<const FByteProperty>(Property)) {
 		/* If we have a string provided, make sure Enum is not null */

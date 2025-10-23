@@ -2,4 +2,4 @@
 
 #pragma once
 
-DECLARE_LOG_CATEGORY_EXTERN(LogJsonAsAsset, All, All)
+DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAsset, All, All)

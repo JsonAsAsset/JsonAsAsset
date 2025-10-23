@@ -78,8 +78,6 @@ void IMaterialGraph::ConstructExpressions(FUObjectExportContainer& Container) {
 void IMaterialGraph::PropagateExpressions(FUObjectExportContainer& Container) {
 	for (FUObjectExport Export : Container.Exports) {
 		/* Get variables from the export data */
-		FName Type = Export.Type;
-		
 		UObject* Parent = Export.Parent;
 
 		/* Get Json Objects from Export */
@@ -266,6 +264,7 @@ UMaterialExpression* IMaterialGraph::OnMissingNodeClass(FUObjectExport& Export, 
 #if ENGINE_UE4
 	/* In Unreal Engine 4, to combat the absence of Sub-graphs, create a Material Function in place of it */
 	if (Type == "MaterialExpressionComposite") {
+		return nullptr;
 		const FString SubgraphFunctionName = AssetName + "_" + Name.ToString().Replace(TEXT("MaterialExpression"), TEXT(""));
 
 		const UPackage* ParentPackage = Parent->GetOutermost();

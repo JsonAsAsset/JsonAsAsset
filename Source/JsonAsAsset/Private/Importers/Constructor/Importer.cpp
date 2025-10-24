@@ -129,6 +129,7 @@ TMap<FString, TArray<FString>> ImporterTemplatedTypes = {
 		TEXT("Texture Assets"),
 		{
 			TEXT("TextureRenderTarget2D"),
+			TEXT("RuntimeVirtualTexture"),
 		}
 	},
 	{

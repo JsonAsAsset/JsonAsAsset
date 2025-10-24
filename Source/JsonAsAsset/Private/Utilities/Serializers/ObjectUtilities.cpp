@@ -69,7 +69,7 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 		
 		/* Check if it's not supposed to be deserialized */
 		if (ExportsToNotDeserialize.Contains(Name)) continue;
-		if (Type == "BodySetup" || Type == "NavCollision") continue;
+		if (Type == "BodySetup" || Type == "NavCollision" || Type == "AnimCurveMetaData") continue;
 
 		FString Outer = ExportObject->GetStringField(TEXT("Outer"));
 		

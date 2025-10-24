@@ -85,6 +85,7 @@ If an asset type isn't listed below, **it's not currently supported by the plugi
 | **Animation Asset Types** | PoseAsset, Skeleton, SkeletalMeshLODSettings, BlendSpace, BlendSpace1D, AimOffsetBlendSpace, AimOffsetBlendSpace1D |
 | **Physics Asset Types** | PhysicsAsset, PhysicalMaterial |
 | **Sequencer Asset Types** | CameraAnim |
+| **Texture Asset Types** | TextureRenderTarget2D, RuntimeVirtualTexture |
 | **Landscape Asset Types** | LandscapeGrassType, FoliageType_InstancedStaticMesh, FoliageType_Actor |
 
 #### The following asset types add onto a pre-existing asset

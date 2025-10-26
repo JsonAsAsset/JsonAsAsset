@@ -91,3 +91,4 @@ _[Ss]cripts
 *.v1
 *.sln
 .idea/
+/Binaries

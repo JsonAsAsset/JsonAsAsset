@@ -454,8 +454,7 @@ inline TArray<FString> OpenFolderDialog(const FString& Title) {
 		ParentWindowHandle = MainWindow->GetNativeWindow()->GetOSWindowHandle();
 	}
 
-	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
-	if (DesktopPlatform) {
+	if (IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get()) {
 		FString SelectedFolder;
 
 		/* Open Folder Dialog */

@@ -1,5 +1,9 @@
 <br/>
 <div align="center">
+  <!--
+  Also popularly known as "JAA", standing for Json As Asset.
+  -->
+  
   <a href="https://github.com/JsonAsAsset/JsonAsAsset">
     <img src="https://github.com/user-attachments/assets/91b216ba-7bb3-4f48-bf96-69c645451d26" alt="Logo" width="250" height="250">
   </a>
@@ -226,6 +230,7 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+
 
 
 

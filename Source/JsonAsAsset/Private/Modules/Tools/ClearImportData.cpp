@@ -11,9 +11,17 @@ void FToolClearImportData::Execute() {
 		return;
 	}
 
+	static const TArray<FName> SupportedClasses = {
+		"AnimSequence",
+		"SkeletalMesh",
+		"StaticMesh",
+		"Texture"
+	};
+
 	for (const FAssetData& AssetData : AssetDataList) {
-		if (!AssetData.IsValid()) continue;
-		if (AssetData.AssetClass != "AnimSequence" && AssetData.AssetClass != "SkeletalMesh" && AssetData.AssetClass != "StaticMesh") continue;
+		if (!AssetData.IsValid() || !SupportedClasses.Contains(AssetData.AssetClass)) {
+			continue;
+		}
 		
 		UObject* Asset = AssetData.GetAsset();
 		if (Asset == nullptr) continue;
@@ -25,6 +33,10 @@ void FToolClearImportData::Execute() {
 
 		if (const UStaticMesh* StaticMesh = Cast<UStaticMesh>(Asset)) {
 			StaticMesh->AssetImportData->SourceData.SourceFiles.Empty();
+		}
+
+		if (const UTexture* Texture = Cast<UTexture>(Asset)) {
+			Texture->AssetImportData->SourceData.SourceFiles.Empty();
 		}
 
 		if (USkeletalMesh* SkeletalMesh = Cast<USkeletalMesh>(Asset)) {

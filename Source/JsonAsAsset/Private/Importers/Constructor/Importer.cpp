@@ -20,12 +20,13 @@
 #include "Importers/Types/DataAssetImporter.h"
 
 /* Templated Class */
-#include "Importers/Constructor/TemplatedImporter.h"
+#include "Importers/Constructor/TextureImporter.h"
 
 /* ~~~~~~~~~~~~~ Templated Engine Classes ~~~~~~~~~~~~~ */
 #include "Materials/MaterialParameterCollection.h"
 #include "Engine/SubsurfaceProfile.h"
 #include "Curves/CurveLinearColor.h"
+#include "Importers/Types/Texture/TextureImporter.h"
 #include "Logging/MessageLog.h"
 #include "Modules/LogCategory.h"
 #include "Sound/SoundNode.h"
@@ -147,7 +148,7 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 		FString Type = DataObject->GetStringField(TEXT("Type"));
 		FString Name = DataObject->GetStringField(TEXT("Name"));
 
-		/* BlueprintGeneratedClass is postfixed with _C */
+		/* BlueprintGeneratedClass is post-fixed with _C */
 		if (Type.Contains("BlueprintGeneratedClass")) {
 			Name.Split("_C", &Name, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
 		}
@@ -177,13 +178,11 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
             UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
 
 			FString ExportDirectoryCache = PluginSettings->ExportDirectory.Path;
-			FString DirectoryPathFix;
 			
-			if (File.Split(TEXT("Output/Exports/"), &DirectoryPathFix, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd)) {
+			if (FString DirectoryPathFix; File.Split(TEXT("Output/Exports/"), &DirectoryPathFix, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd)) {
 				DirectoryPathFix = DirectoryPathFix + TEXT("Output/Exports");
 
 				PluginSettings->ExportDirectory.Path = DirectoryPathFix;
-
 				SavePluginConfig(PluginSettings);
 
 				/* Retry creating the asset package */
@@ -232,6 +231,12 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 			);
 		}
 
+		if (IsAssetTypeImportableUsingCloud(Type)) {
+			Importer = new ITextureImporter<UTextureLightProfile>(
+				Name, File, DataObject, LocalPackage, LocalOutermostPkg, Exports, Class
+			);
+		}
+
 		/* Import the asset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 		bool Successful = false; {
 			try {
@@ -264,9 +269,7 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 				350.0f
 			);
 
-			FMessageLog MessageLogger = FMessageLog(FName("JsonAsAsset"));
-
-			MessageLogger.Message(EMessageSeverity::Info, FText::FromString("Imported Asset: " + Name + " (" + Type + ")"));
+			GetMessageLog().Message(EMessageSeverity::Info, FText::FromString("Imported Asset: " + Name + " (" + Type + ")"));
 		} else {
 			/* Import Failed Notification */
 			AppendNotification(
@@ -355,8 +358,6 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
 
 	if (Type == "Texture") Type = "Texture2D";
 
-	FMessageLog MessageLogger = FMessageLog(FName("JsonAsAsset"));
-
 	if (Settings->bEnableCloudServer && (
 		InObject == nullptr ||
 			Settings->AssetSettings.TextureImportSettings.bDownloadExistingTextures &&
@@ -366,14 +367,14 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
 		const UObject* DefaultObject = GetClassDefaultObject(T::StaticClass());
 
 		if (DefaultObject != nullptr && !Name.IsEmpty() && !Path.IsEmpty()) {
-			bool bRemoteDownloadStatus = false;
+			bool bDownloadStatus = false;
 
 			/* Try importing the asset */
-			if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + Path + "." + Name + "'").ToString(), Type, InObject, bRemoteDownloadStatus)) {
+			if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + Path + "." + Name + "'").ToString(), Type, InObject, bDownloadStatus)) {
 				const FText AssetNameText = FText::FromString(Name);
 				const FSlateBrush* IconBrush = FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail"));
 
-				if (bRemoteDownloadStatus) {
+				if (bDownloadStatus) {
 					AppendNotification(
 						FText::FromString("Locally Downloaded: " + Type),
 						AssetNameText,
@@ -384,7 +385,7 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
 						310.0f
 					);
 
-					MessageLogger.Message(EMessageSeverity::Info, FText::FromString("Locally Downloaded Asset: " + Name + " (" + Type + ")"));
+					GetMessageLog().Message(EMessageSeverity::Info, FText::FromString("Locally Downloaded Asset: " + Name + " (" + Type + ")"));
 				} else {
 					AppendNotification(
 						FText::FromString("Download Failed: " + Type),
@@ -396,7 +397,7 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
 						310.0f
 					);
 
-					MessageLogger.Error(FText::FromString("Failed to locally download asset: " + Name + " (" + Type + ")"));
+					GetMessageLog().Error(FText::FromString("Failed to locally download asset: " + Name + " (" + Type + ")"));
 				}
 			}
 		}

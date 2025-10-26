@@ -1026,20 +1026,23 @@ inline void RedirectPath(FString& OutPath) {
 	}
 }
 
-inline TSharedRef<IMessageLogListing> GetMessageLog() {
+inline TSharedRef<IMessageLogListing> GetMessageLogListing() {
 	FMessageLogModule& MessageLogModule = FModuleManager::GetModuleChecked<FMessageLogModule>("MessageLog");
 	const TSharedRef<IMessageLogListing> LogListing = MessageLogModule.GetLogListing("JsonAsAsset");
 
 	return LogListing;
 }
 
+inline FMessageLog GetMessageLog() {
+	return FMessageLog(FName("JsonAsAsset"));
+}
+
 inline void OpenMessageLog() {
-	FMessageLog MessageLogger = FMessageLog(FName("JsonAsAsset"));
-	MessageLogger.Open(EMessageSeverity::Info, true);
+	GetMessageLog().Open(EMessageSeverity::Info, true);
 }
 
 inline void EmptyMessageLog() {
-	GetMessageLog()->ClearMessages();
+	GetMessageLogListing()->ClearMessages();
 }
 
 inline void RemoveNotification(TWeakPtr<SNotificationItem> Notification) {

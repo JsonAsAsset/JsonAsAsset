@@ -137,23 +137,23 @@ template bool FAssetUtilities::ConstructAsset<UCurveLinearColor>(const FString& 
 /* Importing assets from Cloud */
 template <typename T>
 bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& Type, TObjectPtr<T>& OutObject, bool& bSuccess) {
-	/* Skip if no type provided */
-	if (Type == "") {
+	if (Type.IsEmpty()) {
 		return false;
 	}
 
-	/* Manually handled asset types */
+	/* Supported Texture Classes */
 	const bool bIsTexture = Type ==
-			"Texture2D" ||
-			Type == "TextureRenderTarget2D" ||
-			Type == "TextureCube" ||
-			Type == "VolumeTexture";
+		"Texture2D" ||
+		Type == "TextureRenderTarget2D" ||
+		Type == "TextureCube" ||
+		Type == "VolumeTexture" ||
+		Type == "TextureLightProfile";
 
 	/* Supported Assets */
 	if (IImporter::CanImport(Type, true) || bIsTexture) {
 		if (bIsTexture) {
 			UTexture* Texture;
-			FString NewPath = Path;
+			const FString NewPath = Path;
 
 			FString RootName; {
 				NewPath.Split("/", nullptr, &RootName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
@@ -274,7 +274,10 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 	const FTextureCreatorUtilities TextureCreator = FTextureCreatorUtilities(AssetName, Path, Package, OutermostPkg);
 
 	if (Type == "Texture2D") {
-		TextureCreator.CreateTexture2D(Texture, Data, JsonExport);
+		TextureCreator.CreateTexture<UTexture2D>(Texture, Data, JsonExport);
+	}
+	if (Type == "TextureLightProfile") {
+		TextureCreator.CreateTexture<UTextureLightProfile>(Texture, Data, JsonExport);
 	}
 	if (Type == "TextureCube") {
 		TextureCreator.CreateTextureCube(Texture, Data, JsonExport);

@@ -18,6 +18,10 @@ inline TArray<FString> BlacklistedCloudTypes = {
     "AnimBlueprintGeneratedClass"
 };
 
+inline TArray<FString> ExtraCloudTypes = {
+    "TextureLightProfile"
+};
+
 inline const TArray<FString> ExperimentalAssetTypes = {
     "AnimBlueprintGeneratedClass"
 };
@@ -125,9 +129,21 @@ public:
 
 public:
     /* Accepted Types ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+    static bool IsAssetTypeImportableUsingCloud(const FString& ImporterType) {
+        if (ExtraCloudTypes.Contains(ImporterType)) {
+            return true;
+        }
+
+        return false;
+    }
+    
     static bool CanImportWithCloud(const FString& ImporterType) {
         if (BlacklistedCloudTypes.Contains(ImporterType)) {
             return false;
+        }
+
+        if (ExtraCloudTypes.Contains(ImporterType)) {
+            return true;
         }
 
         return true;
@@ -151,13 +167,15 @@ public:
         
         if (FindFactoryForAssetType(ImporterType)) {
             return true;
-        };
+        }
         
         for (const TPair<FString, TArray<FString>>& Pair : ImporterTemplatedTypes) {
             if (Pair.Value.Contains(ImporterType)) {
                 return true;
             }
         }
+
+        if (CanImportWithCloud(ImporterType))
 
         if (!Class) {
 #if UE5_6_BEYOND
@@ -170,6 +188,10 @@ public:
         if (Class == nullptr) return false;
 
         if (ImporterType == "MaterialInterface") return true;
+
+        if (IsAssetTypeImportableUsingCloud(ImporterType)) {
+            return true;
+        }
         
         return Class->IsChildOf(UDataAsset::StaticClass());
     }

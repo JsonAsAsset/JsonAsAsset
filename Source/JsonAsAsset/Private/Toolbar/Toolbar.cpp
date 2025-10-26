@@ -17,6 +17,7 @@
 #include "Toolbar/Dropdowns/GeneralDropdownBuilder.h"
 #include "Toolbar/Dropdowns/CloudDropdownBuilder.h"
 #include "Toolbar/Dropdowns/ParentDropdownBuilder.h"
+#include "Toolbar/Dropdowns/ToolsDropdownBuilder.h"
 #include "Toolbar/Dropdowns/VersioningDropdownBuilder.h"
 #include "Utilities/EngineUtilities.h"
 
@@ -172,6 +173,7 @@ TSharedRef<SWidget> FJsonAsAssetToolbar::CreateMenuDropdown() {
 		MakeShared<IActionRequiredDropdownBuilder>(),
 		MakeShared<ICloudDropdownBuilder>(),
 		MakeShared<IGeneralDropdownBuilder>(),
+		MakeShared<IToolsDropdownBuilder>(),
 		MakeShared<IVersioningDropdownBuilder>()
 	};
 

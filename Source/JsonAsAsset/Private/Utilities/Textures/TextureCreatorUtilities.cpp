@@ -13,12 +13,9 @@
 #include "Utilities/JsonUtilities.h"
 #include "Utilities/Textures/TextureDecode/TextureNVTT.h"
 
-/* TODO: [Refactor] Still uses manual property deserialization */
-
-bool FTextureCreatorUtilities::CreateTexture2D(UTexture*& OutTexture2D, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const {
-	const TSharedPtr<FJsonObject> SubObjectProperties = Properties->GetObjectField(TEXT("Properties"));
-
-	UTexture2D* Texture2D = NewObject<UTexture2D>(OutermostPkg, UTexture2D::StaticClass(), *AssetName, RF_Standalone | RF_Public);
+template <typename T>
+bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const {
+	UTexture2D* Texture2D = NewObject<T>(OutermostPkg, T::StaticClass(), *AssetName, RF_Standalone | RF_Public);
 
 #if ENGINE_UE5
 	Texture2D->SetPlatformData(new FTexturePlatformData());
@@ -26,7 +23,7 @@ bool FTextureCreatorUtilities::CreateTexture2D(UTexture*& OutTexture2D, TArray<u
 	Texture2D->PlatformData = new FTexturePlatformData();
 #endif
 
-	DeserializeTexture2D(Texture2D, SubObjectProperties);
+	DeserializeTexture2D(Texture2D, Properties->GetObjectField(TEXT("Properties")));
 
 #if ENGINE_UE5
 	FTexturePlatformData* PlatformData = Texture2D->GetPlatformData();
@@ -34,48 +31,17 @@ bool FTextureCreatorUtilities::CreateTexture2D(UTexture*& OutTexture2D, TArray<u
 	FTexturePlatformData* PlatformData = Texture2D->PlatformData;
 #endif
 
-	const int SizeX = Properties->GetNumberField(TEXT("SizeX"));
-	const int SizeY = Properties->GetNumberField(TEXT("SizeY"));
-	constexpr int SizeZ = 1; /* Tex2D doesn't have depth */
-
-	const TArray<TSharedPtr<FJsonValue>>* TextureMipsPtr;
-	Properties->TryGetArrayField(TEXT("Mips"), TextureMipsPtr);
-	if (TextureMipsPtr) {
-		auto TextureMips = *TextureMipsPtr;
+	if (const TArray<TSharedPtr<FJsonValue>>* TextureMipsPtr; Properties->TryGetArrayField(TEXT("Mips"), TextureMipsPtr)) {
+		const auto TextureMips = *TextureMipsPtr;
+	
 		if (TextureMips.Num() == 1) {
-			Texture2D->MipGenSettings = TextureMipGenSettings::TMGS_NoMipmaps;
+			Texture2D->MipGenSettings = TMGS_NoMipmaps;
 		}
 	}
 
-	FString PixelFormat;
-	if (Properties->TryGetStringField(TEXT("PixelFormat"), PixelFormat)) {
-		PlatformData->PixelFormat = static_cast<EPixelFormat>(Texture2D->GetPixelFormatEnum()->GetValueByNameString(PixelFormat));
-	}
+	DeserializeTexturePlatformData(Texture2D, Data, *PlatformData, Properties);
 
-	int Size = SizeX * SizeY * (PlatformData->PixelFormat == PF_BC6H ? 16 : 4);
-	if (PlatformData->PixelFormat == PF_B8G8R8A8 || PlatformData->PixelFormat == PF_FloatRGBA || PlatformData->PixelFormat == PF_G16) Size = Data.Num();
-	uint8* DecompressedData = static_cast<uint8*>(FMemory::Malloc(Size));
-
-	GetDecompressedTextureData(Data.GetData(), DecompressedData, SizeX, SizeY, SizeZ, Size, PlatformData->PixelFormat);
-
-	ETextureSourceFormat Format = TSF_BGRA8;
-	if (Texture2D->CompressionSettings == TC_HDR) Format = TSF_RGBA16F;
-	if (PlatformData->PixelFormat == PF_G16) Format = TSF_G16;
-	Texture2D->Source.Init(SizeX, SizeY, 1, 1, Format);
-	uint8_t* Dest = Texture2D->Source.LockMip(0);
-	FMemory::Memcpy(Dest, DecompressedData, Size);
-	Texture2D->Source.UnlockMip(0);
-
-	if (Texture2D->LODGroup == 255) {
-		Texture2D->LODGroup = TextureGroup::TEXTUREGROUP_World;
-	}
-
-	Texture2D->UpdateResource();
-
-	if (Texture2D && Texture2D->IsValidLowLevel() && Texture2D != nullptr) {
-		OutTexture2D = Texture2D;
-		return true;
-	}
+	OutTexture = Texture2D;
 
 	return false;
 }
@@ -261,6 +227,45 @@ bool FTextureCreatorUtilities::DeserializeTexture(UTexture* Texture, const TShar
 		"ImportedSize",
 		"LODBias"
 	}), Texture);
+	
+	return false;
+}
+
+bool FTextureCreatorUtilities::DeserializeTexturePlatformData(UTexture* Texture, TArray<uint8>& Data, FTexturePlatformData& TexturePlatformData,
+	const TSharedPtr<FJsonObject>& Properties)
+{
+	const int SizeX = Properties->GetNumberField(TEXT("SizeX"));
+	const int SizeY = Properties->GetNumberField(TEXT("SizeY"));
+	constexpr int SizeZ = 1;
+
+	FString PixelFormat;
+	if (Properties->TryGetStringField(TEXT("PixelFormat"), PixelFormat)) {
+		TexturePlatformData.PixelFormat = static_cast<EPixelFormat>(Texture->GetPixelFormatEnum()->GetValueByNameString(PixelFormat));
+	}
+
+	int Size = SizeX * SizeY * (TexturePlatformData.PixelFormat == PF_BC6H ? 16 : 4);
+	if (TexturePlatformData.PixelFormat == PF_B8G8R8A8 || TexturePlatformData.PixelFormat == PF_FloatRGBA || TexturePlatformData.PixelFormat == PF_G16) Size = Data.Num();
+	uint8* DecompressedData = static_cast<uint8*>(FMemory::Malloc(Size));
+
+	GetDecompressedTextureData(Data.GetData(), DecompressedData, SizeX, SizeY, SizeZ, Size, TexturePlatformData.PixelFormat);
+
+	ETextureSourceFormat Format = TSF_BGRA8;
+	if (Texture->CompressionSettings == TC_HDR) Format = TSF_RGBA16F;
+	if (TexturePlatformData.PixelFormat == PF_G16) Format = TSF_G16;
+	Texture->Source.Init(SizeX, SizeY, 1, 1, Format);
+	uint8_t* Dest = Texture->Source.LockMip(0);
+	FMemory::Memcpy(Dest, DecompressedData, Size);
+	Texture->Source.UnlockMip(0);
+
+	if (Texture->LODGroup == 255) {
+		Texture->LODGroup = TEXTUREGROUP_World;
+	}
+
+	Texture->UpdateResource();
+
+	if (Texture && Texture->IsValidLowLevel() && Texture != nullptr) {
+		return true;
+	}
 	
 	return false;
 }

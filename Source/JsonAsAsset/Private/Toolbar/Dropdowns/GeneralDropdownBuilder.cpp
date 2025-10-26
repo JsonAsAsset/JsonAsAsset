@@ -2,7 +2,6 @@
 
 #include "Toolbar/Dropdowns/GeneralDropdownBuilder.h"
 
-#include "Logging/MessageLog.h"
 #include "Utilities/Compatibility.h"
 #include "Utilities/EngineUtilities.h"
 

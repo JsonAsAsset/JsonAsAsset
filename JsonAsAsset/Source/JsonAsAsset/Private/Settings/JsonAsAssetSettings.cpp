@@ -53,8 +53,8 @@ void FJsonAsAssetSettingsDetails::CustomizeDetails(IDetailLayoutBuilder& DetailB
 	EncryptionCategory.AddCustomRow(LOCTEXT("EncryptionKeyGenerator", "EncryptionKeyGenerator"))
 		.ValueContent()[
 			SNew(SButton)
-				.Text(LOCTEXT("GenerateEncryptionKey", "[FORTNITE] Generate Encryption"))
-				.ToolTipText(LOCTEXT("GenerateEncryptionKey_Tooltip", "Generates encryption keys from a Fortnite API."))
+				.Text(LOCTEXT("GenerateEncryptionKey", "Generate Encryption"))
+				.ToolTipText(LOCTEXT("GenerateEncryptionKey_Tooltip", "Generates encryption keys from FN API."))
 				.OnClicked_Lambda([this, Settings]() {
 				UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
 				FHttpModule* HttpModule = &FHttpModule::Get();
@@ -149,4 +149,5 @@ void FJsonAsAssetSettingsDetails::CustomizeDetails(IDetailLayoutBuilder& DetailB
 						})
 		];
 }
+
 #undef LOCTEXT_NAMESPACE

@@ -22,3 +22,9 @@ This plugin's importing feature uses data based off [CUE4Parse](https://github.c
 ```
 git clone https://github.com/JsonAsAsset/JsonAsAsset --recursive
 ```
+
+##### Adding JsonAsAsset as a sub-module
+```
+git submodule add https://github.com/JsonAsAsset/JsonAsAsset Plugins/JsonAsAsset
+git submodule update --init --recursive
+```

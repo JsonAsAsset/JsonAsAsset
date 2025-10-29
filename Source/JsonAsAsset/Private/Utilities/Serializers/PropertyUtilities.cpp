@@ -19,7 +19,7 @@ UPropertySerializer::UPropertySerializer() {
 	this->FallbackStructSerializer = MakeShared<FFallbackStructSerializer>(this);
 
 	UScriptStruct* DateTimeStruct = FindObject<UScriptStruct>(nullptr, TEXT("/Script/CoreUObject.DateTime"));
-	UScriptStruct* TimespanStruct = FindObject<UScriptStruct>(nullptr, TEXT("/Script/CoreUObject.Timespan"));
+	UScriptStruct* TimespanStruct = FindObject<UScriptStruct>(nullptr, TEXT("/Script/CoreUObject.TimeSpan"));
 	check(DateTimeStruct);
 	check(TimespanStruct);
 

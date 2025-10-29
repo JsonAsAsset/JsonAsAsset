@@ -37,21 +37,6 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 						NAME_None
 					);
 
-					InnerMenuBuilder.AddMenuEntry(
-						FText::FromString("Test"),
-						FText::FromString(""),
-						FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
-
-						FUIAction(
-							FExecuteAction::CreateLambda([this] {
-								TObjectPtr<UTextureLightProfile> T;
-								
-								IImporter::DownloadWrapper<UTextureLightProfile>(T, "TextureLightProfile", "LampShade_IESTexture_FloorLamp", "/Game/Building/IESTextures/LampShade_IESTexture_FloorLamp");
-							})
-						),
-						NAME_None
-					);
-										
 					if (Settings->bEnableCloudServer) {
 						InnerMenuBuilder.AddSeparator();
 						

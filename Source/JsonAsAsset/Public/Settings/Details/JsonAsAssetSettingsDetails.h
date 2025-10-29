@@ -3,16 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "IDetailCustomization.h"
 
 class UJsonAsAssetSettings;
 
 /* Details Widget for JsonAsAssetSettings */
-class FJsonAsAssetSettingsDetails final : public IDetailCustomization {
+class FJsonAsAssetSettingsDetails final {
 public:
-	static TSharedRef<IDetailCustomization> MakeInstance();
-
-	virtual void CustomizeDetails(IDetailLayoutBuilder& DetailBuilder) override;
-	void EditConfiguration(IDetailLayoutBuilder& DetailBuilder);
 	static void ReadConfiguration();
 };

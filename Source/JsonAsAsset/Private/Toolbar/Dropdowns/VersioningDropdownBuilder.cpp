@@ -9,7 +9,7 @@ void IVersioningDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		return;
 	}
 	
-	MenuBuilder.BeginSection("JsonAsAssetVersioningSection", FText::FromString("Versioning"));
+	MenuBuilder.BeginSection("JsonAsAssetVersioningSection", FText::FromString("Version"));
 	
 	FText Text, Tooltip;
 	FSlateIcon Icon =
@@ -27,12 +27,12 @@ void IVersioningDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 
 		Icon = FSlateIcon(FAppStyle::GetAppStyleSetName(), "Cascade.AddLODBeforeCurrent.Small");
 	} else if (GJsonAsAssetVersioning.bFutureVersion) {
-		Text = FText::FromString("Developmental Build");
+		Text = FText::FromString("Developmental");
 		
 		Tooltip = FText::FromString("You are currently running a developmental build of JsonAsAsset");
 		
 	} else {
-		Text = FText::FromString("Latest Version");
+		Text = FText::FromString("Latest");
 		
 		Tooltip = FText::FromString("You are currently using the latest version of JsonAsAsset");
 	}

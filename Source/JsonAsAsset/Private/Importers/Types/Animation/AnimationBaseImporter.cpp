@@ -47,7 +47,7 @@ bool IAnimationBaseImporter::Import() {
 
 	UObjectSerializer* ObjectSerializer = GetObjectSerializer();
 	ObjectSerializer->SetExportForDeserialization(JsonObject, AnimSequenceBase);
-	ObjectSerializer->ParentAsset = AnimSequenceBase;
+	ObjectSerializer->Parent = AnimSequenceBase;
 
 	ObjectSerializer->DeserializeExports(AllJsonObjects);
 

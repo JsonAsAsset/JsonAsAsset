@@ -70,10 +70,6 @@ void FJsonAsAssetModule::StartupModule() {
 	}
 #endif
 
-    /* Register custom class layout for settings */
-    FPropertyEditorModule& PropertyModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
-    PropertyModule.RegisterCustomClassLayout(UJsonAsAssetSettings::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&FJsonAsAssetSettingsDetails::MakeInstance));
-
 	Plugin = IPluginManager::Get().FindPlugin("JsonAsAsset");
 
 	GJsonAsAssetVersioning.Update();

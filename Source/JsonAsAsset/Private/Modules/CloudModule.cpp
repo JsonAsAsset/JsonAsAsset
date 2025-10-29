@@ -10,8 +10,10 @@
 #undef GetObject
 #endif
 
+FString CloudModule::URL = "http://localhost:1500";
+
 bool CloudModule::VerifyActivity(const UJsonAsAssetSettings* Settings) {
-	if (Settings->bEnableCloudServer && !Settings->bCustomCloudServer && !IsRunning()) {
+	if (Settings->bEnableCloudServer && !IsRunning()) {
 		FNotificationInfo Info(FText::FromString("No Cloud Servers are active"));
 		
 		SetNotificationSubText(Info, FText::FromString(

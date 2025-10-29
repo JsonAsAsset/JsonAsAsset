@@ -24,7 +24,7 @@ UPropertySerializer::UPropertySerializer() {
 	check(TimespanStruct);
 
 	this->StructSerializers.Add(DateTimeStruct, MakeShared<FDateTimeSerializer>());
-	this->StructSerializers.Add(TimespanStruct, MakeShared<FTimespanSerializer>());
+	this->StructSerializers.Add(TimespanStruct, MakeShared<FTimeSpanSerializer>());
 }
 
 void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TSharedRef<FJsonValue>& JsonValue, void* OutValue) {
@@ -146,7 +146,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				/* Use IImporter to import the object */
 				IImporter* Importer = new IImporter();
 
-				Importer->ParentObject = ObjectSerializer->ParentAsset;
+				Importer->ParentObject = ObjectSerializer->Parent;
 				Importer->LoadObject(&JsonValueAsObject, Object);
 
 				if (Object == nullptr) {
@@ -232,7 +232,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			}
 
 			if (bFallbackToParentTrace) {
-				if (UObject* Parent = ObjectSerializer->ParentAsset) {
+				if (UObject* Parent = ObjectSerializer->Parent) {
 					FString Name = Parent->GetName();
 
 					if (FUObjectExport Export = ExportsContainer.Find(ObjectName, Name); Export.Object != nullptr) {

@@ -13,7 +13,7 @@ bool ITemplatedImporter<AssetType>::Import() {
 
 	UObjectSerializer* ObjectSerializer = GetObjectSerializer();
 	ObjectSerializer->SetExportForDeserialization(JsonObject, Asset);
-	ObjectSerializer->ParentAsset = Asset;
+	ObjectSerializer->Parent = Asset;
 
 	ObjectSerializer->DeserializeExports(AllJsonObjects);
 	

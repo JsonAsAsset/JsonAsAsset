@@ -19,7 +19,7 @@ PRAGMA_DISABLE_OPTIMIZATION
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-UObjectSerializer::UObjectSerializer(): ParentAsset(nullptr), PropertySerializer(nullptr) {
+UObjectSerializer::UObjectSerializer(): Parent(nullptr), PropertySerializer(nullptr) {
 }
 
 void UObjectSerializer::SetupExports(const TArray<TSharedPtr<FJsonValue>>& InObjects) {
@@ -74,7 +74,7 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 		FString Outer = ExportObject->GetStringField(TEXT("Outer"));
 		
 		/* Add it to the referenced objects */
-		PropertySerializer->ExportsContainer.Exports.Add(FUObjectExport(FName(*Name), FName(*Type), FName(*Outer), ExportObject, nullptr, ParentAsset, Index));
+		PropertySerializer->ExportsContainer.Exports.Add(FUObjectExport(FName(*Name), FName(*Type), FName(*Outer), ExportObject, nullptr, Parent, Index));
 	}
 
 	for (FUObjectExport& Export : PropertySerializer->ExportsContainer.Exports) {
@@ -145,7 +145,7 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 
 	if (PathsToNotDeserialize.Contains(Outer + "." + Name)) return;
 	if (ObjectOuter == nullptr) {
-		ObjectOuter = ParentAsset;
+		ObjectOuter = Parent;
 	}
 
 	UObject* NewUObject = NewObject<UObject>(ObjectOuter, Class, FName(*Name));

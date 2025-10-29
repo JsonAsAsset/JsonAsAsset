@@ -2,6 +2,7 @@
 
 #include "Settings/JsonAsAssetSettings.h"
 
+#include "Settings/Details/JsonAsAssetSettingsDetails.h"
 #include "Utilities/EngineUtilities.h"
 #include "Widgets/Input/SButton.h"
 #include "Widgets/SBoxPanel.h"
@@ -11,8 +12,7 @@
 UJsonAsAssetSettings::UJsonAsAssetSettings():
 	/* Default initializers */
 	bEnableExperiments(false),
-	bEnableCloudServer(false),
-	bCustomCloudServer(false)
+	bEnableCloudServer(false)
 {
 	CategoryName = TEXT("Plugins");
 	SectionName = TEXT("JsonAsAsset");
@@ -26,7 +26,11 @@ bool UJsonAsAssetSettings::EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Se
 	const FString ExportDirectoryPath = Settings->ExportDirectory.Path;
 
 	if (ExportDirectoryPath.IsEmpty()) {
-		return false;
+		FJsonAsAssetSettingsDetails::ReadConfiguration();
+		
+		if (ExportDirectoryPath.IsEmpty()) {
+			return false;
+		}
 	}
 
 	/* Invalid Export Directory */

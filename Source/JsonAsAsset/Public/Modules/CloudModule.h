@@ -12,6 +12,8 @@ class UJsonAsAssetSettings;
 
 class CloudModule {
 public:
+	static FString URL;
+	
 	static bool VerifyActivity(const UJsonAsAssetSettings* Settings);
 	static bool IsRunning();
 

@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "Compatibility.h"
-
 class JSONASASSET_API FAssetUtilities {
 public:
 	/*

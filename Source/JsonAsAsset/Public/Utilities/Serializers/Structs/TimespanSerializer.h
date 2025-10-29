@@ -6,7 +6,7 @@
 
 class UPropertySerializer;
 
-class FTimespanSerializer : public FStructSerializer {
+class FTimeSpanSerializer : public FStructSerializer {
 public:
 	virtual void Deserialize(UScriptStruct* Struct, void* StructData, const TSharedPtr<FJsonObject> JsonValue) override;
 };

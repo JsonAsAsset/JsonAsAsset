@@ -3,7 +3,6 @@
 #pragma once
 
 #include "UObject/Object.h"
-#include "Json.h"
 #include "Containers/ObjectExport.h"
 #include "ObjectUtilities.generated.h"
 
@@ -27,7 +26,7 @@ public:
     void DeserializeExport(FUObjectExport& Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap);
 
     UPROPERTY()
-    UObject* ParentAsset;
+    UObject* Parent;
 
     UPROPERTY()
     TMap<FString, UObject*> ConstructedObjects;

@@ -54,17 +54,14 @@ struct FJTextureImportSettings
 public:
 	/* Constructor to initialize default values */
 	FJTextureImportSettings()
-		: bDownloadExistingTextures(false)
+		: bForceRedownloadTextures(false)
 	{}
 
 	/**
-	 * Enables re-downloading of textures even if they already exist in the Unreal Engine project.
-	 *
-	 * Use Case:
-	 * This option is useful when you need to re-import textures that have been updated in a newer version of your Cloud build.
+	 * Enables re-downloading of textures even if they already exist.
 	 */
-	UPROPERTY(EditAnywhere, Config, AdvancedDisplay, Category = "Texture Import Settings")
-	bool bDownloadExistingTextures;
+	UPROPERTY(EditAnywhere, Config, AdvancedDisplay, DisplayName = "Force Redownload Textures (if they already exist)", Category = "Texture Import Settings")
+	bool bForceRedownloadTextures;
 };
 
 /* Settings for sounds */
@@ -73,7 +70,7 @@ struct FJSoundImportSettings
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, Config, Category = "Sound Import Settings", meta = (DisplayName = "Audio File Name Extension"))
+	UPROPERTY(Config)
 	FString AudioFileExtension = "ogg";
 };
 
@@ -118,7 +115,7 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
 	FJMaterialImportSettings MaterialImportSettings;
 
-	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
+	UPROPERTY(Config)
 	FJSoundImportSettings SoundImportSettings;
 
 	/* UPROPERTY(EditAnywhere, Config, Category = AssetSettings) */
@@ -158,7 +155,7 @@ public:
 	 * Specifies the directory path for exported assets.
 	 * (e.g. Output/Exports)
 	 */
-	UPROPERTY(EditAnywhere, Config, Category = Configuration)
+	UPROPERTY(Config)
 	FDirectoryPath ExportDirectory;
 	
 	UPROPERTY(EditAnywhere, Config, Category = Configuration)
@@ -170,21 +167,10 @@ public:
 
 	/**
 	 * Retrieves assets from an API and imports references directly into your project.
-	 *
-	 * For further instructions, please refer to the README.md file found on GitHub.
 	 */
 	UPROPERTY(EditAnywhere, Config, Category = Cloud, DisplayName = "Enable Cloud")
 	bool bEnableCloudServer;
 
-	/**
-	 * DO NOT MODIFY UNLESS YOU KNOW WHAT YOU'RE DOING.
-	 */
-	UPROPERTY(EditAnywhere, Config, Category = Cloud, DisplayName = "Use Custom Cloud URL", meta=(EditCondition="bCustomCloudServer"), AdvancedDisplay)
-	FString CustomCloudURL = "http://localhost:1500";
-
-	UPROPERTY(EditAnywhere, Category = Cloud, meta=(PinHiddenByDefault, InlineEditConditionToggle))
-	uint8 bCustomCloudServer : 1;
-	
 	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings);
 
 	static bool IsSetup(UJsonAsAssetSettings* Settings, TArray<FString>& Reasons) {

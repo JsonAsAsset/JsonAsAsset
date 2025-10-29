@@ -361,7 +361,7 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
 
 	if (Settings->bEnableCloudServer && (
 		InObject == nullptr ||
-			Settings->AssetSettings.TextureImportSettings.bDownloadExistingTextures &&
+			Settings->AssetSettings.TextureImportSettings.bForceRedownloadTextures &&
 			Type == "Texture2D"
 		)
 	) {
@@ -609,10 +609,10 @@ TSharedPtr<FJsonValue> IImporter::GetExportByObjectPath(const TSharedPtr<FJsonOb
 	return AllJsonObjects[FCString::Atod(*StringIndex)];
 }
 
-void IImporter::DeserializeExports(UObject* ParentAsset) {
+void IImporter::DeserializeExports(UObject* Parent) {
 	UObjectSerializer* ObjectSerializer = GetObjectSerializer();
-	ObjectSerializer->SetExportForDeserialization(JsonObject, ParentAsset);
-	ObjectSerializer->ParentAsset = ParentAsset;
+	ObjectSerializer->SetExportForDeserialization(JsonObject, Parent);
+	ObjectSerializer->Parent = Parent;
     
 	ObjectSerializer->DeserializeExports(AllJsonObjects);
 	ApplyModifications();

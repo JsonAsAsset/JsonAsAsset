@@ -37,7 +37,7 @@ bool ReadAnimationData(const TSharedPtr<FJsonObject>& Properties, const TArray<T
 	UObjectSerializer* ObjectSerializer = CreateObjectSerializer();
 
 	ObjectSerializer->SetExportForDeserialization(JsonObject, AnimSequenceBase);
-	ObjectSerializer->ParentAsset = AnimSequenceBase;
+	ObjectSerializer->Parent = AnimSequenceBase;
 
 	ObjectSerializer->DeserializeExports(AllJsonObjects);
 

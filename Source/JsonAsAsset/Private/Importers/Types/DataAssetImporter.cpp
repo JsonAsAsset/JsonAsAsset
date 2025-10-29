@@ -9,7 +9,7 @@ bool IDataAssetImporter::Import() {
 
 	UObjectSerializer* ObjectSerializer = GetObjectSerializer();
 	ObjectSerializer->SetExportForDeserialization(JsonObject, DataAsset);
-	ObjectSerializer->ParentAsset = DataAsset;
+	ObjectSerializer->Parent = DataAsset;
 
 	ObjectSerializer->DeserializeExports(AllJsonObjects);
 

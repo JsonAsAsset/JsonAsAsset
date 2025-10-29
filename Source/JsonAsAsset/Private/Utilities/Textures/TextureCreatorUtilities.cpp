@@ -170,9 +170,6 @@ bool FTextureCreatorUtilities::CreateRenderTarget2D(UTexture*& OutRenderTarget2D
 			RenderTarget2D->MipsSamplerFilter = static_cast<TextureFilter>(StaticEnum<TextureFilter>()->GetValueByNameString(MipsSamplerFilter));
 	}
 
-	const TSharedPtr<FJsonObject>* ClearColor;
-	if (Properties->TryGetObjectField(TEXT("ClearColor"), ClearColor)) RenderTarget2D->ClearColor = ObjectToLinearColor(ClearColor->Get());
-
 	if (RenderTarget2D) {
 		OutRenderTarget2D = RenderTarget2D;
 		return true;

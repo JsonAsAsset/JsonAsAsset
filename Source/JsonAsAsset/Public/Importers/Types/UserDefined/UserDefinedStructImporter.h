@@ -8,6 +8,7 @@
 #else
 #include "Engine/UserDefinedStruct.h"
 #endif
+
 class IUserDefinedStructImporter : public IImporter {
 public:
 	IUserDefinedStructImporter(const FString& AssetName, const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPkg, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects, UClass* AssetClass):

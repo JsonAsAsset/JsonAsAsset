@@ -62,7 +62,7 @@ void FJsonAsAssetToolbar::Register(const FName MenuToExtend) {
 		FUIAction(),
 		FOnGetContent::CreateRaw(this, &FJsonAsAssetToolbar::CreateMenuDropdown),
 		FText::FromString("JsonAsAsset"),
-		FText::FromString("Open JsonAsAsset's Menu"),
+		FText::FromString("Open Menu"),
 		FSlateIcon(),
 		true
 	);
@@ -118,7 +118,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 		),
 		FOnGetContent::CreateRaw(this, &FJsonAsAssetToolbar::CreateMenuDropdown),
 		FText::FromString(Plugin->GetDescriptor().VersionName),
-		FText::FromString("Open JsonAsAsset's Menu"),
+		FText::FromString("Open Menu"),
 		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("JsonAsAsset.Toolbar.Icon")),
 		true
 	);
@@ -170,10 +170,10 @@ TSharedRef<SWidget> FJsonAsAssetToolbar::CreateMenuDropdown() {
 
 	TArray<TSharedRef<IParentDropdownBuilder>> Dropdowns = {
 		MakeShared<IParentDropdownBuilder>(),
+		MakeShared<IToolsDropdownBuilder>(),
 		MakeShared<IActionRequiredDropdownBuilder>(),
 		MakeShared<ICloudDropdownBuilder>(),
 		MakeShared<IGeneralDropdownBuilder>(),
-		MakeShared<IToolsDropdownBuilder>(),
 		MakeShared<IVersioningDropdownBuilder>()
 	};
 

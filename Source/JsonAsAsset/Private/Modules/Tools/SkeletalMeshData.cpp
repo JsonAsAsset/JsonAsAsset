@@ -139,7 +139,7 @@ void FSkeletalMeshData::Execute() {
 				UObjectSerializer* ObjectSerializer = CreateObjectSerializer();
 
 				ObjectSerializer->SetExportForDeserialization(JsonObject, SkeletalMesh);
-				ObjectSerializer->ParentAsset = SkeletalMesh;
+				ObjectSerializer->Parent = SkeletalMesh;
 				
 				SkeletalMesh->GetMeshOnlySocketList().Empty();
 

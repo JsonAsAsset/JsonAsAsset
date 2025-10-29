@@ -251,6 +251,6 @@ public:
     static TObjectPtr<T> DownloadWrapper(TObjectPtr<T> InObject, FString Type, FString Name, FString Path);
 
 protected:
-    void DeserializeExports(UObject* ParentAsset);
+    void DeserializeExports(UObject* Parent);
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 };

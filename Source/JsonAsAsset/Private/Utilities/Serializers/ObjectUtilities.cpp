@@ -56,7 +56,7 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 	TMap<TSharedPtr<FJsonObject>, UObject*> ExportsMap;
 	int Index = -1;
 	
-	for (TSharedPtr<FJsonValue> Object : InExports) {
+	for (const TSharedPtr<FJsonValue> Object : InExports) {
 		Index++;
 
 		TSharedPtr<FJsonObject> ExportObject = Object->AsObject();
@@ -69,7 +69,7 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 		
 		/* Check if it's not supposed to be deserialized */
 		if (ExportsToNotDeserialize.Contains(Name)) continue;
-		if (Type == "BodySetup" || Type == "NavCollision" || Type == "AnimCurveMetaData") continue;
+		if (Type == "BodySetup" || Type == "NavCollision") continue;
 
 		FString Outer = ExportObject->GetStringField(TEXT("Outer"));
 		
@@ -91,8 +91,8 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 
 void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap) {
 	if (Export.Object != nullptr) return;
-	
-	TSharedPtr<FJsonObject> ExportObject = Export.JsonObject;
+
+	const TSharedPtr<FJsonObject> ExportObject = Export.JsonObject;
 
 	/* No name = no export!! */
 	if (!ExportObject->HasField(TEXT("Name"))) return;
@@ -182,9 +182,8 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 		if (const FStructProperty* StructProperty = CastField<FStructProperty>(Property)) {
 			if (StructProperty->Struct->IsChildOf(FAnimNode_Base::StaticStruct())) {
 				void* StructPtr = StructProperty->ContainerPtrToValuePtr<void>(Object);
-				const FAnimNode_Base* AnimNode = static_cast<FAnimNode_Base*>(StructPtr);
 
-				if (AnimNode) {
+				if (static_cast<FAnimNode_Base*>(StructPtr)) {
 					PropertySerializer->DeserializeStruct(StructProperty->Struct, Properties.ToSharedRef(), PropertyValue);
 				}
 			}

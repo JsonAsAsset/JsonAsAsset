@@ -231,6 +231,7 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 			);
 		}
 
+		/* TODO: Don't hardcode this. */
 		if (IsAssetTypeImportableUsingCloud(Type)) {
 			Importer = new ITextureImporter<UTextureLightProfile>(
 				Name, File, DataObject, LocalPackage, LocalOutermostPkg, Exports, Class
@@ -252,9 +253,9 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 
 		if (Successful) {
 			UE_LOG(LogJsonAsAsset, Log, TEXT("Successfully imported \"%s\" as \"%s\""), *Name, *Type);
-			
-			if (!(Type == "AnimSequence" || Type == "AnimMontage"))
-			{
+
+			/* TODO: Remove this? */
+			if (Type != "AnimSequence" && Type != "AnimMontage") {
 				Importer->SavePackage();
 			}
 
@@ -606,6 +607,15 @@ TSharedPtr<FJsonValue> IImporter::GetExportByObjectPath(const TSharedPtr<FJsonOb
 	}
 
 	return AllJsonObjects[FCString::Atod(*StringIndex)];
+}
+
+void IImporter::DeserializeExports(UObject* ParentAsset) {
+	UObjectSerializer* ObjectSerializer = GetObjectSerializer();
+	ObjectSerializer->SetExportForDeserialization(JsonObject, ParentAsset);
+	ObjectSerializer->ParentAsset = ParentAsset;
+    
+	ObjectSerializer->DeserializeExports(AllJsonObjects);
+	ApplyModifications();
 }
 
 #undef LOCTEXT_NAMESPACE

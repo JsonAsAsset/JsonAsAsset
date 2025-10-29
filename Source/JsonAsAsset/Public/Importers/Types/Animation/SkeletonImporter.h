@@ -11,7 +11,9 @@ public:
 	}
 
 	virtual bool Import() override;
-	
+
+	void DeserializeCurveMetaData(FCurveMetaData* OutMeta, const TSharedPtr<FJsonObject>& Json) const;
+	virtual void ApplyModifications() override;
 	void ApplySkeletalChanges(USkeleton* Skeleton) const;
 	void ApplySkeletalAssetData(USkeleton* Skeleton) const;
 

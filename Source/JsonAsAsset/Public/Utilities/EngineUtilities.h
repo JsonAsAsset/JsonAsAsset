@@ -535,6 +535,21 @@ inline auto ProcessExports(const TArray<TSharedPtr<FJsonValue>>& Exports,
 	}
 }
 
+inline void ProcessObjects(
+	const TSharedPtr<FJsonObject>& Parent,
+	const TFunction<void(const FString& Name, const TSharedPtr<FJsonObject>& Object)>& ProcessObjectFunction)
+{
+	for (const auto& Pair : Parent->Values) {
+		if (!Pair.Value.IsValid()) continue;
+
+		if (Pair.Value->Type == EJson::Object) {
+			if (const TSharedPtr<FJsonObject> ChildObject = Pair.Value->AsObject()) {
+				ProcessObjectFunction(Pair.Key, ChildObject);
+			}
+		}
+	}
+}
+
 /* ReSharper disable once CppParameterNeverUsed */
 inline void SetNotificationSubText(FNotificationInfo& Notification, const FText& SubText) {
 #if ENGINE_UE5
@@ -1056,4 +1071,28 @@ inline void RemoveNotification(TWeakPtr<SNotificationItem> Notification) {
 
 inline UJsonAsAssetSettings* GetSettings() {
 	return GetMutableDefault<UJsonAsAssetSettings>();
+}
+
+inline FJsonObject* EnsureObjectField(FJsonObject* Parent, const FString& FieldName) {
+	if (!Parent->HasField(FieldName)) {
+		Parent->SetObjectField(FieldName, MakeShareable(new FJsonObject()));
+	}
+
+	return Parent->GetObjectField(FieldName).Get();
+}
+
+inline FJsonObject* EnsureObjectField(const TSharedPtr<FJsonObject>& Parent, const FString& FieldName) {
+	if (!Parent->HasField(FieldName)) {
+		Parent->SetObjectField(FieldName, MakeShareable(new FJsonObject()));
+	}
+
+	return Parent->GetObjectField(FieldName).Get();
+}
+
+inline TArray<TSharedPtr<FJsonValue>> EnsureArrayField(const TSharedPtr<FJsonObject>& Parent, const FString& FieldName) {
+	if (!Parent->HasField(FieldName)) {
+		Parent->SetArrayField(FieldName, TArray<TSharedPtr<FJsonValue>>());
+	}
+
+	return Parent->GetArrayField(FieldName);
 }

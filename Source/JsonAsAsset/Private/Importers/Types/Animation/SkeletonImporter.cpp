@@ -5,6 +5,7 @@
 bool ISkeletonImporter::Import() {
 	USkeleton* Skeleton = GetSelectedAsset<USkeleton>(true);
 
+	/* If the user selected an asset, and it's a different name from the asset, don't import it to it */
 	if (Skeleton) {
 		if (Skeleton->GetName() != AssetName) {
 			Skeleton = nullptr;
@@ -26,7 +27,7 @@ bool ISkeletonImporter::Import() {
 		for (const FVirtualBone VirtualBone : Skeleton->GetVirtualBones()) {
 			VirtualBoneNames.Add(VirtualBone.VirtualBoneName);
 		}
-		
+
 		Skeleton->RemoveVirtualBones(VirtualBoneNames);
 		Skeleton->AnimRetargetSources.Empty();
 	}
@@ -36,8 +37,62 @@ bool ISkeletonImporter::Import() {
 	GetObjectSerializer()->DeserializeObjectProperties(AssetData, Skeleton);
 
 	ApplySkeletalAssetData(Skeleton);
-	
+
 	return OnAssetCreation(Skeleton);
+}
+
+void ISkeletonImporter::DeserializeCurveMetaData(FCurveMetaData* OutMeta, const TSharedPtr<FJsonObject>& Json) const {
+#if ENGINE_UE4
+	/* Untested in UE5 */
+	if (const TArray<TSharedPtr<FJsonValue>>* Bones = nullptr; Json->TryGetArrayField(TEXT("LinkedBones"), Bones)) {
+		for (const auto& BoneVal : *Bones) {
+			if (auto BoneObj = BoneVal->AsObject()) {
+				FBoneReference Bone;
+				GetObjectSerializer()->PropertySerializer->DeserializeStruct(TBaseStructure<FBoneReference>::Get(), BoneObj.ToSharedRef(), &Bone);
+				OutMeta->LinkedBones.Add(MoveTemp(Bone));
+			}
+		}
+	}
+
+	OutMeta->MaxLOD = Json->GetNumberField(TEXT("MaxLOD"));
+
+	if (const TSharedPtr<FJsonObject>* TypeObj; Json->TryGetObjectField(TEXT("Type"), TypeObj)) {
+		FAnimCurveType& Type = OutMeta->Type;
+		(*TypeObj)->TryGetBoolField(TEXT("bMaterial"), Type.bMaterial);
+		(*TypeObj)->TryGetBoolField(TEXT("bMorphtarget"), Type.bMorphtarget);
+	}
+#endif
+}
+
+void ISkeletonImporter::ApplyModifications() {
+	IImporter::ApplyModifications();
+
+#if ENGINE_UE4
+	/* If this export is found, this means the data is from UE5, and since we're on UE4, we need to move this into where it would be in UE4 */
+	const FUObjectExport AnimCurveMetaData = GetObjectSerializer()->GetPropertySerializer()->ExportsContainer.FindByType(FString("AnimCurveMetaData"));
+
+	if (AnimCurveMetaData.IsJsonValid()) {
+		const TSharedPtr<FJsonObject> CurveMetaDataProperties = AnimCurveMetaData.GetProperties();
+
+		if (CurveMetaDataProperties->HasField(TEXT("CurveMetaData"))) {
+			const TArray<TSharedPtr<FJsonValue>> CurveMetaData = CurveMetaDataProperties->GetArrayField(TEXT("CurveMetaData"));
+
+			FJsonObject* NameMappings = EnsureObjectField(AssetData, "NameMappings");
+			FJsonObject* AnimationCurves = EnsureObjectField(NameMappings, "AnimationCurves");
+			AnimationCurves->SetField("GuidMap", nullptr);
+			AnimationCurves->SetField("UidMap", nullptr);
+			
+			FJsonObject* CurveMetaDataMap = EnsureObjectField(AnimationCurves, "CurveMetaDataMap");
+
+			ProcessJsonArrayField(CurveMetaDataProperties, TEXT("CurveMetaData"), [&](const TSharedPtr<FJsonObject>& ObjectField) {
+				const FString Key = ObjectField->GetStringField(TEXT("Key"));
+				const TSharedPtr<FJsonObject> Value = ObjectField->GetObjectField(TEXT("Value"));
+
+				CurveMetaDataMap->SetObjectField(Key, Value);
+			});
+		}
+	}
+#endif
 }
 
 void ISkeletonImporter::ApplySkeletalChanges(USkeleton* Skeleton) const {
@@ -85,6 +140,29 @@ void ISkeletonImporter::ApplySkeletalChanges(USkeleton* Skeleton) const {
 }
 
 void ISkeletonImporter::ApplySkeletalAssetData(USkeleton* Skeleton) const {
+	/* AnimationCurves ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+#if ENGINE_UE4
+	if (AssetData->HasField("NameMappings")
+		&& AssetData->GetObjectField("NameMappings")->Values.Num() > 0
+		&& AssetData->GetObjectField("NameMappings")->HasField(TEXT("AnimationCurves"))
+		&& AssetData->GetObjectField("NameMappings")->GetObjectField(TEXT("AnimationCurves"))->HasField(TEXT("CurveMetaDataMap"))) {
+
+		TSharedPtr<FJsonObject> NameMappings = AssetData->GetObjectField("NameMappings");
+		TSharedPtr<FJsonObject> AnimationCurves = NameMappings->GetObjectField("AnimationCurves");
+		TSharedPtr<FJsonObject> CurveMetaDataMap = AnimationCurves->GetObjectField("CurveMetaDataMap");
+
+		ProcessObjects(CurveMetaDataMap, [&](const FString& Name, const TSharedPtr<FJsonObject>& Object) {
+			FSmartName NewTrackName;
+			
+			Skeleton->AddSmartNameAndModify(USkeleton::AnimCurveMappingName, FName(*Name), NewTrackName);
+			ensureAlways(Skeleton->GetSmartNameByUID(USkeleton::AnimCurveMappingName, NewTrackName.UID, NewTrackName));
+			FCurveMetaData* CurveMetaData = Skeleton->GetCurveMetaData(FName(*Name));
+
+			DeserializeCurveMetaData(CurveMetaData, Object);
+		});
+	}
+#endif
+	
 	/* AnimRetargetSources ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	const TSharedPtr<FJsonObject> AnimRetargetSources = AssetData->GetObjectField(TEXT("AnimRetargetSources"));
 

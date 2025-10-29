@@ -239,6 +239,7 @@ protected:
      */
     bool OnAssetCreation(UObject* Asset) const;
 
+    virtual void ApplyModifications() {};
     static FName GetExportNameOfSubobject(const FString& PackageIndex);
     TArray<TSharedPtr<FJsonValue>> FilterExportsByOuter(const FString& Outer);
     TSharedPtr<FJsonValue> GetExportByObjectPath(const TSharedPtr<FJsonObject>& Object);
@@ -250,12 +251,6 @@ public:
     static TObjectPtr<T> DownloadWrapper(TObjectPtr<T> InObject, FString Type, FString Name, FString Path);
 
 protected:
-    void DeserializeExports(UObject* ParentAsset) const {
-        UObjectSerializer* ObjectSerializer = GetObjectSerializer();
-        ObjectSerializer->SetExportForDeserialization(JsonObject, ParentAsset);
-        ObjectSerializer->ParentAsset = ParentAsset;
-        
-        ObjectSerializer->DeserializeExports(AllJsonObjects);
-    };
+    void DeserializeExports(UObject* ParentAsset);
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 };

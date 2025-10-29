@@ -46,6 +46,10 @@ struct FUObjectExport {
 	bool IsValid() const {
 		return JsonObject != nullptr && Object != nullptr;
 	}
+
+	bool IsJsonValid() const {
+		return JsonObject != nullptr;
+	}
 };
 
 struct FUObjectExportContainer {
@@ -125,7 +129,7 @@ struct FUObjectExportContainer {
 	}
 
 	FUObjectExport FindByType(const FString& Type) {
-		return Find(FName(*Type));
+		return FindByType(FName(*Type));
 	}
 
 	FUObjectExport FindByType(const FName Type, const FName Outer) {

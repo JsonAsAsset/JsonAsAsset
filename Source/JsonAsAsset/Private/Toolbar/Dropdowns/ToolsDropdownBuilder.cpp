@@ -34,54 +34,56 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					),
 					NAME_None
 				);
-
-				if (Settings->bEnableCloudServer) {
-					InnerMenuBuilder.AddSeparator();
-					
-					InnerMenuBuilder.AddMenuEntry(
-						FText::FromString("Import Static Mesh Properties from Cloud"),
-						FText::FromString("Imports collision, properties and more using Cloud and applies it to the corresponding assets in the content browser folder."),
-						FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
-
-						FUIAction(
-							FExecuteAction::CreateStatic(&FToolConvexCollision::Execute),
-							FCanExecuteAction::CreateLambda([this] {
-								return CloudModule::IsRunning();
-							})
-						),
-						NAME_None
-					);
-
-					InnerMenuBuilder.AddMenuEntry(
-						FText::FromString("Import Animation Data from Cloud"),
-						FText::FromString("Imports animation data using Cloud and applies it to the corresponding assets in the content browser folder."),
-						FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
-
-						FUIAction(
-							FExecuteAction::CreateStatic(&FToolAnimationData::Execute),
-							FCanExecuteAction::CreateLambda([this] {
-								return CloudModule::IsRunning();
-							})
-						),
-						NAME_None
-					);
-
-					InnerMenuBuilder.AddMenuEntry(
-						FText::FromString("Import Skeletal Mesh Data from Cloud"),
-						FText::FromString("Imports skeletal mesh data using Cloud and applies it to the corresponding assets in the content browser folder."),
-						FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
-
-						FUIAction(
-							FExecuteAction::CreateStatic(&FSkeletalMeshData::Execute),
-							FCanExecuteAction::CreateLambda([this] {
-								return CloudModule::IsRunning();
-							})
-						),
-						NAME_None
-					);
-				}
 			}
 			InnerMenuBuilder.EndSection();
+
+			if (Settings->bEnableCloudServer) {
+				InnerMenuBuilder.BeginSection("JsonAsAssetCloudToolsSection", FText::FromString("Cloud"));
+				
+				InnerMenuBuilder.AddMenuEntry(
+					FText::FromString("Import Static Mesh Properties"),
+					FText::FromString("Imports collision, properties and more using Cloud and applies it to the corresponding assets in the content browser folder."),
+					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+
+					FUIAction(
+						FExecuteAction::CreateStatic(&FToolConvexCollision::Execute),
+						FCanExecuteAction::CreateLambda([this] {
+							return CloudModule::IsRunning();
+						})
+					),
+					NAME_None
+				);
+
+				InnerMenuBuilder.AddMenuEntry(
+					FText::FromString("Import Animation Data"),
+					FText::FromString("Imports Animation Data using Cloud and applies it to the corresponding assets in the content browser folder."),
+					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+
+					FUIAction(
+						FExecuteAction::CreateStatic(&FToolAnimationData::Execute),
+						FCanExecuteAction::CreateLambda([this] {
+							return CloudModule::IsRunning();
+						})
+					),
+					NAME_None
+				);
+
+				InnerMenuBuilder.AddMenuEntry(
+					FText::FromString("Import Skeletal Mesh Data"),
+					FText::FromString("Imports Skeletal Mesh Data using Cloud and applies it to the corresponding assets in the content browser folder."),
+					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+
+					FUIAction(
+						FExecuteAction::CreateStatic(&FSkeletalMeshData::Execute),
+						FCanExecuteAction::CreateLambda([this] {
+							return CloudModule::IsRunning();
+						})
+					),
+					NAME_None
+				);
+
+				InnerMenuBuilder.EndSection();
+			}
 		}),
 		false,
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "DeveloperTools.MenuIcon")

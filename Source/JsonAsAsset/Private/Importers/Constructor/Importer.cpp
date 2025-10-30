@@ -261,8 +261,8 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 
 			/* Import Successful Notification */
 			AppendNotification(
-				FText::FromString("Imported Type: " + Type),
-				FText::FromString(Name),
+				FText::FromString("Imported: " + Name),
+				FText::FromString(Type),
 				2.0f,
 				FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
 				SNotificationItem::CS_Success,
@@ -274,8 +274,8 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 		} else {
 			/* Import Failed Notification */
 			AppendNotification(
-				FText::FromString("Import Failed: " + Type),
-				FText::FromString(Name),
+				FText::FromString("Import Failed: " + Name),
+				FText::FromString(Type),
 				2.0f,
 				FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
 				SNotificationItem::CS_Fail,

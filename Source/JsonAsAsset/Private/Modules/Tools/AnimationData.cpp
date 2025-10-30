@@ -42,21 +42,16 @@ bool ReadAnimationData(const TSharedPtr<FJsonObject>& Properties, const TArray<T
 	ObjectSerializer->DeserializeExports(AllJsonObjects);
 
 	/* Deserialize properties */
-	ObjectSerializer->DeserializeObjectProperties(KeepPropertiesShared(Properties, {
-		"RetargetSource",
-		
-		"AdditiveAnimType",
-		"RefPoseType",
-		"RefPoseSeq",
-		"Notifies",
-		"AuthoredSyncMarkers",
-
-		/* AnimMontages */
-		"BlendIn",
-		"BlendOut",
-		"SlotAnimTracks",
-		"CompositeSections",
-		"Skeleton"
+	ObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(Properties, {
+		"NumFrames",
+		"TrackToSkeletonMapTable",
+		"SequenceLength",
+		"Skeleton",
+		"SkeletonGuid",
+		"CompressedTrackToSkeletonMapTable",
+		"CompressedDataStructure",
+		"CompressedRawDataSize",
+		"RawCurveData"
 	}), AnimSequenceBase);
 
 	USkeleton* Skeleton = AnimSequenceBase->GetSkeleton();

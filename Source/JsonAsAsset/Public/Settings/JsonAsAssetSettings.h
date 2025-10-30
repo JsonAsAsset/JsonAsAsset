@@ -60,7 +60,7 @@ public:
 	/**
 	 * Enables re-downloading of textures even if they already exist.
 	 */
-	UPROPERTY(EditAnywhere, Config, AdvancedDisplay, DisplayName = "Force Redownload Textures (if they already exist)", Category = "Texture Import Settings")
+	UPROPERTY(EditAnywhere, Config, AdvancedDisplay, DisplayName = "Force Redownload Textures", Category = "Texture Import Settings")
 	bool bForceRedownloadTextures;
 };
 

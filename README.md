@@ -167,8 +167,6 @@ This is a known issue in our code that we haven't fully resolved yet. While prev
 - Re-launch your Unreal Engine project, go to JsonAsAsset's plugin settings and enable ***"Skip Result Node Connection"***. Also enable ***"Allow Package Saving"***.
 </details>
 
-# 
-
 <a name="contribute"></a>
 ## ✨ Contributors
 
@@ -190,4 +188,5 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+
 

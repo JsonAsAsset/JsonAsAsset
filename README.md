@@ -145,17 +145,13 @@ Follow these steps to install **JsonAsAsset**:
 
 4. The asset will import, and bring you to the created asset in the content browser.
 
-### Want to import entire asset chains automatically? 💡
-
-Set up a [☁️ Cloud Server](#cloud) and JsonAsAsset will fetch every referenced asset for you hands-free.
+> [!TIP]
+> Want to import entire asset chains automatically?
+>
+> Set up a [Cloud Server ☁️](#cloud) and JsonAsAsset will fetch every referenced asset for you hands-free.
 
 <a name="common-errors"></a>
 ### Common Errors 🐛
-> [!NOTE]
-> If the plugin fails to work as expected, it's usually due to an incorrect setup or missing configuration.
-> 
-> The last possible cause is a genuine issue within the plugin itself.
-
 <details>
   <summary>Assertion failed: TextureReferenceIndex != INDEX_NONE</summary>
 
@@ -166,8 +162,10 @@ This is a known issue in our code that we haven't fully resolved yet. While prev
 - Re-launch your Unreal Engine project, go to JsonAsAsset's plugin settings and enable ***"Skip Result Node Connection"***. Also enable ***"Allow Package Saving"***.
 </details>
 
+----------------------
+
 <a name="cloud"></a>
-## ☁️ Cloud Server
+### Cloud Server ☁️
 
 A **Cloud Server** hosts a Web API that lets JsonAsAsset communicate directly with game files. It automatically imports referenced assets for all supported types, except **AnimSequence** and **AnimMontage**. 
 
@@ -176,7 +174,7 @@ A **Cloud Server** hosts a Web API that lets JsonAsAsset communicate directly wi
 <a href="https://github.com/Tectors/j0.dev"><img src="https://github.com/user-attachments/assets/2c450d60-6573-4545-8b20-f6190a87827e" width="126" height="126"/></a>
 
 <a name="licensing"></a>
-## 📗 Licensing
+## Licensing 📗
 
 JsonAsAsset is licensed under the MIT License, read more in the [LICENSE](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/LICENSE) file. The plugin also uses [Detex](https://github.com/hglm/detex) and [NVIDIA Texture Tools](https://docs.nvidia.com/texture-tools/index.html).
 
@@ -208,4 +206,5 @@ Thanks go to these wonderful people:
 Made with ❤️ by the <a href="https://github.com/JsonAsAsset/JsonAsAsset/graphs/contributors">JsonAsAsset contributors</a>.<br/>
 Licensed under the <a href="https://github.com/JsonAsAsset/JsonAsAsset/blob/main/LICENSE">MIT License</a>.
 </p>
+
 

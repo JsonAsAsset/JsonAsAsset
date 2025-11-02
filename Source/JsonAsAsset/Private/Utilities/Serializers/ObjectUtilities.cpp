@@ -97,7 +97,7 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 	/* No name = no export!! */
 	if (!ExportObject->HasField(TEXT("Name"))) return;
 
-	FString Name = ExportObject->GetStringField(TEXT("Name"));
+	const FString Name = ExportObject->GetStringField(TEXT("Name"));
 	FString Type = ExportObject->GetStringField(TEXT("Type")).Replace(TEXT("CommonWidgetSwitcher"), TEXT("CommonActivatableWidgetSwitcher"));
 		
 	/* Check if it's not supposed to be deserialized */
@@ -127,7 +127,7 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 
 	if (!Class) return;
 
-	FString Outer = ExportObject->GetStringField(TEXT("Outer"));
+	const FString Outer = ExportObject->GetStringField(TEXT("Outer"));
 	UObject* ObjectOuter = nullptr;
 
 	if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer.Find(Outer); FoundExport.JsonObject.IsValid()) {

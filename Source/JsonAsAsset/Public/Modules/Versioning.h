@@ -8,6 +8,7 @@
 #include "Interfaces/IPluginManager.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
+#include "UI/StyleModule.h"
 #include "Utilities/EngineUtilities.h"
 
 struct FJsonAsAssetVersioning {
@@ -108,6 +109,33 @@ struct FJsonAsAssetVersioning {
 			const int CurrentVersion = ConvertVersionStringToInt(Plugin->GetDescriptor().VersionName);
 
 			Reset(CurrentVersion, LatestVersion, JsonObject->GetStringField(TEXT("html_url")), VersionName, CurrentVersionName);
+
+			static bool IsNotificationShown = false;
+			
+			if (bNewVersionAvailable && !IsNotificationShown) {
+				const FString CapturedUrl = HTMLUrl;
+
+				FNotificationInfo Info(FText::FromString(VersionName + " is now available!"));
+		
+				SetNotificationSubText(Info, FText::FromString(
+					"Get the latest features and improvements in the new version."
+				));
+
+				Info.HyperlinkText = FText::FromString("GitHub Release");
+				Info.Hyperlink = FSimpleDelegate::CreateLambda([CapturedUrl]() {
+					FPlatformProcess::LaunchURL(*CapturedUrl, nullptr, nullptr);
+				});
+
+				Info.bFireAndForget = true;
+				Info.FadeOutDuration = 0.1f;
+				Info.ExpireDuration = 13.5f;
+				Info.bUseLargeFont = false;
+				Info.bUseThrobber = false;
+				Info.Image = FJsonAsAssetStyle::Get().GetBrush("JsonAsAsset.Toolbar.Icon");
+
+				FSlateNotificationManager::Get().AddNotification(Info);
+				IsNotificationShown = true;
+			}
 		});
 		
 	#if ENGINE_UE5

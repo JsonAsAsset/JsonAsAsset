@@ -47,6 +47,11 @@ JsonAsAsset is an [Unreal Engine](https://www.unrealengine.com/en-US) plugin tha
 
 This project aims to streamline the porting and modding experience, making it easier to bring game assets into Unreal Engine.
 
+<a name="licensing"></a>
+### Licensing
+
+JsonAsAsset is licensed under the MIT License, read more in the [LICENSE](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/LICENSE) file. The plugin also uses [Detex](https://github.com/hglm/detex) and [NVIDIA Texture Tools](https://docs.nvidia.com/texture-tools/index.html).
+
 -----------------
 
 ### **Table of Contents**
@@ -57,10 +62,7 @@ This project aims to streamline the porting and modding experience, making it ea
 
 **Extras**:
 <br>
-
-> - [☁️ Cloud Server](#cloud)  
-> - [🐛 Common Errors](#common-errors)
-> - [📗 Licensing](#licensing)
+> - [Common Errors 🐛](#common-errors)
 
 -----------------
 
@@ -145,10 +147,10 @@ Follow these steps to install **JsonAsAsset**:
 
 4. The asset will import, and bring you to the created asset in the content browser.
 
+<a name="cloud"></a>
 > [!TIP]
-> Want to import entire asset chains automatically?
->
-> Set up a [Cloud Server ☁️](#cloud) and JsonAsAsset will fetch every referenced asset for you hands-free.
+> ### Want to import entire asset chains automatically? 💡
+> Setup [j0.dev](https://github.com/Tectors/j0.dev) and JsonAsAsset will fetch every referenced asset for you hands-free.
 
 <a name="common-errors"></a>
 ### Common Errors 🐛
@@ -162,26 +164,8 @@ This is a known issue in our code that we haven't fully resolved yet. While prev
 - Re-launch your Unreal Engine project, go to JsonAsAsset's plugin settings and enable ***"Skip Result Node Connection"***. Also enable ***"Allow Package Saving"***.
 </details>
 
-----------------------
-
-<a name="cloud"></a>
-### Cloud Server ☁️
-
-A **Cloud Server** hosts a Web API that lets JsonAsAsset communicate directly with game files. It automatically imports referenced assets for all supported types, except **AnimSequence** and **AnimMontage**. 
-
-**Use an app that includes a built-in cloud server for easy setup:**
-
-<a href="https://github.com/Tectors/j0.dev"><img src="https://github.com/user-attachments/assets/2c450d60-6573-4545-8b20-f6190a87827e" width="126" height="126"/></a>
-
-<a name="licensing"></a>
-## Licensing 📗
-
-JsonAsAsset is licensed under the MIT License, read more in the [LICENSE](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/LICENSE) file. The plugin also uses [Detex](https://github.com/hglm/detex) and [NVIDIA Texture Tools](https://docs.nvidia.com/texture-tools/index.html).
-
 <a name="contribute"></a>
 ## ✨ Contributors
-
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Ko--fi?color=ff0de7&logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/t4ctor)
 
 Thanks go to these wonderful people:
 
@@ -195,16 +179,9 @@ Thanks go to these wonderful people:
   </tr>
 </table>
 
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Ko--fi?color=ff0de7&logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/t4ctor)
+
 - Thanks to the people who contributed to [UEAssetToolkit](https://github.com/Buckminsterfullerene02/UEAssetToolkit-Fixes)! They have helped a lot.
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
-
----
-
-<p align="center">
-Made with ❤️ by the <a href="https://github.com/JsonAsAsset/JsonAsAsset/graphs/contributors">JsonAsAsset contributors</a>.<br/>
-Licensed under the <a href="https://github.com/JsonAsAsset/JsonAsAsset/blob/main/LICENSE">MIT License</a>.
-</p>
-
-

@@ -32,13 +32,13 @@
 
 </div>
 
-### Description:
+### Description
 
 A user-friendly plugin for [Unreal Engine](https://www.unrealengine.com/en-US) that reads [JSON](https://www.json.org/json-en.html) files extracted from CUEParse [(FModel)](https://fmodel.app), and regenerates assets as they were from the game's files.
 
 ✨ [Contributors](#contribute)
 
-### Example Use:
+### Example Use
 
 * Importing **materials**, data assets, and data tables — [see more](#asset-types)
 * Porting **physics assets** for skeletal meshes
@@ -46,6 +46,21 @@ A user-friendly plugin for [Unreal Engine](https://www.unrealengine.com/en-US) t
 * Automating asset porting workflows
 
 This project aims to streamline the porting and modding experience, making it easier to bring game assets into Unreal Engine.
+
+-----------------
+
+### **Table of Contents**
+
+> 1. [Asset Types](#asset-types)  
+> 2. [Installation](#installation)  
+> 3. [→ Using JsonAsAsset](#plugin-usage)
+
+**Extras**:
+<br>
+
+> - [`☁️ Cloud Server`](#cloud)  
+> - [`🐛 Common Errors`](#common-errors)
+> - [`📗 Licensing`](#licensing)
 
 -----------------
 
@@ -58,39 +73,22 @@ This project aims to streamline the porting and modding experience, making it ea
 
 -----------------
 
-### **Table of Contents**:
-
-> 1. [Asset Types](#asset-types)  
-> 2. [Installation](#installation)  
->    2.1 [FModel](#fmodel)  
->    2.2 [Settings](#setup-settings)
-> 4. [→ Using JsonAsAsset](#plugin-usage)
-
-**Extras**:
-<br>
-
-> - [`☁️ Cloud Server`](#cloud)  
-> - [`🐛 Common Errors`](#common-errors)
-> - [`📗 Licensing`](#licensing)
-
------------------
-
 <a name="asset-types"></a>
 ## 1. Asset Types
 If an asset type isn't listed below, **it's not currently supported by the plugin**.
 
 |  | Asset Types |
 |--------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| **Curve Asset Types** | CurveFloat, CurveTable, CurveVector, CurveLinearColor, CurveLinearColorAtlas |
-| **Data Asset Types** | DataAsset, SlateBrushAsset, SlateWidgetStyleAsset, AnimBoneCompressionSettings, AnimCurveCompressionSettings, UserDefinedEnum, UserDefinedStruct |
-| **Table Types** | CurveTable, DataTable, StringTable |
-| **Material Types** | Material, MaterialFunction, MaterialInstanceConstant, MaterialParameterCollection, SubsurfaceProfile |
-| **Sound Types** | Most/all sound classes are supported. SoundWave is downloaded by a [Cloud Server](#cloud)! |
-| **Animation Asset Types** | PoseAsset, Skeleton, SkeletalMeshLODSettings, BlendSpace, BlendSpace1D, AimOffsetBlendSpace, AimOffsetBlendSpace1D |
-| **Physics Asset Types** | PhysicsAsset, PhysicalMaterial |
-| **Sequencer Asset Types** | CameraAnim |
-| **Texture Asset Types** | TextureRenderTarget2D, RuntimeVirtualTexture |
-| **Landscape Asset Types** | LandscapeGrassType, FoliageType_InstancedStaticMesh, FoliageType_Actor |
+| 🟢 **Curve** | CurveFloat, CurveTable, CurveVector, CurveLinearColor, CurveLinearColorAtlas |
+| 🟣 **Data** | DataAsset, SlateBrushAsset, SlateWidgetStyleAsset, AnimBoneCompressionSettings, AnimCurveCompressionSettings, UserDefinedEnum, UserDefinedStruct |
+| 🔵 **Table** | CurveTable, DataTable, StringTable |
+| 🟠 **Material** | Material, MaterialFunction, MaterialInstanceConstant, MaterialParameterCollection, SubsurfaceProfile |
+| 🟡 **Sound** | Most/all sound classes are supported. SoundWave is downloaded by a [Cloud Server](#cloud)! |
+| 🔴 **Animation** | PoseAsset, Skeleton, SkeletalMeshLODSettings, BlendSpace, BlendSpace1D, AimOffsetBlendSpace, AimOffsetBlendSpace1D |
+| ⚪ **Physics** | PhysicsAsset, PhysicalMaterial |
+| 🟤 **Sequencer** | CameraAnim |
+| 🟧 **Texture** | TextureRenderTarget2D, RuntimeVirtualTexture |
+| 🟩 **Landscape** | LandscapeGrassType, FoliageType_InstancedStaticMesh, FoliageType_Actor |
 
 #### The following asset types add onto a pre-existing asset
 |  | Asset Types |
@@ -107,6 +105,16 @@ See [Unreal Engine Modding Projects](https://github.com/Buckminsterfullerene02/U
 
 <a name="installation"></a>
 ## 2. Installation
+[<img align="left" width="150" height="150" src="https://github.com/user-attachments/assets/d8e4f9c9-1268-4aee-ab1a-dabee31b3069?raw=true">](https://fmodel.app)
+
+> [!IMPORTANT]
+> If you haven't already, **install [FModel](https://fmodel.app) and set it up correctly, then proceed with the setup**.
+>
+>
+> ​There is a specific FModel version for **material data support** found in the discord server.            
+> [**Material Data Prerequisites still apply.**](#material-data-prerequisites)
+>  ​
+
 Follow these steps to install **JsonAsAsset**:
 
 1. **Visit the Releases Page:**  
@@ -125,44 +133,16 @@ Follow these steps to install **JsonAsAsset**:
 11. **Restart the Editor:**  
    Restart the Unreal Engine editor to apply the changes.
 
---------------------
-
-<a name="fmodel"></a>
-#### 2.1 Setup FModel
-
-[<img align="left" width="150" height="150" src="https://github.com/user-attachments/assets/d8e4f9c9-1268-4aee-ab1a-dabee31b3069?raw=true">](https://fmodel.app)
-
-> [!IMPORTANT]
-> If you haven't already, **install [FModel](https://fmodel.app) and set it up correctly, then proceed with the setup**.
->
->
-> ​There is a specific FModel version for **material data support** found in the discord server.            
-> **Material Data Prerequisites still apply.**
->  ​
-
 -------------------
 
-<img align="right" width="226" height="181" src=https://github.com/user-attachments/assets/69190903-7740-4815-9d5f-cedce349a3f0>
-
-<a name="setup-settings"></a>
-#### 2.2 Setup Settings
-
-1. **Open Plugin Settings:**  
-   Click on the JsonAsAsset dropdown, then select Open Plugin Settings.
-   
-3. **Import Settings from FModel:**    
-   Locate Load External Configuration and press **FModel Settings**, your settings should be changed.
-
-----------
-
 <a name="plugin-usage"></a>
-## 4. Using JsonAsAsset
+## 3. Using JsonAsAsset
 
 1. Find a asset in [FModel](https://fmodel.app), and save it by right clicking and pressing `Save Properties`. Locate the file on your computer and copy the location.
 
 2. Press onto the [JsonAsAsset](https://github.com/JsonAsAsset/JsonAsAsset) button on your tool-bar, and a file import should pop-up. <img align="right" width="206" height="96" src=https://github.com/user-attachments/assets/6a9bf925-484b-4c23-b0ed-c59d58c5d07c>
 
-3. Paste in the file's path, select the file and press open.
+3. Select the file and press open.
 
 4. The asset will import, and bring you to the created asset in the content browser.
 
@@ -230,3 +210,4 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+

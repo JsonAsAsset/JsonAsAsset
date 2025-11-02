@@ -148,9 +148,12 @@ Follow these steps to install **JsonAsAsset**:
 4. The asset will import, and bring you to the created asset in the content browser.
 
 <a name="cloud"></a>
+# 
 > [!TIP]
 > ### Want to import entire asset chains automatically? 💡
-> Setup [j0.dev](https://github.com/Tectors/j0.dev) and JsonAsAsset will fetch every referenced asset for you hands-free.
+> Enable Cloud in Plugin Settings, and setup a Cloud Server, such as [j0.dev](https://github.com/Tectors/j0.dev).
+>
+> Once the Cloud is started, JsonAsAsset will fetch every referenced asset for you hands-free.
 
 <a name="common-errors"></a>
 ### Common Errors 🐛
@@ -163,6 +166,8 @@ This is a known issue in our code that we haven't fully resolved yet. While prev
 
 - Re-launch your Unreal Engine project, go to JsonAsAsset's plugin settings and enable ***"Skip Result Node Connection"***. Also enable ***"Allow Package Saving"***.
 </details>
+
+# 
 
 <a name="contribute"></a>
 ## ✨ Contributors
@@ -185,3 +190,4 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+

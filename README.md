@@ -5,7 +5,7 @@
   -->
   
   <a href="https://github.com/JsonAsAsset/JsonAsAsset">
-    <img src="https://github.com/user-attachments/assets/91b216ba-7bb3-4f48-bf96-69c645451d26" alt="Logo" width="250" height="250">
+    <img src="https://github.com/user-attachments/assets/91b216ba-7bb3-4f48-bf96-69c645451d26" alt="Logo" width="200" height="200">
   </a>
 
   <h3 align="center">JsonAsAsset</h3>
@@ -22,8 +22,8 @@
     
 [![Discord](https://img.shields.io/badge/Join%20Discord-Collector?color=0363ff&logo=discord&logoColor=white&style=for-the-badge)](https://discord.gg/xXEw4jc2UT) [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Ko--fi?color=ff0de7&logo=ko-fi&logoColor=white&style=for-the-badge)](https://ko-fi.com/t4ctor)
 
-[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/JsonAsAsset/JsonAsAsset/total?style=for-the-badge&label=DOWNLOADS&color=ff0d0d)](https://github.com/JsonAsAsset/JsonAsAsset/releases)
-[![GitHub Repo stars](https://img.shields.io/github/stars/JsonAsAsset/JsonAsAsset?style=for-the-badge&logo=&color=gold)](https://github.com/JsonAsAsset/JsonAsAsset/stargazers)
+[![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/JsonAsAsset/JsonAsAsset/total?style=for-the-badge&label=DOWNLOADS&color=ff0d0d)](/releases)
+[![GitHub Repo stars](https://img.shields.io/github/stars/JsonAsAsset/JsonAsAsset?style=for-the-badge&logo=&color=gold)](/stargazers)
 
 [![Unreal Engine 5 Supported)](https://img.shields.io/badge/UE5.0+-black?logo=unrealengine&style=for-the-badge&labelColor=grey)](#installation)
 [![Unreal Engine 4.27.2 Supported)](https://img.shields.io/badge/4.27.2-black?logo=unrealengine&style=for-the-badge&labelColor=grey)](#installation)
@@ -34,7 +34,7 @@
 
 ### Description
 
-A user-friendly plugin for [Unreal Engine](https://www.unrealengine.com/en-US) that reads [JSON](https://www.json.org/json-en.html) files extracted from CUEParse [(FModel)](https://fmodel.app), and regenerates assets as they were from the game's files.
+JsonAsAsset is an [Unreal Engine](https://www.unrealengine.com/en-US) plugin that reads [JSON](https://www.json.org/json-en.html) files from CUEParse [(FModel)](https://fmodel.app), and rebuilds assets like materials, data tables, physics assets, and more.
 
 ✨ [Contributors](#contribute)
 
@@ -53,14 +53,14 @@ This project aims to streamline the porting and modding experience, making it ea
 
 > 1. [Asset Types](#asset-types)  
 > 2. [Installation](#installation)  
-> 3. [→ Using JsonAsAsset](#plugin-usage)
+> 3. [→ Workflow](#workflow)
 
 **Extras**:
 <br>
 
-> - [`☁️ Cloud Server`](#cloud)  
-> - [`🐛 Common Errors`](#common-errors)
-> - [`📗 Licensing`](#licensing)
+> - [☁️ Cloud Server](#cloud)  
+> - [🐛 Common Errors](#common-errors)
+> - [📗 Licensing](#licensing)
 
 -----------------
 
@@ -74,7 +74,7 @@ This project aims to streamline the porting and modding experience, making it ea
 -----------------
 
 <a name="asset-types"></a>
-## 1. Asset Types
+## Asset Types
 If an asset type isn't listed below, **it's not currently supported by the plugin**.
 
 |  | Asset Types |
@@ -83,11 +83,11 @@ If an asset type isn't listed below, **it's not currently supported by the plugi
 | 🟣 **Data** | DataAsset, SlateBrushAsset, SlateWidgetStyleAsset, AnimBoneCompressionSettings, AnimCurveCompressionSettings, UserDefinedEnum, UserDefinedStruct |
 | 🔵 **Table** | CurveTable, DataTable, StringTable |
 | 🟠 **Material** | Material, MaterialFunction, MaterialInstanceConstant, MaterialParameterCollection, SubsurfaceProfile |
+| 🟧 **Texture** | TextureRenderTarget2D, RuntimeVirtualTexture |
 | 🟡 **Sound** | Most/all sound classes are supported. SoundWave is downloaded by a [Cloud Server](#cloud)! |
 | 🔴 **Animation** | PoseAsset, Skeleton, SkeletalMeshLODSettings, BlendSpace, BlendSpace1D, AimOffsetBlendSpace, AimOffsetBlendSpace1D |
 | ⚪ **Physics** | PhysicsAsset, PhysicalMaterial |
 | 🟤 **Sequencer** | CameraAnim |
-| 🟧 **Texture** | TextureRenderTarget2D, RuntimeVirtualTexture |
 | 🟩 **Landscape** | LandscapeGrassType, FoliageType_InstancedStaticMesh, FoliageType_Actor |
 
 #### The following asset types add onto a pre-existing asset
@@ -95,16 +95,17 @@ If an asset type isn't listed below, **it's not currently supported by the plugi
 |-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | **Animation Types** | AnimSequence, AnimMontage **[Animation Curves]** |
 
-#### Material Data Prerequisites
+<a name="material-data-prerequisites"></a>
+#### 🟠 Material Data Prerequisites
 Unreal Engine games made below 4.12 (a guess) will have material data, *any games made above that version will most definitely not have any material data*, and therefore the actual data will be stripped and cannot be imported. **Unless you are using a User Generated Content editor**, then it's possible material data will be there.
 
-#### C++ Classes Prerequisites
+#### 🟣 C++ Classes Prerequisites
 If your game uses custom C++ classes or structures, **you need to define them**.
 
 See [Unreal Engine Modding Projects](https://github.com/Buckminsterfullerene02/UE-Modding-Tools?tab=readme-ov-file#game-specific-template-projects) for game-specific template projects.
 
 <a name="installation"></a>
-## 2. Installation
+## Installation
 [<img align="left" width="150" height="150" src="https://github.com/user-attachments/assets/d8e4f9c9-1268-4aee-ab1a-dabee31b3069?raw=true">](https://fmodel.app)
 
 > [!IMPORTANT]
@@ -121,9 +122,9 @@ Follow these steps to install **JsonAsAsset**:
    Go to the [Releases page](/../../releases) for the plugin.
 3. **Download the Appropriate Release:**    
    Download the release that matches your version of Unreal Engine.  
-   If a matching release isn’t available, [**compile the plugin yourself**](https://dev.epicgames.com/community/learning/tutorials/qz93/unreal-engine-building-plugins).
+   If a matching release isn't available, [**compile the plugin yourself**](https://dev.epicgames.com/community/learning/tutorials/qz93/unreal-engine-building-plugins).
 5. **Extract the Files:**  
-   Extract the downloaded files to your project’s `Plugins` folder. If the folder doesn’t exist, create it in the root directory of your project.
+   Extract the downloaded files to your project's `Plugins` folder. If the folder doesn't exist, create it in the root directory of your project.
 7. **Open Your Project**  
    Launch your Unreal Engine project.
 8. **Access the Plugins Window:**  
@@ -133,10 +134,8 @@ Follow these steps to install **JsonAsAsset**:
 11. **Restart the Editor:**  
    Restart the Unreal Engine editor to apply the changes.
 
--------------------
-
-<a name="plugin-usage"></a>
-## 3. Using JsonAsAsset
+<a name="workflow"></a>
+## Workflow
 
 1. Find a asset in [FModel](https://fmodel.app), and save it by right clicking and pressing `Save Properties`. Locate the file on your computer and copy the location.
 
@@ -146,9 +145,9 @@ Follow these steps to install **JsonAsAsset**:
 
 4. The asset will import, and bring you to the created asset in the content browser.
 
-To bulk import assets and **what they reference**, you must set up a [`☁️ Cloud Server`](#cloud)!
+#### Want to import entire asset chains automatically? 💡
 
-------------
+Set up a [☁️ Cloud Server](#cloud) and JsonAsAsset will fetch every referenced asset for you hands-free.
 
 <a name="cloud"></a>
 ## ☁️ Cloud Server
@@ -211,3 +210,9 @@ Thanks go to these wonderful people:
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
 
+---
+
+<p align="center">
+Made with ❤️ by the <a href="https://github.com/JsonAsAsset/JsonAsAsset/graphs/contributors">JsonAsAsset contributors</a>.<br/>
+Licensed under the <a href="https://github.com/JsonAsAsset/JsonAsAsset/blob/main/LICENSE">MIT License</a>.
+</p>

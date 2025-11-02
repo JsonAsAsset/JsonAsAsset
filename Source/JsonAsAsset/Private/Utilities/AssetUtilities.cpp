@@ -134,6 +134,7 @@ template bool FAssetUtilities::ConstructAsset<UObject>(const FString& Path, cons
 template bool FAssetUtilities::ConstructAsset<UMaterialFunctionInterface>(const FString& Path, const FString& Type, TObjectPtr<UMaterialFunctionInterface>& OutObject, bool& bSuccess);
 template bool FAssetUtilities::ConstructAsset<USoundNode>(const FString& Path, const FString& Type, TObjectPtr<USoundNode>& OutObject, bool& bSuccess);
 template bool FAssetUtilities::ConstructAsset<UCurveLinearColor>(const FString& Path, const FString& Type, TObjectPtr<UCurveLinearColor>& OutObject, bool& bSuccess);
+template bool FAssetUtilities::ConstructAsset<UTextureLightProfile>(const FString&, const FString&, TObjectPtr<UTextureLightProfile>&, bool&);
 
 /* Importing assets from Cloud */
 template <typename T>

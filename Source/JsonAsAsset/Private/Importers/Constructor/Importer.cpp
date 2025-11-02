@@ -351,62 +351,6 @@ bool IImporter::HandleAssetCreation(UObject* Asset) const {
 	return true;
 }
 
-template TObjectPtr<UObject> IImporter::DownloadWrapper<UObject>(TObjectPtr<UObject> Obj, FString PropertyClassName, FString AssetName, FString PackagePath);
-
-template <typename T>
-TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path) {
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
-
-	if (Type == "Texture") Type = "Texture2D";
-
-	if (Settings->bEnableCloudServer && (
-		InObject == nullptr ||
-			Settings->AssetSettings.TextureImportSettings.bForceRedownloadTextures &&
-			Type == "Texture2D"
-		)
-	) {
-		const UObject* DefaultObject = GetClassDefaultObject(T::StaticClass());
-
-		if (DefaultObject != nullptr && !Name.IsEmpty() && !Path.IsEmpty()) {
-			bool bDownloadStatus = false;
-
-			/* Try importing the asset */
-			if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + Path + "." + Name + "'").ToString(), Type, InObject, bDownloadStatus)) {
-				const FText AssetNameText = FText::FromString(Name);
-				const FSlateBrush* IconBrush = FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail"));
-
-				if (bDownloadStatus) {
-					AppendNotification(
-						FText::FromString("Locally Downloaded: " + Type),
-						AssetNameText,
-						2.0f,
-						IconBrush,
-						SNotificationItem::CS_Success,
-						false,
-						310.0f
-					);
-
-					GetMessageLog().Message(EMessageSeverity::Info, FText::FromString("Locally Downloaded Asset: " + Name + " (" + Type + ")"));
-				} else {
-					AppendNotification(
-						FText::FromString("Download Failed: " + Type),
-						AssetNameText,
-						5.0f,
-						IconBrush,
-						SNotificationItem::CS_Fail,
-						false,
-						310.0f
-					);
-
-					GetMessageLog().Error(FText::FromString("Failed to locally download asset: " + Name + " (" + Type + ")"));
-				}
-			}
-		}
-	}
-
-	return InObject;
-}
-
 template void IImporter::LoadObject<UMaterialInterface>(const TSharedPtr<FJsonObject>*, TObjectPtr<UMaterialInterface>&);
 template void IImporter::LoadObject<USubsurfaceProfile>(const TSharedPtr<FJsonObject>*, TObjectPtr<USubsurfaceProfile>&);
 template void IImporter::LoadObject<UTexture>(const TSharedPtr<FJsonObject>*, TObjectPtr<UTexture>&);

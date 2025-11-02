@@ -13,6 +13,9 @@
 #include "Utilities/JsonUtilities.h"
 #include "Utilities/Textures/TextureDecode/TextureNVTT.h"
 
+template bool FTextureCreatorUtilities::CreateTexture<UTexture2D>(UTexture*&, TArray<uint8>&, const TSharedPtr<FJsonObject>&) const;
+template bool FTextureCreatorUtilities::CreateTexture<UTextureLightProfile>(UTexture*&, TArray<uint8>&, const TSharedPtr<FJsonObject>&) const;
+
 template <typename T>
 bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const {
 	UTexture2D* Texture2D = NewObject<T>(OutermostPkg, T::StaticClass(), *AssetName, RF_Standalone | RF_Public);

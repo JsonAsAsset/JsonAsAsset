@@ -94,13 +94,14 @@ public:
 };
 
 USTRUCT()
-struct FAssetSettings
+struct FJAssetSettings
 {
 	GENERATED_BODY()
 public:
 	/* Constructor to initialize default values */
-	FAssetSettings()
-		: bSavePackagesOnImport(false)
+	FJAssetSettings()
+		: bUE5Target(false),
+		  bSavePackagesOnImport(false)
 	{
 		MaterialImportSettings = FJMaterialImportSettings();
 		SoundImportSettings = FJSoundImportSettings();
@@ -139,11 +140,24 @@ public:
 	TArray<FJPathRedirector> PathRedirectors;
 };
 
-/* A user-friendly Unreal Engine plugin designed to import assets from packaged games through JSON files */
+USTRUCT()
+struct FJVersioningSettings
+{
+	GENERATED_BODY()
+public:
+	/* Disable update reminders for newer updates of JsonAsAsset. */
+	UPROPERTY(EditAnywhere, Config, Category = VersioningSettings)
+	bool bDisableReminders = false;
+
+	/* Disable checking for newer updates of JsonAsAsset. */
+	UPROPERTY(EditAnywhere, Config, Category = VersioningSettings)
+	bool bDisable = false;
+};
+
+/* Powerful Unreal Engine Plugin that imports assets from FModel */
 UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig)
 class JSONASASSET_API UJsonAsAssetSettings : public UDeveloperSettings {
 	GENERATED_BODY()
-
 public:
 	UJsonAsAssetSettings();
 
@@ -157,9 +171,12 @@ public:
 	 */
 	UPROPERTY(Config)
 	FDirectoryPath ExportDirectory;
+
+	UPROPERTY(EditAnywhere, Config, Category = Configuration)
+	FJVersioningSettings Versioning;
 	
 	UPROPERTY(EditAnywhere, Config, Category = Configuration)
-	FAssetSettings AssetSettings;
+	FJAssetSettings AssetSettings;
 
 	/* Enables experimental/developing features of JsonAsAsset. Features may not work as intended. */
 	UPROPERTY(EditAnywhere, Config, Category = Configuration, AdvancedDisplay)

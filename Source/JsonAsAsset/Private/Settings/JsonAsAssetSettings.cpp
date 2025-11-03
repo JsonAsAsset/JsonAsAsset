@@ -10,7 +10,6 @@
 #define LOCTEXT_NAMESPACE "JsonAsAsset"
 
 UJsonAsAssetSettings::UJsonAsAssetSettings():
-	/* Default initializers */
 	bEnableExperiments(false),
 	bEnableCloudServer(false)
 {

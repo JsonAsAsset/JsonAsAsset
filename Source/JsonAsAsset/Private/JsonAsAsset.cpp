@@ -72,7 +72,10 @@ void FJsonAsAssetModule::StartupModule() {
 
 	Plugin = IPluginManager::Get().FindPlugin("JsonAsAsset");
 
-	GJsonAsAssetVersioning.Update();
+	if (Settings->bCheckForUpdates)
+	{
+		GJsonAsAssetVersioning.Update();
+	}
 
 	/* Update ExportDirectory if empty */
 	if (Settings->ExportDirectory.Path.IsEmpty()) {

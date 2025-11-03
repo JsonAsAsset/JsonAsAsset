@@ -171,6 +171,10 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category = Cloud, DisplayName = "Enable Cloud")
 	bool bEnableCloudServer;
 
+	/* Check for updates on startup */
+	UPROPERTY(EditAnywhere, Config, Category = Configuration, AdvancedDisplay)
+	bool bCheckForUpdates = true;
+
 	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings);
 
 	static bool IsSetup(UJsonAsAssetSettings* Settings, TArray<FString>& Reasons) {

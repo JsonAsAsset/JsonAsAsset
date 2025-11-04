@@ -3,9 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Interfaces/IPluginManager.h"
 #include "Modules/Versioning.h"
-#include "Toolbar/Toolbar.h"
 #include "Utilities/Compatibility.h"
 
 #if ENGINE_UE4
@@ -19,9 +17,4 @@ public:
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
 
-    TSharedPtr<FUICommandList> PluginCommands;
-    UJsonAsAssetSettings* Settings = nullptr;
-    TSharedPtr<IPlugin> Plugin;
-
-	FJsonAsAssetToolbar Toolbar;
 };

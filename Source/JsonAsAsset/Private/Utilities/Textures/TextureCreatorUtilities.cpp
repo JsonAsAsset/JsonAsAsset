@@ -6,6 +6,7 @@
 #include "Engine/TextureRenderTarget2D.h"
 #include "Engine/TextureCube.h"
 #include "Engine/VolumeTexture.h"
+#include "Factories/TextureFactory.h"
 #include "Factories/TextureRenderTargetFactoryNew.h"
 #include "nvimage/DirectDrawSurface.h"
 #include "nvimage/Image.h"
@@ -13,12 +14,24 @@
 #include "Utilities/JsonUtilities.h"
 #include "Utilities/Textures/TextureDecode/TextureNVTT.h"
 
-template bool FTextureCreatorUtilities::CreateTexture<UTexture2D>(UTexture*&, TArray<uint8>&, const TSharedPtr<FJsonObject>&) const;
-template bool FTextureCreatorUtilities::CreateTexture<UTextureLightProfile>(UTexture*&, TArray<uint8>&, const TSharedPtr<FJsonObject>&) const;
+template bool FTextureCreatorUtilities::CreateTexture<UTexture2D>(UTexture*&, TArray<uint8>&, const TSharedPtr<FJsonObject>&);
+template bool FTextureCreatorUtilities::CreateTexture<UTextureLightProfile>(UTexture*&, TArray<uint8>&, const TSharedPtr<FJsonObject>&);
 
 template <typename T>
-bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const {
-	UTexture2D* Texture2D = NewObject<T>(OutermostPkg, T::StaticClass(), *AssetName, RF_Standalone | RF_Public);
+bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) {
+	UTexture2D* Texture2D;
+
+	if (bUseOctetStream) {
+		Texture2D = NewObject<T>(OutermostPkg, T::StaticClass(), *AssetName, RF_Standalone | RF_Public);
+	} else {
+		UTextureFactory* TextureFactory = NewObject<UTextureFactory>();
+		TextureFactory->AddToRoot();
+		TextureFactory->SuppressImportOverwriteDialog();
+
+		const uint8* ImageData = Data.GetData();
+		Texture2D = Cast<T>(TextureFactory->FactoryCreateBinary(T::StaticClass(), Package, *AssetName, RF_Standalone | RF_Public, nullptr,
+			*FPaths::GetExtension(AssetName + ".png").ToLower(), ImageData, ImageData + Data.Num(), GWarn));
+	}
 
 #if ENGINE_UE5
 	Texture2D->SetPlatformData(new FTexturePlatformData());
@@ -42,7 +55,9 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 		}
 	}
 
-	DeserializeTexturePlatformData(Texture2D, Data, *PlatformData, Properties);
+	if (bUseOctetStream) {
+		DeserializeTexturePlatformData(Texture2D, Data, *PlatformData, Properties);
+	}
 
 	OutTexture = Texture2D;
 
@@ -247,7 +262,11 @@ bool FTextureCreatorUtilities::DeserializeTexturePlatformData(UTexture* Texture,
 	if (TexturePlatformData.PixelFormat == PF_B8G8R8A8 || TexturePlatformData.PixelFormat == PF_FloatRGBA || TexturePlatformData.PixelFormat == PF_G16) Size = Data.Num();
 	uint8* DecompressedData = static_cast<uint8*>(FMemory::Malloc(Size));
 
-	GetDecompressedTextureData(Data.GetData(), DecompressedData, SizeX, SizeY, SizeZ, Size, TexturePlatformData.PixelFormat);
+	if (bUseOctetStream) {
+		GetDecompressedTextureData(Data.GetData(), DecompressedData, SizeX, SizeY, SizeZ, Size, TexturePlatformData.PixelFormat);
+	} else {
+		DecompressedData = Data.GetData();
+	}
 
 	ETextureSourceFormat Format = TSF_BGRA8;
 	if (Texture->CompressionSettings == TC_HDR) Format = TSF_RGBA16F;

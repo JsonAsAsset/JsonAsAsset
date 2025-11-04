@@ -7,8 +7,8 @@
 
 struct FTextureCreatorUtilities {
 public:
-	FTextureCreatorUtilities(const FString& AssetName, const FString& FilePath, UPackage* Package, UPackage* OutermostPkg)
-		: AssetName(AssetName), FilePath(FilePath), Package(Package), OutermostPkg(OutermostPkg)
+	FTextureCreatorUtilities(const FString& AssetName, const FString& FilePath, UPackage* Package, UPackage* OutermostPkg, const bool bUseOctetStream)
+		: bUseOctetStream(bUseOctetStream), AssetName(AssetName), FilePath(FilePath), Package(Package), OutermostPkg(OutermostPkg)
 	{
 		PropertySerializer = NewObject<UPropertySerializer>();
 		GObjectSerializer = NewObject<UObjectSerializer>();
@@ -16,8 +16,10 @@ public:
 		GObjectSerializer->SetPropertySerializer(PropertySerializer);
 	}
 
+	bool bUseOctetStream = true;
+
     template <class T = UObject>
-	bool CreateTexture(UTexture*& OutTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const;
+	bool CreateTexture(UTexture*& OutTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties);
 	bool CreateTextureCube(UTexture*& OutTextureCube, const TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const;
 	bool CreateVolumeTexture(UTexture*& OutVolumeTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const;
 	bool CreateRenderTarget2D(UTexture*& OutRenderTarget2D, const TSharedPtr<FJsonObject>& Properties) const;
@@ -25,7 +27,7 @@ public:
 	/* Deserialization functions */
 	bool DeserializeTexture2D(UTexture2D* InTexture2D, const TSharedPtr<FJsonObject>& Properties) const;
 	bool DeserializeTexture(UTexture* Texture, const TSharedPtr<FJsonObject>& Properties) const;
-	static bool DeserializeTexturePlatformData(UTexture* Texture, TArray<uint8>& Data, FTexturePlatformData& TexturePlatformData, const TSharedPtr<FJsonObject>& Properties);
+	bool DeserializeTexturePlatformData(UTexture* Texture, TArray<uint8>& Data, FTexturePlatformData& TexturePlatformData, const TSharedPtr<FJsonObject>& Properties);
 
 private:
 	static void GetDecompressedTextureData(uint8* Data, uint8*& OutData, const int SizeX, const int SizeY, const int SizeZ, const int TotalSize, const EPixelFormat Format);

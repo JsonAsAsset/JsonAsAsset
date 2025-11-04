@@ -181,7 +181,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& Type, T
 			return true;
 		}
 
-		TSharedPtr<FJsonObject> JsonObject = Response->GetArrayField(TEXT("jsonOutput"))[0]->AsObject();
+		const TSharedPtr<FJsonObject> JsonObject = Response->GetArrayField(TEXT("jsonOutput"))[0]->AsObject();
 		FString PackagePath;
 		FString AssetName;
 		Path.Split(".", &PackagePath, &AssetName);
@@ -232,6 +232,10 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 	
 	UTexture* Texture = nullptr;
 	TArray<uint8> Data = TArray<uint8>();
+	bool bUseOctetStream = Type == "TextureLightProfile"
+	                       || Type == "TextureCube"
+	                       || Type == "VolumeTexture"
+	                       || Type == "TextureRenderTarget2D";
 
 	/* ~~~~~~~~~~~~~~~ Download Texture Data ~~~~~~~~~~~~ */
 	if (Type != "TextureRenderTarget2D") {
@@ -241,9 +245,9 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 #else
 		const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = HttpModule->CreateRequest();
 #endif
-
+		
 		HttpRequest->SetURL(CloudModule::URL + "/api/export?path=" + FetchPath);
-		HttpRequest->SetHeader("content-type", "application/octet-stream");
+		HttpRequest->SetHeader("content-type", bUseOctetStream ? "application/octet-stream" : "image/png");
 		HttpRequest->SetVerb(TEXT("GET"));
 
 #if ENGINE_UE5
@@ -273,7 +277,7 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 	UPackage* OutermostPkg = Package->GetOutermost();
 	Package->FullyLoad();
 
-	const FTextureCreatorUtilities TextureCreator = FTextureCreatorUtilities(AssetName, Path, Package, OutermostPkg);
+	FTextureCreatorUtilities TextureCreator = FTextureCreatorUtilities(AssetName, Path, Package, OutermostPkg, bUseOctetStream);
 
 	if (Type == "Texture2D") {
 		TextureCreator.CreateTexture<UTexture2D>(Texture, Data, JsonExport);

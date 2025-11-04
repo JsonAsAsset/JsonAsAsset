@@ -12,6 +12,7 @@ Source/JsonAsAsset/Public/Importers/Constructor/Blueprint/*
 Source/JsonAsAsset/Private/Importers/Constructor/Blueprint/*
 Source/JsonAsAsset/Private/Importers/Types/Blueprint/*
 Source/JsonAsAsset/Public/Importers/Types/Blueprint/*
+/Binaries
 
 # VS Code Settings
 .vscode/settings.json
@@ -90,5 +91,5 @@ _[Ss]cripts
 *.db
 *.v1
 *.sln
+
 .idea/
-/Binaries

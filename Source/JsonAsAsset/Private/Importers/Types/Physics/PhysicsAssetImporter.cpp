@@ -15,12 +15,13 @@ bool IPhysicsAssetImporter::Import() {
 
 	UPhysicsAsset* PhysicsAsset = NewObject<UPhysicsAsset>(Package, UPhysicsAsset::StaticClass(), *AssetName, RF_Public | RF_Standalone);
 
-	TMap<FName, FExportData> Exports = CreateExports();
+	DeserializeExports(PhysicsAsset, false);
+	FUObjectExportContainer ExportContainer = GetExportContainer();
 	
 	/* SkeletalBodySetups ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	ProcessJsonArrayField(AssetData, TEXT("SkeletalBodySetups"), [&](const TSharedPtr<FJsonObject>& ObjectField) {
 		const FName ExportName = GetExportNameOfSubobject(ObjectField->GetStringField(TEXT("ObjectName")));
-		const FJsonObject* ExportJson = Exports.Find(ExportName)->Json;
+		const TSharedPtr<FJsonObject> ExportJson = ExportContainer.Find(ExportName).JsonObject;
 
 		const TSharedPtr<FJsonObject> ExportProperties = ExportJson->GetObjectField(TEXT("Properties"));
 		const FName BoneName = FName(*ExportProperties->GetStringField(TEXT("BoneName")));
@@ -53,9 +54,9 @@ bool IPhysicsAssetImporter::Import() {
 	/* ConstraintSetup ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	ProcessJsonArrayField(AssetData, TEXT("ConstraintSetup"), [&](const TSharedPtr<FJsonObject>& ObjectField) {
 		const FName ExportName = GetExportNameOfSubobject(ObjectField->GetStringField(TEXT("ObjectName")));
-		const FJsonObject* ExportJson = Exports.Find(ExportName)->Json;
+		const TSharedPtr<FJsonObject> ExportJson = ExportContainer.Find(ExportName).JsonObject;
 
-		TSharedPtr<FJsonObject> ExportProperties = ExportJson->GetObjectField(TEXT("Properties"));
+		const TSharedPtr<FJsonObject> ExportProperties = ExportJson->GetObjectField(TEXT("Properties"));
 		UPhysicsConstraintTemplate* PhysicsConstraintTemplate = CreateNewConstraint(PhysicsAsset, ExportName);
 		
 		GetObjectSerializer()->DeserializeObjectProperties(ExportProperties, PhysicsConstraintTemplate);

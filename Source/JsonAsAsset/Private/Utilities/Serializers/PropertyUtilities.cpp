@@ -10,7 +10,7 @@
 /* Struct Serializers */
 #include "Utilities/Serializers/Structs/DateTimeSerializer.h"
 #include "Utilities/Serializers/Structs/FallbackStructSerializer.h"
-#include "Utilities/Serializers/Structs/TimespanSerializer.h"
+#include "Utilities/Serializers/Structs/TimeSpanSerializer.h"
 
 DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAssetPropertySerializer, Error, Log);
 PRAGMA_DISABLE_OPTIMIZATION

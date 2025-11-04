@@ -1096,3 +1096,13 @@ inline TArray<TSharedPtr<FJsonValue>> EnsureArrayField(const TSharedPtr<FJsonObj
 
 	return Parent->GetArrayField(FieldName);
 }
+
+inline FName GetExportNameOfSubobject(const FString& PackageIndex) {
+	FString Name; {
+		PackageIndex.Split("'", nullptr, &Name);
+		Name.Split(":", nullptr, &Name);
+		Name = Name.Replace(TEXT("'"), TEXT(""));
+	}
+	
+	return FName(Name);
+}

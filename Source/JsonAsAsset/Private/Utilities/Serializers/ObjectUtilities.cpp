@@ -50,7 +50,7 @@ void UObjectSerializer::SetExportForDeserialization(const TSharedPtr<FJsonObject
 	ConstructedObjects.Add(JsonObject->GetStringField(TEXT("Name")), Object);
 }
 
-void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExports) {
+void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExports, const bool bCreateObjects) {
 	PropertySerializer->ExportsContainer.Empty();
 	
 	TMap<TSharedPtr<FJsonObject>, UObject*> ExportsMap;
@@ -77,8 +77,10 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 		PropertySerializer->ExportsContainer.Exports.Add(FUObjectExport(FName(*Name), FName(*Type), FName(*Outer), ExportObject, nullptr, Parent, Index));
 	}
 
-	for (FUObjectExport& Export : PropertySerializer->ExportsContainer.Exports) {
-		DeserializeExport(Export, ExportsMap);
+	if (bCreateObjects) {
+		for (FUObjectExport& Export : PropertySerializer->ExportsContainer.Exports) {
+			DeserializeExport(Export, ExportsMap);
+		}
 	}
 
 	for (const auto Pair : ExportsMap) {

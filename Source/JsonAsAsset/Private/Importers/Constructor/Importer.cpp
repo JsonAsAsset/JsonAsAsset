@@ -461,26 +461,6 @@ void IImporter::ImportReference(const FString& File) {
 	}
 }
 
-TMap<FName, FExportData> IImporter::CreateExports() {
-	TMap<FName, FExportData> OutExports;
-
-	for (const TSharedPtr<FJsonValue> Value : AllJsonObjects) {
-		TSharedPtr<FJsonObject> Object = TSharedPtr<FJsonObject>(Value->AsObject());
-
-		FString ExType = Object->GetStringField(TEXT("Type"));
-		FString Name = Object->GetStringField(TEXT("Name"));
-		FString Outer = "None";
-
-		if (Object->HasField(TEXT("Outer"))) {
-			Outer = Object->GetStringField(TEXT("Outer"));
-		}
-
-		OutExports.Add(FName(Name), FExportData(ExType, Outer, Object));
-	}
-
-	return OutExports;
-}
-
 void IImporter::SavePackage() const {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
@@ -519,46 +499,12 @@ bool IImporter::OnAssetCreation(UObject* Asset) const {
 	return Synced;
 }
 
-FName IImporter::GetExportNameOfSubobject(const FString& PackageIndex) {
-	FString Name; {
-		PackageIndex.Split("'", nullptr, &Name);
-		Name.Split(":", nullptr, &Name);
-		Name = Name.Replace(TEXT("'"), TEXT(""));
-	}
-	
-	return FName(Name);
-}
-
-TArray<TSharedPtr<FJsonValue>> IImporter::FilterExportsByOuter(const FString& Outer) {
-	TArray<TSharedPtr<FJsonValue>> ReturnValue = TArray<TSharedPtr<FJsonValue>>();
-
-	for (const TSharedPtr<FJsonValue> Value : AllJsonObjects) {
-		const TSharedPtr<FJsonObject> ValueObject = TSharedPtr<FJsonObject>(Value->AsObject());
-
-		FString ExportOuter;
-		if (ValueObject->TryGetStringField(TEXT("Outer"), ExportOuter) && ExportOuter == Outer) 
-			ReturnValue.Add(TSharedPtr<FJsonValue>(Value));
-	}
-
-	return ReturnValue;
-}
-
-TSharedPtr<FJsonValue> IImporter::GetExportByObjectPath(const TSharedPtr<FJsonObject>& Object) {
-	const TSharedPtr<FJsonObject> ValueObject = TSharedPtr<FJsonObject>(Object);
-
-	FString StringIndex; {
-		ValueObject->GetStringField(TEXT("ObjectPath")).Split(".", nullptr, &StringIndex);
-	}
-
-	return AllJsonObjects[FCString::Atod(*StringIndex)];
-}
-
-void IImporter::DeserializeExports(UObject* Parent) {
+void IImporter::DeserializeExports(UObject* Parent, const bool bCreateObjects) {
 	UObjectSerializer* ObjectSerializer = GetObjectSerializer();
 	ObjectSerializer->SetExportForDeserialization(JsonObject, Parent);
 	ObjectSerializer->Parent = Parent;
     
-	ObjectSerializer->DeserializeExports(AllJsonObjects);
+	ObjectSerializer->DeserializeExports(AllJsonObjects, bCreateObjects);
 	ApplyModifications();
 }
 

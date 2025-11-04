@@ -233,17 +233,12 @@ protected:
     bool HandleAssetCreation(UObject* Asset) const;
     void SavePackage() const;
 
-    TMap<FName, FExportData> CreateExports();
-
     /*
      * Handle edit changes, and add it to the content browser
      */
     bool OnAssetCreation(UObject* Asset) const;
 
     virtual void ApplyModifications() {};
-    static FName GetExportNameOfSubobject(const FString& PackageIndex);
-    TArray<TSharedPtr<FJsonValue>> FilterExportsByOuter(const FString& Outer);
-    TSharedPtr<FJsonValue> GetExportByObjectPath(const TSharedPtr<FJsonObject>& Object);
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 public:
@@ -252,6 +247,7 @@ public:
     static TObjectPtr<T> DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path) {
         const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
+        /* TODO: Remove this? */
         if (Type == "Texture") Type = "Texture2D";
 
         if (Settings->bEnableCloudServer && (
@@ -303,6 +299,10 @@ public:
     }
 
 protected:
-    void DeserializeExports(UObject* Parent);
+    void DeserializeExports(UObject* Parent, bool bCreateObjects = true);
+    
+    FUObjectExportContainer GetExportContainer() const {
+        return GetObjectSerializer()->GetPropertySerializer()->ExportsContainer;
+    }
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 };

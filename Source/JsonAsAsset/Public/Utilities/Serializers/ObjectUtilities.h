@@ -22,7 +22,7 @@ public:
     void DeserializeObjectProperties(const TSharedPtr<FJsonObject>& Properties, UObject* Object) const;
 
     void SetExportForDeserialization(const TSharedPtr<FJsonObject>& JsonObject, UObject* Object);
-    void DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExports);
+    void DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExports, bool bCreateObjects = true);
     void DeserializeExport(FUObjectExport& Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap);
 
     UPROPERTY()

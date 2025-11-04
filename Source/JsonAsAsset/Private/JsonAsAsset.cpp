@@ -4,12 +4,10 @@
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-#if !ENGINE_UE5
+#if ENGINE_UE4
 /* ReSharper disable once CppUnusedIncludeDirective */
 #include "MainFrame/Public/Interfaces/IMainFrameModule.h"
-#endif
 
-#if ENGINE_UE4
 #include "ToolMenus.h"
 #include "LevelEditor.h"
 #endif

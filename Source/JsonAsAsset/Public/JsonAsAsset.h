@@ -16,8 +16,6 @@ class UJsonAsAssetSettings;
 
 class FJsonAsAssetModule : public IModuleInterface {
 public:
-	FJsonAsAssetToolbar Toolbar;
-    
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
 
@@ -26,6 +24,8 @@ public:
     TSharedPtr<FUICommandList> PluginCommands;
     UJsonAsAssetSettings* Settings = nullptr;
     TSharedPtr<IPlugin> Plugin;
+
+	FJsonAsAssetToolbar Toolbar;
 
 #if ENGINE_UE4
     void AddToolbarExtension(FToolBarBuilder& Builder);

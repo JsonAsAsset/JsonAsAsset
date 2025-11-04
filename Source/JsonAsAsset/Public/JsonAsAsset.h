@@ -19,15 +19,9 @@ public:
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
 
-    void RegisterMenus();
-
     TSharedPtr<FUICommandList> PluginCommands;
     UJsonAsAssetSettings* Settings = nullptr;
     TSharedPtr<IPlugin> Plugin;
 
 	FJsonAsAssetToolbar Toolbar;
-
-#if ENGINE_UE4
-    void AddToolbarExtension(FToolBarBuilder& Builder);
-#endif
 };

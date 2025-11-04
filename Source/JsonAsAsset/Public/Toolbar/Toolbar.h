@@ -12,6 +12,7 @@ struct FJsonAsAssetToolbar {
 	 * NOTE: Called on FJsonAsAssetModule::StartupModule
 	 */
 	void Register(FName MenuToExtend = "LevelEditor.LevelEditorToolBar.PlayToolBar");
+	void Register();
 
 #if ENGINE_UE4
 	void UE4Register(FToolBarBuilder& Builder);

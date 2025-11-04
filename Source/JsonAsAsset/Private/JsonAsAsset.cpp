@@ -44,7 +44,7 @@ void FJsonAsAssetModule::StartupModule() {
     PluginCommands = MakeShareable(new FUICommandList);
 
     /* Register menus on startup */
-    UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FJsonAsAssetModule::RegisterMenus));
+    UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(&Toolbar, &FJsonAsAssetToolbar::Register));
 
     Settings = GetMutableDefault<UJsonAsAssetSettings>();
 
@@ -62,7 +62,12 @@ void FJsonAsAssetModule::StartupModule() {
     {
 	    FLevelEditorModule& LevelEditorModule = FModuleManager::LoadModuleChecked<FLevelEditorModule>("LevelEditor");
 	    const TSharedPtr<FExtender> ToolbarExtender = MakeShareable(new FExtender);
-    	ToolbarExtender->AddToolBarExtension("Settings", EExtensionHook::After, PluginCommands, FToolBarExtensionDelegate::CreateRaw(this, &FJsonAsAssetModule::AddToolbarExtension));
+    	ToolbarExtender->AddToolBarExtension(
+			"Settings",
+			EExtensionHook::After,
+			PluginCommands,
+			FToolBarExtensionDelegate::CreateRaw(&Toolbar, &FJsonAsAssetToolbar::UE4Register)
+		);
 
     	LevelEditorModule.GetToolBarExtensibilityManager()->AddExtender(ToolbarExtender);
 	}
@@ -95,15 +100,5 @@ void FJsonAsAssetModule::ShutdownModule() {
 		MessageLogModule.UnregisterLogListing("JsonAsAsset");
 	}
 }
-
-void FJsonAsAssetModule::RegisterMenus() {
-	Toolbar.Register();
-}
-
-#if ENGINE_UE4
-void FJsonAsAssetModule::AddToolbarExtension(FToolBarBuilder& Builder) {
-	Toolbar.UE4Register(Builder);
-}
-#endif
 
 IMPLEMENT_MODULE(FJsonAsAssetModule, JsonAsAsset)

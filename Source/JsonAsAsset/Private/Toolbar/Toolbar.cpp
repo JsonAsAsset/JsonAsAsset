@@ -75,6 +75,10 @@ void FJsonAsAssetToolbar::Register(const FName MenuToExtend) {
 #endif
 }
 
+void FJsonAsAssetToolbar::Register() {
+	Register("LevelEditor.LevelEditorToolBar.PlayToolBar");
+}
+
 #if ENGINE_UE4
 void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
     const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin("JsonAsAsset");

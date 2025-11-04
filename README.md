@@ -151,7 +151,7 @@ Follow these steps to install **JsonAsAsset**:
 # 
 > [!TIP]
 > ### Want to import entire asset chains automatically? 💡
-> Enable Cloud in Plugin Settings, and setup a Cloud Server, such as [j0.dev](https://github.com/Tectors/j0.dev).
+> Enable Cloud in Plugin Settings, and setup a Cloud Server. [Click here to get to Cloud releases.](https://github.com/Tectors/j0.dev/releases)
 >
 > Once the Cloud is started, JsonAsAsset will fetch every referenced asset for you hands-free.
 
@@ -188,4 +188,5 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+
 

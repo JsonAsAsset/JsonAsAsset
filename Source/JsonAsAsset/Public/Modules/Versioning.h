@@ -112,7 +112,7 @@ struct FJsonAsAssetVersioning {
 
 			const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 			
-			static bool IsNotificationShown = Settings->Versioning.bDisableReminders;
+			static bool IsNotificationShown = Settings->Versioning.bEnableReminders;
 			
 			if (bNewVersionAvailable && !IsNotificationShown) {
 				const FString CapturedUrl = HTMLUrl;

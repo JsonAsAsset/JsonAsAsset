@@ -145,13 +145,13 @@ struct FJVersioningSettings
 {
 	GENERATED_BODY()
 public:
-	/* Disable update reminders for newer updates of JsonAsAsset. */
-	UPROPERTY(EditAnywhere, Config, Category = VersioningSettings)
-	bool bDisableReminders = false;
-
 	/* Disable checking for newer updates of JsonAsAsset. */
 	UPROPERTY(EditAnywhere, Config, Category = VersioningSettings)
 	bool bDisable = false;
+	
+	/* Enable update reminders for newer updates of JsonAsAsset. */
+	UPROPERTY(EditAnywhere, Config, Category = VersioningSettings)
+	bool bEnableReminders = true;
 };
 
 /* Powerful Unreal Engine Plugin that imports assets from FModel */

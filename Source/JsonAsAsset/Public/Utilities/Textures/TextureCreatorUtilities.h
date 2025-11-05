@@ -11,9 +11,9 @@ public:
 		: bUseOctetStream(bUseOctetStream), AssetName(AssetName), FilePath(FilePath), Package(Package), OutermostPkg(OutermostPkg)
 	{
 		PropertySerializer = NewObject<UPropertySerializer>();
-		GObjectSerializer = NewObject<UObjectSerializer>();
+		ObjectSerializer = NewObject<UObjectSerializer>();
 
-		GObjectSerializer->SetPropertySerializer(PropertySerializer);
+		ObjectSerializer->SetPropertySerializer(PropertySerializer);
 	}
 
 	bool bUseOctetStream = true;
@@ -38,8 +38,8 @@ protected:
 	UPackage* Package;
 	UPackage* OutermostPkg;
 	UPropertySerializer* PropertySerializer;
-	UObjectSerializer* GObjectSerializer;
+	UObjectSerializer* ObjectSerializer;
 
 public:
-	FORCEINLINE UObjectSerializer* GetObjectSerializer() const { return GObjectSerializer; }
+	FORCEINLINE UObjectSerializer* GetObjectSerializer() const { return ObjectSerializer; }
 };

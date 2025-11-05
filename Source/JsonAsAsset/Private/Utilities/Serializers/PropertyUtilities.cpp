@@ -420,12 +420,10 @@ void UPropertySerializer::ClearCachedData() {
 void UPropertySerializer::DisablePropertySerialization(UStruct* Struct, const FName PropertyName) {
 	FProperty* Property = Struct->FindPropertyByName(PropertyName);
 	checkf(Property, TEXT("Cannot find Property %s in Struct %s"), *PropertyName.ToString(), *Struct->GetPathName());
-	this->PinnedStructs.Add(Struct);
 	this->BlacklistedProperties.Add(Property);
 }
 
 void UPropertySerializer::AddStructSerializer(UScriptStruct* Struct, const TSharedPtr<FStructSerializer>& Serializer) {
-	this->PinnedStructs.Add(Struct);
 	this->StructSerializers.Add(Struct, Serializer);
 }
 

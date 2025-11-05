@@ -7,10 +7,10 @@ USerializerContainer::USerializerContainer(UPackage* Package, UPackage* Outermos
 	: Package(Package), OutermostPkg(OutermostPkg)
 {
 	PropertySerializer = NewObject<UPropertySerializer>();
-	GObjectSerializer = NewObject<UObjectSerializer>();
-	GObjectSerializer->SetPropertySerializer(PropertySerializer);
+	ObjectSerializer = NewObject<UObjectSerializer>();
+	ObjectSerializer->SetPropertySerializer(PropertySerializer);
 }
 
 UObjectSerializer* USerializerContainer::GetObjectSerializer() const {
-	return GObjectSerializer;
+	return ObjectSerializer;
 }

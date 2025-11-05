@@ -34,9 +34,6 @@ class JSONASASSET_API UPropertySerializer : public UObject
 
 	UPROPERTY()
 	UObjectSerializer* ObjectSerializer;
-
-	UPROPERTY()
-	TArray<UStruct*> PinnedStructs;
 	
 	TArray<FProperty*> BlacklistedProperties;
 	TSharedPtr<FStructSerializer> FallbackStructSerializer;

@@ -46,12 +46,12 @@ bool IAnimationBlueprintImporter::Import() {
 	if (!RootAnimNodeProperties.IsValid()) return false;
 
 	const UBlueprintGeneratedClass* GeneratedClass = Cast<UBlueprintGeneratedClass>(AnimBlueprint->GeneratedClass);
-	GObjectSerializer->Exports = AllJsonObjects;
-	GObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(RootAnimNodeProperties, {
+	ObjectSerializer->Exports = AllJsonObjects;
+	ObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(RootAnimNodeProperties, {
 		"RootComponent"
 	}), GeneratedClass->GetDefaultObject());
 
-	GObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(AssetData, {
+	ObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(AssetData, {
 		"FuncMap",
 		"bCooked",
 		"Children",

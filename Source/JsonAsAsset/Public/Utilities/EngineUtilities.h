@@ -413,8 +413,7 @@ inline TArray<FString> OpenFileDialog(const FString& Title, const FString& Type)
 		}
 	}
 
-	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
-	if (DesktopPlatform) {
+	if (IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get()) {
 		constexpr uint32 SelectionFlag = 1;
 		
 		DesktopPlatform->OpenFileDialog(ParentWindowHandle, Title, DefaultPath, FString(""), Type, SelectionFlag, ReturnValue);
@@ -433,8 +432,6 @@ inline FString OpenFolderDialog(const FString& Title, const FString& DefaultPath
 		ParentWindowHandle = MainWindow->GetNativeWindow()->GetOSWindowHandle();
 	}
 
-	IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get();
-	if (DesktopPlatform) {
 		DesktopPlatform->OpenDirectoryDialog(ParentWindowHandle, Title, DefaultPath, OutFolder);
 	}
 
@@ -1037,6 +1034,8 @@ inline void RedirectPath(FString& OutPath) {
 
 	for (FJPathRedirector Redirector : Settings->AssetSettings.PathRedirectors) {
 		OutPath = OutPath.Replace(*Redirector.Source, *Redirector.Target);
+	for (auto [Source, Target] : Settings->AssetSettings.PathRedirectors) {
+		OutPath = OutPath.Replace(*Source, *Target);
 	}
 }
 

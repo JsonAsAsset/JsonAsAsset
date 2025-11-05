@@ -500,11 +500,10 @@ bool IImporter::OnAssetCreation(UObject* Asset) const {
 }
 
 void IImporter::DeserializeExports(UObject* Parent, const bool bCreateObjects) {
-	UObjectSerializer* ObjectSerializer = GetObjectSerializer();
-	ObjectSerializer->SetExportForDeserialization(JsonObject, Parent);
-	ObjectSerializer->Parent = Parent;
+	GetObjectSerializer()->SetExportForDeserialization(JsonObject, Parent);
+	GetObjectSerializer()->Parent = Parent;
     
-	ObjectSerializer->DeserializeExports(AllJsonObjects, bCreateObjects);
+	GetObjectSerializer()->DeserializeExports(AllJsonObjects, bCreateObjects);
 	ApplyModifications();
 }
 

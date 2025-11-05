@@ -48,7 +48,7 @@ void ISkeletonImporter::DeserializeCurveMetaData(FCurveMetaData* OutMeta, const 
 		for (const auto& BoneVal : *Bones) {
 			if (auto BoneObj = BoneVal->AsObject()) {
 				FBoneReference Bone;
-				GetObjectSerializer()->PropertySerializer->DeserializeStruct(TBaseStructure<FBoneReference>::Get(), BoneObj.ToSharedRef(), &Bone);
+				GetPropertySerializer()->DeserializeStruct(TBaseStructure<FBoneReference>::Get(), BoneObj.ToSharedRef(), &Bone);
 				OutMeta->LinkedBones.Add(MoveTemp(Bone));
 			}
 		}

@@ -240,21 +240,14 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 	/* ~~~~~~~~~~~~~~~ Download Texture Data ~~~~~~~~~~~~ */
 	if (Type != "TextureRenderTarget2D") {
 		FHttpModule* HttpModule = &FHttpModule::Get();
-#if ENGINE_UE5
-		const TSharedRef<IHttpRequest> HttpRequest = HttpModule->CreateRequest();
-#else
-		const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = HttpModule->CreateRequest();
-#endif
-		
+		const auto HttpRequest = HttpModule->CreateRequest();
+
 		HttpRequest->SetURL(CloudModule::URL + "/api/export?path=" + FetchPath);
 		HttpRequest->SetHeader("content-type", bUseOctetStream ? "application/octet-stream" : "image/png");
 		HttpRequest->SetVerb(TEXT("GET"));
+		
+		const auto HttpResponse = FRemoteUtilities::ExecuteRequestSync(HttpRequest);
 
-#if ENGINE_UE5
-		const TSharedPtr<IHttpResponse> HttpResponse = FRemoteUtilities::ExecuteRequestSync(HttpRequest);
-#else
-		const TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> HttpResponse = FRemoteUtilities::ExecuteRequestSync(HttpRequest);
-#endif
 		if (!HttpResponse.IsValid() || HttpResponse->GetResponseCode() != 200)
 			return false;
 
@@ -332,32 +325,22 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 
 TSharedPtr<FJsonObject> FAssetUtilities::API_RequestExports(const FString& Path, const FString& FetchPath) {
 	FHttpModule* HttpModule = &FHttpModule::Get();
-
-#if ENGINE_UE5
-	const TSharedRef<IHttpRequest> HttpRequest = HttpModule->CreateRequest();
-#else
-	const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = HttpModule->CreateRequest();
-#endif
+	
+	const auto HttpRequest = HttpModule->CreateRequest();
 
 	FString PackagePath;
 	FString AssetName;
 	Path.Split(".", &PackagePath, &AssetName);
 
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	
+	const auto NewRequest = HttpModule->CreateRequest();
 
-#if ENGINE_UE5
-	const TSharedRef<IHttpRequest> NewRequest = HttpModule->CreateRequest();
-#else
-	const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> NewRequest = HttpModule->CreateRequest();
-#endif
 	NewRequest->SetURL(CloudModule::URL + FetchPath + Path);
 	NewRequest->SetVerb(TEXT("GET"));
+	
+	const auto NewResponse = FRemoteUtilities::ExecuteRequestSync(NewRequest);
 
-#if ENGINE_UE5
-	const TSharedPtr<IHttpResponse> NewResponse = FRemoteUtilities::ExecuteRequestSync(NewRequest);
-#else
-	const TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> NewResponse = FRemoteUtilities::ExecuteRequestSync(NewRequest);
-#endif
 	if (!NewResponse.IsValid()) return TSharedPtr<FJsonObject>();
 
 	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(NewResponse->GetContentAsString());

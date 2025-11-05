@@ -12,9 +12,6 @@
 #include "Settings/JsonAsAssetSettings.h"
 #include "MessageLogModule.h"
 
-/* Settings */
-#include "./Settings/Details/JsonAsAssetSettingsDetails.h"
-
 #include "Modules/UI/CommandsModule.h"
 #include "Modules/UI/StyleModule.h"
 #include "Toolbar/Toolbar.h"
@@ -70,7 +67,7 @@ void FJsonAsAssetModule::StartupModule() {
 
 	/* Update ExportDirectory if empty */
 	if (Settings->ExportDirectory.Path.IsEmpty()) {
-		FJsonAsAssetSettingsDetails::ReadConfiguration();
+		Settings->ReadAppData();
 	}
 }
 

@@ -206,4 +206,6 @@ public:
 		TArray<FString> Params;
 		return IsSetup(Settings, Params);
 	}
+
+	static void ReadAppData();
 };

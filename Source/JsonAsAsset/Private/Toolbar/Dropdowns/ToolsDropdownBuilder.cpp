@@ -74,7 +74,10 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
 
 					FUIAction(
-						FExecuteAction::CreateStatic(&FSkeletalMeshData::Execute),
+						FExecuteAction::CreateLambda([] {
+							FSkeletalMeshData SkeletalMeshData = FSkeletalMeshData();
+							SkeletalMeshData.Execute();
+						}),
 						FCanExecuteAction::CreateLambda([this] {
 							return CloudModule::IsRunning();
 						})

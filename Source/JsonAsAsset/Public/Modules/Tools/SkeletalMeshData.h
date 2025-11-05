@@ -4,9 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "ToolBase.h"
+#include "SkeletalMeshData.generated.h"
 
-struct FSkeletalMeshData : FToolBase {
-	static void Execute();
+USTRUCT()
+struct FSkeletalMeshData : public FToolBase {
+	GENERATED_BODY()
+public:
+	void Execute();
 
 	static TArray<FSkeletalMaterial> GetMaterials(USkeletalMesh* Mesh);
 };

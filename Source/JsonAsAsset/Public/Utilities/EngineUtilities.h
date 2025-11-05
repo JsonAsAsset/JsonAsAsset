@@ -679,12 +679,8 @@ inline void SendHttpRequest(const FString& URL, TFunction<void(FHttpRequestPtr, 
 		UE_LOG(LogJsonAsAsset, Error, TEXT("HTTP module not available"));
 		return;
 	}
-
-#if ENGINE_UE5
-	const TSharedRef<IHttpRequest> Request = Http->CreateRequest();
-#else
-	const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
-#endif
+	
+	auto Request = Http->CreateRequest();
 	
 	Request->SetURL(URL);
 	Request->SetVerb(Verb);

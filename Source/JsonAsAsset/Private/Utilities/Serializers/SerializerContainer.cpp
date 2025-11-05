@@ -14,3 +14,7 @@ USerializerContainer::USerializerContainer(UPackage* Package, UPackage* Outermos
 UObjectSerializer* USerializerContainer::GetObjectSerializer() const {
 	return ObjectSerializer;
 }
+
+UPropertySerializer* USerializerContainer::GetPropertySerializer() const {
+	return GetObjectSerializer()->PropertySerializer;
+}

@@ -432,6 +432,7 @@ inline FString OpenFolderDialog(const FString& Title, const FString& DefaultPath
 		ParentWindowHandle = MainWindow->GetNativeWindow()->GetOSWindowHandle();
 	}
 
+	if (IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get()) {
 		DesktopPlatform->OpenDirectoryDialog(ParentWindowHandle, Title, DefaultPath, OutFolder);
 	}
 
@@ -978,11 +979,9 @@ inline TArray<TSharedPtr<FJsonValue>> RequestArrayURL(const FString& URL) {
 
 inline TSubclassOf<UObject> LoadClassFromPath(const FString& ObjectName, const FString& ObjectPath) {
 	const FString FullPath = ObjectPath + TEXT(".") + ObjectName;
-	UObject* LoadedObject = StaticLoadObject(UObject::StaticClass(), nullptr, *FullPath);
 
-	if (LoadedObject) {
-		UClass* LoadedClass = Cast<UClass>(LoadedObject);
-		if (LoadedClass) {
+	if (UObject* LoadedObject = StaticLoadObject(UObject::StaticClass(), nullptr, *FullPath)) {
+		if (UClass* LoadedClass = Cast<UClass>(LoadedObject)) {
 			return LoadedClass;
 		}
 	}
@@ -1002,9 +1001,7 @@ inline TSubclassOf<UObject> LoadBlueprintClass(FString& ObjectPath) {
 		FullPath = FullPath.LeftChop(2);
 	}
 
-	UObject* LoadedObject = StaticLoadObject(UObject::StaticClass(), nullptr, *FullPath);
-
-	if (LoadedObject) {
+	if (UObject* LoadedObject = StaticLoadObject(UObject::StaticClass(), nullptr, *FullPath)) {
 		const UBlueprint* LoadedBlueprint = Cast<UBlueprint>(LoadedObject);
 		
 		if (LoadedBlueprint && LoadedBlueprint->GeneratedClass) {
@@ -1032,8 +1029,6 @@ inline UClass* LoadClass(const TSharedPtr<FJsonObject>& SuperStruct) {
 inline void RedirectPath(FString& OutPath) {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
-	for (FJPathRedirector Redirector : Settings->AssetSettings.PathRedirectors) {
-		OutPath = OutPath.Replace(*Redirector.Source, *Redirector.Target);
 	for (auto [Source, Target] : Settings->AssetSettings.PathRedirectors) {
 		OutPath = OutPath.Replace(*Source, *Target);
 	}

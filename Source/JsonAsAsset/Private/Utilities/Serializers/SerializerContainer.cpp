@@ -11,7 +11,6 @@ USerializerContainer::USerializerContainer(UPackage* Package, UPackage* Outermos
 	GObjectSerializer->SetPropertySerializer(PropertySerializer);
 }
 
-UObjectSerializer* USerializerContainer::GetObjectSerializer() const
-{
+UObjectSerializer* USerializerContainer::GetObjectSerializer() const {
 	return GObjectSerializer;
 }

@@ -81,13 +81,13 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 		for (FUObjectExport& Export : PropertySerializer->ExportsContainer.Exports) {
 			DeserializeExport(Export, ExportsMap);
 		}
-	}
 
-	for (const auto Pair : ExportsMap) {
-		TSharedPtr<FJsonObject> Properties = Pair.Key;
-		UObject* Object = Pair.Value;
+		for (const auto Pair : ExportsMap) {
+			TSharedPtr<FJsonObject> Properties = Pair.Key;
+			UObject* Object = Pair.Value;
 
-		DeserializeObjectProperties(Properties, Object);
+			DeserializeObjectProperties(Properties, Object);
+		}
 	}
 }
 

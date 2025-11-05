@@ -52,8 +52,7 @@ void UObjectSerializer::SetExportForDeserialization(const TSharedPtr<FJsonObject
 
 void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExports, const bool bCreateObjects) {
 	PropertySerializer->ExportsContainer.Empty();
-	
-	TMap<TSharedPtr<FJsonObject>, UObject*> ExportsMap;
+
 	int Index = -1;
 	
 	for (const TSharedPtr<FJsonValue> Object : InExports) {
@@ -69,7 +68,7 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 		
 		/* Check if it's not supposed to be deserialized */
 		if (ExportsToNotDeserialize.Contains(Name)) continue;
-		if (Type == "BodySetup" || Type == "NavCollision") continue;
+		if (Type == "NavCollision") continue;
 
 		FString Outer = ExportObject->GetStringField(TEXT("Outer"));
 		
@@ -78,6 +77,8 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 	}
 
 	if (bCreateObjects) {
+		TMap<TSharedPtr<FJsonObject>, UObject*> ExportsMap;
+		
 		for (FUObjectExport& Export : PropertySerializer->ExportsContainer.Exports) {
 			DeserializeExport(Export, ExportsMap);
 		}

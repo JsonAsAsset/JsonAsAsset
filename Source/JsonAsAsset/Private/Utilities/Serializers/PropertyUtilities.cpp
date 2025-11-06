@@ -171,7 +171,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				if (Object != nullptr) {
 					/* Get the export */
 					if (TSharedPtr<FJsonObject> Export = GetExport(JsonValueAsObject.Get(), ObjectSerializer->Exports)) {
-						if (Export->HasField(TEXT("Properties")) && ObjectSerializer->Parent != nullptr && (port->GetStringField("Outer") == ObjectSerializer->Parent->GetName()) {
+						if (Export->HasField(TEXT("Properties")) && ObjectSerializer->Parent != nullptr && Export->GetStringField("Outer") == ObjectSerializer->Parent->GetName()) {
 							TSharedPtr<FJsonObject> Properties = Export->GetObjectField(TEXT("Properties"));
 
 							if (Export->HasField(TEXT("LODData"))) {

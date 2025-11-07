@@ -2,6 +2,7 @@
 
 #include "Modules/Tools/ClearImportData.h"
 #include "EditorFramework/AssetImportData.h"
+#include "Factories/FbxAnimSequenceImportData.h"
 #include "Utilities/EngineUtilities.h"
 
 void FToolClearImportData::Execute() {
@@ -28,6 +29,11 @@ void FToolClearImportData::Execute() {
 
 		if (UAnimSequence* AnimSequence = Cast<UAnimSequence>(Asset)) {
 			AnimSequence->AssetImportData->SourceData.SourceFiles.Empty();
+			
+			if (UFbxAnimSequenceImportData* FbxImportData = Cast<UFbxAnimSequenceImportData>(AnimSequence->AssetImportData)) {
+				FbxImportData->ImportUniformScale = 1.0f;
+			}
+			
 			AnimSequence->Modify();
 		}
 

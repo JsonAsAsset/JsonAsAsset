@@ -386,7 +386,6 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 		*static_cast<FName*>(OutValue) = *NameString;
 	}
 	else if (const FTextProperty* TextProperty = CastField<const FTextProperty>(Property)) {
-		/* For FText, standard ExportTextItem is okay to use, because it's serialization is quite complex */
 		const FString SerializedValue = NewJsonValue->AsString();
 		
 		if (!SerializedValue.IsEmpty()) {

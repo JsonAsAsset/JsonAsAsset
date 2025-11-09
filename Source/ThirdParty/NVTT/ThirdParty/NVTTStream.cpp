@@ -1,4 +1,4 @@
-#include "TextureNVTT.h"
+#include "NVTTStream.h"
 #include "nvcore/Stream.h"
 
 class NVTTStream : public nv::Stream {

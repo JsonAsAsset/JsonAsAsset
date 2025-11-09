@@ -186,7 +186,7 @@ public:
 	 * Retrieves assets from an API and imports references directly into your project.
 	 */
 	UPROPERTY(EditAnywhere, Config, Category = Cloud, DisplayName = "Enable Cloud")
-	bool bEnableCloudServer;
+	bool bEnableCloudServer = true;
 
 	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings);
 

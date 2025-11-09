@@ -256,7 +256,7 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FSt
 
 			/* TODO: Remove this? */
 			if (Type != "AnimSequence" && Type != "AnimMontage") {
-				Importer->SavePackage();
+				Importer->Save();
 			}
 
 			/* Import Successful Notification */
@@ -331,6 +331,20 @@ TArray<TSharedPtr<FJsonValue>> IImporter::FilterObjectsWithoutMatchingPropertyNa
 }
 
 bool IImporter::HandleAssetCreation(UObject* Asset) const {
+	{
+		/* User Failsafe.... */
+		const UPackage* OutermostPackage = Asset->GetOutermost();
+		const FString PackageName = OutermostPackage->GetName();
+
+		const FString Path = FPackageName::GetLongPackagePath(PackageName);
+		if (!Path.StartsWith(TEXT("/")) || Path.Len() < 2)
+		{
+			SpawnPrompt("User Failsafe (#1)", "To keep crashes from happening due to user setup issues, which would be assumed as the plugin's mishaps.\n\nHere's some reasons why this failsafe happened:\n\n- You didn't export it from FModel\n- Imported it from a random path, not in Exports/.../\n\nPlease reimport next time at the proper location.");
+			
+			return false;
+		}
+	}
+
 	FAssetRegistryModule::AssetCreated(Asset);
 	
 	if (!Asset->MarkPackageDirty()) return false;
@@ -461,7 +475,7 @@ void IImporter::ImportReference(const FString& File) {
 	}
 }
 
-void IImporter::SavePackage() const {
+void IImporter::Save() const {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
 	/* Ensure the package is valid before proceeding */
@@ -470,22 +484,9 @@ void IImporter::SavePackage() const {
 		return;
 	}
 
-	const FString PackageName = Package->GetName();
-	const FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-
 	/* User option to save packages on import */
 	if (Settings->AssetSettings.bSavePackagesOnImport) {
-#if ENGINE_UE5
-		FSavePackageArgs SaveArgs; {
-			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
-			SaveArgs.Error = GError;
-			SaveArgs.SaveFlags = SAVE_NoError;
-		}
-		
-		UPackage::SavePackage(Package, nullptr, *PackageFileName, SaveArgs);
-#else
-		UPackage::SavePackage(Package, nullptr, RF_Standalone, *PackageFileName);
-#endif
+		SavePackage(Package);
 	}
 }
 
@@ -493,7 +494,7 @@ bool IImporter::OnAssetCreation(UObject* Asset) const {
 	const bool Synced = HandleAssetCreation(Asset);
 	
 	if (Synced) {
-		SavePackage();
+		Save();
 	}
 	
 	return Synced;

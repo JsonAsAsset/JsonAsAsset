@@ -42,7 +42,7 @@ bool IMaterialFunctionImporter::Import() {
 	MaterialFunction->PreEditChange(nullptr);
 	MaterialFunction->PostEditChange();
 
-	SavePackage();
+	Save();
 	
 	return true;
 }

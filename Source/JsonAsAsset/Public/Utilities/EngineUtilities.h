@@ -110,9 +110,9 @@ TEnum StringToEnum(const FString& StringValue) {
 }
 
 inline TSharedPtr<FJsonObject> FindExport(const TSharedPtr<FJsonObject>& Export, const TArray<TSharedPtr<FJsonValue>>& File) {
-	FString string_int; Export->GetStringField(TEXT("ObjectPath")).Split(".", nullptr, &string_int);
+	FString String_INT; Export->GetStringField(TEXT("ObjectPath")).Split(".", nullptr, &String_INT);
 	
-	return File[FCString::Atoi(*string_int)]->AsObject();
+	return File[FCString::Atoi(*String_INT)]->AsObject();
 }
 
 inline void SpawnPrompt(const FString& Title, const FString& Text) {
@@ -1095,4 +1095,21 @@ inline FName GetExportNameOfSubobject(const FString& PackageIndex) {
 	}
 	
 	return FName(Name);
+}
+
+inline void SavePackage(UPackage* Package) {
+	const FString PackageName = Package->GetName();
+	const FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
+	
+#if ENGINE_UE5
+	FSavePackageArgs SaveArgs; {
+		SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
+		SaveArgs.Error = GError;
+		SaveArgs.SaveFlags = SAVE_NoError;
+	}
+		
+	UPackage::SavePackage(Package, nullptr, *PackageFileName, SaveArgs);
+#else
+	UPackage::SavePackage(Package, nullptr, RF_Standalone, *PackageFileName);
+#endif
 }

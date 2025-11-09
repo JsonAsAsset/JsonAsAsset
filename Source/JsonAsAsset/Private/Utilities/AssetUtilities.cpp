@@ -304,18 +304,7 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 
 	/* Save texture */
 	if (Settings->AssetSettings.bSavePackagesOnImport) {
-		const FString PackageName = Package->GetName();
-		const FString PackageFileName = FPackageName::LongPackageNameToFilename(PackageName, FPackageName::GetAssetPackageExtension());
-#if ENGINE_UE5
-		FSavePackageArgs SaveArgs; {
-			SaveArgs.TopLevelFlags = RF_Public | RF_Standalone;
-			SaveArgs.SaveFlags = SAVE_NoError;
-		}
-		
-		UPackage::SavePackage(Package, nullptr, *PackageFileName, SaveArgs);
-#else
-		UPackage::SavePackage(Package, nullptr, RF_Standalone, *PackageFileName);
-#endif
+		SavePackage(Package);
 	}
 
 	OutTexture = Texture;

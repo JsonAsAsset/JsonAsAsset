@@ -135,7 +135,7 @@ bool IMaterialImporter::Import() {
 	Material->MarkPackageDirty();
 	Material->PreEditChange(nullptr);
 
-	SavePackage();
+	Save();
 
 	return true;
 }

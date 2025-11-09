@@ -231,7 +231,7 @@ public:
 protected:
     /* This is called at the end of asset creation, bringing the user to the asset and fully loading it */
     bool HandleAssetCreation(UObject* Asset) const;
-    void SavePackage() const;
+    void Save() const;
 
     /*
      * Handle edit changes, and add it to the content browser

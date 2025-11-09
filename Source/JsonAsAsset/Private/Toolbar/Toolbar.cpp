@@ -3,6 +3,7 @@
 #include "Toolbar/Toolbar.h"
 
 #include "Utilities/Compatibility.h"
+#include "Utilities/EngineUtilities.h"
 
 #include "Importers/Constructor/Importer.h"
 
@@ -18,12 +19,11 @@
 #include "Toolbar/Dropdowns/ParentDropdownBuilder.h"
 #include "Toolbar/Dropdowns/ToolsDropdownBuilder.h"
 #include "Toolbar/Dropdowns/VersioningDropdownBuilder.h"
-#include "Utilities/EngineUtilities.h"
 
 class FMessageLogModule;
 
 /* ReSharper disable once CppMemberFunctionMayBeStatic */
-void FJsonAsAssetToolbar::Register(const FName MenuToExtend) {
+void FJsonAsAssetToolbar::Register() {
 #if ENGINE_UE5
 	/* Get Plugin's VersionName, example: 1.0.0 */
     const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin("JsonAsAsset");
@@ -67,16 +67,12 @@ void FJsonAsAssetToolbar::Register(const FName MenuToExtend) {
 	);
 
 	/* Extend the menu */
-	UToolMenu* Menu = UToolMenus::Get()->ExtendMenu(MenuToExtend);
+	UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar.PlayToolBar");
 	FToolMenuSection& Section = Menu->FindOrAddSection("JsonAsAsset");
 
 	Section.AddEntry(ActionButton);
 	Section.AddEntry(MenuButton);
 #endif
-}
-
-void FJsonAsAssetToolbar::Register() {
-	Register("LevelEditor.LevelEditorToolBar.PlayToolBar");
 }
 
 #if ENGINE_UE4

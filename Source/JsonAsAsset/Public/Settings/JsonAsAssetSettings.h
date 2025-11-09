@@ -74,13 +74,6 @@ public:
 	FString AudioFileExtension = "ogg";
 };
 
-/* Settings for pose assets */
-USTRUCT()
-struct FJPoseAssetImportSettings
-{
-	GENERATED_BODY()
-};
-
 USTRUCT()
 struct FJPathRedirector
 {
@@ -107,7 +100,6 @@ public:
 		SoundImportSettings = FJSoundImportSettings();
 		TextureImportSettings = FJTextureImportSettings();
 		AnimationBlueprintImportSettings = FJAnimationBlueprintImportSettings();
-		PoseAssetImportSettings = FJPoseAssetImportSettings();
 	}
 
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
@@ -118,9 +110,6 @@ public:
 
 	UPROPERTY(Config)
 	FJSoundImportSettings SoundImportSettings;
-
-	/* UPROPERTY(EditAnywhere, Config, Category = AssetSettings) */
-	FJPoseAssetImportSettings PoseAssetImportSettings;
 
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
 	FJAnimationBlueprintImportSettings AnimationBlueprintImportSettings;
@@ -165,6 +154,14 @@ public:
 	virtual FText GetSectionText() const override;
 #endif
 
+	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings);
+
+	static bool IsSetup(UJsonAsAssetSettings* Settings, TArray<FString>& Reasons);
+	static bool IsSetup(UJsonAsAssetSettings* Settings);
+
+	static void ReadAppData();
+
+public:
 	/**
 	 * Specifies the directory path for exported assets.
 	 * (e.g. Output/Exports)
@@ -182,30 +179,7 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category = Configuration, AdvancedDisplay)
 	bool bEnableExperiments;
 
-	/**
-	 * Retrieves assets from an API and imports references directly into your project.
-	 */
+	/* Retrieves assets from an API and imports references directly into your project. */
 	UPROPERTY(EditAnywhere, Config, Category = Cloud, DisplayName = "Enable Cloud")
 	bool bEnableCloudServer = true;
-
-	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings);
-
-	static bool IsSetup(UJsonAsAssetSettings* Settings, TArray<FString>& Reasons) {
-		const bool IsExportDirectoryValid = EnsureExportDirectoryIsValid(Settings);
-		
-		if (!IsExportDirectoryValid) {
-			Reasons.Add("Export Directory is missing");
-		}
-
-		return IsExportDirectoryValid;
-	}
-	
-	static bool IsSetup(UJsonAsAssetSettings* Settings) {
-		if (Settings == nullptr) return false;
-		
-		TArray<FString> Params;
-		return IsSetup(Settings, Params);
-	}
-
-	static void ReadAppData();
 };

@@ -42,6 +42,23 @@ bool UJsonAsAssetSettings::EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Se
 	return true;
 }
 
+bool UJsonAsAssetSettings::IsSetup(UJsonAsAssetSettings* Settings, TArray<FString>& Reasons) {
+	const bool IsExportDirectoryValid = EnsureExportDirectoryIsValid(Settings);
+	
+	if (!IsExportDirectoryValid) {
+		Reasons.Add("Export Directory is missing");
+	}
+
+	return IsExportDirectoryValid;
+}
+
+bool UJsonAsAssetSettings::IsSetup(UJsonAsAssetSettings* Settings) {
+	if (Settings == nullptr) return false;
+	
+	TArray<FString> Params;
+	return IsSetup(Settings, Params);
+}
+
 void UJsonAsAssetSettings::ReadAppData() {
 	UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
 

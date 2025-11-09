@@ -6,12 +6,6 @@
 #include "Utilities/Compatibility.h"
 
 struct FJsonAsAssetToolbar {
-	/*
-	 * Registers the JsonAsAsset button onto the toolbar
-	 *
-	 * NOTE: Called on FJsonAsAssetModule::StartupModule
-	 */
-	void Register(FName MenuToExtend = "LevelEditor.LevelEditorToolBar.PlayToolBar");
 	void Register();
 
 #if ENGINE_UE4

@@ -118,6 +118,8 @@ See [Unreal Engine Modding Projects](https://github.com/Buckminsterfullerene02/U
 > [**Material Data Prerequisites still apply.**](#material-data-prerequisites)
 >  ​
 
+We strongly recommend using the latest **commit** of JsonAsAsset to ensure compatibility with recent Unreal updates and access to the newest features.
+
 Follow these steps to install **JsonAsAsset**:
 
 1. **Visit the Releases Page:**  
@@ -136,6 +138,12 @@ Follow these steps to install **JsonAsAsset**:
 11. **Restart the Editor:**  
    Restart the Unreal Engine editor to apply the changes.
 
+<a name="cloud"></a>
+### Setup the Cloud ✨
+Make sure Cloud is enabled in Plugin Settings, and setup a Cloud Server. [Click here to get to Cloud releases.](https://github.com/Tectors/j0.dev/releases)
+
+Once the Cloud is started, JsonAsAsset will fetch every referenced asset for you hands-free.
+
 <a name="workflow"></a>
 ## Workflow
 
@@ -146,14 +154,6 @@ Follow these steps to install **JsonAsAsset**:
 3. Select the file and press open.
 
 4. The asset will import, and bring you to the created asset in the content browser.
-
-<a name="cloud"></a>
-# 
-> [!TIP]
-> ### Want to import entire asset chains automatically? 💡
-> Make sure Cloud is enabled in Plugin Settings, and setup a Cloud Server. [Click here to get to Cloud releases.](https://github.com/Tectors/j0.dev/releases)
->
-> Once the Cloud is started, JsonAsAsset will fetch every referenced asset for you hands-free.
 
 <a name="common-errors"></a>
 ### Common Errors 🐛
@@ -188,6 +188,3 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
-
-
-

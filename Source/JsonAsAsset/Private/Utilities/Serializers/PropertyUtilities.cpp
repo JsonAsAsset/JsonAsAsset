@@ -39,6 +39,10 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 	}
 
 	if (MapProperty) {
+		if (NewJsonValue->IsNull()) {
+			return;
+		}
+		
 		FProperty* KeyProperty = MapProperty->KeyProp;
 		FProperty* ValueProperty = MapProperty->ValueProp;
 		FScriptMapHelper MapHelper(MapProperty, OutValue);
@@ -339,6 +343,24 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			check(ByteProperty->Enum);
 			int64 EnumerationValue = ByteProperty->Enum->GetValueByNameString(EnumAsString);
 
+			/* Somethings wrong!!! */
+			if (EnumerationValue == -1) {
+				UE_LOG(LogJsonAsAsset, Warning, TEXT("Invalid enum value for property '%s'!"), *Property->GetName());
+
+				UE_LOG(LogJsonAsAsset, Warning, TEXT("Enum name: %s"), *EnumAsString);
+				UE_LOG(LogJsonAsAsset, Warning, TEXT("Enum type: %s"), *ByteProperty->Enum->GetName());
+				UE_LOG(LogJsonAsAsset, Warning, TEXT("Available values:"));
+
+				for (int32 Index = 0; Index < ByteProperty->Enum->NumEnums() - 1; ++Index)
+				{
+					FString Name = ByteProperty->Enum->GetNameStringByIndex(Index);
+					int64 Value = ByteProperty->Enum->GetValueByIndex(Index);
+					UE_LOG(LogJsonAsAsset, Warning, TEXT("  [%d] %s = %lld"), Index, *Name, Value);
+				}
+
+				EnumerationValue = 0;
+			}
+			
 			ByteProperty->SetIntPropertyValue(OutValue, EnumerationValue);
 		}
 		else {

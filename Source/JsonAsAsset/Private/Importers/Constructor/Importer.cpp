@@ -85,6 +85,7 @@ TMap<FString, TArray<FString>> ImporterTemplatedTypes = {
 			TEXT("SlateWidgetStyleAsset"),
 			TEXT("AnimBoneCompressionSettings"),
 			TEXT("AnimCurveCompressionSettings"),
+			TEXT("LandscapeLayerInfoObject")
 		}
 	},
 	{

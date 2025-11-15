@@ -26,6 +26,7 @@
 #include "MessageLogModule.h"
 #include "Logging/MessageLog.h"
 #include "Modules/LogCategory.h"
+#include "UObject/SavePackage.h"
 
 #if (ENGINE_MAJOR_VERSION != 4 || ENGINE_MINOR_VERSION < 27)
 #include "Engine/DeveloperSettings.h"

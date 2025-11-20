@@ -26,7 +26,6 @@
 #include "Materials/MaterialParameterCollection.h"
 #include "Engine/SubsurfaceProfile.h"
 #include "Curves/CurveLinearColor.h"
-#include "Extensions/NotForLicensees/TextureStack.h"
 #include "Importers/Types/Texture/TextureImporter.h"
 #include "Logging/MessageLog.h"
 #include "Modules/LogCategory.h"

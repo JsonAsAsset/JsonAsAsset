@@ -34,6 +34,35 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					),
 					NAME_None
 				);
+
+				InnerMenuBuilder.AddMenuEntry(
+					FText::FromString("Import Folder of JSON Files"),
+					FText::FromString(""),
+					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+
+					FUIAction(
+						FExecuteAction::CreateLambda([] {
+							for (FString Folder : OpenFolderDialog("Folder of JSON files"))
+							{
+								TArray<FString> JsonFiles;
+								IFileManager::Get().FindFilesRecursive(
+									JsonFiles,
+									*Folder,
+									TEXT("*.json"),
+									true,
+									true,
+									false
+								);
+
+								for (FString& JsonPath : JsonFiles)
+								{
+									IImporter::ImportReference(JsonPath);
+								}
+							}
+						})
+					),
+					NAME_None
+				);
 			}
 			InnerMenuBuilder.EndSection();
 

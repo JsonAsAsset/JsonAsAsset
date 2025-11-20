@@ -258,7 +258,7 @@ void FToolAnimationData::Execute() {
 			continue;
 		}
 
-		TArray<TSharedPtr<FJsonValue>> Exports = Response->GetArrayField(TEXT("jsonOutput"));
+		TArray<TSharedPtr<FJsonValue>> Exports = Response->GetArrayField(TEXT("exports"));
 		
 		for (const TSharedPtr<FJsonValue>& Export : Exports) {
 			if (!Export.IsValid() || !Export->AsObject().IsValid()) {

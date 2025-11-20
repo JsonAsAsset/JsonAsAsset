@@ -16,7 +16,7 @@ public:
 public:
 	/* Importing assets from Cloud */
 	template <class T = UObject>
-	static bool ConstructAsset(const FString& Path, const FString& Type, TObjectPtr<T>& OutObject, bool& bSuccess);
+	static bool ConstructAsset(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<T>& OutObject, bool& bSuccess);
 	
 	static bool Construct_TypeTexture(const FString& Path, const FString& FetchPath, UTexture*& OutTexture);
 

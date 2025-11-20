@@ -390,6 +390,8 @@ void IImporter::LoadObject(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 
 	if (!Settings->AssetSettings.GameName.IsEmpty()) {
 		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.GameName + "/Content"), TEXT("/Game"));
+		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.GameName + "/Plugins"), TEXT(""));
+		ObjectPath = ObjectPath.Replace(TEXT("/Content"), TEXT(""));
 	}
 
 	ObjectPath = ObjectPath.Replace(TEXT("Engine/Content"), TEXT("/Engine"));
@@ -456,7 +458,7 @@ TArray<TObjectPtr<T>> IImporter::LoadObject(const TArray<TSharedPtr<FJsonValue>>
 	return Array;
 }
 
-void IImporter::ImportReference(const FString& File) {
+void IImporter::ImportReference(FString& File) {
 	/* ~~~~  Parse JSON into UE JSON Reader ~~~~ */
 	FString ContentBefore;
 	FFileHelper::LoadFileToString(ContentBefore, *File);

@@ -32,6 +32,8 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 			*FPaths::GetExtension(AssetName + ".png").ToLower(), ImageData, ImageData + Data.Num(), GWarn));
 	}
 
+	if (Texture2D == nullptr) return false;
+
 #if ENGINE_UE5
 	Texture2D->SetPlatformData(new FTexturePlatformData());
 #else

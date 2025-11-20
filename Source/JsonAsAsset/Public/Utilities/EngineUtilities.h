@@ -192,7 +192,7 @@ inline TArray<TSharedPtr<FJsonValue>> RequestExports(const FString& Path) {
 		return Exports;
 	}
 
-	Exports = Response->GetArrayField(TEXT("jsonOutput"));
+	Exports = Response->GetArrayField(TEXT("exports"));
 	
 	return Exports;
 }
@@ -1028,6 +1028,14 @@ inline void RedirectPath(FString& OutPath) {
 
 	for (auto [Source, Target] : Settings->AssetSettings.PathRedirectors) {
 		OutPath = OutPath.Replace(*Source, *Target);
+	}
+}
+
+inline void ReverseRedirectPath(FString& OutPath) {
+	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+
+	for (const FJPathRedirector& Redirect : Settings->AssetSettings.PathRedirectors) {
+		OutPath = OutPath.Replace(*Redirect.Target, *Redirect.Source);
 	}
 }
 

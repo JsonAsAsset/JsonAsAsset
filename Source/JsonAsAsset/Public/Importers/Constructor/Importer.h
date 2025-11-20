@@ -215,7 +215,7 @@ public:
 
 public:
     /* Sends off to the ReadExportsAndImport function once read */
-    static void ImportReference(const FString& File);
+    static void ImportReference(FString& File);
 
     /*
      * Searches for importable asset types and imports them.
@@ -249,20 +249,24 @@ public:
 
         /* TODO: Remove this? */
         if (Type == "Texture") Type = "Texture2D";
-
+        
         if (Settings->bEnableCloudServer && (
             InObject == nullptr ||
                 Settings->AssetSettings.TextureImportSettings.bForceRedownloadTextures &&
                 Type == "Texture2D"
             )
+            && !Path.StartsWith("Engine/")
         ) {
             const UObject* DefaultObject = GetClassDefaultObject(T::StaticClass());
 
             if (DefaultObject != nullptr && !Name.IsEmpty() && !Path.IsEmpty()) {
                 bool bDownloadStatus = false;
 
+                FString NewPath = Path;
+                ReverseRedirectPath(NewPath);
+
                 /* Try importing the asset */
-                if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + Path + "." + Name + "'").ToString(), Type, InObject, bDownloadStatus)) {
+                if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), FSoftObjectPath(Type + "'" + Path + "." + Name + "'").ToString(), Type, InObject, bDownloadStatus)) {
                     const FText AssetNameText = FText::FromString(Name);
                     const FSlateBrush* IconBrush = FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail"));
 

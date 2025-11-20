@@ -7,7 +7,7 @@
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 
-class FRemoteUtilities {
+class JSONASASSET_API FRemoteUtilities {
 public:
 #if ENGINE_UE5
 	static TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> ExecuteRequestSync(TSharedRef<IHttpRequest> HttpRequest, float LoopDelay = 0.02);

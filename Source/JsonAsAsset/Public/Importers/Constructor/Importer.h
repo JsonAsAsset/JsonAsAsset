@@ -255,7 +255,7 @@ public:
                 Settings->AssetSettings.TextureImportSettings.bForceRedownloadTextures &&
                 Type == "Texture2D"
             )
-            && !Path.StartsWith("Engine/")
+            && !Path.StartsWith("Engine/") && !Path.StartsWith("/Engine/")
         ) {
             const UObject* DefaultObject = GetClassDefaultObject(T::StaticClass());
 

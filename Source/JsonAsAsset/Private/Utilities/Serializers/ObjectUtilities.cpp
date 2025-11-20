@@ -73,7 +73,7 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 		FString Outer = ExportObject->GetStringField(TEXT("Outer"));
 		
 		/* Add it to the referenced objects */
-		PropertySerializer->ExportsContainer.Exports.Add(FUObjectExport(FName(*Name), FName(*Type), FName(*Outer), ExportObject, nullptr, Parent, Index));
+		PropertySerializer->ExportsContainer.Exports.Add(FUObjectExport(ExportObject, nullptr, Parent, Index));
 	}
 
 	if (bCreateObjects) {

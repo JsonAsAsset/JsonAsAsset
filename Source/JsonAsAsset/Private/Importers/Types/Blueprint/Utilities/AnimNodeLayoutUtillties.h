@@ -113,7 +113,7 @@ inline void AutoLayoutAnimGraphNodes(const TArray<FUObjectExport>& NodeExports) 
 
 	for (const FUObjectExport& Export : NodeExports) {
 		if (UAnimGraphNode_Base* Node = Cast<UAnimGraphNode_Base>(Export.Object)) {
-			NameToNode.Add(Export.Name, Node);
+			NameToNode.Add(Export.GetName(), Node);
 
 			/* Node with no outgoing links = root-level / sink node */
 			bool bHasOutputs = false;

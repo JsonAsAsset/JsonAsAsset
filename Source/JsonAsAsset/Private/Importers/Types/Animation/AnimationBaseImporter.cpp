@@ -5,6 +5,7 @@
 #include "Animation/AnimMontage.h"
 #include "Dom/JsonObject.h"
 #include "Animation/AnimSequence.h"
+#include "Utilities/JsonUtilities.h"
 
 #if ENGINE_UE5
 #include "Animation/AnimData/IAnimationDataController.h"

@@ -56,7 +56,8 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 
 								for (FString& JsonPath : JsonFiles)
 								{
-									IImporter::ImportReference(JsonPath);
+									IImporter* Importer = new IImporter();
+									Importer->ImportReference(JsonPath);
 								}
 							}
 						})

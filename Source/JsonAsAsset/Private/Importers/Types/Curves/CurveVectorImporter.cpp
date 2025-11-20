@@ -3,6 +3,7 @@
 #include "Importers/Types/Curves/CurveVectorImporter.h"
 #include "Factories/CurveFactory.h"
 #include "Curves/CurveVector.h"
+#include "Utilities/JsonUtilities.h"
 
 bool ICurveVectorImporter::Import() {
 	/* Array of containers */

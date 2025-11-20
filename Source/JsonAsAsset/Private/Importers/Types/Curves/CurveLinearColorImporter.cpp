@@ -3,6 +3,7 @@
 #include "Importers/Types/Curves/CurveLinearColorImporter.h"
 #include "Curves/CurveLinearColor.h"
 #include "Factories/CurveFactory.h"
+#include "Utilities/JsonUtilities.h"
 
 bool ICurveLinearColorImporter::Import() {
 	TArray<TSharedPtr<FJsonValue>> FloatCurves = AssetData->GetArrayField(TEXT("FloatCurves"));

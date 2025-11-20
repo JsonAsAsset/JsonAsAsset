@@ -16,18 +16,16 @@ public:
 	static inline FString Export = TEXT("/api/export");
 
 public:
-	static TSharedPtr<FJsonObject> Get(const FString& RequestURL, const TMap<FString, FString>& Parameters = {}) {
+	static auto SendRequest(const FString& RequestURL, const TMap<FString, FString>& Parameters = {}, const TMap<FString, FString>& Headers = {}) {
 		FHttpModule* HttpModule = &FHttpModule::Get();
 		const auto NewRequest = HttpModule->CreateRequest();
 
 		FString FullUrl = URL + RequestURL;
 		
-		if (Parameters.Num() > 0)
-		{
+		if (Parameters.Num() > 0) {
 			bool bFirst = true;
 
-			for (const auto& Pair : Parameters)
-			{
+			for (const auto& Pair : Parameters) {
 				FullUrl += bFirst ? TEXT("?") : TEXT("&");
 				bFirst = false;
 
@@ -38,20 +36,40 @@ public:
 				);
 			}
 		}
+
+		for (const auto& Pair : Headers) {
+			NewRequest->SetHeader(Pair.Key, Pair.Value);
+		}
 		
 		NewRequest->SetURL(FullUrl);
-		NewRequest->SetVerb(TEXT("GET"));
+		
+		return NewRequest;
+	}
 	
-		const auto NewResponse = FRemoteUtilities::ExecuteRequestSync(NewRequest);
-		if (!NewResponse.IsValid()) return TSharedPtr<FJsonObject>();
+	static TSharedPtr<FJsonObject> Get(const FString& RequestURL, const TMap<FString, FString>& Parameters = {}, const TMap<FString, FString>& Headers = {}) {
+		const auto Request = SendRequest(RequestURL, Parameters, Headers);
+		Request->SetVerb(TEXT("GET"));
+	
+		const auto Response = FRemoteUtilities::ExecuteRequestSync(Request);
+		if (!Response.IsValid()) return TSharedPtr<FJsonObject>();
 
-		const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(NewResponse->GetContentAsString());
+		const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
 		
 		if (TSharedPtr<FJsonObject> JsonObject; FJsonSerializer::Deserialize(JsonReader, JsonObject)) {
 			return JsonObject;
 		}
 
 		return TSharedPtr<FJsonObject>();
+	}
+
+	static TArray<uint8> GetRaw(const FString& RequestURL, const TMap<FString, FString>& Parameters = {}, const TMap<FString, FString>& Headers = {}) {
+		const auto Request = SendRequest(RequestURL, Parameters, Headers);
+		Request->SetVerb(TEXT("GET"));
+	
+		const auto Response = FRemoteUtilities::ExecuteRequestSync(Request);
+		if (!Response.IsValid()) return TArray<uint8>();
+
+		return Response->GetContent();
 	}
 
 	static TArray<TSharedPtr<FJsonValue>> GetExports(const FString& RequestURL, const TMap<FString, FString>& Parameters = {}) {

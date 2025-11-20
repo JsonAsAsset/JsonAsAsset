@@ -11,6 +11,7 @@
 #include "Materials/MaterialExpressionShadingPathSwitch.h"
 #include "Materials/MaterialExpressionQualitySwitch.h"
 #include "Materials/MaterialExpressionReroute.h"
+#include "Utilities/JsonUtilities.h"
 
 #if ENGINE_UE5
 #include "Materials/MaterialExpressionTextureBase.h"
@@ -24,7 +25,6 @@ TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(UObject* Parent, const 
 		TSharedPtr<FJsonObject> Object = TSharedPtr<FJsonObject>(Value->AsObject());
 
 		FString ExportType = Object->GetStringField(TEXT("Type"));
-		FName ExportName(Object->GetStringField(TEXT("Name")));
 
 		/* If an editor only data object is found, just set it */
 		if (ExportType == Type + "EditorOnlyData") {
@@ -40,8 +40,6 @@ TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(UObject* Parent, const 
 
 		/* Add to the list of expressions */
 		Container.Exports.Add(FUObjectExport(
-			ExportName,
-			FName(ExportType),
 			FName(Outer),
 			Object,
 			nullptr,
@@ -188,8 +186,8 @@ void IMaterialGraph::AddExpressionToParent(UObject* Parent, UMaterialExpression*
 }
 
 UMaterialExpression* IMaterialGraph::CreateEmptyExpression(FUObjectExport& Export, FUObjectExportContainer& Container) {
-	const FName Type = Export.Type;
-	const FName Name = Export.Name;
+	const FName Type = Export.GetType();
+	const FName Name = Export.GetName();
 	
 #if UE5_6_BEYOND
 	const UClass* Class = FindFirstObject<UClass>(*Type.ToString());
@@ -252,8 +250,8 @@ UMaterialExpression* IMaterialGraph::CreateEmptyExpression(FUObjectExport& Expor
 /* ReSharper disable once CppMemberFunctionMayBeConst */
 UMaterialExpression* IMaterialGraph::OnMissingNodeClass(FUObjectExport& Export, FUObjectExportContainer& Container) {
 	/* Get variables from the export data */
-	const FName Name = Export.Name;
-	FName Type = Export.Type;
+	const FName Name = Export.GetName();
+	FName Type = Export.GetType();
 
 	/* Material/MaterialFunction Parent */
 	UObject* Parent = Export.Parent;

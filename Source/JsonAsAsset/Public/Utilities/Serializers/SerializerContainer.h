@@ -24,7 +24,7 @@ public:
     FORCEINLINE UObjectSerializer* GetObjectSerializer() const;
     FORCEINLINE UPropertySerializer* GetPropertySerializer() const;
 
-protected:
+public:
     UPropertySerializer* PropertySerializer;
     UObjectSerializer* ObjectSerializer;
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

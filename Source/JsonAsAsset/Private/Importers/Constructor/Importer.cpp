@@ -26,6 +26,7 @@
 #include "Materials/MaterialParameterCollection.h"
 #include "Engine/SubsurfaceProfile.h"
 #include "Curves/CurveLinearColor.h"
+#include "Extensions/NotForLicensees/TextureStack.h"
 #include "Importers/Types/Texture/TextureImporter.h"
 #include "Logging/MessageLog.h"
 #include "Modules/LogCategory.h"
@@ -142,151 +143,158 @@ TMap<FString, TArray<FString>> ImporterTemplatedTypes = {
 	}
 };
 
-bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FString File, const bool bHideNotifications) {
+bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, const FString& File, const bool bHideNotifications) {
 	for (const TSharedPtr<FJsonValue>& ExportPtr : Exports) {
-		TSharedPtr<FJsonObject> DataObject = ExportPtr->AsObject();
-
-		FString Type = DataObject->GetStringField(TEXT("Type"));
-		FString Name = DataObject->GetStringField(TEXT("Name"));
-
-		/* BlueprintGeneratedClass is post-fixed with _C */
-		if (Type.Contains("BlueprintGeneratedClass")) {
-			Name.Split("_C", &Name, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
-		}
-#if UE5_6_BEYOND
-		UClass* Class = FindFirstObject<UClass>(*Type);
-#else
-		UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type);
-#endif
+		if (ExportPtr->Type != EJson::Object) continue;
 		
-		if (Class == nullptr) continue;
-
-		/* Check if this export can be imported */
-		const bool InheritsDataAsset = Class->IsChildOf(UDataAsset::StaticClass());
-		if (!CanImport(Type, false, Class)) continue;
-
-		/* Convert from relative path to full path */
-		if (FPaths::IsRelative(File)) File = FPaths::ConvertRelativePathToFull(File);
-
-		RedirectPath(File);
-
-		FString FailureReason;
-		UPackage* LocalOutermostPkg;
-		UPackage* LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
-
-		if (LocalPackage == nullptr) {
-			/* Try fixing our Export Directory Settings using the provided File directory if local package not found */
-            UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
-
-			FString ExportDirectoryCache = PluginSettings->ExportDirectory.Path;
-			
-			if (FString DirectoryPathFix; File.Split(TEXT("Output/Exports/"), &DirectoryPathFix, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd)) {
-				DirectoryPathFix = DirectoryPathFix + TEXT("Output/Exports");
-
-				PluginSettings->ExportDirectory.Path = DirectoryPathFix;
-				SavePluginConfig(PluginSettings);
-
-				/* Retry creating the asset package */
-				LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
-
-				/* Undo the change if unsuccessful */
-				if (LocalPackage == nullptr) {
-					PluginSettings->ExportDirectory.Path = ExportDirectoryCache;
-
-					SavePluginConfig(PluginSettings);
-				}
-			}
-		}
-
-		if (LocalPackage == nullptr) {
-			AppendNotification(
-				FText::FromString("Import Failed: " + Type),
-				FText::FromString(FailureReason),
-				4.0f,
-				FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
-				SNotificationItem::CS_Fail,
-				false,
-				350.0f
-			);
-
-			return false;
-		}
-
-		/* Importer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		IImporter* Importer = nullptr;
-		
-		/* Try to find the importer using a factory delegate */
-		if (const FImporterFactoryDelegate* Factory = FindFactoryForAssetType(Type)) {
-			Importer = (*Factory)(Name, File, DataObject, LocalPackage, LocalOutermostPkg, Exports, Class);
-		}
-
-		/* If it inherits DataAsset, use the data asset importer */
-		if (Importer == nullptr && InheritsDataAsset) {
-			Importer = new IDataAssetImporter(Name, File, DataObject, LocalPackage, LocalOutermostPkg, Exports, Class);
-		}
-
-		/* By default, (with no existing importer) use the templated importer with the asset class. */
-		if (Importer == nullptr) {
-			Importer = new ITemplatedImporter<UObject>(
-				Name, File, DataObject, LocalPackage, LocalOutermostPkg, Exports, Class
-			);
-		}
-
-		/* TODO: Don't hardcode this. */
-		if (IsAssetTypeImportableUsingCloud(Type)) {
-			Importer = new ITextureImporter<UTextureLightProfile>(
-				Name, File, DataObject, LocalPackage, LocalOutermostPkg, Exports, Class
-			);
-		}
-
-		/* Import the asset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		bool Successful = false; {
-			try {
-				Successful = Importer->Import();
-			} catch (const char* Exception) {
-				UE_LOG(LogJsonAsAsset, Error, TEXT("Importer exception: %s"), *FString(Exception));
-			}
-		}
-
-		if (bHideNotifications) {
-			return Successful;
-		}
-
-		if (Successful) {
-			UE_LOG(LogJsonAsAsset, Log, TEXT("Successfully imported \"%s\" as \"%s\""), *Name, *Type);
-
-			/* TODO: Remove this? */
-			if (Type != "AnimSequence" && Type != "AnimMontage") {
-				Importer->Save();
-			}
-
-			/* Import Successful Notification */
-			AppendNotification(
-				FText::FromString("Imported: " + Name),
-				FText::FromString(Type),
-				2.0f,
-				FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
-				SNotificationItem::CS_Success,
-				false,
-				350.0f
-			);
-
-			GetMessageLog().Message(EMessageSeverity::Info, FText::FromString("Imported Asset: " + Name + " (" + Type + ")"));
-		} else {
-			/* Import Failed Notification */
-			AppendNotification(
-				FText::FromString("Import Failed: " + Name),
-				FText::FromString(Type),
-				2.0f,
-				FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
-				SNotificationItem::CS_Fail,
-				false,
-				350.0f
-			);
-		}
+		ReadExportAndImport(Exports, ExportPtr->AsObject(), File, bHideNotifications);
 	}
 
 	return true;
+}
+
+void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, const bool bHideNotifications) const {
+	FString Type = Export->GetStringField(TEXT("Type"));
+	FString Name = Export->GetStringField(TEXT("Name"));
+
+	/* BlueprintGeneratedClass is post-fixed with _C */
+	if (Type.Contains("BlueprintGeneratedClass")) {
+		Name.Split("_C", &Name, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+	}
+#if UE5_6_BEYOND
+	UClass* Class = FindFirstObject<UClass>(*Type);
+#else
+	UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type);
+#endif
+	
+	if (Class == nullptr) return;
+
+	/* Check if this export can be imported */
+	const bool InheritsDataAsset = Class->IsChildOf(UDataAsset::StaticClass());
+	if (!CanImport(Type, false, Class)) return;
+
+	/* Convert from relative path to full path */
+	if (FPaths::IsRelative(File)) File = FPaths::ConvertRelativePathToFull(File);
+
+	RedirectPath(File);
+
+	FString FailureReason;
+	UPackage* LocalOutermostPkg;
+	UPackage* LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
+
+	if (LocalPackage == nullptr) {
+		/* Try fixing our Export Directory Settings using the provided File directory if local package not found */
+        UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
+
+		FString ExportDirectoryCache = PluginSettings->ExportDirectory.Path;
+		
+		if (FString DirectoryPathFix; File.Split(TEXT("Output/Exports/"), &DirectoryPathFix, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd)) {
+			DirectoryPathFix = DirectoryPathFix + TEXT("Output/Exports");
+
+			PluginSettings->ExportDirectory.Path = DirectoryPathFix;
+			SavePluginConfig(PluginSettings);
+
+			/* Retry creating the asset package */
+			LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
+
+			/* Undo the change if unsuccessful */
+			if (LocalPackage == nullptr) {
+				PluginSettings->ExportDirectory.Path = ExportDirectoryCache;
+
+				SavePluginConfig(PluginSettings);
+			}
+		}
+	}
+
+	if (LocalPackage == nullptr) {
+		AppendNotification(
+			FText::FromString("Import Failed: " + Type),
+			FText::FromString(FailureReason),
+			4.0f,
+			FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
+			SNotificationItem::CS_Fail,
+			false,
+			350.0f
+		);
+
+		return;
+	}
+
+	/* Importer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	IImporter* Importer = nullptr;
+	
+	/* Try to find the importer using a factory delegate */
+	if (const FImporterFactoryDelegate* Factory = FindFactoryForAssetType(Type)) {
+		Importer = (*Factory)(Name, File, Export, LocalPackage, LocalOutermostPkg, Exports, Class);
+	}
+
+	/* If it inherits DataAsset, use the data asset importer */
+	if (Importer == nullptr && InheritsDataAsset) {
+		Importer = new IDataAssetImporter(Name, File, Export, LocalPackage, LocalOutermostPkg, Exports, Class);
+	}
+
+	/* By default, (with no existing importer) use the templated importer with the asset class. */
+	if (Importer == nullptr) {
+		Importer = new ITemplatedImporter<UObject>(
+			Name, File, Export, LocalPackage, LocalOutermostPkg, Exports, Class
+		);
+	}
+
+	/* TODO: Don't hardcode this. */
+	if (IsAssetTypeImportableUsingCloud(Type)) {
+		Importer = new ITextureImporter<UTextureLightProfile>(
+			Name, File, Export, LocalPackage, LocalOutermostPkg, Exports, Class
+		);
+	}
+
+	Importer->PropertySerializer->ExportsContainer = GetPropertySerializer()->ExportsContainer;
+	Importer->PropertySerializer->Importer = Importer;
+	
+	/* Import the asset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	bool Successful = false; {
+		try {
+			Successful = Importer->Import();
+		} catch (const char* Exception) {
+			UE_LOG(LogJsonAsAsset, Error, TEXT("Importer exception: %s"), *FString(Exception));
+		}
+	}
+
+	if (bHideNotifications) {
+		return;
+	}
+
+	if (Successful) {
+		UE_LOG(LogJsonAsAsset, Log, TEXT("Successfully imported \"%s\" as \"%s\""), *Name, *Type);
+
+		/* TODO: Remove this? */
+		if (Type != "AnimSequence" && Type != "AnimMontage") {
+			Importer->Save();
+		}
+
+		/* Import Successful Notification */
+		AppendNotification(
+			FText::FromString("Imported: " + Name),
+			FText::FromString(Type),
+			2.0f,
+			FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
+			SNotificationItem::CS_Success,
+			false,
+			350.0f
+		);
+
+		GetMessageLog().Message(EMessageSeverity::Info, FText::FromString("Imported Asset: " + Name + " (" + Type + ")"));
+	} else {
+		/* Import Failed Notification */
+		AppendNotification(
+			FText::FromString("Import Failed: " + Name),
+			FText::FromString(Type),
+			2.0f,
+			FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
+			SNotificationItem::CS_Fail,
+			false,
+			350.0f
+		);
+	}
 }
 
 TArray<TSharedPtr<FJsonValue>> IImporter::GetObjectsWithPropertyNameStartingWith(const FString& StartsWithStr, const FString& PropertyName) {
@@ -429,6 +437,14 @@ void IImporter::LoadObject(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 	}
 
 	Object = LoadedObject;
+
+	if (!Object) {
+		const FUObjectExport Export = GetPropertySerializer()->ExportsContainer.Find(ObjectName);
+		
+		if (Export.IsValid()) {
+			Object = TObjectPtr<T>(Cast<T>(Export.Object));
+		}
+	}
 
 	/* If object is still null, send off to Cloud to download */
 	if (!Object) {

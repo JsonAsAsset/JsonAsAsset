@@ -159,7 +159,8 @@ void FJsonAsAssetToolbar::ImportAction() {
 	for (FString& File : OutFileNames) {
 		EmptyMessageLog();
 
-		IImporter::ImportReference(File);
+		IImporter* Importer = new IImporter();
+		Importer->ImportReference(File);
 	}
 }
 

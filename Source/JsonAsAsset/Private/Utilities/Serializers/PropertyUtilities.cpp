@@ -147,9 +147,10 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			bool bUseDefaultLoadObject = !JsonValueAsObject->GetStringField(TEXT("ObjectName")).Contains(":ParticleModule");
 
 			if (bUseDefaultLoadObject) {
-				/* Use IImporter to import the object */
-				IImporter* Importer = new IImporter();
-
+				if (Importer == nullptr) {
+					Importer = new IImporter();
+				}
+				
 				Importer->ParentObject = ObjectSerializer->Parent;
 				Importer->LoadObject(&JsonValueAsObject, Object);
 

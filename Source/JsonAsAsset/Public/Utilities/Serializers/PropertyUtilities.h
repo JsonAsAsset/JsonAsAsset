@@ -11,6 +11,8 @@
 #include "Utilities/Compatibility.h"
 #include "PropertyUtilities.generated.h"
 
+class IImporter;
+
 USTRUCT()
 struct FFailedPropertyInfo
 {
@@ -30,10 +32,13 @@ class JSONASASSET_API UPropertySerializer : public UObject
 {
 	GENERATED_BODY()
 
+public:
 	friend class UObjectSerializer;
 
 	UPROPERTY()
 	UObjectSerializer* ObjectSerializer;
+
+	IImporter* Importer;
 	
 	TArray<FProperty*> BlacklistedProperties;
 	TSharedPtr<FStructSerializer> FallbackStructSerializer;

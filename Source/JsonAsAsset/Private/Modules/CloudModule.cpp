@@ -54,7 +54,7 @@ void CloudModule::RetrieveMetadata() {
 	UJsonAsAssetSettings* MutableSettings = GetMutableDefault<UJsonAsAssetSettings>();
 	
 	if (MutableSettings->bEnableCloudServer) {
-		const auto MetadataResponse = RequestObjectURL("http://localhost:1500/api/metadata");
+		const auto MetadataResponse = RequestObjectURL(URL + "/api/metadata");
 		if (MetadataResponse->HasField("reason")) return;
 		
 		if (MetadataResponse->HasField(TEXT("name"))) {

@@ -202,7 +202,8 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 			}
 
 			/* Import asset by IImporter */
-			bSuccess = IImporter::ReadExportsAndImport(Response->GetArrayField(TEXT("exports")), PackagePath, true);
+			IImporter* Importer = new IImporter();
+			bSuccess = Importer->ReadExportsAndImport(Response->GetArrayField(TEXT("exports")), PackagePath, true);
 
 			/* Define found object */
 			OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *RealPath));
@@ -233,7 +234,6 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 	const TSharedPtr<FJsonObject> JsonExport = Response[0]->AsObject();
 	const FString Type = JsonExport->GetStringField(TEXT("Type"));
 	
-	UTexture* Texture = nullptr;
 	TArray<uint8> Data = TArray<uint8>();
 	bool bUseOctetStream = Type == "TextureLightProfile"
 	                       || Type == "TextureCube"
@@ -264,10 +264,22 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 		}
 	}
 
+	return Fast_Construct_TypeTexture(JsonExport, Path, Type, Data, OutTexture);
+}
+
+bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& JsonExport, const FString& Path, const FString& Type, TArray<uint8> Data, UTexture*& OutTexture) {
+	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	UTexture* Texture = nullptr;
+	
 	FString PackagePath;
 	FString AssetName; {
 		Path.Split(".", &PackagePath, &AssetName);
 	}
+
+	const bool bUseOctetStream = Type == "TextureLightProfile"
+					   || Type == "TextureCube"
+					   || Type == "VolumeTexture"
+					   || Type == "TextureRenderTarget2D";
 
 	UPackage* Package = CreateAssetPackage(*PackagePath);
 	UPackage* OutermostPkg = Package->GetOutermost();

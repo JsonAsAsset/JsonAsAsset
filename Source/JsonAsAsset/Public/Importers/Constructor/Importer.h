@@ -4,7 +4,6 @@
 
 #include "Utilities/Compatibility.h"
 #include "Utilities/EngineUtilities.h"
-#include "Utilities/JsonUtilities.h"
 #include "Dom/JsonObject.h"
 #include "CoreMinimal.h"
 #include "Styling/SlateIconFinder.h"
@@ -215,12 +214,13 @@ public:
 
 public:
     /* Sends off to the ReadExportsAndImport function once read */
-    static void ImportReference(FString& File);
+    void ImportReference(FString& File);
 
     /*
      * Searches for importable asset types and imports them.
      */
-    static bool ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, FString File, bool bHideNotifications = false);
+    bool ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, const FString& File, bool bHideNotifications = false);
+    void ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, bool bHideNotifications = false) const;
 
 public:
     TArray<TSharedPtr<FJsonValue>> GetObjectsWithPropertyNameStartingWith(const FString& StartsWithStr, const FString& PropertyName);

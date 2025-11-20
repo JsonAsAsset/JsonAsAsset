@@ -279,7 +279,7 @@ inline void HandlePropertyBinding(FUObjectExport NodeExport, const TArray<TShare
 				}
 			}
 
-			Node->NodeComment = NodeExport.Name.ToString();
+			Node->NodeComment = NodeExport.GetName().ToString();
 			Node->bCommentBubbleVisible = bBoundFunction;
 		}
 	}

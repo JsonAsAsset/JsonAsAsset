@@ -9,12 +9,15 @@
 struct FUObjectExport {
 	FUObjectExport(): Object(nullptr), Parent(nullptr), Position(-1) { };
 
-	FName Name;
-	FName Type;
-	FName Outer;
-
-	/* The json object of the expression, this is not Properties */
+	/* The json object of the expression, ^this is not Properties^ */
 	TSharedPtr<FJsonObject> JsonObject;
+
+	FName NameOverride;
+	FName TypeOverride;
+	FName OuterOverride;
+
+	TSharedPtr<void> ExtraData;
+	FName ExtraDataType;
 
 	/* Object created */
 	UObject* Object;
@@ -29,18 +32,55 @@ struct FUObjectExport {
 
 	int Position;
 
-	FUObjectExport(const FName& Name, const FName& Type, const FName Outer, const TSharedPtr<FJsonObject>& JsonObject, UObject* Object, UObject* Parent, int Position)
-		: Name(Name), Type(Type), Outer(Outer), JsonObject(JsonObject), Object(Object), Parent(Parent), Position(Position) {
-	}
+	FUObjectExport(const TSharedPtr<FJsonObject>& JsonObject, UObject* Object, UObject* Parent, const int Position = -1)
+		: JsonObject(JsonObject), Object(Object), Parent(Parent), Position(Position) { }
 
-	FUObjectExport(const FName& Name, const FName& Type, const FName Outer, const TSharedPtr<FJsonObject>& JsonObject, UObject* Object, UObject* Parent)
-		: Name(Name), Type(Type), Outer(Outer), JsonObject(JsonObject), Object(Object), Parent(Parent), Position(-1) {
-	}
+	FUObjectExport(const FName OuterOverride, const TSharedPtr<FJsonObject>& JsonObject, UObject* Object, UObject* Parent, const int Position = -1)
+		: JsonObject(JsonObject), OuterOverride(OuterOverride), Object(Object), Parent(Parent), Position(Position) { }
+
+	FUObjectExport(const FName NameOverride, const FName TypeOverride, const FName OuterOverride, const TSharedPtr<FJsonObject>& JsonObject, UObject* Object, UObject* Parent, int Position = -1)
+		: JsonObject(JsonObject), NameOverride(NameOverride), TypeOverride(TypeOverride), OuterOverride(OuterOverride), Object(Object), Parent(Parent), Position(Position) { }
 
 	TSharedPtr<FJsonObject> GetProperties() const {
 		TSharedPtr<FJsonObject> Properties = JsonObject->GetObjectField(TEXT("Properties"));
 
 		return Properties;
+	}
+
+	FName GetName() const {
+		if (!NameOverride.IsNone()) {
+			return NameOverride;
+		}
+		
+		if (!JsonObject.IsValid() || !JsonObject->HasField(TEXT("Name"))) {
+			return "";
+		}
+		
+		return FName(*JsonObject->GetStringField(TEXT("Name")));
+	}
+
+	FName GetType() const {
+		if (!TypeOverride.IsNone()) {
+			return TypeOverride;
+		}
+		
+		if (!JsonObject.IsValid() || !JsonObject->HasField(TEXT("Type"))) {
+			return "";
+		}
+		
+		return FName(*JsonObject->GetStringField(TEXT("Type")));
+	}
+
+	FName GetOuter() const {
+		if (!OuterOverride.IsNone()) {
+			return OuterOverride;
+		}
+
+		if (!JsonObject.IsValid() || !JsonObject->HasField(TEXT("Outer"))) {
+			return "";
+		}
+		
+		return FName(*JsonObject->GetStringField(TEXT("Outer")));
 	}
 
 	bool IsValid() const {
@@ -58,9 +98,23 @@ struct FUObjectExportContainer {
 	
 	FUObjectExportContainer() {};
 
+	void Fill(TArray<TSharedPtr<FJsonValue>> Array) {
+		int Index = -1;
+	
+		for (const TSharedPtr Value : Array) {
+			Index++;
+
+			TSharedPtr<FJsonObject> Object = Value->AsObject();
+			if (!Object->HasField(TEXT("Name"))) continue;
+
+			/* Add it to the referenced objects */
+			Exports.Add(FUObjectExport(Object, nullptr, nullptr, Index));
+		}
+	}
+
 	FUObjectExport& Find(const FName Name) {
 		for (FUObjectExport& Export : Exports) {
-			if (Export.Name == Name) {
+			if (Export.GetName() == Name) {
 				return Export;
 			}
 		}
@@ -70,9 +124,9 @@ struct FUObjectExportContainer {
 	}
 
 	template<typename T>
-	T* Find(const FName Name) const {
-		for (FUObjectExport Export : Exports) {
-			if (Export.Name == Name) {
+	T* Find(const FName Name) {
+		for (FUObjectExport& Export : Exports) {
+			if (Export.GetName() == Name) {
 				return Export.Get<T>();
 			}
 		}
@@ -81,8 +135,8 @@ struct FUObjectExportContainer {
 	}
 
 	FUObjectExport Find(const FName Name, const FName Outer) {
-		for (FUObjectExport Export : Exports) {
-			if (Export.Name == Name && Export.Outer == Outer) {
+		for (FUObjectExport& Export : Exports) {
+			if (Export.GetName() == Name && Export.GetOuter() == Outer) {
 				return Export;
 			}
 		}
@@ -91,7 +145,7 @@ struct FUObjectExportContainer {
 	}
 
 	FUObjectExport Find(const int Position) {
-		for (FUObjectExport Export : Exports) {
+		for (FUObjectExport& Export : Exports) {
 			if (Export.Position == Position) {
 				return Export;
 			}
@@ -101,7 +155,7 @@ struct FUObjectExportContainer {
 	}
 
 	UObject* FindRef(const int Position) {
-		for (const FUObjectExport Export : Exports) {
+		for (const FUObjectExport& Export : Exports) {
 			if (Export.Position == Position) {
 				return Export.Object;
 			}
@@ -119,8 +173,8 @@ struct FUObjectExportContainer {
 	}
 
 	FUObjectExport FindByType(const FName Type) {
-		for (FUObjectExport Export : Exports) {
-			if (Export.Type == Type) {
+		for (FUObjectExport& Export : Exports) {
+			if (Export.GetType() == Type) {
 				return Export;
 			}
 		}
@@ -133,8 +187,8 @@ struct FUObjectExportContainer {
 	}
 
 	FUObjectExport FindByType(const FName Type, const FName Outer) {
-		for (FUObjectExport Export : Exports) {
-			if (Export.Type == Type && Export.Outer == Outer) {
+		for (FUObjectExport& Export : Exports) {
+			if (Export.GetType() == Type && Export.GetOuter() == Outer) {
 				return Export;
 			}
 		}
@@ -147,8 +201,8 @@ struct FUObjectExportContainer {
 	}
 	
 	bool Contains(const FName Name) {
-		for (FUObjectExport Export : Exports) {
-			if (Export.Name == Name) {
+		for (FUObjectExport& Export : Exports) {
+			if (Export.GetName() == Name) {
 				return true;
 			}
 		}

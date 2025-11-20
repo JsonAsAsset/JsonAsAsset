@@ -12,6 +12,10 @@ Source/JsonAsAsset/Public/Importers/Constructor/Blueprint/*
 Source/JsonAsAsset/Private/Importers/Constructor/Blueprint/*
 Source/JsonAsAsset/Private/Importers/Types/Blueprint/*
 Source/JsonAsAsset/Public/Importers/Types/Blueprint/*
+
+# NotForLicensees ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Source/JsonAsAsset/Private/Extensions/NotForLicensees/*
+
 /Binaries
 
 # VS Code Settings

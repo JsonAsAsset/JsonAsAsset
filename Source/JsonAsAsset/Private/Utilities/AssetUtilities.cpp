@@ -240,6 +240,10 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 	                       || Type == "VolumeTexture"
 	                       || Type == "TextureRenderTarget2D";
 
+#if UE4_26_BELOW
+	bUseOctetStream = true;
+#endif
+
 	/* ~~~~~~~~~~~~~~~ Download Texture Data ~~~~~~~~~~~~ */
 	if (Type != "TextureRenderTarget2D") {
 		FHttpModule* HttpModule = &FHttpModule::Get();
@@ -280,6 +284,10 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 					   || Type == "TextureCube"
 					   || Type == "VolumeTexture"
 					   || Type == "TextureRenderTarget2D";
+
+#if UE4_26_BELOW
+	bUseOctetStream = true;
+#endif
 
 	UPackage* Package = CreateAssetPackage(*PackagePath);
 	UPackage* OutermostPkg = Package->GetOutermost();

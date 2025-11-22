@@ -3,7 +3,6 @@
 #include "JsonAsAsset.h"
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
 #if ENGINE_UE4
 #include "ToolMenus.h"
 #include "LevelEditor.h"

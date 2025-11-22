@@ -3,7 +3,6 @@
 #pragma once
 
 #include "Utilities/Compatibility.h"
-
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 

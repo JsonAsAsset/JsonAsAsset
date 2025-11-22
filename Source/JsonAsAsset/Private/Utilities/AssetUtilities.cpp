@@ -104,7 +104,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 
 	const FString PathWithGame = ModifiablePath + Name;
 
-	if (PathWithGame.Contains(TEXT("//"), ESearchCase::CaseSensitive)) {
+	if (PathWithGame.Contains(TEXT("//"), ESearchCase::CaseSensitive) || PathWithGame == "None" || PathWithGame.IsEmpty()) {
 		FailureReason = "Attempted to create a package with name containing double slashes.\n\nUpdate your configuration to use a valid Export Directory.";
 		return nullptr;
 	}

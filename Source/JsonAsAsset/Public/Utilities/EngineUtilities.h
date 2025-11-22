@@ -24,6 +24,7 @@
 #include "TlHelp32.h"
 #include "Json.h"
 #include "MessageLogModule.h"
+#include "Extensions/Cloud.h"
 #include "Logging/MessageLog.h"
 #include "Modules/LogCategory.h"
 #include "UObject/SavePackage.h"
@@ -184,7 +185,7 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 inline TArray<TSharedPtr<FJsonValue>> RequestExports(const FString& Path) {
 	TArray<TSharedPtr<FJsonValue>> Exports = {};
 
-	const TSharedPtr<FJsonObject> Response = FAssetUtilities::API_RequestExports(Path);
+	const TSharedPtr<FJsonObject> Response = Cloud::Export::GetRaw(Path);
 	if (Response == nullptr || Path.IsEmpty()) return Exports;
 
 	if (Response->HasField(TEXT("errored"))) {
@@ -195,26 +196,6 @@ inline TArray<TSharedPtr<FJsonValue>> RequestExports(const FString& Path) {
 	Exports = Response->GetArrayField(TEXT("exports"));
 	
 	return Exports;
-}
-
-inline TSharedPtr<FJsonObject> RequestExport(const FString& FetchPath = "/api/export?raw=true&path=", const FString& Path = "") {
-	static TMap<FString, TSharedPtr<FJsonObject>> ExportCache;
-
-	if (Path.IsEmpty()) return TSharedPtr<FJsonObject>();
-
-	/* Check cache first */
-	if (TSharedPtr<FJsonObject>* CachedResponse = ExportCache.Find(Path)) {
-		return *CachedResponse;
-	}
-
-	/* Fetch from API */
-	TSharedPtr<FJsonObject> Response = FAssetUtilities::API_RequestExports(Path, FetchPath);
-	
-	if (Response) {
-		ExportCache.Add(Path, Response);
-	}
-
-	return Response;
 }
 
 inline bool IsProcessRunning(const FString& ProcessName) {

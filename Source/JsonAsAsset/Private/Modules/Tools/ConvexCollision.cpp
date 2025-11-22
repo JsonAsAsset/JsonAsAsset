@@ -3,6 +3,7 @@
 #include "Modules/Tools/ConvexCollision.h"
 
 #include "Engine/StaticMeshSocket.h"
+#include "Extensions/Cloud.h"
 #include "Utilities/EngineUtilities.h"
 
 #include "PhysicsEngine/BodySetup.h"
@@ -27,7 +28,7 @@ void FToolConvexCollision::Execute() {
 		/* Request to API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 		FString ObjectPath = AssetData.ObjectPath.ToString();
 
-		const TSharedPtr<FJsonObject> Response = FAssetUtilities::API_RequestExports(ObjectPath);
+		const TSharedPtr<FJsonObject> Response = Cloud::Export::GetRaw(ObjectPath);
 		if (Response == nullptr || ObjectPath.IsEmpty()) continue;
 
 		/* Not found */

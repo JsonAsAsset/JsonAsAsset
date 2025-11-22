@@ -6,6 +6,7 @@
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
 #include "IAssetTools.h"
+#include "Extensions/Cloud.h"
 #include "Misc/MessageDialog.h"
 #include "Modules/CloudModule.h"
 #include "Sound/SoundCue.h"
@@ -142,7 +143,7 @@ void ISoundGraph::SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*
 					const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
 					/* Import SoundWave */
-					FString AudioURL = FString::Format(*(CloudModule::URL + "/api/export?raw=false&path={0}"), { AssetPtr });
+					FString AudioURL = FString::Format(*(Cloud::URL + "/api/export?raw=false&path={0}"), { AssetPtr });
 					FString AbsoluteSavePath = FString::Format(*("{0}Cache/{1}." + Settings->AssetSettings.SoundImportSettings.AudioFileExtension), { FPaths::ProjectDir(), FPaths::GetBaseFilename(AssetPtr) });
 
 					ImportSoundWave(AudioURL, AbsoluteSavePath, AssetPtr, WavePlayerNode);

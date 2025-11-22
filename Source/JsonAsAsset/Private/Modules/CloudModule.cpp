@@ -10,14 +10,40 @@
 #undef GetObject
 #endif
 
-FString CloudModule::URL = "http://localhost:1500";
-
 bool CloudModule::VerifyActivity(const UJsonAsAssetSettings* Settings) {
 	if (Settings->bEnableCloudServer && !IsRunning()) {
 		FNotificationInfo Info(FText::FromString("No Cloud Servers are active"));
 		
 		SetNotificationSubText(Info, FText::FromString(
 			"Read documentation on how to start one."
+		));
+
+		Info.HyperlinkText = FText::FromString("Learn how to setup");
+		Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
+			const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#cloud";
+			FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
+		});
+
+		Info.bFireAndForget = false;
+		Info.FadeOutDuration = 3.0f;
+		Info.ExpireDuration = 3.0f;
+		Info.bUseLargeFont = false;
+		Info.bUseThrobber = false;
+		Info.Image = FJsonAsAssetStyle::Get().GetBrush("JsonAsAsset.Toolbar.Icon");
+
+		RemoveNotification(CloudNotification);
+
+		CloudNotification = FSlateNotificationManager::Get().AddNotification(Info);
+		CloudNotification.Pin()->SetCompletionState(SNotificationItem::CS_Pending);
+
+		return false;
+	}
+
+	if (!IsReady()) {
+		FNotificationInfo Info(FText::FromString("No Cloud Server is initialized"));
+		
+		SetNotificationSubText(Info, FText::FromString(
+			"Read documentation on how to start a profile."
 		));
 
 		Info.HyperlinkText = FText::FromString("Learn how to setup");
@@ -54,8 +80,8 @@ void CloudModule::RetrieveMetadata() {
 	UJsonAsAssetSettings* MutableSettings = GetMutableDefault<UJsonAsAssetSettings>();
 	
 	if (MutableSettings->bEnableCloudServer) {
-		const auto MetadataResponse = RequestObjectURL(URL + "/api/metadata");
-		if (MetadataResponse->HasField("reason")) return;
+		const auto MetadataResponse = Cloud::Get("/api/metadata");
+		if (!MetadataResponse.IsValid()) return;
 		
 		if (MetadataResponse->HasField(TEXT("name"))) {
 			FString Name = MetadataResponse->GetStringField(TEXT("name"));
@@ -70,4 +96,10 @@ void CloudModule::RetrieveMetadata() {
 
 		SavePluginConfig(MutableSettings);
 	}
+}
+
+bool CloudModule::IsReady() {
+	const auto StatusResponse = Cloud::Get("/api/status");
+
+	return StatusResponse.IsValid();
 }

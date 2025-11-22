@@ -17,6 +17,7 @@
 #include "UObject/SavePackage.h"
 
 #include "HttpModule.h"
+#include "Extensions/Cloud.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Modules/CloudModule.h"
 #include "Serialization/JsonReader.h"
@@ -176,7 +177,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 			return true;
 		}
 		
-		const TSharedPtr<FJsonObject> Response = API_RequestExports(Path);
+		const TSharedPtr<FJsonObject> Response = Cloud::Export::GetRaw(Path);
 		if (Response == nullptr || Path.IsEmpty()) return true;
 
 		if (Response->HasField(TEXT("errored"))) {
@@ -184,6 +185,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 			return true;
 		}
 
+		//
 		const TSharedPtr<FJsonObject> JsonObject = Response->GetArrayField(TEXT("exports"))[0]->AsObject();
 		FString PackagePath;
 		FString AssetName;
@@ -220,7 +222,7 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 		return false;
 	}
 
-	const TSharedPtr<FJsonObject> JsonObject = API_RequestExports(FetchPath);
+	const TSharedPtr<FJsonObject> JsonObject = Cloud::Export::GetRaw(FetchPath);
 	if (JsonObject == nullptr) {
 		return false;
 	}
@@ -249,7 +251,7 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 		FHttpModule* HttpModule = &FHttpModule::Get();
 		const auto HttpRequest = HttpModule->CreateRequest();
 
-		HttpRequest->SetURL(CloudModule::URL + "/api/export?path=" + FetchPath);
+		HttpRequest->SetURL(Cloud::URL + "/api/export?path=" + FetchPath);
 		HttpRequest->SetHeader("content-type", bUseOctetStream ? "application/octet-stream" : "image/png");
 		HttpRequest->SetVerb(TEXT("GET"));
 		
@@ -333,31 +335,4 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 	OutTexture = Texture;
 
 	return true;
-}
-
-TSharedPtr<FJsonObject> FAssetUtilities::API_RequestExports(const FString& Path, const FString& FetchPath) {
-	FHttpModule* HttpModule = &FHttpModule::Get();
-	
-	const auto HttpRequest = HttpModule->CreateRequest();
-
-	FString PackagePath;
-	FString AssetName;
-	Path.Split(".", &PackagePath, &AssetName);
-	
-	const auto NewRequest = HttpModule->CreateRequest();
-
-	NewRequest->SetURL(CloudModule::URL + FetchPath + Path);
-	NewRequest->SetVerb(TEXT("GET"));
-	
-	const auto NewResponse = FRemoteUtilities::ExecuteRequestSync(NewRequest);
-
-	if (!NewResponse.IsValid()) return TSharedPtr<FJsonObject>();
-
-	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(NewResponse->GetContentAsString());
-	TSharedPtr<FJsonObject> JsonObject;
-	if (FJsonSerializer::Deserialize(JsonReader, JsonObject)) {
-		return JsonObject;
-	}
-
-	return TSharedPtr<FJsonObject>();
 }

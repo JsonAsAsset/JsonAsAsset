@@ -65,7 +65,7 @@ void FSkeletalMeshData::Execute() {
 		/* Request to API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 		FString ObjectPath = AssetData.ObjectPath.ToString();
 
-		const TSharedPtr<FJsonObject> Response = FAssetUtilities::API_RequestExports(ObjectPath);
+		const TSharedPtr<FJsonObject> Response = Cloud::Export::GetRaw(ObjectPath);
 		if (Response == nullptr || ObjectPath.IsEmpty()) continue;
 
 		/* Not found */

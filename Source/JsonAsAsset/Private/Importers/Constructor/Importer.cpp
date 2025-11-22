@@ -85,7 +85,8 @@ TMap<FString, TArray<FString>> ImporterTemplatedTypes = {
 			TEXT("SlateWidgetStyleAsset"),
 			TEXT("AnimBoneCompressionSettings"),
 			TEXT("AnimCurveCompressionSettings"),
-			TEXT("LandscapeLayerInfoObject")
+			TEXT("LandscapeLayerInfoObject"),
+			TEXT("HLODProxy")
 		}
 	},
 	{
@@ -152,7 +153,7 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, con
 	return true;
 }
 
-void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, const bool bHideNotifications) const {
+void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, const bool bHideNotifications) {
 	FString Type = Export->GetStringField(TEXT("Type"));
 	FString Name = Export->GetStringField(TEXT("Name"));
 
@@ -185,22 +186,27 @@ void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Export
 		/* Try fixing our Export Directory Settings using the provided File directory if local package not found */
         UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
 
-		FString ExportDirectoryCache = PluginSettings->ExportDirectory.Path;
+		PluginSettings->ReadAppData();
+		LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
+
+		if (LocalPackage == nullptr) {
+			FString ExportDirectoryCache = PluginSettings->ExportDirectory.Path;
 		
-		if (FString DirectoryPathFix; File.Split(TEXT("Output/Exports/"), &DirectoryPathFix, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd)) {
-			DirectoryPathFix = DirectoryPathFix + TEXT("Output/Exports");
+			if (FString DirectoryPathFix; File.Split(TEXT("Output/Exports/"), &DirectoryPathFix, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd)) {
+				DirectoryPathFix = DirectoryPathFix + TEXT("Output/Exports");
 
-			PluginSettings->ExportDirectory.Path = DirectoryPathFix;
-			SavePluginConfig(PluginSettings);
-
-			/* Retry creating the asset package */
-			LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
-
-			/* Undo the change if unsuccessful */
-			if (LocalPackage == nullptr) {
-				PluginSettings->ExportDirectory.Path = ExportDirectoryCache;
-
+				PluginSettings->ExportDirectory.Path = DirectoryPathFix;
 				SavePluginConfig(PluginSettings);
+
+				/* Retry creating the asset package */
+				LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
+
+				/* Undo the change if unsuccessful */
+				if (LocalPackage == nullptr) {
+					PluginSettings->ExportDirectory.Path = ExportDirectoryCache;
+
+					SavePluginConfig(PluginSettings);
+				}
 			}
 		}
 	}
@@ -246,15 +252,23 @@ void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Export
 		);
 	}
 
-	Importer->PropertySerializer->ExportsContainer = GetPropertySerializer()->ExportsContainer;
-	Importer->PropertySerializer->Importer = Importer;
-	
+	if (ObjectSerializer != nullptr && PropertySerializer != nullptr) {
+		Importer->PropertySerializer->ExportsContainer = GetPropertySerializer()->ExportsContainer;
+		Importer->PropertySerializer->Importer = Importer;
+	}
+
 	/* Import the asset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	bool Successful = false; {
 		try {
 			Successful = Importer->Import();
 		} catch (const char* Exception) {
 			UE_LOG(LogJsonAsAsset, Error, TEXT("Importer exception: %s"), *FString(Exception));
+		}
+	}
+
+	if (Importer) {
+		if (Importer->ImportedAsset != nullptr) {
+			ImportedAsset = Importer->ImportedAsset;
 		}
 	}
 
@@ -415,6 +429,19 @@ void IImporter::LoadObject(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 	/* Try to load object using the object path and the object name combined */
 	TObjectPtr<T> LoadedObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *(ObjectPath + "." + ObjectName)));
 
+	if (!LoadedObject) {
+		FString NewObjectPath;
+		FString ObjectFileName; {
+			ObjectPath.Split("/", &NewObjectPath, &ObjectFileName, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+		}
+
+		NewObjectPath = NewObjectPath + "/" + ObjectName;
+
+		if (ObjectFileName != ObjectName) {
+			LoadedObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *(NewObjectPath + "." + ObjectName)));
+		}
+	}
+
 	if (ParentObject != nullptr) {
 		if (!Outer.IsEmpty() && ParentObject->IsA(AActor::StaticClass())) {
 			const AActor* NewLoadedObject = Cast<AActor>(ParentObject);
@@ -437,7 +464,7 @@ void IImporter::LoadObject(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 
 	Object = LoadedObject;
 
-	if (!Object) {
+	if (!Object && ObjectSerializer != nullptr && PropertySerializer != nullptr) {
 		const FUObjectExport Export = GetPropertySerializer()->ExportsContainer.Find(ObjectName);
 		
 		if (Export.IsValid() && Export.Object != nullptr && Export.Object->IsA(T::StaticClass())) {
@@ -473,7 +500,7 @@ TArray<TObjectPtr<T>> IImporter::LoadObject(const TArray<TSharedPtr<FJsonValue>>
 	return Array;
 }
 
-void IImporter::ImportReference(FString& File) {
+void IImporter::ImportReference(const FString& File) {
 	/* ~~~~  Parse JSON into UE JSON Reader ~~~~ */
 	FString ContentBefore;
 	FFileHelper::LoadFileToString(ContentBefore, *File);
@@ -508,9 +535,10 @@ void IImporter::Save() const {
 	}
 }
 
-bool IImporter::OnAssetCreation(UObject* Asset) const {
-	const bool Synced = HandleAssetCreation(Asset);
+bool IImporter::OnAssetCreation(UObject* Asset) {
+	ImportedAsset = Asset;
 	
+	const bool Synced = HandleAssetCreation(Asset);
 	if (Synced) {
 		Save();
 	}

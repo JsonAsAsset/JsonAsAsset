@@ -214,19 +214,20 @@ public:
 
 public:
     /* Sends off to the ReadExportsAndImport function once read */
-    void ImportReference(FString& File);
+    void ImportReference(const FString& File);
 
     /*
      * Searches for importable asset types and imports them.
      */
     bool ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, const FString& File, bool bHideNotifications = false);
-    void ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, bool bHideNotifications = false) const;
+    void ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, bool bHideNotifications = false);
 
 public:
     TArray<TSharedPtr<FJsonValue>> GetObjectsWithPropertyNameStartingWith(const FString& StartsWithStr, const FString& PropertyName);
     TArray<TSharedPtr<FJsonValue>> FilterObjectsWithoutMatchingPropertyName(const FString& StartsWithStr, const FString& PropertyName);
 
     UObject* ParentObject;
+    UObject* ImportedAsset;
     
 protected:
     /* This is called at the end of asset creation, bringing the user to the asset and fully loading it */
@@ -236,8 +237,8 @@ protected:
     /*
      * Handle edit changes, and add it to the content browser
      */
-    bool OnAssetCreation(UObject* Asset) const;
-
+    bool OnAssetCreation(UObject* Asset);
+    
     virtual void ApplyModifications() {};
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

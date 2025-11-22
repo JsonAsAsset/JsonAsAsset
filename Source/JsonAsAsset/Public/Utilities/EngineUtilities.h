@@ -680,8 +680,8 @@ inline void SendHttpRequest(const FString& URL, TFunction<void(FHttpRequestPtr, 
 		UE_LOG(LogJsonAsAsset, Error, TEXT("HTTP module not available"));
 		return;
 	}
-	
-	auto Request = Http->CreateRequest();
+
+	const auto Request = Http->CreateRequest();
 	
 	Request->SetURL(URL);
 	Request->SetVerb(Verb);
@@ -1121,14 +1121,4 @@ inline void SavePackage(UPackage* Package) {
 #else
 	UPackage::SavePackage(Package, nullptr, RF_Standalone, *PackageFileName);
 #endif
-}
-
-inline UClass* FindClassByType(const FString& Type) {
-#if UE5_6_BEYOND
-	UClass* Class = FindFirstObject<UClass>(*Type);
-#else
-	UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type);
-#endif
-
-	return Class;
 }

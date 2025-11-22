@@ -184,3 +184,13 @@ inline const UObject* GetClassDefaultObject(UClass* Class) {
 	return Class->ClassDefaultObject;
 #endif
 }
+
+inline UClass* FindClassByType(const FString& Type) {
+#if UE5_6_BEYOND
+	UClass* Class = FindFirstObject<UClass>(*Type);
+#else
+	UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type);
+#endif
+
+	return Class;
+}

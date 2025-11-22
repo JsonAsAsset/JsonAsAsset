@@ -9,8 +9,7 @@
 #define LOCTEXT_NAMESPACE "JsonAsAsset"
 
 UJsonAsAssetSettings::UJsonAsAssetSettings():
-	bEnableExperiments(false),
-	bEnableCloudServer(false)
+	bEnableExperiments(false)
 {
 	CategoryName = TEXT("Plugins");
 	SectionName = TEXT("JsonAsAsset");

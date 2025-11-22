@@ -84,15 +84,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 			FExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::ImportAction),
 			FCanExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::IsActionEnabled),
 			FGetActionCheckState(),
-			FIsActionButtonVisible::CreateLambda([this]() {
-				static const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"));
-
-				if (CVar) {
-					return CVar && CVar->GetInt() == 0;
-				}
-
-				return true;
-			})
+			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
 		),
 		NAME_None,
 		FText::FromString(Plugin->GetDescriptor().VersionName),
@@ -105,15 +97,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 			FExecuteAction(),
 			FCanExecuteAction(),
 			FGetActionCheckState(),
-			FIsActionButtonVisible::CreateLambda([this]() {
-				static const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"));
-
-				if (CVar) {
-					return CVar && CVar->GetInt() == 0;
-				}
-
-				return true;
-			})
+			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
 		),
 		FOnGetContent::CreateRaw(this, &FJsonAsAssetToolbar::CreateMenuDropdown),
 		FText::FromString(Plugin->GetDescriptor().VersionName),
@@ -124,20 +108,37 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 }
 #endif
 
+bool FJsonAsAssetToolbar::IsToolBarVisible() {
+	bool bVisible = true;
+
+	if (static const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"))) {
+		if (CVar->GetInt() == 1) {
+			bVisible = false;
+		}
+	}
+
+	if (GEditor) {
+		const TIndirectArray<FWorldContext>& WorldContextList = GEditor->GetWorldContexts();
+
+		for (const FWorldContext& WorldContext : WorldContextList) {
+			if (WorldContext.World() && WorldContext.World()->WorldType == EWorldType::PIE) {
+				bVisible = false;
+			}
+		}
+	}
+
+	return bVisible;
+}
+
 /* ReSharper disable once CppMemberFunctionMayBeStatic */
 bool FJsonAsAssetToolbar::IsActionEnabled() const {
-	UJsonAsAssetSettings* Settings = GetSettings();
-	
-	return UJsonAsAssetSettings::IsSetup(Settings);
+	return UJsonAsAssetSettings::IsSetup(GetSettings());
 }
 
 /* ReSharper disable once CppMemberFunctionMayBeStatic */
 FText FJsonAsAssetToolbar::GetTooltipText() const {
-	UJsonAsAssetSettings* Settings = GetSettings();
-	
-	return !UJsonAsAssetSettings::IsSetup(Settings)
+	return !UJsonAsAssetSettings::IsSetup(GetSettings())
 		? FText::FromString("The button is disabled due to your settings being improperly setup. Please modify your settings to execute JsonAsAsset.")
-	
 		: FText::FromString("Execute JsonAsAsset");
 }
 

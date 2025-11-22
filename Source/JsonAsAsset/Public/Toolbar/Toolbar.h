@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "Utilities/Compatibility.h"
 
-struct FJsonAsAssetToolbar {
+struct JSONASASSET_API FJsonAsAssetToolbar {
 	void Register();
 
 #if ENGINE_UE4
 	void UE4Register(FToolBarBuilder& Builder);
 #endif
-	
+
 	bool IsActionEnabled() const;
 	FText GetTooltipText() const;
 	
@@ -19,4 +19,6 @@ struct FJsonAsAssetToolbar {
 	void ImportAction();
 	
 	TSharedRef<SWidget> CreateMenuDropdown();
+
+	static bool IsToolBarVisible();
 };

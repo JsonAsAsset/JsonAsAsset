@@ -254,6 +254,9 @@ void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Export
 		Importer->PropertySerializer->Importer = Importer;
 	}
 
+	Package = LocalPackage;
+	SetupImportTracking();
+
 	/* Import the asset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	bool Successful = false; {
 		try {
@@ -304,6 +307,26 @@ void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Export
 			false,
 			350.0f
 		);
+	}
+}
+
+void IImporter::SetupImportTracking() {
+	const UJsonAsAssetSettings* Settings = GetSettings();
+
+	if (Settings->bEnableCloudServer) {
+		const TSharedPtr<FJsonObject> Metadata = Cloud::Export::Get(Package->GetPathName(), false, {
+			{
+				"metadata",
+				"true"
+			}
+		});
+
+		if (Metadata.IsValid()) {
+			ImportMap = Metadata->GetArrayField("ImportMap");
+		}
+
+		FScopedSlowTask SlowTask(0.1f, FText::FromString("Downloading " + Package->GetName()));
+		SlowTask.MakeDialog();
 	}
 }
 

@@ -217,6 +217,11 @@ public:
     void ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, bool bHideNotifications = false);
 
 public:
+    TArray<TSharedPtr<FJsonValue>> ImportMap;
+    
+    void SetupImportTracking();
+
+public:
     TArray<TSharedPtr<FJsonValue>> GetObjectsWithPropertyNameStartingWith(const FString& StartsWithStr, const FString& PropertyName);
     TArray<TSharedPtr<FJsonValue>> FilterObjectsWithoutMatchingPropertyName(const FString& StartsWithStr, const FString& PropertyName);
 

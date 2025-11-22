@@ -36,7 +36,9 @@ void FJsonAsAssetToolbar::Register() {
 		FToolUIActionChoice(
 			FUIAction(
 				FExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::ImportAction),
-				FCanExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::IsActionEnabled)
+				FCanExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::IsActionEnabled),
+				FGetActionCheckState(),
+				FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
 			)
 		),
 		
@@ -58,7 +60,12 @@ void FJsonAsAssetToolbar::Register() {
 	/* Menu dropdown */
 	const FToolMenuEntry MenuButton = FToolMenuEntry::InitComboButton(
 		"JsonAsAssetMenu",
-		FUIAction(),
+		FUIAction(
+			FExecuteAction(),
+			FCanExecuteAction(),
+			FGetActionCheckState(),
+			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
+		),
 		FOnGetContent::CreateRaw(this, &FJsonAsAssetToolbar::CreateMenuDropdown),
 		FText::FromString("JsonAsAsset"),
 		FText::FromString("Open JsonAsAsset's Menu"),

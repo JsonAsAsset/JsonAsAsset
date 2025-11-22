@@ -432,11 +432,8 @@ void IAnimationBlueprintImporter::CreateAnimGraphNodes(UEdGraph* AnimGraph, cons
 			if (!NodeGuid.IsValid()) NodeGuid = FGuid();
 		}
 
-#if UE5_6_BEYOND
-		const UClass* Class = FindFirstObject<UClass>(*NodeType);
-#else
-		const UClass* Class = FindObject<UClass>(ANY_PACKAGE, *NodeType);
-#endif
+		const UClass* Class = FindClassByType(NodeType);
+		
 		if (!Class) continue;
 
 		UAnimGraphNode_Base* Node = NewObject<UAnimGraphNode_Base>(AnimGraph, Class, NAME_None, RF_Transactional);

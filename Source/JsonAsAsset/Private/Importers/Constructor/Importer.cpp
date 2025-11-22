@@ -154,18 +154,15 @@ bool IImporter::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, con
 }
 
 void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, const bool bHideNotifications) {
-	FString Type = Export->GetStringField(TEXT("Type"));
+	const FString Type = Export->GetStringField(TEXT("Type"));
 	FString Name = Export->GetStringField(TEXT("Name"));
 
 	/* BlueprintGeneratedClass is post-fixed with _C */
 	if (Type.Contains("BlueprintGeneratedClass")) {
 		Name.Split("_C", &Name, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
 	}
-#if UE5_6_BEYOND
-	UClass* Class = FindFirstObject<UClass>(*Type);
-#else
-	UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type);
-#endif
+
+	UClass* Class = FindClassByType(Type);
 	
 	if (Class == nullptr) return;
 

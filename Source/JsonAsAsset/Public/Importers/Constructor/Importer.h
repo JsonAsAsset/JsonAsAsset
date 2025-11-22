@@ -175,14 +175,8 @@ public:
             }
         }
 
-        if (CanImportWithCloud(ImporterType))
-
         if (!Class) {
-#if UE5_6_BEYOND
-            Class = FindFirstObject<UClass>(*ImporterType);
-#else
-        	Class = FindObject<UClass>(ANY_PACKAGE, *ImporterType);
-#endif
+		    Class = FindClassByType(ImporterType);
         }
 
         if (Class == nullptr) return false;

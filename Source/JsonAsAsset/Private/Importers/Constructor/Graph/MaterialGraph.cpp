@@ -188,12 +188,8 @@ void IMaterialGraph::AddExpressionToParent(UObject* Parent, UMaterialExpression*
 UMaterialExpression* IMaterialGraph::CreateEmptyExpression(FUObjectExport& Export, FUObjectExportContainer& Container) {
 	const FName Type = Export.GetType();
 	const FName Name = Export.GetName();
-	
-#if UE5_6_BEYOND
-	const UClass* Class = FindFirstObject<UClass>(*Type.ToString());
-#else
-	const UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type.ToString());
-#endif
+
+	UClass* Class = FindClassByType(Type.ToString());
 	
 	/* Material/MaterialFunction Parent */
 	UObject* Parent = Export.Parent;
@@ -212,11 +208,7 @@ UMaterialExpression* IMaterialGraph::CreateEmptyExpression(FUObjectExport& Expor
 #endif
 
 		if (!Class) {
-#if UE5_6_BEYOND
-			Class = FindFirstObject<UClass>(*Type.ToString().Replace(TEXT("MaterialExpressionPhysicalMaterialOutput"), TEXT("MaterialExpressionLandscapePhysicalMaterialOutput")));
-#else
-			Class = FindObject<UClass>(ANY_PACKAGE, *Type.ToString().Replace(TEXT("MaterialExpressionPhysicalMaterialOutput"), TEXT("MaterialExpressionLandscapePhysicalMaterialOutput")));
-#endif
+			Class = FindClassByType(Type.ToString().Replace(TEXT("MaterialExpressionPhysicalMaterialOutput"), TEXT("MaterialExpressionLandscapePhysicalMaterialOutput")));
 		}
 	}
 

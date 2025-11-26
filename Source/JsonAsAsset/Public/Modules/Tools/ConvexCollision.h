@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "ToolBase.h"
+#include "ConvexCollision.generated.h"
 
+USTRUCT()
 struct FToolConvexCollision : FToolBase {
+	GENERATED_BODY()
+public:
 	static void Execute();
 };

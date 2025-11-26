@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "ToolBase.h"
+#include "ClearImportData.generated.h"
 
+USTRUCT()
 struct FToolClearImportData : FToolBase {
+	GENERATED_BODY()
+public:
 	static void Execute();
 };

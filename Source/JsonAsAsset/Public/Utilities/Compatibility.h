@@ -5,7 +5,7 @@
 /*
  * This file is used to allow the same code used on UE5 to be used on UE4,
  * it contains structures and classes to replicate missing classes/structs.
- */
+*/
 
 /* Compiles an experimental version of JsonAsAsset */
 #ifndef JSONASASSET_EXPERIMENTAL

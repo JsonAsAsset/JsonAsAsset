@@ -10,8 +10,8 @@
 
 #include "Settings/JsonAsAssetSettings.h"
 #include "MessageLogModule.h"
+#include "Modules/Versioning.h"
 
-#include "Modules/UI/CommandsModule.h"
 #include "Modules/UI/StyleModule.h"
 #include "Toolbar/Toolbar.h"
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -24,7 +24,6 @@ void FJsonAsAssetModule::StartupModule() {
     /* Initialize plugin style, reload textures, and register commands */
     FJsonAsAssetStyle::Initialize();
     FJsonAsAssetStyle::ReloadTextures();
-    FJsonAsAssetCommands::Register();
 	
     /* Register toolbar on startup */
 	FJsonAsAssetToolbar Toolbar;
@@ -75,9 +74,8 @@ void FJsonAsAssetModule::ShutdownModule() {
 	UToolMenus::UnRegisterStartupCallback(this);
 	UToolMenus::UnregisterOwner(this);
 
-	/* Shutdown the plugin style and unregister commands */
+	/* Shutdown the plugin style */
 	FJsonAsAssetStyle::Shutdown();
-	FJsonAsAssetCommands::Unregister();
 
 	/* Unregister message log listing if the module is loaded */
 	if (FModuleManager::Get().IsModuleLoaded("MessageLog")) {

@@ -8,13 +8,17 @@
 /* Style of JsonAsAsset */
 class FJsonAsAssetStyle {
 public:
-	static void Initialize();
-	static void Shutdown();
-	static void ReloadTextures();
 	static const ISlateStyle& Get();
 	static FName GetStyleSetName();
+	
+public:
+	static void Initialize();
+	static void ReloadTextures();
 
 private:
 	static TSharedRef<FSlateStyleSet> Create();
 	static TSharedPtr<FSlateStyleSet> StyleInstance;
+
+public:
+	static void Shutdown();
 };

@@ -13,7 +13,6 @@
 
 #include "Interfaces/IPluginManager.h"
 #include "Modules/Cloud/Cloud.h"
-#include "Modules/Cloud/CloudStatus.h"
 #include "Modules/UI/StyleModule.h"
 #include "Toolbar/Dropdowns/ActionRequiredDropdownBuilder.h"
 #include "Toolbar/Dropdowns/GeneralDropdownBuilder.h"

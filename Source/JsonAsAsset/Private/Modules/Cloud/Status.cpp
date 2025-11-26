@@ -1,9 +1,12 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2025 */
 
-#include "Modules/Cloud/CloudStatus.h"
 #include "Modules/Cloud/Cloud.h"
 #include "Modules/UI/StyleModule.h"
 #include "Utilities/EngineUtilities.h"
+
+#if PLATFORM_WINDOWS
+static TWeakPtr<SNotificationItem> CloudNotification;
+#endif
 
 bool Cloud::Status::IsOpened() {
 	return IsProcessRunning("j0.dev.exe");

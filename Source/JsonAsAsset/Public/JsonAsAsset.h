@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Modules/Versioning.h"
 #include "Utilities/Compatibility.h"
 
 #if ENGINE_UE4

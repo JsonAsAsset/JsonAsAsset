@@ -12,5 +12,6 @@ struct FSkeletalMeshData : public FToolBase {
 public:
 	void Execute();
 
+protected:
 	static TArray<FSkeletalMaterial> GetMaterials(USkeletalMesh* Mesh);
 };

@@ -7,10 +7,21 @@
 #include "Modules/LogCategory.h"
 
 #if ENGINE_UE5
-TSharedPtr<IHttpResponse> FRemoteUtilities::ExecuteRequestSync(TSharedRef<IHttpRequest> HttpRequest, float LoopDelay)
+TSharedPtr<IHttpResponse>
 #else
-TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> FRemoteUtilities::ExecuteRequestSync(const TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& HttpRequest, float LoopDelay)
+TSharedPtr<IHttpResponse, ESPMode::ThreadSafe>
 #endif
+	FRemoteUtilities::ExecuteRequestSync(
+
+	/* Different type declarations for HttpRequest on UE5 */
+#if ENGINE_UE5
+	TSharedRef<IHttpRequest> HttpRequest
+#else
+	const TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& HttpRequest
+#endif
+	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	
+	, const float LoopDelay)
 {
 	const bool bStartedRequest = HttpRequest->ProcessRequest();
 	if (!bStartedRequest) {

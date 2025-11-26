@@ -105,7 +105,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 		FString PathString = "";
 		
 		switch (NewJsonValue->Type) {
-			/* FModel, extract it from the object */
+			/* CUEParse, extract it from the object */
 			case EJson::Object:
 				SoftJsonObjectProperty = NewJsonValue->AsObject();
 				PathString = SoftJsonObjectProperty->GetStringField(TEXT("AssetPathName"));
@@ -259,7 +259,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			return;
 		}
 
-		/* FGameplayTagContainer (handled from FModel data) */
+		/* FGameplayTagContainer (handled from CUEParse data) */
 		if (StructProperty->Struct == FGameplayTagContainer::StaticStruct()) {
 			FGameplayTagContainer* GameplayTagContainerStr = static_cast<FGameplayTagContainer*>(OutValue);
 

@@ -2,6 +2,10 @@
 
 #pragma once
 
+/**
+ * Holds helper functions for JsonAsAsset.
+*/
+
 #include "Framework/Notifications/NotificationManager.h"
 #include "Widgets/Notifications/SNotificationList.h"
 #include "Utilities/Serializers/PropertyUtilities.h"
@@ -26,7 +30,6 @@
 #include "Logging/MessageLog.h"
 #include "Modules/LogCategory.h"
 #include "Modules/Cloud/Cloud.h"
-#include "UObject/SavePackage.h"
 
 #if (ENGINE_MAJOR_VERSION != 4 || ENGINE_MINOR_VERSION < 27)
 #include "Engine/DeveloperSettings.h"
@@ -224,7 +227,7 @@ inline bool IsProcessRunning(const FString& ProcessName) {
 }
 
 inline TSharedPtr<FJsonObject> GetExport(const FString& Type, TArray<TSharedPtr<FJsonValue>> AllJsonObjects, const bool bGetProperties = false) {
-	for (const TSharedPtr<FJsonValue> Value : AllJsonObjects) {
+	for (const TSharedPtr Value : AllJsonObjects) {
 		const TSharedPtr<FJsonObject> ValueObject = Value->AsObject();
 
 		if (ValueObject->GetStringField(TEXT("Type")) == Type) {
@@ -240,7 +243,7 @@ inline TSharedPtr<FJsonObject> GetExport(const FString& Type, TArray<TSharedPtr<
 }
 
 inline TSharedPtr<FJsonObject> GetExportByName(const FString& Name, TArray<TSharedPtr<FJsonValue>> AllJsonObjects, const bool bGetProperties = false) {
-	for (const TSharedPtr<FJsonValue> Value : AllJsonObjects) {
+	for (const TSharedPtr Value : AllJsonObjects) {
 		const TSharedPtr<FJsonObject> ValueObject = Value->AsObject();
 
 		if (ValueObject->GetStringField(TEXT("Name")) == Name) {
@@ -321,7 +324,7 @@ inline bool DeserializeJSON(const FString& FilePath, TArray<TSharedPtr<FJsonValu
 			Content.Append(ContentBefore);
 			Content.Append(FString("}"));
 
-			const TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(Content);
+			const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Content);
 
 			TSharedPtr<FJsonObject> JsonObject;
 			if (FJsonSerializer::Deserialize(JsonReader, JsonObject)) {
@@ -340,7 +343,7 @@ inline bool DeserializeArrayJSON(const FString& String, TArray<TSharedPtr<FJsonV
 	Content.Append(String);
 	Content.Append(FString("}"));
 
-	const TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(Content);
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Content);
 
 	TSharedPtr<FJsonObject> JsonObject;
 	if (FJsonSerializer::Deserialize(JsonReader, JsonObject)) {
@@ -357,7 +360,7 @@ inline bool DeserializeJSONObject(const FString& String, TSharedPtr<FJsonObject>
 	Content.Append(String);
 	Content.Append(FString("}"));
 
-	const TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(Content);
+	const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Content);
 
 	TSharedPtr<FJsonObject> JsonObject;
 	if (FJsonSerializer::Deserialize(JsonReader, JsonObject)) {

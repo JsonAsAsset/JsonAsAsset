@@ -8,9 +8,15 @@
 
 class JSONASASSET_API FRemoteUtilities {
 public:
+	static TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> ExecuteRequestSync(
+
+		/* Different type declarations for HttpRequest on UE5 */
 #if ENGINE_UE5
-	static TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> ExecuteRequestSync(TSharedRef<IHttpRequest> HttpRequest, float LoopDelay = 0.02);
+		TSharedRef<IHttpRequest> HttpRequest,
 #else
-	static TSharedPtr<IHttpResponse, ESPMode::ThreadSafe> ExecuteRequestSync(const TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& HttpRequest, float LoopDelay = 0.02);
+		const TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& HttpRequest,
 #endif
+		/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+		
+		float LoopDelay = 0.02);
 };

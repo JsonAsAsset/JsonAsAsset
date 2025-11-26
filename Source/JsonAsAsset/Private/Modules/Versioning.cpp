@@ -2,10 +2,21 @@
 
 #include "Modules/Versioning.h"
 
+#include "HttpModule.h"
+#include "Interfaces/IHttpResponse.h"
+#include "Interfaces/IPluginManager.h"
+#include "Modules/LogCategory.h"
+#include "Modules/UI/StyleModule.h"
+#include "Serialization/JsonSerializer.h"
+#include "Utilities/EngineUtilities.h"
+
 FJsonAsAssetVersioning GJsonAsAssetVersioning;
 
-void FJsonAsAssetVersioning::Reset(const int InVersion, const int InLatestVersion, const FString& InHTMLUrl,
-	const FString& InVersionName, const FString& InCurrentVersionName) {
+void FJsonAsAssetVersioning::SetValid(const bool bValid) {
+	bIsValid = bValid;
+}
+
+void FJsonAsAssetVersioning::Reset(const int InVersion, const int InLatestVersion, const FString& InHTMLUrl, const FString& InVersionName, const FString& InCurrentVersionName) {
 	Version = InVersion;
 	LatestVersion = InLatestVersion;
 	VersionName = InVersionName;
@@ -47,7 +58,7 @@ void FJsonAsAssetVersioning::Update() {
 		/* Deserialize the JSON response */
 		TSharedPtr<FJsonObject> JsonObject;
 		const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(ResponseString);
-		if (!FJsonSerializer::Deserialize(Reader, JsonObject) || !JsonObject.IsValid()) {
+		if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid()) {
 			return;
 		}
 

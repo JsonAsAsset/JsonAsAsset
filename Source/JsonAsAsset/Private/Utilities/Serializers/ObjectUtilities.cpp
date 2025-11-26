@@ -97,7 +97,7 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 
 	const TSharedPtr<FJsonObject> ExportObject = Export.JsonObject;
 
-	/* No name = no export!! */
+	/* No name means no export */
 	if (!ExportObject->HasField(TEXT("Name"))) return;
 
 	const FString Name = ExportObject->GetStringField(TEXT("Name"));
@@ -193,11 +193,11 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 		}
 	}
 
-	/* this is a use case for importing maps and parsing static mesh components
+	/* This is a use case for importing maps and parsing static mesh components
 	 * using the object and property serializer, this was initially wanted to be
-	 * done completely without any manual work (using the de-serializers)
-	 * however I don't think it's possible to do so. as I haven't seen any native
-	 * property that can do this using the data provided in CUE4Parse
+	 * done completely without any manual work. (using the de-serializers)
+	 * However I don't think it's possible to do so. as I haven't seen any native
+	 * property that can do this using the data provided in CUE4Parse.
 	 */
 	if (Properties->HasField(TEXT("LODData")) && Cast<UStaticMeshComponent>(Object)) {
 		UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object);

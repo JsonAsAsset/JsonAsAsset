@@ -76,6 +76,7 @@ TMap<FString, TArray<FString>> ImporterTemplatedTypes = {
 		TEXT("Curve Assets"),
 		{
 			TEXT("CurveFloat"),
+			TEXT("CurveLinearColor"),
 		}
 	},
 	{

@@ -28,7 +28,7 @@
 #include "Json.h"
 #include "MessageLogModule.h"
 #include "Logging/MessageLog.h"
-#include "Modules/LogCategory.h"
+#include "Modules/Log.h"
 #include "Modules/Cloud/Cloud.h"
 
 #if (ENGINE_MAJOR_VERSION != 4 || ENGINE_MINOR_VERSION < 27)

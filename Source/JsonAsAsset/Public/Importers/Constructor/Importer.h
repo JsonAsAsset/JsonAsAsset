@@ -7,7 +7,10 @@
 #include "Dom/JsonObject.h"
 #include "CoreMinimal.h"
 #include "Styling/SlateIconFinder.h"
+#include "Utilities/AssetUtilities.h"
 #include "Utilities/Serializers/SerializerContainer.h"
+
+/* TODO: Really feeling like I should rewrite all of this */
 
 /* AssetType/Category ~ Defined in CPP */
 extern TMap<FString, TArray<FString>> ImporterTemplatedTypes;
@@ -115,7 +118,6 @@ protected:
     TSharedPtr<FJsonObject> AssetData;
     UClass* AssetClass;
     FString AssetName;
-
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     
 public:

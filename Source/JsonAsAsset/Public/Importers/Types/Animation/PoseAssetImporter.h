@@ -13,6 +13,8 @@ public:
 	UPoseAsset* PoseAsset;
 
 	virtual bool Import() override;
+
+protected:
 	void ReverseCookLocalSpacePose(USkeleton* Skeleton) const;
 	static UAnimSequence* CreateAnimSequenceFromPose(USkeleton* Skeleton, const FString& SequenceName, const TSharedPtr<FJsonObject>& PoseContainer, UPackage* Outer);
 };

@@ -12,12 +12,14 @@ public:
 
 	virtual bool Import() override;
 
-	void DeserializeCurveMetaData(FCurveMetaData* OutMeta, const TSharedPtr<FJsonObject>& Json) const;
+protected:
 	virtual void ApplyModifications() override;
 	void ApplySkeletalChanges(USkeleton* Skeleton) const;
 	void ApplySkeletalAssetData(USkeleton* Skeleton) const;
 
 	static void RebuildSkeleton(const USkeleton* Skeleton);
+private:
+	void DeserializeCurveMetaData(FCurveMetaData* OutMeta, const TSharedPtr<FJsonObject>& Json) const;
 };
 
 REGISTER_IMPORTER(ISkeletonImporter, {

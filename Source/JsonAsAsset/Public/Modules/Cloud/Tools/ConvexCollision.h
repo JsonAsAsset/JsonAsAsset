@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ToolBase.h"
-#include "AnimationData.generated.h"
+#include "Modules/Tools/ToolBase.h"
+#include "ConvexCollision.generated.h"
 
 USTRUCT()
-struct FToolAnimationData : FToolBase {
+struct FToolConvexCollision : public FToolBase {
 	GENERATED_BODY()
 public:
 	static void Execute();

@@ -1,5 +1,7 @@
 /* Copyright JsonAsAsset Contributors 2024-2025 */
 
+/* TODO: Rewrite */
+
 #include "Importers/Types/UserDefined/UserDefinedStructImporter.h"
 
 #include "UserDefinedStructure/UserDefinedStructEditorData.h"

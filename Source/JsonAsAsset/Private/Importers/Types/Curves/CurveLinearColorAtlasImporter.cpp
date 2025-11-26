@@ -4,6 +4,8 @@
 #include "Curves/CurveLinearColorAtlas.h"
 #include "Curves/CurveLinearColor.h"
 
+/* Seems like some of this data has to be manually set (written code) */
+
 bool ICurveLinearColorAtlasImporter::Import() {
 	float Width = 256;
 	float Height = 256;

@@ -230,7 +230,6 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 		return false;
 	}
 
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 	const TSharedPtr<FJsonObject> JsonExport = Response[0]->AsObject();
 	const FString Type = JsonExport->GetStringField(TEXT("Type"));
 	

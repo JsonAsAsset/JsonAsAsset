@@ -101,7 +101,7 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 	if (!ExportObject->HasField(TEXT("Name"))) return;
 
 	const FString Name = ExportObject->GetStringField(TEXT("Name"));
-	FString Type = ExportObject->GetStringField(TEXT("Type")).Replace(TEXT("CommonWidgetSwitcher"), TEXT("CommonActivatableWidgetSwitcher"));
+	const FString Type = ExportObject->GetStringField(TEXT("Type")).Replace(TEXT("CommonWidgetSwitcher"), TEXT("CommonActivatableWidgetSwitcher"));
 		
 	/* Check if it's not supposed to be deserialized */
 	if (ExportsToNotDeserialize.Contains(Name)) return;
@@ -146,7 +146,7 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 	UObject* NewUObject = NewObject<UObject>(ObjectOuter, Class, FName(*Name));
 
 	if (ExportObject->HasField(TEXT("Properties"))) {
-		TSharedPtr<FJsonObject> Properties = ExportObject->GetObjectField(TEXT("Properties"));
+		const TSharedPtr<FJsonObject> Properties = ExportObject->GetObjectField(TEXT("Properties"));
 
 		ExportsMap.Add(Properties, NewUObject);
 	} else {
@@ -206,7 +206,7 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 		TArray<TSharedPtr<FJsonValue>> ObjectLODData = Properties->GetArrayField(TEXT("LODData"));
 		int CurrentLOD = -1;
 		
-		for (const TSharedPtr<FJsonValue> CurrentLODValue : ObjectLODData) {
+		for (const TSharedPtr CurrentLODValue : ObjectLODData) {
 			CurrentLOD++;
 
 			const TSharedPtr<FJsonObject> CurrentLODObject = CurrentLODValue->AsObject();

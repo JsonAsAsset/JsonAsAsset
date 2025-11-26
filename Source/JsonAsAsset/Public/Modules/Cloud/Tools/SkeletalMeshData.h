@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ToolBase.h"
+#include "Modules/Tools/ToolBase.h"
 #include "SkeletalMeshData.generated.h"
 
 USTRUCT()

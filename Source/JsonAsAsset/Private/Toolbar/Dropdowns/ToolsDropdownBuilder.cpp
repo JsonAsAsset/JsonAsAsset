@@ -5,10 +5,10 @@
 #include "Importers/Constructor/Importer.h"
 #include "Utilities/EngineUtilities.h"
 
-#include "Modules/Tools/AnimationData.h"
+#include "Modules/Cloud/Tools/AnimationData.h"
 #include "Modules/Tools/ClearImportData.h"
-#include "Modules/Tools/ConvexCollision.h"
-#include "Modules/Tools/SkeletalMeshData.h"
+#include "Modules/Cloud/Tools/ConvexCollision.h"
+#include "Modules/Cloud/Tools/SkeletalMeshData.h"
 
 void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	UJsonAsAssetSettings* Settings = GetSettings();

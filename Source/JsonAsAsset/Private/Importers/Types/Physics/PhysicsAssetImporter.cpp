@@ -38,7 +38,7 @@ bool IPhysicsAssetImporter::Import() {
 	/* CollisionDisableTable ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	TArray<TSharedPtr<FJsonValue>> CollisionDisableTable = AssetData->GetArrayField(TEXT("CollisionDisableTable"));
 
-	for (const TSharedPtr<FJsonValue> TableJSONElement : CollisionDisableTable) {
+	for (const TSharedPtr TableJSONElement : CollisionDisableTable) {
 		const TSharedPtr<FJsonObject> TableObjectElement = TableJSONElement->AsObject();
 
 		bool MapValue = TableObjectElement->GetBoolField(TEXT("Value"));

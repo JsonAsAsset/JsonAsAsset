@@ -7,7 +7,7 @@
 #include "ClearImportData.generated.h"
 
 USTRUCT()
-struct FToolClearImportData : FToolBase {
+struct FToolClearImportData : public FToolBase {
 	GENERATED_BODY()
 public:
 	static void Execute();

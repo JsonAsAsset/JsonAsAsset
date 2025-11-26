@@ -34,7 +34,7 @@ protected:
 	static FExpressionInput PopulateExpressionInput(const FJsonObject* JsonProperties, UMaterialExpression* Expression, const FString& Type = "Default");
 	static FName GetExpressionName(const FJsonObject* JsonProperties, const FString& OverrideParameterName = "Expression");
 
-protected:
+public:
 	UMaterialExpression* OnMissingNodeClass(FUObjectExport& Export, FUObjectExportContainer& Container);
 	void SpawnMaterialDataMissingNotification() const;
 

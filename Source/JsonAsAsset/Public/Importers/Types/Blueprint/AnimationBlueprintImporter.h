@@ -40,6 +40,7 @@ private:
 	static void ConnectAnimGraphNodes(FUObjectExportContainer& Container, UEdGraph* AnimGraph);
 
 	static void UpdateBlendListByEnumVisibleEntries(FUObjectExport NodeExport, FUObjectExportContainer& Container, UEdGraph* AnimGraph);
+	
 protected:
 	/* Global Cached data to reuse */
 	UAnimBlueprint* AnimBlueprint;

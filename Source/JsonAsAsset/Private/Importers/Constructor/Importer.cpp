@@ -28,7 +28,7 @@
 #include "Curves/CurveLinearColor.h"
 #include "Importers/Types/Texture/TextureImporter.h"
 #include "Logging/MessageLog.h"
-#include "Modules/LogCategory.h"
+#include "Modules/Log.h"
 #include "Sound/SoundNode.h"
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 

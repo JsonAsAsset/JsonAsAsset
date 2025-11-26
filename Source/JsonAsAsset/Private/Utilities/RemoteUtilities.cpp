@@ -4,7 +4,7 @@
 
 #include "HttpManager.h"
 #include "HttpModule.h"
-#include "Modules/LogCategory.h"
+#include "Modules/Log.h"
 
 #if ENGINE_UE5
 TSharedPtr<IHttpResponse>

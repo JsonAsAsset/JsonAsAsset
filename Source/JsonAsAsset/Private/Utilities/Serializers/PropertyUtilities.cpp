@@ -454,10 +454,12 @@ bool UPropertySerializer::ShouldDeserializeProperty(FProperty* Property) const {
 	if (Property->HasAnyPropertyFlags(CPF_Deprecated)) {
 		return false;
 	}
+	
 	/* Skip blacklisted properties */
 	if (this != nullptr && this && BlacklistedProperties.IsValidIndex(0) && BlacklistedProperties.Contains(Property)) {
 		return false;
 	}
+	
 	return true;
 }
 

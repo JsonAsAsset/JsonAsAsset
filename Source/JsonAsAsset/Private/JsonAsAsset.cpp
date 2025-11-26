@@ -64,9 +64,7 @@ void FJsonAsAssetModule::StartupModule() {
 	}
 
 	/* Update ExportDirectory if empty */
-	if (Settings->Runtime.ExportDirectory.Path.IsEmpty()) {
-		Settings->ReadAppData();
-	}
+	Settings->ReadAppData();
 }
 
 void FJsonAsAssetModule::ShutdownModule() {

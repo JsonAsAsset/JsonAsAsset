@@ -5,7 +5,7 @@
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Interfaces/IPluginManager.h"
-#include "Modules/LogCategory.h"
+#include "Modules/Log.h"
 #include "Modules/UI/StyleModule.h"
 #include "Serialization/JsonSerializer.h"
 #include "Utilities/EngineUtilities.h"

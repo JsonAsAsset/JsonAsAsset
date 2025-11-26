@@ -11,7 +11,7 @@ void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		return;
 	}
 	
-	MenuBuilder.BeginSection("JsonAsAssetSection", FText::FromString("Cloud"));
+	MenuBuilder.BeginSection("JsonAsAssetCloudSection", FText::FromString("Cloud"));
 
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Learn how to setup"),

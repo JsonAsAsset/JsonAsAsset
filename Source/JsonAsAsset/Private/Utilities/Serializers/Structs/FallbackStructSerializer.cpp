@@ -3,9 +3,6 @@
 #include "Utilities/Serializers/Structs/FallbackStructSerializer.h"
 #include "Utilities/Serializers/PropertyUtilities.h"
 
-FFallbackStructSerializer::FFallbackStructSerializer(UPropertySerializer* PropertySerializer) : PropertySerializer(PropertySerializer) {
-}
-
 void FFallbackStructSerializer::Deserialize(UScriptStruct* Struct, void* StructValue, const TSharedPtr<FJsonObject> JsonValue) {
 	for (FProperty* Property = Struct->PropertyLink; Property; Property = Property->PropertyLinkNext) {
 		const FString PropertyName = Property->GetName();

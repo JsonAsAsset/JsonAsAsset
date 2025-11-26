@@ -19,4 +19,4 @@ REGISTER_IMPORTER(IBlendSpaceImporter, (TArray<FString>{
 
 	"AimOffsetBlendSpace",
 	"AimOffsetBlendSpace1D"
-}), "Animation Assets");
+}), TEXT("Animation Assets"));

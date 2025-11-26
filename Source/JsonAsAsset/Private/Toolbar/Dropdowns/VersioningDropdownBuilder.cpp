@@ -3,6 +3,7 @@
 #include "Toolbar/Dropdowns/VersioningDropdownBuilder.h"
 
 #include "Modules/Versioning.h"
+#include "Utilities/Compatibility.h"
 
 void IVersioningDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	if (!GJsonAsAssetVersioning.bIsValid) {

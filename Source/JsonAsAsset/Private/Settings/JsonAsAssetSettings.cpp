@@ -63,13 +63,10 @@ void UJsonAsAssetSettings::ReadAppData() {
 	FString AppDataPath = FPlatformMisc::GetEnvironmentVariable(TEXT("APPDATA"));
 	AppDataPath = FPaths::Combine(AppDataPath, TEXT("FModel/AppSettings.json"));
 
-	FString JsonContent;
-        	
-	if (FFileHelper::LoadFileToString(JsonContent, *AppDataPath)) {
+	if (FString JsonContent; FFileHelper::LoadFileToString(JsonContent, *AppDataPath)) {
 		const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonContent);
-		TSharedPtr<FJsonObject> JsonObject;
-
-		if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid()) {
+		
+		if (TSharedPtr<FJsonObject> JsonObject; FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid()) {
 			/* Load the PropertiesDirectory and GameDirectory */
 			PluginSettings->Runtime.ExportDirectory.Path = JsonObject->GetStringField(TEXT("PropertiesDirectory")).Replace(TEXT("\\"), TEXT("/"));
 		}

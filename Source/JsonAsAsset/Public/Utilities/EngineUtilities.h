@@ -35,6 +35,10 @@
 #include "Engine/DeveloperSettings.h"
 #endif
 
+#if ENGINE_UE5
+#include "UObject/SavePackage.h"
+#endif
+
 inline bool HandlePackageCreation(UObject* Asset, UPackage* Package) {
 	FAssetRegistryModule::AssetCreated(Asset);
 	if (!Asset->MarkPackageDirty()) return false;

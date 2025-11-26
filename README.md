@@ -21,8 +21,8 @@ Thanks go to these wonderful people:
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="25.28%"><a href="https://github.com/Tectors"><img src="https://github.com/Tectors.png" width="100px;" alt="Tector"/><br /><sub><b>Tector</b></sub></a><br/>Developer</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/GMatrixGames"><img src="https://github.com/GMatrixGames.png" width="100px;" alt="GMatrixGames"/><br /><sub><b>GMatrixGames</b></sub></a><br/>Developer</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/zyloxmods"><img src="https://github.com/zyloxmods.png" width="80px;" alt="Zylox"/><br /><sub><b>Zylox</b></sub></a><br/>Maintainer</a></td>
+      <td align="center" valign="top" width="25.28%"><a href="https://github.com/Tectors"><img src="https://github.com/Tectors.png" width="100px;" alt="Tector"/><br /><sub><b>Tector</b></sub></a><br/>Creator</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/GMatrixGames"><img src="https://github.com/GMatrixGames.png" width="100px;" alt="GMatrixGames"/><br /><sub><b>GMatrixGames</b></sub></a><br/>Contributor</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/zyloxmods"><img src="https://github.com/zyloxmods.png" width="80px;" alt="Zylox"/><br /><sub><b>Zylox</b></sub></a><br/>Casual Maintainer</a></td>
   </tbody>
 </table>

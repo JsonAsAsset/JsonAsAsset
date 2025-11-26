@@ -322,7 +322,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 		if (Property->GetCPPType(nullptr, CPPF_None) == TEXT("FExpressionInput")) {
 			UJsonAsAssetSettings* Settings = GetSettings();
 			
-			if (Settings->AssetSettings.bUE5Target) {
+			if (Settings->Runtime.bUE5Target) {
 				FExpressionInput* ExpressionInput = static_cast<FExpressionInput*>(OutValue);
 
 				if (ExpressionInput &&

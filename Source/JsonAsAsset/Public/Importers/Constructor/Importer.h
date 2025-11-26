@@ -252,7 +252,7 @@ public:
         
         if (Settings->bEnableCloudServer && (
             InObject == nullptr ||
-                Settings->AssetSettings.TextureImportSettings.bForceRedownloadTextures &&
+                Settings->AssetSettings.Texture.bReDownloadTextures &&
                 Type == "Texture2D"
             )
             && !Path.StartsWith("Engine/") && !Path.StartsWith("/Engine/")

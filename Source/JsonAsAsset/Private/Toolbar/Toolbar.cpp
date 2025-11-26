@@ -12,7 +12,9 @@
 #endif
 
 #include "Interfaces/IPluginManager.h"
-#include "Modules/CloudModule.h"
+#include "Modules/Cloud/Cloud.h"
+#include "Modules/Cloud/CloudStatus.h"
+#include "Modules/UI/StyleModule.h"
 #include "Toolbar/Dropdowns/ActionRequiredDropdownBuilder.h"
 #include "Toolbar/Dropdowns/GeneralDropdownBuilder.h"
 #include "Toolbar/Dropdowns/CloudDropdownBuilder.h"
@@ -155,8 +157,8 @@ void FJsonAsAssetToolbar::ImportAction() {
 
 	/* Conditional Settings Checks */
 	if (!UJsonAsAssetSettings::EnsureExportDirectoryIsValid(Settings)) return;
-	if (!CloudModule::VerifyActivity(Settings)) return;
-	CloudModule::RetrieveMetadata();
+	if (!Cloud::Status::Check(Settings)) return;
+	Cloud::Update();
 
 	/* Dialog for a JSON File */
 	TArray<FString> OutFileNames = OpenFileDialog("Select a JSON File", "JSON Files|*.json");

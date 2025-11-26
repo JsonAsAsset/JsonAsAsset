@@ -16,7 +16,6 @@
 #include "ContentBrowserModule.h"
 #include "IDesktopPlatform.h"
 #include "RemoteUtilities.h"
-#include "AssetUtilities.h"
 #include "PluginUtils.h"
 #include "HttpModule.h"
 #include "IMessageLogListing.h"
@@ -24,9 +23,9 @@
 #include "TlHelp32.h"
 #include "Json.h"
 #include "MessageLogModule.h"
-#include "Extensions/Cloud.h"
 #include "Logging/MessageLog.h"
 #include "Modules/LogCategory.h"
+#include "Modules/Cloud/Cloud.h"
 #include "UObject/SavePackage.h"
 
 #if (ENGINE_MAJOR_VERSION != 4 || ENGINE_MINOR_VERSION < 27)
@@ -1007,7 +1006,7 @@ inline UClass* LoadClass(const TSharedPtr<FJsonObject>& SuperStruct) {
 inline void RedirectPath(FString& OutPath) {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
-	for (auto [Source, Target] : Settings->AssetSettings.PathRedirectors) {
+	for (auto [Source, Target] : Settings->AssetSettings.Redirectors) {
 		OutPath = OutPath.Replace(*Source, *Target);
 	}
 }
@@ -1015,7 +1014,7 @@ inline void RedirectPath(FString& OutPath) {
 inline void ReverseRedirectPath(FString& OutPath) {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
-	for (const FJPathRedirector& Redirect : Settings->AssetSettings.PathRedirectors) {
+	for (const FJRedirector& Redirect : Settings->AssetSettings.Redirectors) {
 		OutPath = OutPath.Replace(*Redirect.Target, *Redirect.Source);
 	}
 }

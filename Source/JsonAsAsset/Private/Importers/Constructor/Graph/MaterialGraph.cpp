@@ -11,6 +11,7 @@
 #include "Materials/MaterialExpressionShadingPathSwitch.h"
 #include "Materials/MaterialExpressionQualitySwitch.h"
 #include "Materials/MaterialExpressionReroute.h"
+#include "Utilities/AssetUtilities.h"
 #include "Utilities/JsonUtilities.h"
 
 #if ENGINE_UE5

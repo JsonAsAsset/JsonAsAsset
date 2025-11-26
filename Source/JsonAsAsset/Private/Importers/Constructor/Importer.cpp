@@ -187,12 +187,12 @@ void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Export
 		LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
 
 		if (LocalPackage == nullptr) {
-			FString ExportDirectoryCache = PluginSettings->ExportDirectory.Path;
+			FString ExportDirectoryCache = PluginSettings->Runtime.ExportDirectory.Path;
 		
 			if (FString DirectoryPathFix; File.Split(TEXT("Output/Exports/"), &DirectoryPathFix, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd)) {
 				DirectoryPathFix = DirectoryPathFix + TEXT("Output/Exports");
 
-				PluginSettings->ExportDirectory.Path = DirectoryPathFix;
+				PluginSettings->Runtime.ExportDirectory.Path = DirectoryPathFix;
 				SavePluginConfig(PluginSettings);
 
 				/* Retry creating the asset package */
@@ -200,7 +200,7 @@ void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Export
 
 				/* Undo the change if unsuccessful */
 				if (LocalPackage == nullptr) {
-					PluginSettings->ExportDirectory.Path = ExportDirectoryCache;
+					PluginSettings->Runtime.ExportDirectory.Path = ExportDirectoryCache;
 
 					SavePluginConfig(PluginSettings);
 				}
@@ -550,7 +550,7 @@ void IImporter::Save() const {
 	}
 
 	/* User option to save packages on import */
-	if (Settings->AssetSettings.bSavePackagesOnImport) {
+	if (Settings->AssetSettings.bSaveAssets) {
 		SavePackage(Package);
 	}
 }

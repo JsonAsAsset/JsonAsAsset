@@ -8,19 +8,17 @@
 
 #define LOCTEXT_NAMESPACE "JsonAsAsset"
 
-UJsonAsAssetSettings::UJsonAsAssetSettings():
-	bEnableExperiments(false)
-{
+UJsonAsAssetSettings::UJsonAsAssetSettings() {
 	CategoryName = TEXT("Plugins");
 	SectionName = TEXT("JsonAsAsset");
 }
 
 FText UJsonAsAssetSettings::GetSectionText() const {
-	return LOCTEXT("SettingsDisplayName", "JsonAsAsset");
+	return FText::FromString("JsonAsAsset");
 }
 
 bool UJsonAsAssetSettings::EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings) {
-	const FString ExportDirectoryPath = Settings->ExportDirectory.Path;
+	const FString ExportDirectoryPath = Settings->Runtime.ExportDirectory.Path;
 
 	if (ExportDirectoryPath.IsEmpty()) {
 		ReadAppData();
@@ -33,7 +31,7 @@ bool UJsonAsAssetSettings::EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Se
 	/* Invalid Export Directory */
 	if (ExportDirectoryPath.Contains("\\")) {
 		/* Fix up export directory */
-		Settings->ExportDirectory.Path = ExportDirectoryPath.Replace(TEXT("\\"), TEXT("/"));
+		Settings->Runtime.ExportDirectory.Path = ExportDirectoryPath.Replace(TEXT("\\"), TEXT("/"));
 	
 		SavePluginConfig(Settings);
 	}
@@ -73,7 +71,7 @@ void UJsonAsAssetSettings::ReadAppData() {
 
 		if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid()) {
 			/* Load the PropertiesDirectory and GameDirectory */
-			PluginSettings->ExportDirectory.Path = JsonObject->GetStringField(TEXT("PropertiesDirectory")).Replace(TEXT("\\"), TEXT("/"));
+			PluginSettings->Runtime.ExportDirectory.Path = JsonObject->GetStringField(TEXT("PropertiesDirectory")).Replace(TEXT("\\"), TEXT("/"));
 		}
 	}
 

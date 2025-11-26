@@ -49,7 +49,7 @@ bool IMaterialImporter::Import() {
 	UMaterial* EditorOnlyData = Material;
 #endif
 	
-	if (!Settings->AssetSettings.MaterialImportSettings.bSkipResultNodeConnection) {
+	if (!Settings->AssetSettings.Material.bSkipResultNodeConnection) {
 		TArray<FString> IgnoredProperties = TArray<FString> {
 			"ParameterGroupData",
 			"ExpressionCollection",

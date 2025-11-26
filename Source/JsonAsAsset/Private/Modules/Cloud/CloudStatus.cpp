@@ -1,17 +1,22 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2025 */
 
-#include "Modules/CloudModule.h"
-
+#include "Modules/Cloud/CloudStatus.h"
+#include "Modules/Cloud/Cloud.h"
 #include "Modules/UI/StyleModule.h"
-#include "Settings/JsonAsAssetSettings.h"
 #include "Utilities/EngineUtilities.h"
 
-#ifdef _MSC_VER
-#undef GetObject
-#endif
+bool Cloud::Status::IsOpened() {
+	return IsProcessRunning("j0.dev.exe");
+}
 
-bool CloudModule::VerifyActivity(const UJsonAsAssetSettings* Settings) {
-	if (Settings->bEnableCloudServer && !IsRunning()) {
+bool Cloud::Status::IsReady() {
+	return Get("/api/status").IsValid();
+}
+
+bool Cloud::Status::Check(const UJsonAsAssetSettings* Settings) {
+	RemoveNotification(CloudNotification);
+	
+	if (Settings->bEnableCloudServer && !IsOpened()) {
 		FNotificationInfo Info(FText::FromString("No Cloud Servers are active"));
 		
 		SetNotificationSubText(Info, FText::FromString(
@@ -30,8 +35,6 @@ bool CloudModule::VerifyActivity(const UJsonAsAssetSettings* Settings) {
 		Info.bUseLargeFont = false;
 		Info.bUseThrobber = false;
 		Info.Image = FJsonAsAssetStyle::Get().GetBrush("JsonAsAsset.Toolbar.Icon");
-
-		RemoveNotification(CloudNotification);
 
 		CloudNotification = FSlateNotificationManager::Get().AddNotification(Info);
 		CloudNotification.Pin()->SetCompletionState(SNotificationItem::CS_Pending);
@@ -59,47 +62,11 @@ bool CloudModule::VerifyActivity(const UJsonAsAssetSettings* Settings) {
 		Info.bUseThrobber = false;
 		Info.Image = FJsonAsAssetStyle::Get().GetBrush("JsonAsAsset.Toolbar.Icon");
 
-		RemoveNotification(CloudNotification);
-
 		CloudNotification = FSlateNotificationManager::Get().AddNotification(Info);
 		CloudNotification.Pin()->SetCompletionState(SNotificationItem::CS_Pending);
 
 		return false;
 	}
 
-	RemoveNotification(CloudNotification);
-
 	return true;
-}
-
-bool CloudModule::IsRunning() {
-	return IsProcessRunning("j0.dev.exe");
-}
-
-void CloudModule::RetrieveMetadata() {
-	UJsonAsAssetSettings* MutableSettings = GetMutableDefault<UJsonAsAssetSettings>();
-	
-	if (MutableSettings->bEnableCloudServer) {
-		const auto MetadataResponse = Cloud::Get("/api/metadata");
-		if (!MetadataResponse.IsValid()) return;
-		
-		if (MetadataResponse->HasField(TEXT("name"))) {
-			FString Name = MetadataResponse->GetStringField(TEXT("name"));
-			MutableSettings->AssetSettings.GameName = Name;
-		}
-
-		if (MetadataResponse->HasField(TEXT("major_version"))) {
-			const int MajorVersion = MetadataResponse->GetIntegerField(TEXT("major_version"));
-				
-			MutableSettings->AssetSettings.bUE5Target = MajorVersion == 5;
-		}
-
-		SavePluginConfig(MutableSettings);
-	}
-}
-
-bool CloudModule::IsReady() {
-	const auto StatusResponse = Cloud::Get("/api/status");
-
-	return StatusResponse.IsValid();
 }

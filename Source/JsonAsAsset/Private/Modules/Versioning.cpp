@@ -66,10 +66,8 @@ void FJsonAsAssetVersioning::Update() {
 
 		Reset(CurrentVersion, LatestVersion, JsonObject->GetStringField(TEXT("html_url")), VersionName, CurrentVersionName);
 
-		const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
-		
-		static bool IsNotificationShown = Settings->Versioning.bEnableReminders;
-		
+		static bool IsNotificationShown = false;
+
 		if (bNewVersionAvailable && !IsNotificationShown) {
 			const FString CapturedUrl = HTMLUrl;
 

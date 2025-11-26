@@ -1,9 +1,11 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2025 */
 
-#include "Extensions/Cloud.h"
+#include "Modules/Cloud/Cloud.h"
 
 #include "HttpModule.h"
 #include "GenericPlatform/GenericPlatformHttp.h"
+#include "Settings/JsonAsAssetSettings.h"
+#include "Utilities/EngineUtilities.h"
 #include "Utilities/RemoteUtilities.h"
 
 TSharedPtr<FJsonObject> Cloud::Export::Get(const TMap<FString, FString>& Parameters, const TMap<FString, FString>& Headers) {
@@ -21,7 +23,7 @@ TSharedPtr<FJsonObject> Cloud::Export::GetRaw(const FString& Path, const TMap<FS
 	return Get(Path, true, Parameters, Headers);
 }
 
-TArray<TSharedPtr<FJsonValue>> Cloud::Exports::Get(const TMap<FString, FString>& Parameters, const TMap<FString, FString>& Headers) {
+TArray<TSharedPtr<FJsonValue>> Cloud::Export::Array::Get(const TMap<FString, FString>& Parameters, const TMap<FString, FString>& Headers) {
 	const TSharedPtr<FJsonObject> JsonObject = Export::Get(Parameters, Headers);
 
 	if (!JsonObject.IsValid()) return TArray<TSharedPtr<FJsonValue>>();
@@ -29,14 +31,14 @@ TArray<TSharedPtr<FJsonValue>> Cloud::Exports::Get(const TMap<FString, FString>&
 	return JsonObject->GetArrayField(TEXT("exports"));
 }
 
-TArray<TSharedPtr<FJsonValue>> Cloud::Exports::Get(const FString& Path, const bool Raw, TMap<FString, FString> Parameters, const TMap<FString, FString>& Headers) {
+TArray<TSharedPtr<FJsonValue>> Cloud::Export::Array::Get(const FString& Path, const bool Raw, TMap<FString, FString> Parameters, const TMap<FString, FString>& Headers) {
 	Parameters.Add(TEXT("path"), Path);
 	Parameters.Add(TEXT("raw"), Raw ? TEXT("true") : TEXT("false"));
 	
 	return Get(Parameters, Headers);
 }
 
-TArray<TSharedPtr<FJsonValue>> Cloud::Exports::GetRaw(const FString& Path, const TMap<FString, FString>& Parameters, const TMap<FString, FString>& Headers) {
+TArray<TSharedPtr<FJsonValue>> Cloud::Export::Array::GetRaw(const FString& Path, const TMap<FString, FString>& Parameters, const TMap<FString, FString>& Headers) {
 	return Get(Path, true, Parameters, Headers);
 }
 
@@ -109,4 +111,25 @@ TArray<TSharedPtr<FJsonValue>> Cloud::GetExports(const FString& RequestURL, cons
 	if (!JsonObject.IsValid()) return {};
 
 	return JsonObject->GetArrayField(TEXT("exports"));
+}
+
+void Cloud::Update() {
+	UJsonAsAssetSettings* MutableSettings = GetMutableDefault<UJsonAsAssetSettings>();
+	if (!MutableSettings->bEnableCloudServer) return;
+	
+	const auto MetadataResponse = Get("/api/metadata");
+	if (!MetadataResponse.IsValid()) return;
+	
+	if (MetadataResponse->HasField(TEXT("name"))) {
+		FString Name = MetadataResponse->GetStringField(TEXT("name"));
+		MutableSettings->AssetSettings.GameName = Name;
+	}
+
+	if (MetadataResponse->HasField(TEXT("major_version"))) {
+		const int MajorVersion = MetadataResponse->GetIntegerField(TEXT("major_version"));
+			
+		MutableSettings->Runtime.bUE5Target = MajorVersion == 5;
+	}
+
+	SavePluginConfig(MutableSettings);
 }

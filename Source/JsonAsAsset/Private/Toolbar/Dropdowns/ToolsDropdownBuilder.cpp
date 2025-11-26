@@ -3,7 +3,6 @@
 #include "Toolbar/Dropdowns/ToolsDropdownBuilder.h"
 
 #include "Importers/Constructor/Importer.h"
-#include "Modules/CloudModule.h"
 #include "Utilities/EngineUtilities.h"
 
 #include "Modules/Tools/AnimationData.h"
@@ -78,7 +77,7 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					FUIAction(
 						FExecuteAction::CreateStatic(&FToolConvexCollision::Execute),
 						FCanExecuteAction::CreateLambda([this] {
-							return CloudModule::IsRunning();
+							return Cloud::Status::IsOpened();
 						})
 					),
 					NAME_None
@@ -92,7 +91,7 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					FUIAction(
 						FExecuteAction::CreateStatic(&FToolAnimationData::Execute),
 						FCanExecuteAction::CreateLambda([this] {
-							return CloudModule::IsRunning();
+							return Cloud::Status::IsOpened();
 						})
 					),
 					NAME_None
@@ -109,7 +108,7 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 							SkeletalMeshData.Execute();
 						}),
 						FCanExecuteAction::CreateLambda([this] {
-							return CloudModule::IsRunning();
+							return Cloud::Status::IsOpened();
 						})
 					),
 					NAME_None

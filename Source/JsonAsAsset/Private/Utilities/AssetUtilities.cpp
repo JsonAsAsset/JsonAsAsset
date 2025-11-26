@@ -17,9 +17,7 @@
 #include "UObject/SavePackage.h"
 
 #include "HttpModule.h"
-#include "Extensions/Cloud.h"
 #include "Interfaces/IHttpResponse.h"
-#include "Modules/CloudModule.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
 #include "Utilities/RemoteUtilities.h"
@@ -46,13 +44,13 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 	if (!ModifiablePath.StartsWith("/Game/") && !ModifiablePath.StartsWith("/Plugins/") && ModifiablePath.Contains("/Content/")) {
 		if (!Settings->AssetSettings.GameName.IsEmpty()) {
 			ModifiablePath = ModifiablePath.Replace(*(Settings->AssetSettings.GameName + "/Content"), TEXT("/Game"));
-			ModifiablePath.Split(*(Settings->ExportDirectory.Path + "/"), nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+			ModifiablePath.Split(*(Settings->Runtime.ExportDirectory.Path + "/"), nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 			ModifiablePath.Split("/", &ModifiablePath, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 			ModifiablePath += "/";
 		}
 
 		if (!ModifiablePath.StartsWith("/Game/") && !ModifiablePath.StartsWith("/Plugins/") && ModifiablePath.Contains("/Content/")) {
-			ModifiablePath.Split(*(Settings->ExportDirectory.Path + "/"), nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+			ModifiablePath.Split(*(Settings->Runtime.ExportDirectory.Path + "/"), nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 			ModifiablePath.Split("/", nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 			ModifiablePath.Split("/", &ModifiablePath, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 			/* Ex: RestPath: Plugins/Folder/BaseTextures */
@@ -328,7 +326,7 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 	Package->FullyLoad();
 
 	/* Save texture */
-	if (Settings->AssetSettings.bSavePackagesOnImport) {
+	if (Settings->AssetSettings.bSaveAssets) {
 		SavePackage(Package);
 	}
 

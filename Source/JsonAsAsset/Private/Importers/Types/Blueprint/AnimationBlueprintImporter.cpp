@@ -532,7 +532,7 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 		HandlePropertyBinding(NodeExport, AllJsonObjects, Node, this, AnimBlueprint);
 
 		const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
-		if (Settings->AssetSettings.AnimationBlueprintImportSettings.bShowAllNodeKeysAsComment) {
+		if (Settings->AssetSettings.AnimationBlueprint.bDisplayNodeKeys) {
 			Node->NodeComment = NodeExport.GetName().ToString();
 			Node->bCommentBubbleVisible = true;
 		}

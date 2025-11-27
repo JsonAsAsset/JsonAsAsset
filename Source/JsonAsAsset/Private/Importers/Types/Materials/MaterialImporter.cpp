@@ -136,7 +136,11 @@ bool IMaterialImporter::Import() {
 			PositionalExpression = MaterialAttributes;
 		}
 	}
-	
+
+	if (!PositionalExpression) {
+		PositionalExpression = EditorOnlyData->EmissiveColor.Expression;
+	}
+
 	if (PositionalExpression) {
 		Material->EditorX = PositionalExpression->MaterialExpressionEditorX + PositionalExpression->GetWidth() * 2.5;
 		Material->EditorY = PositionalExpression->MaterialExpressionEditorY;

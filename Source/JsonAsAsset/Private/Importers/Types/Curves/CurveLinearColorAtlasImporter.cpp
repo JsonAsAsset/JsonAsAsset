@@ -84,11 +84,11 @@ bool ICurveLinearColorAtlasImporter::Import() {
 	TArray<TObjectPtr<UCurveLinearColor>> CurvesLocal;
 
 #if ENGINE_UE5
-	CurvesLocal = LoadObject(GradientCurves, CurvesLocal);
+	CurvesLocal = LoadExport(GradientCurves, CurvesLocal);
 	Object->GradientCurves = CurvesLocal;
 	Object->PostEditChangeProperty(PropertyChangedEvent);
 #else
-	CurvesLocal = LoadObject(GradientCurves, CurvesLocal);
+	CurvesLocal = LoadExport(GradientCurves, CurvesLocal);
 
 	/* Convert TObjectPtr<UCurveLinearColor> to UCurveLinearColor* and assign to Object->GradientCurves */
 	TArray<UCurveLinearColor*> RawCurves;

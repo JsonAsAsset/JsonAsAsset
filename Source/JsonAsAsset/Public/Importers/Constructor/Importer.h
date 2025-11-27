@@ -14,7 +14,7 @@
 /* ReSharper disable once CppUnusedIncludeDirective */
 #include "TypesHelper.h"
 
-/* Global handler for converting JSON to assets */
+/* Base handler for converting JSON to assets */
 class JSONASASSET_API IImporter : public USerializerContainer {
 public:
     /* Constructors ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -49,11 +49,11 @@ public:
 public:
     /* Loads a single <T> object ptr */
     template<class T = UObject>
-    void LoadObject(const TSharedPtr<FJsonObject>* PackageIndex, TObjectPtr<T>& Object);
+    void LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectPtr<T>& Object);
 
     /* Loads an array of <T> object ptrs */
     template<class T = UObject>
-    TArray<TObjectPtr<T>> LoadObject(const TArray<TSharedPtr<FJsonValue>>& PackageArray, TArray<TObjectPtr<T>> Array);
+    TArray<TObjectPtr<T>> LoadExport(const TArray<TSharedPtr<FJsonValue>>& PackageArray, TArray<TObjectPtr<T>> Array);
 
 public:
     /* Sends off to the ReadExportsAndImport function once read */
@@ -67,7 +67,6 @@ public:
     TArray<TSharedPtr<FJsonValue>> ImportMap;
     
     void SetupImportTracking();
-
 public:
     UObject* ParentObject;
     UObject* ImportedAsset;

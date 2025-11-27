@@ -152,7 +152,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				}
 				
 				Importer->ParentObject = ObjectSerializer->Parent;
-				Importer->LoadObject(&JsonValueAsObject, Object);
+				Importer->LoadExport(&JsonValueAsObject, Object);
 
 				if (Object == nullptr) {
 					if (ObjectProperty && ObjectProperty->PropertyClass) {

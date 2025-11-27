@@ -127,7 +127,7 @@ void FSkeletalMeshData::Execute() {
 						IImporter* Importer = new IImporter();
 						
 						TObjectPtr<UObject> LoadedObject;
-						Importer->LoadObject<UObject>(&SkeletalMaterial, LoadedObject);
+						Importer->LoadExport<UObject>(&SkeletalMaterial, LoadedObject);
 
 						if (IsObjectPtrValid(LoadedObject)) MaterialSlot.MaterialInterface = Cast<UMaterialInterface>(LoadedObject.Get());
 					} else break;

@@ -216,7 +216,7 @@ inline void HandlePropertyBinding(FUObjectExport NodeExport, const TArray<TShare
 						TSharedPtr<FJsonObject> StructObject = SourcePropertyObject->GetObjectField(TEXT("Struct"));
 
 						TObjectPtr<UObject> LoadedObject;
-						Importer->LoadObject<UObject>(&StructObject, LoadedObject);
+						Importer->LoadExport<UObject>(&StructObject, LoadedObject);
 
 						PropertyBinding.PinType.PinSubCategoryObject = LoadedObject.Get();
 					} else {
@@ -239,7 +239,7 @@ inline void HandlePropertyBinding(FUObjectExport NodeExport, const TArray<TShare
 							TSharedPtr<FJsonObject> StructObject = CopyRecordAsObject->GetObjectField(TEXT("CachedSourceStructSubProperty"));
 							
 							TObjectPtr<UObject> LoadedObject;
-							Importer->LoadObject<UObject>(&StructObject, LoadedObject);
+							Importer->LoadExport<UObject>(&StructObject, LoadedObject);
 
 							auto StructProperty = LoadStructProperty(StructObject);
 

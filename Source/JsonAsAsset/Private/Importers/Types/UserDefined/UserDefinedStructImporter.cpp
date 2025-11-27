@@ -245,7 +245,7 @@ UObject* IUserDefinedStructImporter::LoadObjectFromJsonReference(const TSharedPt
     }
 
     TObjectPtr<UObject> LoadedObject;
-    LoadObject<UObject>(&ReferenceObject, LoadedObject);
+    LoadExport<UObject>(&ReferenceObject, LoadedObject);
     
     return LoadedObject;
 }

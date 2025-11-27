@@ -27,7 +27,7 @@ bool IMaterialFunctionImporter::Import() {
 	/* Define editor only data from the JSON */
 	FUObjectExportContainer ExpressionContainer;
 
-	const TSharedPtr<FJsonObject> Props = FindMaterialData(MaterialFunction, GetAssetExport()->GetStringField(TEXT("Type")), MaterialFunction->GetName(), ExpressionContainer);
+	const TSharedPtr<FJsonObject> Props = FindMaterialData(MaterialFunction, GetAssetType(), MaterialFunction->GetName(), ExpressionContainer);
 
 	/* Map out each expression for easier access */
 	ConstructExpressions(ExpressionContainer);

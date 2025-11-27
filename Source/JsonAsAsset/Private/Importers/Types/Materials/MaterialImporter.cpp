@@ -32,7 +32,7 @@ bool IMaterialImporter::Import() {
 
 	/* Define material data from the JSON */
 	FUObjectExportContainer ExpressionContainer;
-	TSharedPtr<FJsonObject> Props = FindMaterialData(Material, GetAssetExport()->GetStringField(TEXT("Type")), Material->GetName(), ExpressionContainer);
+	TSharedPtr<FJsonObject> Props = FindMaterialData(Material, GetAssetType(), Material->GetName(), ExpressionContainer);
 
 	/* Map out each expression for easier access */
 	ConstructExpressions(ExpressionContainer);
@@ -64,8 +64,7 @@ bool IMaterialImporter::Import() {
 
 		const TSharedPtr<FJsonObject> RawConnectionData = TSharedPtr<FJsonObject>(Props);
 		for (FString Property : IgnoredProperties) {
-			if (RawConnectionData->HasField(Property))
-			{
+			if (RawConnectionData->HasField(Property)) {
 				RawConnectionData->RemoveField(Property);
 			}
 		}
@@ -129,6 +128,20 @@ bool IMaterialImporter::Import() {
 
 	/* Deserialize any properties */
 	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), Material);
+
+	/* Move Material Result Node ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	UMaterialExpression* PositionalExpression = EditorOnlyData->BaseColor.Expression;
+	if (UMaterialExpression* MaterialAttributes = EditorOnlyData->MaterialAttributes.Expression) {
+		if (Material->bUseMaterialAttributes) {
+			PositionalExpression = MaterialAttributes;
+		}
+	}
+	
+	if (PositionalExpression) {
+		Material->EditorX = PositionalExpression->MaterialExpressionEditorX + PositionalExpression->GetWidth() * 2.5;
+		Material->EditorY = PositionalExpression->MaterialExpressionEditorY;
+	}
+	/* Move Material Result Node ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 	Material->UpdateCachedExpressionData();
 	

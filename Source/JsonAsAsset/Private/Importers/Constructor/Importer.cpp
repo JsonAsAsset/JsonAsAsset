@@ -64,6 +64,10 @@ FString IImporter::GetAssetName() const {
 	return ImporterExport.GetName().ToString();
 }
 
+FString IImporter::GetAssetType() const {
+	return ImporterExport.GetType().ToString();
+}
+
 TSharedPtr<FJsonObject> IImporter::GetAssetData() const {
 	return ImporterExport.JsonObject->GetObjectField(TEXT("Properties"));
 }

@@ -28,6 +28,7 @@ public:
 
 public:
     FString GetAssetName() const;
+    FString GetAssetType() const;
     TSharedPtr<FJsonObject> GetAssetData() const;
     TSharedPtr<FJsonObject> GetAssetExport() const;
     UClass* GetAssetClass();

@@ -12,6 +12,7 @@
 #include "Materials/MaterialExpressionQualitySwitch.h"
 #include "Materials/MaterialExpressionReroute.h"
 #include "Utilities/AssetUtilities.h"
+#include "Utilities/EngineUtilities.h"
 #include "Utilities/JsonUtilities.h"
 
 #if ENGINE_UE5

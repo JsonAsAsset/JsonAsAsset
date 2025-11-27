@@ -151,7 +151,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 					Importer = new IImporter();
 				}
 				
-				Importer->ParentObject = ObjectSerializer->Parent;
+				Importer->SetParent(ObjectSerializer->Parent);
 				Importer->LoadExport(&JsonValueAsObject, Object);
 
 				if (Object == nullptr) {

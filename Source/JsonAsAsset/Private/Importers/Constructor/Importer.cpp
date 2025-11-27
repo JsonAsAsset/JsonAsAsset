@@ -26,8 +26,7 @@
 /* Importer Constructor */
 IImporter::IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
 		  const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects)
-	: USerializerContainer(Package), AllJsonObjects(AllJsonObjects),
-	  ParentObject(nullptr)
+	: USerializerContainer(Package), AllJsonObjects(AllJsonObjects)
 {
 	/* Create Properties field if it doesn't exist */
 	if (!JsonObject->HasField(TEXT("Properties"))) {
@@ -75,6 +74,14 @@ TSharedPtr<FJsonObject> IImporter::GetAssetExport() const {
 
 UClass* IImporter::GetAssetClass() {
 	return ImporterExport.GetClass();
+}
+
+void IImporter::SetParent(UObject* Parent) {
+	ImporterExport.Parent = Parent;
+}
+
+UObject* IImporter::GetParent() const {
+	return ImporterExport.Parent;
 }
 
 /* TODO: Got a feeling FORCEINLINE will fix this */
@@ -150,9 +157,9 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 		}
 	}
 
-	if (ParentObject != nullptr) {
-		if (!Outer.IsEmpty() && ParentObject->IsA(AActor::StaticClass())) {
-			const AActor* NewLoadedObject = Cast<AActor>(ParentObject);
+	if (GetParent() != nullptr) {
+		if (!Outer.IsEmpty() && GetParent()->IsA(AActor::StaticClass())) {
+			const AActor* NewLoadedObject = Cast<AActor>(GetParent());
 			auto Components = NewLoadedObject->GetComponents();
 		
 			for (UActorComponent* Component : Components) {

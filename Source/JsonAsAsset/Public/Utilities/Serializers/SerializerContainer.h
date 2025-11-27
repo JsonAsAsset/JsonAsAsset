@@ -15,6 +15,14 @@ public:
     virtual ~USerializerContainer() {}
 
     UPackage* Package;
+    
+    /* TODO: Rename to Export after refactor */
+    FUObjectExport ImporterExport;
+    FUObjectExportContainer ImporterContainer;
+
+public:
+    /* TODO: Refactor into ImporterContainer */
+    TArray<TSharedPtr<FJsonValue>> AllJsonObjects;
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 public:

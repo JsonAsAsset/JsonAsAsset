@@ -18,7 +18,7 @@
 class JSONASASSET_API IImporter : public USerializerContainer {
 public:
     /* Constructors ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    IImporter() : ParentObject(nullptr) {}
+    IImporter() {}
 
     /* Importer Constructor */
     IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
@@ -27,16 +27,13 @@ public:
     virtual ~IImporter() override {}
 
 public:
-    /* TODO: Rename to Export after refactor */
-    FUObjectExport ImporterExport;
-
     FString GetAssetName() const;
     TSharedPtr<FJsonObject> GetAssetData() const;
     TSharedPtr<FJsonObject> GetAssetExport() const;
     UClass* GetAssetClass();
 
-public:
-    TArray<TSharedPtr<FJsonValue>> AllJsonObjects;
+    void SetParent(UObject* Parent);
+    UObject* GetParent() const;
 
 public:
     /* Overriden in child classes, returns false if failed. */
@@ -58,9 +55,6 @@ public:
     template<class T = UObject>
     TArray<TObjectPtr<T>> LoadExport(const TArray<TSharedPtr<FJsonValue>>& PackageArray, TArray<TObjectPtr<T>> Array);
 
-public:
-    UObject* ParentObject;
-    
 public:
     void Save() const;
 

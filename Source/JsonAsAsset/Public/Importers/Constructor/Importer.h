@@ -38,10 +38,7 @@ protected:
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     
 public:
-    /*
-    * Overriden in child classes.
-    * Returns false if failed.
-    */
+    /* Overriden in child classes, returns false if failed. */
     virtual bool Import() {
         return false;
     }
@@ -67,9 +64,7 @@ public:
     /* Sends off to the ReadExportsAndImport function once read */
     void ImportReference(const FString& File);
 
-    /*
-     * Searches for importable asset types and imports them.
-     */
+    /* Searches for importable asset types and imports them. */
     bool ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, const FString& File, bool bHideNotifications = false);
     void ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, bool bHideNotifications = false);
 

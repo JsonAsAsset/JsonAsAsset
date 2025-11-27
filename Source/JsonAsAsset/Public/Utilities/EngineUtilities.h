@@ -1109,3 +1109,14 @@ inline void SavePackage(UPackage* Package) {
 	UPackage::SavePackage(Package, nullptr, RF_Standalone, *PackageFileName);
 #endif
 }
+
+/* Needed to compile macro *REGISTER_IMPORTER* */
+FORCEINLINE uint32 GetTypeHash(const TArray<FString>& Array) {
+	uint32 Hash = 0;
+    
+	for (const FString& Str : Array) {
+		Hash = HashCombine(Hash, GetTypeHash(Str));
+	}
+    
+	return Hash;
+}

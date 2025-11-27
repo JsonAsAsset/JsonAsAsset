@@ -1,6 +1,6 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2025 */
 
-#include "Importers/Constructor/TextureImporter.h"
+#include "Importers/Constructor/TemplatedImporter.h"
 
 /* Explicit instantiation of ITemplatedImporter for UObject */
 template class ITemplatedImporter<UObject>;

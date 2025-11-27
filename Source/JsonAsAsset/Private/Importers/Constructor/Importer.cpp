@@ -333,48 +333,6 @@ void IImporter::SetupImportTracking() {
 	}
 }
 
-TArray<TSharedPtr<FJsonValue>> IImporter::GetObjectsWithPropertyNameStartingWith(const FString& StartsWithStr, const FString& PropertyName) {
-	TArray<TSharedPtr<FJsonValue>> FilteredObjects;
-
-	for (const TSharedPtr<FJsonValue>& JsonObjectValue : AllJsonObjects) {
-		if (JsonObjectValue->Type == EJson::Object) {
-			TSharedPtr<FJsonObject> JsonObjectType = JsonObjectValue->AsObject();
-
-			if (JsonObjectType.IsValid() && JsonObjectType->HasField(PropertyName)) {
-				const FString TypeValue = JsonObjectType->GetStringField(PropertyName);
-
-				/* Check if the "Type" field starts with the specified string */
-				if (TypeValue.StartsWith(StartsWithStr)) {
-					FilteredObjects.Add(JsonObjectValue);
-				}
-			}
-		}
-	}
-
-	return FilteredObjects;
-}
-
-TArray<TSharedPtr<FJsonValue>> IImporter::FilterObjectsWithoutMatchingPropertyName(const FString& StartsWithStr, const FString& PropertyName) {
-	TArray<TSharedPtr<FJsonValue>> FilteredObjects;
-
-	for (const TSharedPtr<FJsonValue>& JsonObjectValue : AllJsonObjects) {
-		if (JsonObjectValue->Type == EJson::Object) {
-			TSharedPtr<FJsonObject> JsonObjectType = JsonObjectValue->AsObject();
-
-			if (JsonObjectType.IsValid() && JsonObjectType->HasField(PropertyName)) {
-				const FString TypeValue = JsonObjectType->GetStringField(PropertyName);
-
-				/* Check if the "Type" field starts with the specified string */
-				if (!TypeValue.StartsWith(StartsWithStr)) {
-					FilteredObjects.Add(JsonObjectValue);
-				}
-			}
-		}
-	}
-
-	return FilteredObjects;
-}
-
 bool IImporter::HandleAssetCreation(UObject* Asset) const {
 	{
 		/* User Failsafe.... */
@@ -410,6 +368,7 @@ bool IImporter::HandleAssetCreation(UObject* Asset) const {
 	return true;
 }
 
+/* TODO: Got a feeling FORCEINLINE will fix this */
 template void IImporter::LoadObject<UMaterialInterface>(const TSharedPtr<FJsonObject>*, TObjectPtr<UMaterialInterface>&);
 template void IImporter::LoadObject<USubsurfaceProfile>(const TSharedPtr<FJsonObject>*, TObjectPtr<USubsurfaceProfile>&);
 template void IImporter::LoadObject<UTexture>(const TSharedPtr<FJsonObject>*, TObjectPtr<UTexture>&);

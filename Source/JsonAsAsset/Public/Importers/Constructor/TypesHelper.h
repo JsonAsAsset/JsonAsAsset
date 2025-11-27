@@ -58,14 +58,6 @@ inline bool CanImport(const FString& ImporterType, const bool IsCloud = false, c
 	return Class->IsChildOf(UDataAsset::StaticClass());
 }
 
-inline bool CanImportAny(TArray<FString>& Types) {
-	for (FString& Type : Types) {
-		if (CanImport(Type)) return true;
-	}
-	
-	return false;
-}
-
 inline bool IsAssetTypeExperimental(const FString& ImporterType) {
 	if (ExperimentalAssetTypes.Contains(ImporterType)) {
 		return false;

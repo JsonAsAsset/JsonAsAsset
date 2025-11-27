@@ -69,9 +69,6 @@ public:
     void SetupImportTracking();
 
 public:
-    TArray<TSharedPtr<FJsonValue>> GetObjectsWithPropertyNameStartingWith(const FString& StartsWithStr, const FString& PropertyName);
-    TArray<TSharedPtr<FJsonValue>> FilterObjectsWithoutMatchingPropertyName(const FString& StartsWithStr, const FString& PropertyName);
-
     UObject* ParentObject;
     UObject* ImportedAsset;
     

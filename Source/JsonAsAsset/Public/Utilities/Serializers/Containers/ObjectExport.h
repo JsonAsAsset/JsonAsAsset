@@ -103,7 +103,7 @@ struct FUObjectExport {
 	}
 
 protected:
-	UClass* Class;
+	UClass* Class = nullptr;
 };
 
 struct FUObjectExportContainer {

@@ -5,9 +5,13 @@
 #include "Internationalization/StringTable.h"
 #include "Internationalization/StringTableCore.h"
 
+UObject* IStringTableImporter::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<UStringTable>(Package, UStringTable::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+}
+
 bool IStringTableImporter::Import() {
-	/* Create StringTable from Package */
-	UStringTable* StringTable = NewObject<UStringTable>(Package, UStringTable::StaticClass(), *AssetName, RF_Public | RF_Standalone);
+	/* Create StringTable */
+	UStringTable* StringTable = Create<UStringTable>();
 
 	if (AssetData->HasField(TEXT("StringTable"))) {
 		const TSharedPtr<FJsonObject> StringTableData = AssetData->GetObjectField(TEXT("StringTable"));

@@ -12,6 +12,7 @@ public:
 
 	UPoseAsset* PoseAsset;
 
+	virtual UObject* CreateAsset(UObject* CreatedAsset) override;
 	virtual bool Import() override;
 
 protected:

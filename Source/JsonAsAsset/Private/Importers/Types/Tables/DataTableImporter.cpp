@@ -2,8 +2,12 @@
 
 #include "Importers/Types/Tables/DataTableImporter.h"
 
+UObject* IDataTableImporter::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<UDataTable>(Package, UDataTable::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+}
+
 bool IDataTableImporter::Import() {
-	UDataTable* DataTable = NewObject<UDataTable>(Package, UDataTable::StaticClass(), *AssetName, RF_Public | RF_Standalone);
+	UDataTable* DataTable = Create<UDataTable>();
 	
 	/* ScriptClass for the Data Table */
 	FString TableStruct; {

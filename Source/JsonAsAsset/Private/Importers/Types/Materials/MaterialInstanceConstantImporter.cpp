@@ -6,8 +6,12 @@
 #include "RHIDefinitions.h"
 #include "MaterialShared.h"
 
+UObject* IMaterialInstanceConstantImporter::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<UMaterialInstanceConstant>(Package, UMaterialInstanceConstant::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+}
+
 bool IMaterialInstanceConstantImporter::Import() {
-	UMaterialInstanceConstant* MaterialInstanceConstant = NewObject<UMaterialInstanceConstant>(Package, UMaterialInstanceConstant::StaticClass(), *AssetName, RF_Public | RF_Standalone);
+	UMaterialInstanceConstant* MaterialInstanceConstant = Create<UMaterialInstanceConstant>();
 
 	/* Specific fix for 4.16 engines */
 	const TArray<FString> ParameterFields = {

@@ -3,12 +3,18 @@
 #include "Importers/Types/Animation/BlendSpaceImporter.h"
 #include "Animation/BlendSpace.h"
 
-bool IBlendSpaceImporter::Import() {
+UObject* IBlendSpaceImporter::CreateAsset(UObject* CreatedAsset) {
 #if ENGINE_UE5
 	auto BlendSpace = NewObject<UBlendSpace>(Package, AssetClass, *AssetName, RF_Public | RF_Standalone);
 #else
 	UBlendSpaceBase* BlendSpace = NewObject<UBlendSpaceBase>(Package, AssetClass, *AssetName, RF_Public | RF_Standalone);
 #endif
+	
+	return IImporter::CreateAsset(BlendSpace);
+}
+
+bool IBlendSpaceImporter::Import() {
+	UBlendSpaceBase* BlendSpace = Create<UBlendSpaceBase>();
 	
 	BlendSpace->Modify();
 	

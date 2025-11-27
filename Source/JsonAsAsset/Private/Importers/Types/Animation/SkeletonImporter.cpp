@@ -2,6 +2,10 @@
 
 #include "Importers/Types/Animation/SkeletonImporter.h"
 
+UObject* ISkeletonImporter::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<USkeleton>(Package, USkeleton::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+}
+
 bool ISkeletonImporter::Import() {
 	USkeleton* Skeleton = GetSelectedAsset<USkeleton>(true);
 
@@ -14,7 +18,7 @@ bool ISkeletonImporter::Import() {
 
 	/* If there is no skeleton, create one. */
 	if (!Skeleton) {
-		Skeleton = NewObject<USkeleton>(Package, USkeleton::StaticClass(), *AssetName, RF_Public | RF_Standalone);
+		Skeleton = Create<USkeleton>();
 
 		ApplySkeletalChanges(Skeleton);
 	} else {

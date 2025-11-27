@@ -12,5 +12,6 @@ public:
 		IImporter(AssetName, FilePath, JsonObject, Package, OutermostPackage, AllJsonObjects, AssetClass) {
 	}
 
+	virtual UObject* CreateAsset(UObject* CreatedAsset) override;
 	virtual bool Import() override;
 };

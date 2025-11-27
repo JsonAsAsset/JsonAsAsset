@@ -4,13 +4,15 @@
 #include "Curves/CurveLinearColorAtlas.h"
 #include "Curves/CurveLinearColor.h"
 
-/* Seems like some of this data has to be manually set (written code) */
+UObject* ICurveLinearColorAtlasImporter::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<UCurveLinearColorAtlas>(Package, UCurveLinearColorAtlas::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+}
 
 bool ICurveLinearColorAtlasImporter::Import() {
 	float Width = 256;
 	float Height = 256;
 
-	UCurveLinearColorAtlas* Object = NewObject<UCurveLinearColorAtlas>(Package, UCurveLinearColorAtlas::StaticClass(), *AssetName, RF_Public | RF_Standalone);
+	UCurveLinearColorAtlas* Object = Create<UCurveLinearColorAtlas>();
 #if !UE5_6_BEYOND
 	Object->Source.Init(Width, Height, 1, 1, TSF_RGBA16F);
 	const int32 TextureDataSize = Object->Source.CalcMipSize(0);

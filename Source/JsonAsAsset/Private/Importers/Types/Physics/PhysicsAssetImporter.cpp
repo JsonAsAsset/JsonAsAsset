@@ -5,6 +5,10 @@
 
 #include "PhysicsEngine/PhysicsConstraintTemplate.h"
 
+UObject* IPhysicsAssetImporter::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<UPhysicsAsset>(Package, UPhysicsAsset::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+}
+
 bool IPhysicsAssetImporter::Import() {
 	/* CollisionDisableTable is required to port physics assets */
 	if (!AssetData->HasField(TEXT("CollisionDisableTable"))) {
@@ -13,7 +17,7 @@ bool IPhysicsAssetImporter::Import() {
 		return false;
 	}
 
-	UPhysicsAsset* PhysicsAsset = NewObject<UPhysicsAsset>(Package, UPhysicsAsset::StaticClass(), *AssetName, RF_Public | RF_Standalone);
+	UPhysicsAsset* PhysicsAsset = Create<UPhysicsAsset>();
 
 	DeserializeExports(PhysicsAsset, false);
 	FUObjectExportContainer ExportContainer = GetExportContainer();

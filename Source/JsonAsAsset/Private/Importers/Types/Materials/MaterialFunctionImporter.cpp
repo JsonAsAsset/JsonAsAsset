@@ -3,10 +3,16 @@
 #include "Importers/Types/Materials/MaterialFunctionImporter.h"
 #include "Factories/MaterialFunctionFactoryNew.h"
 
-bool IMaterialFunctionImporter::Import() {
+UObject* IMaterialFunctionImporter::CreateAsset(UObject* CreatedAsset) {
 	/* Create Material Function Factory (factory automatically creates the Material Function) */
 	UMaterialFunctionFactoryNew* MaterialFunctionFactory = NewObject<UMaterialFunctionFactoryNew>();
 	UMaterialFunction* MaterialFunction = Cast<UMaterialFunction>(MaterialFunctionFactory->FactoryCreateNew(UMaterialFunction::StaticClass(), OutermostPackage, *AssetName, RF_Standalone | RF_Public, nullptr, GWarn));
+
+	return IImporter::CreateAsset(MaterialFunction);
+}
+
+bool IMaterialFunctionImporter::Import() {
+	UMaterialFunction* MaterialFunction = Create<UMaterialFunction>();
 
 	/* Empty all expressions, we create them */
 #if ENGINE_UE5

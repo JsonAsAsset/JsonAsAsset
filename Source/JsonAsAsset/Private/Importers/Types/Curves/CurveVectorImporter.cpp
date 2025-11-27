@@ -5,12 +5,18 @@
 #include "Curves/CurveVector.h"
 #include "Utilities/JsonUtilities.h"
 
+UObject* ICurveVectorImporter::CreateAsset(UObject* CreatedAsset) {
+	UCurveVectorFactory* CurveVectorFactory = NewObject<UCurveVectorFactory>();
+	UCurveVector* CurveVector = Cast<UCurveVector>(CurveVectorFactory->FactoryCreateNew(UCurveVector::StaticClass(), OutermostPackage, *AssetName, RF_Standalone | RF_Public, nullptr, GWarn));
+
+	return IImporter::CreateAsset(CurveVector);
+}
+
 bool ICurveVectorImporter::Import() {
 	/* Array of containers */
 	TArray<TSharedPtr<FJsonValue>> FloatCurves = AssetData->GetArrayField(TEXT("FloatCurves"));
 
-	UCurveVectorFactory* CurveVectorFactory = NewObject<UCurveVectorFactory>();
-	UCurveVector* CurveVectorAsset = Cast<UCurveVector>(CurveVectorFactory->FactoryCreateNew(UCurveVector::StaticClass(), OutermostPackage, *AssetName, RF_Standalone | RF_Public, nullptr, GWarn));
+	UCurveVector* CurveVectorAsset = Create<UCurveVector>();
 
 	/* For each container, get keys */
 	for (int i = 0; i < FloatCurves.Num(); i++) {

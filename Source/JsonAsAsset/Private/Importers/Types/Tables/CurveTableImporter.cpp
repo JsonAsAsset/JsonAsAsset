@@ -10,9 +10,13 @@ public:
 	}
 };
 
+UObject* ICurveTableImporter::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<UCurveTable>(Package, UCurveTable::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+}
+
 bool ICurveTableImporter::Import() {
 	const TSharedPtr<FJsonObject> RowData = AssetData->GetObjectField(TEXT("Rows"));
-	UCurveTable* CurveTable = NewObject<UCurveTable>(Package, UCurveTable::StaticClass(), *AssetName, RF_Public | RF_Standalone);
+	UCurveTable* CurveTable = Create<UCurveTable>();
 
 	/* Used to determine curve type */
 	ECurveTableMode CurveTableMode = ECurveTableMode::RichCurves; {

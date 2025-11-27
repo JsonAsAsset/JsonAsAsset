@@ -3,8 +3,12 @@
 #include "Importers/Types/Animation/PoseAssetImporter.h"
 #include "Animation/PoseAsset.h"
 
+UObject* IPoseAssetImporter::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<UPoseAsset>(OutermostPackage, UPoseAsset::StaticClass(), *AssetName, RF_Standalone | RF_Public));
+}
+
 bool IPoseAssetImporter::Import() {
-	PoseAsset = NewObject<UPoseAsset>(OutermostPackage, UPoseAsset::StaticClass(), *AssetName, RF_Standalone | RF_Public);
+	PoseAsset = Create<UPoseAsset>();
 
 	/* Set Skeleton, so we can use it in the uncooking process */
 	GetObjectSerializer()->DeserializeObjectProperties(KeepPropertiesShared(AssetData,

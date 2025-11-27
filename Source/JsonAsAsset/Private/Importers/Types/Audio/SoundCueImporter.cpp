@@ -3,9 +3,12 @@
 #include "Importers/Types/Audio/SoundCueImporter.h"
 #include "Sound/SoundCue.h"
 
+UObject* ISoundCueImporter::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<USoundCue>(Package, *AssetName, RF_Public | RF_Standalone));
+}
+
 bool ISoundCueImporter::Import() {
-	/* Create Sound Cue */
-	USoundCue* SoundCue = NewObject<USoundCue>(Package, *AssetName, RF_Public | RF_Standalone);
+	USoundCue* SoundCue = Create<USoundCue>();
 	
 	SoundCue->PreEditChange(nullptr);
 	

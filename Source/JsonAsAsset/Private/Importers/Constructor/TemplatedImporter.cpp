@@ -6,8 +6,13 @@
 template class ITemplatedImporter<UObject>;
 
 template <typename AssetType>
+UObject* ITemplatedImporter<AssetType>::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<AssetType>(Package, AssetClass ? AssetClass : AssetType::StaticClass(), FName(AssetName), RF_Public | RF_Standalone));
+}
+
+template <typename AssetType>
 bool ITemplatedImporter<AssetType>::Import() {
-	AssetType* Asset = NewObject<AssetType>(Package, AssetClass ? AssetClass : AssetType::StaticClass(), FName(AssetName), RF_Public | RF_Standalone);
+	AssetType* Asset = Create<AssetType>();
 
 	Asset->MarkPackageDirty();
 

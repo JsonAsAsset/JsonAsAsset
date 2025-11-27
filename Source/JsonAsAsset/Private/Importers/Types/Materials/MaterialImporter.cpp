@@ -12,10 +12,16 @@
 #include "Factories/MaterialFactoryNew.h"
 #include "Settings/JsonAsAssetSettings.h"
 
-bool IMaterialImporter::Import() {
+UObject* IMaterialImporter::CreateAsset(UObject* CreatedAsset) {
 	/* Create Material Factory (factory automatically creates the Material) */
 	UMaterialFactoryNew* MaterialFactory = NewObject<UMaterialFactoryNew>();
 	UMaterial* Material = Cast<UMaterial>(MaterialFactory->FactoryCreateNew(UMaterial::StaticClass(), OutermostPackage, *AssetName, RF_Standalone | RF_Public, nullptr, GWarn));
+
+	return IImporter::CreateAsset(Material);
+}
+
+bool IMaterialImporter::Import() {
+	UMaterial* Material = Create<UMaterial>();
 
 	/* Clear any default expressions the engine adds */
 #if ENGINE_UE5

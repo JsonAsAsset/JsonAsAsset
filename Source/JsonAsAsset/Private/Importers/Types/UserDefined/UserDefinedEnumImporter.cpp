@@ -5,9 +5,13 @@
 #include "Engine/UserDefinedEnum.h"
 #include "Kismet2/EnumEditorUtils.h"
 
+UObject* IUserDefinedEnumImporter::CreateAsset(UObject* CreatedAsset) {
+	return IImporter::CreateAsset(NewObject<UUserDefinedEnum>(Package, *AssetName, RF_Public | RF_Standalone));
+}
+
 bool IUserDefinedEnumImporter::Import() {
 	/* Create the UserDefinedEnum */
-	UUserDefinedEnum* UserDefinedEnum = NewObject<UUserDefinedEnum>(Package, *AssetName, RF_Public | RF_Standalone);
+	UUserDefinedEnum* UserDefinedEnum = Create<UUserDefinedEnum>();
 	
 	UserDefinedEnum->SetMetaData(TEXT("BlueprintType"), TEXT("true"));
 	UserDefinedEnum->Modify();

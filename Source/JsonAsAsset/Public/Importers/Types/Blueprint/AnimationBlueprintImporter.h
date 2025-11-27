@@ -17,7 +17,7 @@ public:
 	virtual bool Import() override;
 
 private:
-	UAnimBlueprint* CreateAnimBlueprint(UClass* ParentClass) const;
+	UAnimBlueprint* CreateAnimBlueprint(UClass* ParentClass);
 	
 	void ProcessEvaluateGraphExposedInputs(const TSharedPtr<FJsonObject>& AnimNodeProperties) const;
 

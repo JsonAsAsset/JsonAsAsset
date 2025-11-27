@@ -46,6 +46,23 @@ public:
         return false;
     }
 
+    virtual UObject* CreateAsset(UObject* CreatedAsset = nullptr) {
+        if (CreatedAsset) {
+            ImportedAsset = CreatedAsset;
+            
+            return CreatedAsset;
+        }
+        
+        return nullptr;
+    }
+
+    template<typename T>
+    T* Create() {
+        UObject* TargetAsset = CreateAsset(nullptr);
+
+        return Cast<T>(TargetAsset);
+    }
+
 public:
     /* Loads a single <T> object ptr */
     template<class T = UObject>

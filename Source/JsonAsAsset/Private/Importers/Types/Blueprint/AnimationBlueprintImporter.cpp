@@ -146,7 +146,7 @@ bool IAnimationBlueprintImporter::Import() {
 	return OnAssetCreation(AnimBlueprint);
 }
 
-UAnimBlueprint* IAnimationBlueprintImporter::CreateAnimBlueprint(UClass* ParentClass) const {
+UAnimBlueprint* IAnimationBlueprintImporter::CreateAnimBlueprint(UClass* ParentClass) {
 	EBlueprintType BlueprintType = BPTYPE_Normal;
 
 	if (ParentClass->HasAnyClassFlags(CLASS_Const)) {
@@ -162,9 +162,9 @@ UAnimBlueprint* IAnimationBlueprintImporter::CreateAnimBlueprint(UClass* ParentC
 	UBlueprint* Blueprint = FKismetEditorUtilities::CreateBlueprint(ParentClass, Package, FName(*AssetName), BlueprintType, UAnimBlueprint::StaticClass(), UAnimBlueprintGeneratedClass::StaticClass());
 
 	if (Blueprint != nullptr) {
-		return Cast<UAnimBlueprint>(Blueprint);
+		return Cast<UAnimBlueprint>(CreateAsset(Blueprint));
 	}
-	
+
 	return nullptr;
 }
 

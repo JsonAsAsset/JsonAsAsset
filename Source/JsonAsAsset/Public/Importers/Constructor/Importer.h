@@ -38,10 +38,6 @@ public:
 public:
     TArray<TSharedPtr<FJsonValue>> AllJsonObjects;
 
-protected:
-    /* Class variables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    
 public:
     /* Overriden in child classes, returns false if failed. */
     virtual bool Import() {

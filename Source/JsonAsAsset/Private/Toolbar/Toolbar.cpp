@@ -11,6 +11,7 @@
 #include "Modules/UI/StyleModule.h"
 #endif
 
+#include "Importers/Constructor/ImportReader.h"
 #include "Interfaces/IPluginManager.h"
 #include "Modules/Cloud/Cloud.h"
 #include "Modules/UI/StyleModule.h"
@@ -168,8 +169,7 @@ void FJsonAsAssetToolbar::ImportAction() {
 	for (FString& File : OutFileNames) {
 		EmptyMessageLog();
 
-		IImporter* Importer = new IImporter();
-		Importer->ImportReference(File);
+		IImportReader::ImportReference(File);
 	}
 }
 

@@ -39,22 +39,11 @@
 #include "UObject/SavePackage.h"
 #endif
 
-inline bool HandlePackageCreation(UObject* Asset, UPackage* Package) {
-	FAssetRegistryModule::AssetCreated(Asset);
-	if (!Asset->MarkPackageDirty()) return false;
-	
-	Package->SetDirtyFlag(true);
-	Asset->PostEditChange();
-	Asset->AddToRoot();
-	
-	Package->FullyLoad();
-
-	/* Browse to newly added Asset */
-	const TArray<FAssetData>& Assets = {Asset};
+inline void BrowseToAsset(UObject* Asset) {
+	/* Browse to newly added Asset in the Content Browser */
+	const TArray<FAssetData>& Assets = { Asset };
 	const FContentBrowserModule& ContentBrowserModule = FModuleManager::Get().LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
 	ContentBrowserModule.Get().SyncBrowserToAssets(Assets);
-
-	return true;
 }
 
 /**
@@ -1119,4 +1108,35 @@ FORCEINLINE uint32 GetTypeHash(const TArray<FString>& Array) {
 	}
     
 	return Hash;
+}
+
+inline bool HandleAssetCreation(UObject* Asset, UPackage* Package) {
+	{
+		/* User Failsafe.... */
+		const UPackage* AssetOutermostPackage = Asset->GetOutermost();
+		const FString PackageName = AssetOutermostPackage->GetName();
+
+		const FString Path = FPackageName::GetLongPackagePath(PackageName);
+		if (!Path.StartsWith(TEXT("/")) || Path.Len() < 2)
+		{
+			SpawnPrompt("User Failsafe (#1)", "To keep crashes from happening due to user setup issues, which would be assumed as the plugin's mishaps.\n\nHere's some reasons why this failsafe happened:\n\n- You didn't export it from FModel\n- Imported it from a random path, not in Exports/.../\n\nPlease reimport next time at the proper location.");
+			
+			return false;
+		}
+	}
+
+	FAssetRegistryModule::AssetCreated(Asset);
+	
+	if (!Asset->MarkPackageDirty()) return false;
+	
+	Package->SetDirtyFlag(true);
+	Asset->PostEditChange();
+	Asset->AddToRoot();
+	
+	Package->FullyLoad();
+
+	BrowseToAsset(Asset);
+	Asset->PostLoad();
+	
+	return true;
 }

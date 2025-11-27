@@ -32,6 +32,9 @@ struct FUObjectExport {
 
 	int Position;
 
+	explicit FUObjectExport(const TSharedPtr<FJsonObject>& JsonObject)
+		: JsonObject(JsonObject), Object(nullptr), Parent(nullptr), Position(-1) { }
+	
 	FUObjectExport(const TSharedPtr<FJsonObject>& JsonObject, UObject* Object, UObject* Parent, const int Position = -1)
 		: JsonObject(JsonObject), Object(Object), Parent(Parent), Position(Position) { }
 

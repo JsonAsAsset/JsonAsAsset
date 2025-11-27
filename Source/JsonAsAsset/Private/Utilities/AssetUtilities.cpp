@@ -17,6 +17,7 @@
 #include "UObject/SavePackage.h"
 
 #include "HttpModule.h"
+#include "Importers/Constructor/ImportReader.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Serialization/JsonReader.h"
 #include "Serialization/JsonSerializer.h"
@@ -201,9 +202,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 				CreatePlugin(RootName);
 			}
 
-			/* Import asset by IImporter */
-			IImporter* Importer = new IImporter();
-			bSuccess = Importer->ReadExportsAndImport(Response->GetArrayField(TEXT("exports")), PackagePath, true);
+			bSuccess = IImportReader::ReadExportsAndImport(Response->GetArrayField(TEXT("exports")), PackagePath, true);
 
 			/* Define found object */
 			OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *RealPath));

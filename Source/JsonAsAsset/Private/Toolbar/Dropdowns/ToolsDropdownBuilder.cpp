@@ -3,6 +3,7 @@
 #include "Toolbar/Dropdowns/ToolsDropdownBuilder.h"
 
 #include "Importers/Constructor/Importer.h"
+#include "Importers/Constructor/ImportReader.h"
 #include "Utilities/EngineUtilities.h"
 
 #include "Modules/Cloud/Tools/AnimationData.h"
@@ -55,8 +56,7 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 
 								for (FString& JsonPath : JsonFiles)
 								{
-									IImporter* Importer = new IImporter();
-									Importer->ImportReference(JsonPath);
+									IImportReader::ImportReference(JsonPath);
 								}
 							}
 						})

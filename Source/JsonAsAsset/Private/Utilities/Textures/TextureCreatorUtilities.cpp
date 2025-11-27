@@ -21,7 +21,7 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 	UTexture2D* Texture2D;
 
 	if (bUseOctetStream) {
-		Texture2D = NewObject<T>(OutermostPackage, T::StaticClass(), *AssetName, RF_Standalone | RF_Public);
+		Texture2D = NewObject<T>(Package, T::StaticClass(), *AssetName, RF_Standalone | RF_Public);
 	} else {
 		UTextureFactory* TextureFactory = NewObject<UTextureFactory>();
 		TextureFactory->AddToRoot();
@@ -164,7 +164,7 @@ bool FTextureCreatorUtilities::CreateVolumeTexture(UTexture*& OutVolumeTexture, 
 bool FTextureCreatorUtilities::CreateRenderTarget2D(UTexture*& OutRenderTarget2D, const TSharedPtr<FJsonObject>& Properties) const {
 	UTextureRenderTargetFactoryNew* TextureFactory = NewObject<UTextureRenderTargetFactoryNew>();
 	TextureFactory->AddToRoot();
-	UTextureRenderTarget2D* RenderTarget2D = Cast<UTextureRenderTarget2D>(TextureFactory->FactoryCreateNew(UTextureRenderTarget2D::StaticClass(), OutermostPackage, *AssetName, RF_Standalone | RF_Public, nullptr, GWarn));
+	UTextureRenderTarget2D* RenderTarget2D = Cast<UTextureRenderTarget2D>(TextureFactory->FactoryCreateNew(UTextureRenderTarget2D::StaticClass(), Package, *AssetName, RF_Standalone | RF_Public, nullptr, GWarn));
 
 	DeserializeTexture(RenderTarget2D, Properties);
 

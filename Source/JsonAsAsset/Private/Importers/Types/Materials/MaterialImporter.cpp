@@ -15,7 +15,7 @@
 UObject* IMaterialImporter::CreateAsset(UObject* CreatedAsset) {
 	/* Create Material Factory (factory automatically creates the Material) */
 	UMaterialFactoryNew* MaterialFactory = NewObject<UMaterialFactoryNew>();
-	UMaterial* Material = Cast<UMaterial>(MaterialFactory->FactoryCreateNew(UMaterial::StaticClass(), OutermostPackage, *GetAssetName(), RF_Standalone | RF_Public, nullptr, GWarn));
+	UMaterial* Material = Cast<UMaterial>(MaterialFactory->FactoryCreateNew(UMaterial::StaticClass(), Package, *GetAssetName(), RF_Standalone | RF_Public, nullptr, GWarn));
 
 	return IImporter::CreateAsset(Material);
 }

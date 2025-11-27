@@ -4,7 +4,7 @@
 #include "Animation/PoseAsset.h"
 
 UObject* IPoseAssetImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<UPoseAsset>(OutermostPackage, UPoseAsset::StaticClass(), *GetAssetName(), RF_Standalone | RF_Public));
+	return IImporter::CreateAsset(NewObject<UPoseAsset>(Package, UPoseAsset::StaticClass(), *GetAssetName(), RF_Standalone | RF_Public));
 }
 
 bool IPoseAssetImporter::Import() {
@@ -137,7 +137,7 @@ void IPoseAssetImporter::ReverseCookLocalSpacePose(USkeleton* Skeleton) const {
 
 	FString CleanName = GetAssetName();
 
-	const FString PoseAssetPackagePath = OutermostPackage->GetName();
+	const FString PoseAssetPackagePath = Package->GetName();
 	const FString ParentPath = FPackageName::GetLongPackagePath(PoseAssetPackagePath);
 
 	if (GetAssetName().EndsWith(TEXT("_PoseAsset"))) {

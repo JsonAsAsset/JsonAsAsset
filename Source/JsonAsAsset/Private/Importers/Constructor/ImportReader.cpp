@@ -45,15 +45,14 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 	RedirectPath(File);
 
 	FString FailureReason;
-	UPackage* LocalOutermostPackage;
-	UPackage* LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPackage, FailureReason);
+	UPackage* LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, FailureReason);
 
 	if (LocalPackage == nullptr) {
 		/* Try fixing our Export Directory Settings using the provided File directory if local package not found */
         UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
 
 		PluginSettings->ReadAppData();
-		LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPackage, FailureReason);
+		LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, FailureReason);
 
 		if (LocalPackage == nullptr) {
 			FString ExportDirectoryCache = PluginSettings->Runtime.ExportDirectory.Path;
@@ -65,7 +64,7 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 				SavePluginConfig(PluginSettings);
 
 				/* Retry creating the asset package */
-				LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPackage, FailureReason);
+				LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, FailureReason);
 
 				/* Undo the change if unsuccessful */
 				if (LocalPackage == nullptr) {

@@ -36,7 +36,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& FullPath) {
 	return Package;
 }
 
-UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString& OutputPath, UPackage*& OutOutermostPackage, FString& FailureReason) {
+UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString& OutputPath, FString& FailureReason) {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 	
 	FString ModifiablePath = OutputPath;
@@ -110,17 +110,15 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 	}
 	
 	UPackage* Package = CreateAssetPackage(*PathWithGame);
-	OutOutermostPackage = Package->GetOutermost();
 	Package->FullyLoad();
 
 	return Package;
 }
 
 UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString& OutputPath) {
-	UPackage* Ignore = nullptr; /* Put here because &nullptr doesn't work */
 	FString StringIgnore = "";
 	
-	return CreateAssetPackage(Name, OutputPath, Ignore, StringIgnore);
+	return CreateAssetPackage(Name, OutputPath, StringIgnore);
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

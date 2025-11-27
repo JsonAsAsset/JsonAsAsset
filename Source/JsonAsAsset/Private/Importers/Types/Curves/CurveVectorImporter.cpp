@@ -7,7 +7,7 @@
 
 UObject* ICurveVectorImporter::CreateAsset(UObject* CreatedAsset) {
 	UCurveVectorFactory* CurveVectorFactory = NewObject<UCurveVectorFactory>();
-	UCurveVector* CurveVector = Cast<UCurveVector>(CurveVectorFactory->FactoryCreateNew(UCurveVector::StaticClass(), OutermostPackage, *GetAssetName(), RF_Standalone | RF_Public, nullptr, GWarn));
+	UCurveVector* CurveVector = Cast<UCurveVector>(CurveVectorFactory->FactoryCreateNew(UCurveVector::StaticClass(), Package, *GetAssetName(), RF_Standalone | RF_Public, nullptr, GWarn));
 
 	return IImporter::CreateAsset(CurveVector);
 }

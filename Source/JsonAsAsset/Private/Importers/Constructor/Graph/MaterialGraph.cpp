@@ -265,12 +265,11 @@ UMaterialExpression* IMaterialGraph::OnMissingNodeClass(FUObjectExport& Export, 
 		SubgraphFunctionPath.Split("/", &SubgraphFunctionPath, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 		SubgraphFunctionPath = SubgraphFunctionPath + "/";
 		
-		UPackage* SubgraphLocalOutermostPackage;
 		FString FailureReason;
-		FAssetUtilities::CreateAssetPackage(SubgraphFunctionName, SubgraphFunctionPath, SubgraphLocalOutermostPackage, FailureReason);
+		FAssetUtilities::CreateAssetPackage(SubgraphFunctionName, SubgraphFunctionPath, FailureReason);
 
 		UMaterialFunctionFactoryNew* SubgraphMaterialFunctionFactory = NewObject<UMaterialFunctionFactoryNew>();
-		UMaterialFunction* SubgraphMaterialFunction = Cast<UMaterialFunction>(SubgraphMaterialFunctionFactory->FactoryCreateNew(UMaterialFunction::StaticClass(), SubgraphLocalOutermostPackage, *SubgraphFunctionName, RF_Standalone | RF_Public, nullptr, GWarn));
+		UMaterialFunction* SubgraphMaterialFunction = Cast<UMaterialFunction>(SubgraphMaterialFunctionFactory->FactoryCreateNew(UMaterialFunction::StaticClass(), Package, *SubgraphFunctionName, RF_Standalone | RF_Public, nullptr, GWarn));
 
 		OnAssetCreation(SubgraphMaterialFunction);
 

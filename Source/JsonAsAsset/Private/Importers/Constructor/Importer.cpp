@@ -30,8 +30,6 @@ IImporter::IImporter(
 	: USerializerContainer(Package), AllJsonObjects(AllJsonObjects),
 	  ParentObject(nullptr)
 {
-	OutermostPackage = Package->GetOutermost();
-	
 	/* Create Properties field if it doesn't exist */
 	if (!JsonObject->HasField(TEXT("Properties"))) {
 		JsonObject->SetObjectField(TEXT("Properties"), TSharedPtr<FJsonObject>());

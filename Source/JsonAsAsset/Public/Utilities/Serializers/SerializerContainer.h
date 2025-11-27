@@ -15,7 +15,6 @@ public:
     virtual ~USerializerContainer() {}
 
     UPackage* Package;
-    UPackage* OutermostPackage;
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 public:

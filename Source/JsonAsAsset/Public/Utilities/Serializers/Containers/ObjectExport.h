@@ -4,6 +4,7 @@
 
 #include "Dom/JsonObject.h"
 #include "UObject/Object.h"
+#include "Utilities/Compatibility.h"
 
 /* A structure to hold data for a UObject export. */
 struct FUObjectExport {
@@ -29,7 +30,6 @@ struct FUObjectExport {
 
 	/* Parent of this expression */
 	UObject* Parent;
-
 	int Position;
 
 	explicit FUObjectExport(const TSharedPtr<FJsonObject>& JsonObject)
@@ -44,10 +44,18 @@ struct FUObjectExport {
 	FUObjectExport(const FName NameOverride, const FName TypeOverride, const FName OuterOverride, const TSharedPtr<FJsonObject>& JsonObject, UObject* Object, UObject* Parent, int Position = -1)
 		: JsonObject(JsonObject), NameOverride(NameOverride), TypeOverride(TypeOverride), OuterOverride(OuterOverride), Object(Object), Parent(Parent), Position(Position) { }
 
-	TSharedPtr<FJsonObject> GetProperties() const {
-		TSharedPtr<FJsonObject> Properties = JsonObject->GetObjectField(TEXT("Properties"));
+	const TSharedPtr<FJsonObject>& GetProperties() const {
+		return JsonObject->GetObjectField(TEXT("Properties"));
+	}
 
-		return Properties;
+	UClass* GetClass() {
+		if (Class) return Class;
+		
+		UClass* ClassRef = FindClassByType(GetType().ToString());
+		if (ClassRef == nullptr) return nullptr;
+		
+		Class = ClassRef;
+		return Class;
 	}
 
 	FName GetName() const {
@@ -93,6 +101,9 @@ struct FUObjectExport {
 	bool IsJsonValid() const {
 		return JsonObject != nullptr;
 	}
+
+protected:
+	UClass* Class;
 };
 
 struct FUObjectExportContainer {

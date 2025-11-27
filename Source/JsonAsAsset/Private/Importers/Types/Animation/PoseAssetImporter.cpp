@@ -4,7 +4,7 @@
 #include "Animation/PoseAsset.h"
 
 UObject* IPoseAssetImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<UPoseAsset>(OutermostPackage, UPoseAsset::StaticClass(), *AssetName, RF_Standalone | RF_Public));
+	return IImporter::CreateAsset(NewObject<UPoseAsset>(OutermostPackage, UPoseAsset::StaticClass(), *GetAssetName(), RF_Standalone | RF_Public));
 }
 
 bool IPoseAssetImporter::Import() {
@@ -135,20 +135,20 @@ void IPoseAssetImporter::ReverseCookLocalSpacePose(USkeleton* Skeleton) const {
 		Pose->SetArrayField(TEXT("SourceLocalSpacePose"), SourceLocalSpacePose);
 	}
 
-	FString CleanName = AssetName;
+	FString CleanName = GetAssetName();
 
 	const FString PoseAssetPackagePath = OutermostPackage->GetName();
 	const FString ParentPath = FPackageName::GetLongPackagePath(PoseAssetPackagePath);
 
-	if (AssetName.EndsWith(TEXT("_PoseAsset"))) {
+	if (GetAssetName().EndsWith(TEXT("_PoseAsset"))) {
 		CleanName.RemoveFromEnd(TEXT("_PoseAsset"));
 	} else {
-		CleanName = AssetName + "_Pose_Export";
+		CleanName = GetAssetName() + "_Pose_Export";
 	}
 
 	const FString PotentialAnimSequencePath = ParentPath / CleanName;
 	if (FPackageName::DoesPackageExist(PotentialAnimSequencePath)) {
-		CleanName = AssetName + "_Pose_Export";
+		CleanName = GetAssetName() + "_Pose_Export";
 	}
 	
 	const FString AnimSequencePackagePath = ParentPath / CleanName;

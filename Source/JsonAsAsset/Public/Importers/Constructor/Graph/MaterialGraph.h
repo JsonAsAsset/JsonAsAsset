@@ -10,8 +10,8 @@
 */
 class IMaterialGraph : public IImporter {
 public:
-	IMaterialGraph(const FString& AssetName, const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects, UClass* AssetClass):
-		IImporter(AssetName, FilePath, JsonObject, Package, OutermostPackage, AllJsonObjects, AssetClass) {
+	IMaterialGraph(const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
+		IImporter(FilePath, JsonObject, Package, OutermostPackage, AllJsonObjects) {
 	}
 	
 protected:

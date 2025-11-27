@@ -7,7 +7,7 @@
 #include "MaterialShared.h"
 
 UObject* IMaterialInstanceConstantImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<UMaterialInstanceConstant>(Package, UMaterialInstanceConstant::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<UMaterialInstanceConstant>(Package, UMaterialInstanceConstant::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
 }
 
 bool IMaterialInstanceConstantImporter::Import() {

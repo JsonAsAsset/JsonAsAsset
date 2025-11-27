@@ -6,7 +6,7 @@
 UObject* IMaterialFunctionImporter::CreateAsset(UObject* CreatedAsset) {
 	/* Create Material Function Factory (factory automatically creates the Material Function) */
 	UMaterialFunctionFactoryNew* MaterialFunctionFactory = NewObject<UMaterialFunctionFactoryNew>();
-	UMaterialFunction* MaterialFunction = Cast<UMaterialFunction>(MaterialFunctionFactory->FactoryCreateNew(UMaterialFunction::StaticClass(), OutermostPackage, *AssetName, RF_Standalone | RF_Public, nullptr, GWarn));
+	UMaterialFunction* MaterialFunction = Cast<UMaterialFunction>(MaterialFunctionFactory->FactoryCreateNew(UMaterialFunction::StaticClass(), OutermostPackage, *GetAssetName(), RF_Standalone | RF_Public, nullptr, GWarn));
 
 	return IImporter::CreateAsset(MaterialFunction);
 }
@@ -27,7 +27,7 @@ bool IMaterialFunctionImporter::Import() {
 	/* Define editor only data from the JSON */
 	FUObjectExportContainer ExpressionContainer;
 
-	const TSharedPtr<FJsonObject> Props = FindMaterialData(MaterialFunction, JsonObject->GetStringField(TEXT("Type")), MaterialFunction->GetName(), ExpressionContainer);
+	const TSharedPtr<FJsonObject> Props = FindMaterialData(MaterialFunction, GetAssetExport()->GetStringField(TEXT("Type")), MaterialFunction->GetName(), ExpressionContainer);
 
 	/* Map out each expression for easier access */
 	ConstructExpressions(ExpressionContainer);

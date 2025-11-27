@@ -257,7 +257,7 @@ UMaterialExpression* IMaterialGraph::OnMissingNodeClass(FUObjectExport& Export, 
 	/* In Unreal Engine 4, to combat the absence of Sub-graphs, create a Material Function in place of it */
 	if (Type == "MaterialExpressionComposite") {
 		return nullptr;
-		const FString SubgraphFunctionName = AssetName + "_" + Name.ToString().Replace(TEXT("MaterialExpression"), TEXT(""));
+		const FString SubgraphFunctionName = GetAssetName() + "_" + Name.ToString().Replace(TEXT("MaterialExpression"), TEXT(""));
 
 		const UPackage* ParentPackage = Parent->GetOutermost();
 		FString SubgraphFunctionPath = ParentPackage->GetPathName();
@@ -427,7 +427,7 @@ UMaterialExpression* IMaterialGraph::OnMissingNodeClass(FUObjectExport& Export, 
 }
 
 void IMaterialGraph::SpawnMaterialDataMissingNotification() const {
-	FNotificationInfo Info = FNotificationInfo(FText::FromString("No Material Data (" + AssetName + ")"));
+	FNotificationInfo Info = FNotificationInfo(FText::FromString("No Material Data (" + GetAssetName() + ")"));
 	Info.ExpireDuration = 7.0f;
 	Info.bUseLargeFont = true;
 	Info.bUseSuccessFailIcons = true;

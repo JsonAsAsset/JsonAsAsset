@@ -7,7 +7,7 @@ template class ITemplatedImporter<UObject>;
 
 template <typename AssetType>
 UObject* ITemplatedImporter<AssetType>::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<AssetType>(Package, AssetClass ? AssetClass : AssetType::StaticClass(), FName(AssetName), RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<AssetType>(Package, GetAssetClass() ? GetAssetClass() : AssetType::StaticClass(), FName(GetAssetName()), RF_Public | RF_Standalone));
 }
 
 template <typename AssetType>
@@ -16,7 +16,7 @@ bool ITemplatedImporter<AssetType>::Import() {
 
 	Asset->MarkPackageDirty();
 
-	GetObjectSerializer()->SetExportForDeserialization(JsonObject, Asset);
+	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), Asset);
 	GetObjectSerializer()->Parent = Asset;
 
 	GetObjectSerializer()->DeserializeExports(AllJsonObjects);

@@ -16,15 +16,15 @@
 #endif
 
 bool IAnimationBaseImporter::Import() {
-	const FString JsonName = JsonObject->GetStringField(TEXT("Name"));
+	const FString JsonName = GetAssetExport()->GetStringField(TEXT("Name"));
 
 	TArray<TSharedPtr<FJsonValue>> FloatCurves;
 	TArray<TSharedPtr<FJsonValue>> Notifies;
 
 	UAnimSequenceBase* AnimSequenceBase = GetSelectedAsset<UAnimSequenceBase>(true, JsonName);
 
-	if (!AnimSequenceBase && AssetClass->IsChildOf<UAnimMontage>()) {
-		AnimSequenceBase = NewObject<UAnimMontage>(Package, AssetClass, *JsonName, RF_Public | RF_Standalone);
+	if (!AnimSequenceBase && GetAssetClass()->IsChildOf<UAnimMontage>()) {
+		AnimSequenceBase = NewObject<UAnimMontage>(Package, GetAssetClass(), *JsonName, RF_Public | RF_Standalone);
 	}
 
 	if (!AnimSequenceBase) {
@@ -46,7 +46,7 @@ bool IAnimationBaseImporter::Import() {
 		CastedAnimSequence->Notifies.Empty();
 	}
 
-	GetObjectSerializer()->SetExportForDeserialization(JsonObject, AnimSequenceBase);
+	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), AnimSequenceBase);
 	GetObjectSerializer()->Parent = AnimSequenceBase;
 
 	GetObjectSerializer()->DeserializeExports(AllJsonObjects);
@@ -86,8 +86,8 @@ bool IAnimationBaseImporter::Import() {
 	if (GetAssetData()->TryGetObjectField(TEXT("RawCurveData"), RawCurveData))
 		FloatCurves = GetAssetData()->GetObjectField(TEXT("RawCurveData"))->GetArrayField(TEXT("FloatCurves"));
 	
-	if (JsonObject->TryGetObjectField(TEXT("CompressedCurveData"), RawCurveData))
-		FloatCurves = JsonObject->GetObjectField(TEXT("CompressedCurveData"))->GetArrayField(TEXT("FloatCurves"));
+	if (GetAssetExport()->TryGetObjectField(TEXT("CompressedCurveData"), RawCurveData))
+		FloatCurves = GetAssetExport()->GetObjectField(TEXT("CompressedCurveData"))->GetArrayField(TEXT("FloatCurves"));
 
 	/* Import the curves */
 	for (const TSharedPtr<FJsonValue> FloatCurveObject : FloatCurves) {

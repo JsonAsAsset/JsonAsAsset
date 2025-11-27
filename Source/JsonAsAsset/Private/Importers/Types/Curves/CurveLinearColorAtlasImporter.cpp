@@ -5,7 +5,7 @@
 #include "Curves/CurveLinearColor.h"
 
 UObject* ICurveLinearColorAtlasImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<UCurveLinearColorAtlas>(Package, UCurveLinearColorAtlas::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<UCurveLinearColorAtlas>(Package, UCurveLinearColorAtlas::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
 }
 
 bool ICurveLinearColorAtlasImporter::Import() {

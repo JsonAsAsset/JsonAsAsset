@@ -26,9 +26,6 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 	const FString Type = Export->GetStringField(TEXT("Type"));
 	FString Name = Export->GetStringField(TEXT("Name"));
 
-	/*
-	ImporterExport = FUObjectExport(Export);*/
-
 	/* BlueprintGeneratedClass is post-fixed with _C */
 	if (Type.Contains("BlueprintGeneratedClass")) {
 		Name.Split("_C", &Name, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
@@ -99,25 +96,25 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 	
 	/* Try to find the importer using a factory delegate */
 	if (const FImporterFactoryDelegate* Factory = FindFactoryForAssetType(Type)) {
-		Importer = (*Factory)(Name, File, Export, LocalPackage, LocalOutermostPackage, Exports, Class);
+		Importer = (*Factory)(File, Export, LocalPackage, LocalOutermostPackage, Exports);
 	}
 
 	/* If it inherits DataAsset, use the data asset importer */
 	if (Importer == nullptr && InheritsDataAsset) {
-		Importer = new IDataAssetImporter(Name, File, Export, LocalPackage, LocalOutermostPackage, Exports, Class);
+		Importer = new IDataAssetImporter(File, Export, LocalPackage, LocalOutermostPackage, Exports);
 	}
 
 	/* By default, (with no existing importer) use the templated importer with the asset class. */
 	if (Importer == nullptr) {
 		Importer = new ITemplatedImporter<UObject>(
-			Name, File, Export, LocalPackage, LocalOutermostPackage, Exports, Class
+			File, Export, LocalPackage, LocalOutermostPackage, Exports
 		);
 	}
 
 	/* TODO: Don't hardcode this. */
 	if (IsAssetTypeImportableUsingCloud(Type)) {
 		Importer = new ITextureImporter<UTextureLightProfile>(
-			Name, File, Export, LocalPackage, LocalOutermostPackage, Exports, Class
+			File, Export, LocalPackage, LocalOutermostPackage, Exports
 		);
 	}
 

@@ -24,12 +24,11 @@
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* Importer Constructor */
-IImporter::IImporter(const FString& AssetName, const FString& FilePath, 
+IImporter::IImporter(const FString& FilePath, 
 		  const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
-		  UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects,
-		  UClass* AssetClass)
-	: USerializerContainer(Package, OutermostPackage), AllJsonObjects(AllJsonObjects), JsonObject(JsonObject),
-	  FilePath(FilePath), AssetClass(AssetClass), AssetName(AssetName),
+		  UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects)
+	: USerializerContainer(Package, OutermostPackage), AllJsonObjects(AllJsonObjects),
+	  FilePath(FilePath),
 	  ParentObject(nullptr)
 {
 	/* Create Properties field if it doesn't exist */
@@ -37,7 +36,7 @@ IImporter::IImporter(const FString& AssetName, const FString& FilePath,
 		JsonObject->SetObjectField(TEXT("Properties"), TSharedPtr<FJsonObject>());
 	}
 
-	ImporterExport.JsonObject = JsonObject->GetObjectField(TEXT("Properties"));
+	ImporterExport.JsonObject = JsonObject;
 
 	/* Move asset properties defined outside "Properties" and move it inside */
 	for (const auto& Pair : JsonObject->Values) {
@@ -49,13 +48,34 @@ IImporter::IImporter(const FString& AssetName, const FString& FilePath,
 			!PropertyName.Equals(TEXT("Flags")) &&
 			!PropertyName.Equals(TEXT("Properties"))
 		) {
-			ImporterExport.JsonObject->SetField(PropertyName, Pair.Value);
+			ImporterExport.GetProperties()->SetField(PropertyName, Pair.Value);
 		}
+	}
+
+	ImporterExport.NameOverride = ImporterExport.GetName();
+	
+	/* BlueprintGeneratedClass is post-fixed with _C */
+	if (ImporterExport.GetType().ToString().Contains("BlueprintGeneratedClass")) {
+		FString NewName;
+		ImporterExport.NameOverride.ToString().Split("_C", &NewName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+		ImporterExport.NameOverride = FName(*NewName);
 	}
 }
 
+FString IImporter::GetAssetName() const {
+	return ImporterExport.GetName().ToString();
+}
+
 TSharedPtr<FJsonObject> IImporter::GetAssetData() const {
+	return ImporterExport.JsonObject->GetObjectField(TEXT("Properties"));
+}
+
+TSharedPtr<FJsonObject> IImporter::GetAssetExport() const {
 	return ImporterExport.JsonObject;
+}
+
+UClass* IImporter::GetAssetClass() {
+	return ImporterExport.GetClass();
 }
 
 /* TODO: Got a feeling FORCEINLINE will fix this */
@@ -273,7 +293,7 @@ bool IImporter::OnAssetCreation(UObject* Asset) {
 }
 
 void IImporter::DeserializeExports(UObject* Parent, const bool bCreateObjects) {
-	GetObjectSerializer()->SetExportForDeserialization(JsonObject, Parent);
+	GetObjectSerializer()->SetExportForDeserialization(ImporterExport.JsonObject, Parent);
 	GetObjectSerializer()->Parent = Parent;
     
 	GetObjectSerializer()->DeserializeExports(AllJsonObjects, bCreateObjects);

@@ -34,7 +34,7 @@ static const TMap<FString, EPinContainerType> ContainerTypeMap = {
 };
 
 UObject* IUserDefinedStructImporter::CreateAsset(UObject* CreatedAsset) {
-    return IImporter::CreateAsset(FStructureEditorUtils::CreateUserDefinedStruct(Package, *AssetName, RF_Standalone | RF_Public | RF_Transactional));
+    return IImporter::CreateAsset(FStructureEditorUtils::CreateUserDefinedStruct(Package, *GetAssetName(), RF_Standalone | RF_Public | RF_Transactional));
 }
 
 bool IUserDefinedStructImporter::Import() {

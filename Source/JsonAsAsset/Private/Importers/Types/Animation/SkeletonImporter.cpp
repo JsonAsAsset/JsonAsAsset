@@ -3,7 +3,7 @@
 #include "Importers/Types/Animation/SkeletonImporter.h"
 
 UObject* ISkeletonImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<USkeleton>(Package, USkeleton::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<USkeleton>(Package, USkeleton::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
 }
 
 bool ISkeletonImporter::Import() {
@@ -11,7 +11,7 @@ bool ISkeletonImporter::Import() {
 
 	/* If the user selected an asset, and it's a different name from the asset, don't import it to it */
 	if (Skeleton) {
-		if (Skeleton->GetName() != AssetName) {
+		if (Skeleton->GetName() != GetAssetName()) {
 			Skeleton = nullptr;
 		}
 	}

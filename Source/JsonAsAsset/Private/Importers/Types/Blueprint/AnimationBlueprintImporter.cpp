@@ -159,7 +159,7 @@ UAnimBlueprint* IAnimationBlueprintImporter::CreateAnimBlueprint(UClass* ParentC
 		BlueprintType = BPTYPE_Interface;
 	}
 
-	UBlueprint* Blueprint = FKismetEditorUtilities::CreateBlueprint(ParentClass, Package, FName(*AssetName), BlueprintType, UAnimBlueprint::StaticClass(), UAnimBlueprintGeneratedClass::StaticClass());
+	UBlueprint* Blueprint = FKismetEditorUtilities::CreateBlueprint(ParentClass, Package, FName(*GetAssetName()), BlueprintType, UAnimBlueprint::StaticClass(), UAnimBlueprintGeneratedClass::StaticClass());
 
 	if (Blueprint != nullptr) {
 		return Cast<UAnimBlueprint>(CreateAsset(Blueprint));

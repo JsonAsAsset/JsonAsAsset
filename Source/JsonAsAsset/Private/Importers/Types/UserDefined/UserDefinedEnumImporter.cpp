@@ -6,7 +6,7 @@
 #include "Kismet2/EnumEditorUtils.h"
 
 UObject* IUserDefinedEnumImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<UUserDefinedEnum>(Package, *AssetName, RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<UUserDefinedEnum>(Package, *GetAssetName(), RF_Public | RF_Standalone));
 }
 
 bool IUserDefinedEnumImporter::Import() {

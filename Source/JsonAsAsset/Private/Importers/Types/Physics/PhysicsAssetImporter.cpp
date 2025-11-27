@@ -6,7 +6,7 @@
 #include "PhysicsEngine/PhysicsConstraintTemplate.h"
 
 UObject* IPhysicsAssetImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<UPhysicsAsset>(Package, UPhysicsAsset::StaticClass(), *AssetName, RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<UPhysicsAsset>(Package, UPhysicsAsset::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
 }
 
 bool IPhysicsAssetImporter::Import() {
@@ -83,7 +83,7 @@ bool IPhysicsAssetImporter::Import() {
 	const USkeletalMesh* SkeletalMesh = GetSelectedAsset<USkeletalMesh>(true);
 
 	if (!SkeletalMesh) {
-		FString CleanName = AssetName;
+		FString CleanName = GetAssetName();
 		CleanName.RemoveFromEnd(TEXT("_PhysicsAsset"));
 		CleanName.RemoveFromEnd(TEXT("_Physics"));
 

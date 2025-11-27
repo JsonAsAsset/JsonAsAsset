@@ -9,7 +9,7 @@
 class IImporter;
 
 /* Easy way to find importers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-using FImporterFactoryDelegate = TFunction<IImporter*(const FString& AssetName, const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& Exports, UClass* AssetClass)>;
+using FImporterFactoryDelegate = TFunction<IImporter*(const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& Exports)>;
 
 /* Registration info for an importer */
 struct FImporterRegistrationInfo {
@@ -48,6 +48,6 @@ inline FImporterFactoryDelegate* FindFactoryForAssetType(const FString& AssetTyp
 }
 
 template <typename T>
-IImporter* CreateImporter(const FString& AssetName, const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& Exports, UClass* AssetClass) {
-	return new T(AssetName, FilePath, JsonObject, Package, OutermostPackage, Exports, AssetClass);
+IImporter* CreateImporter(const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& Exports) {
+	return new T(FilePath, JsonObject, Package, OutermostPackage, Exports);
 }

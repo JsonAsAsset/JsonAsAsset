@@ -37,9 +37,9 @@
 /* Importer Constructor */
 IImporter::IImporter(const FString& AssetName, const FString& FilePath, 
 		  const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
-		  UPackage* OutermostPkg, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects,
+		  UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects,
 		  UClass* AssetClass)
-	: USerializerContainer(Package, OutermostPkg), AllJsonObjects(AllJsonObjects), JsonObject(JsonObject),
+	: USerializerContainer(Package, OutermostPackage), AllJsonObjects(AllJsonObjects), JsonObject(JsonObject),
 	  FilePath(FilePath), AssetClass(AssetClass), AssetName(AssetName),
 	  ParentObject(nullptr)
 {
@@ -177,15 +177,15 @@ void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Export
 	RedirectPath(File);
 
 	FString FailureReason;
-	UPackage* LocalOutermostPkg;
-	UPackage* LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
+	UPackage* LocalOutermostPackage;
+	UPackage* LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPackage, FailureReason);
 
 	if (LocalPackage == nullptr) {
 		/* Try fixing our Export Directory Settings using the provided File directory if local package not found */
         UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
 
 		PluginSettings->ReadAppData();
-		LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
+		LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPackage, FailureReason);
 
 		if (LocalPackage == nullptr) {
 			FString ExportDirectoryCache = PluginSettings->Runtime.ExportDirectory.Path;
@@ -197,7 +197,7 @@ void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Export
 				SavePluginConfig(PluginSettings);
 
 				/* Retry creating the asset package */
-				LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPkg, FailureReason);
+				LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, LocalOutermostPackage, FailureReason);
 
 				/* Undo the change if unsuccessful */
 				if (LocalPackage == nullptr) {
@@ -228,25 +228,25 @@ void IImporter::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Export
 	
 	/* Try to find the importer using a factory delegate */
 	if (const FImporterFactoryDelegate* Factory = FindFactoryForAssetType(Type)) {
-		Importer = (*Factory)(Name, File, Export, LocalPackage, LocalOutermostPkg, Exports, Class);
+		Importer = (*Factory)(Name, File, Export, LocalPackage, LocalOutermostPackage, Exports, Class);
 	}
 
 	/* If it inherits DataAsset, use the data asset importer */
 	if (Importer == nullptr && InheritsDataAsset) {
-		Importer = new IDataAssetImporter(Name, File, Export, LocalPackage, LocalOutermostPkg, Exports, Class);
+		Importer = new IDataAssetImporter(Name, File, Export, LocalPackage, LocalOutermostPackage, Exports, Class);
 	}
 
 	/* By default, (with no existing importer) use the templated importer with the asset class. */
 	if (Importer == nullptr) {
 		Importer = new ITemplatedImporter<UObject>(
-			Name, File, Export, LocalPackage, LocalOutermostPkg, Exports, Class
+			Name, File, Export, LocalPackage, LocalOutermostPackage, Exports, Class
 		);
 	}
 
 	/* TODO: Don't hardcode this. */
 	if (IsAssetTypeImportableUsingCloud(Type)) {
 		Importer = new ITextureImporter<UTextureLightProfile>(
-			Name, File, Export, LocalPackage, LocalOutermostPkg, Exports, Class
+			Name, File, Export, LocalPackage, LocalOutermostPackage, Exports, Class
 		);
 	}
 
@@ -376,8 +376,8 @@ TArray<TSharedPtr<FJsonValue>> IImporter::FilterObjectsWithoutMatchingPropertyNa
 bool IImporter::HandleAssetCreation(UObject* Asset) const {
 	{
 		/* User Failsafe.... */
-		const UPackage* OutermostPackage = Asset->GetOutermost();
-		const FString PackageName = OutermostPackage->GetName();
+		const UPackage* AssetOutermostPackage = Asset->GetOutermost();
+		const FString PackageName = AssetOutermostPackage->GetName();
 
 		const FString Path = FPackageName::GetLongPackagePath(PackageName);
 		if (!Path.StartsWith(TEXT("/")) || Path.Len() < 2)

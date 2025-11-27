@@ -7,8 +7,8 @@
 
 struct FTextureCreatorUtilities {
 public:
-	FTextureCreatorUtilities(const FString& AssetName, const FString& FilePath, UPackage* Package, UPackage* OutermostPkg, const bool bUseOctetStream)
-		: bUseOctetStream(bUseOctetStream), AssetName(AssetName), FilePath(FilePath), Package(Package), OutermostPkg(OutermostPkg)
+	FTextureCreatorUtilities(const FString& AssetName, const FString& FilePath, UPackage* Package, UPackage* OutermostPackage, const bool bUseOctetStream)
+		: bUseOctetStream(bUseOctetStream), AssetName(AssetName), FilePath(FilePath), Package(Package), OutermostPackage(OutermostPackage)
 	{
 		PropertySerializer = NewObject<UPropertySerializer>();
 		ObjectSerializer = NewObject<UObjectSerializer>();
@@ -36,7 +36,7 @@ protected:
 	FString AssetName;
 	FString FilePath;
 	UPackage* Package;
-	UPackage* OutermostPkg;
+	UPackage* OutermostPackage;
 	UPropertySerializer* PropertySerializer;
 	UObjectSerializer* ObjectSerializer;
 

@@ -8,16 +8,14 @@
 class JSONASASSET_API USerializerContainer {
 public:
     /* Constructors ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    USerializerContainer()
-        : Package(nullptr), OutermostPkg(nullptr), PropertySerializer(nullptr), ObjectSerializer(nullptr) {}
+    explicit USerializerContainer(UPackage* Package, UPackage* OutermostPackage);
+    USerializerContainer();
 
-    /* Importer Constructor */
-    explicit USerializerContainer(UPackage* Package, UPackage* OutermostPkg);
-
+    /* Virtual Constructor */
     virtual ~USerializerContainer() {}
 
     UPackage* Package;
-    UPackage* OutermostPkg;
+    UPackage* OutermostPackage;
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 public:
@@ -27,5 +25,8 @@ public:
 public:
     UPropertySerializer* PropertySerializer;
     UObjectSerializer* ObjectSerializer;
+
+private:
+    void CreateSerializers();
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 };

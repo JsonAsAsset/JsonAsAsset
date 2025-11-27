@@ -10,7 +10,7 @@ bool ICurveVectorImporter::Import() {
 	TArray<TSharedPtr<FJsonValue>> FloatCurves = AssetData->GetArrayField(TEXT("FloatCurves"));
 
 	UCurveVectorFactory* CurveVectorFactory = NewObject<UCurveVectorFactory>();
-	UCurveVector* CurveVectorAsset = Cast<UCurveVector>(CurveVectorFactory->FactoryCreateNew(UCurveVector::StaticClass(), OutermostPkg, *AssetName, RF_Standalone | RF_Public, nullptr, GWarn));
+	UCurveVector* CurveVectorAsset = Cast<UCurveVector>(CurveVectorFactory->FactoryCreateNew(UCurveVector::StaticClass(), OutermostPackage, *AssetName, RF_Standalone | RF_Public, nullptr, GWarn));
 
 	/* For each container, get keys */
 	for (int i = 0; i < FloatCurves.Num(); i++) {

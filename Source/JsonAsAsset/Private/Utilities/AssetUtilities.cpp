@@ -35,7 +35,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& FullPath) {
 	return Package;
 }
 
-UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString& OutputPath, UPackage*& OutOutermostPkg, FString& FailureReason) {
+UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString& OutputPath, UPackage*& OutOutermostPackage, FString& FailureReason) {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 	
 	FString ModifiablePath = OutputPath;
@@ -109,7 +109,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 	}
 	
 	UPackage* Package = CreateAssetPackage(*PathWithGame);
-	OutOutermostPkg = Package->GetOutermost();
+	OutOutermostPackage = Package->GetOutermost();
 	Package->FullyLoad();
 
 	return Package;
@@ -289,10 +289,10 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 #endif
 
 	UPackage* Package = CreateAssetPackage(*PackagePath);
-	UPackage* OutermostPkg = Package->GetOutermost();
+	UPackage* OutermostPackage = Package->GetOutermost();
 	Package->FullyLoad();
 
-	FTextureCreatorUtilities TextureCreator = FTextureCreatorUtilities(AssetName, Path, Package, OutermostPkg, bUseOctetStream);
+	FTextureCreatorUtilities TextureCreator = FTextureCreatorUtilities(AssetName, Path, Package, OutermostPackage, bUseOctetStream);
 
 	if (Type == "Texture2D") {
 		TextureCreator.CreateTexture<UTexture2D>(Texture, Data, JsonExport);

@@ -7,8 +7,8 @@
 
 class ICurveTableImporter : public IImporter {
 public:
-	ICurveTableImporter(const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
-		IImporter(FilePath, JsonObject, Package, OutermostPackage, AllJsonObjects) {
+	ICurveTableImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
+		IImporter(JsonObject, Package, AllJsonObjects) {
 	}
 
 	virtual UObject* CreateAsset(UObject* CreatedAsset) override;

@@ -7,9 +7,10 @@
 
 struct FTextureCreatorUtilities {
 public:
-	FTextureCreatorUtilities(const FString& AssetName, const FString& FilePath, UPackage* Package, UPackage* OutermostPackage, const bool bUseOctetStream)
-		: bUseOctetStream(bUseOctetStream), AssetName(AssetName), FilePath(FilePath), Package(Package), OutermostPackage(OutermostPackage)
+	FTextureCreatorUtilities(const FString& AssetName, const FString& FilePath, UPackage* Package, const bool bUseOctetStream)
+		: bUseOctetStream(bUseOctetStream), AssetName(AssetName), FilePath(FilePath), Package(Package)
 	{
+		OutermostPackage = Package->GetOutermost();
 		PropertySerializer = NewObject<UPropertySerializer>();
 		ObjectSerializer = NewObject<UObjectSerializer>();
 

@@ -24,13 +24,14 @@
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* Importer Constructor */
-IImporter::IImporter(const FString& FilePath, 
+IImporter::IImporter(
 		  const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
-		  UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects)
-	: USerializerContainer(Package, OutermostPackage), AllJsonObjects(AllJsonObjects),
-	  FilePath(FilePath),
+		  const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects)
+	: USerializerContainer(Package), AllJsonObjects(AllJsonObjects),
 	  ParentObject(nullptr)
 {
+	OutermostPackage = Package->GetOutermost();
+	
 	/* Create Properties field if it doesn't exist */
 	if (!JsonObject->HasField(TEXT("Properties"))) {
 		JsonObject->SetObjectField(TEXT("Properties"), TSharedPtr<FJsonObject>());
@@ -56,9 +57,10 @@ IImporter::IImporter(const FString& FilePath,
 	
 	/* BlueprintGeneratedClass is post-fixed with _C */
 	if (ImporterExport.GetType().ToString().Contains("BlueprintGeneratedClass")) {
-		FString NewName;
-		ImporterExport.NameOverride.ToString().Split("_C", &NewName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
-		ImporterExport.NameOverride = FName(*NewName);
+		FString NewName; {
+			ImporterExport.NameOverride.ToString().Split("_C", &NewName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+			ImporterExport.NameOverride = FName(*NewName);
+		}
 	}
 }
 
@@ -88,6 +90,16 @@ template void IImporter::LoadExport<USoundWave>(const TSharedPtr<FJsonObject>*, 
 template void IImporter::LoadExport<UObject>(const TSharedPtr<FJsonObject>*, TObjectPtr<UObject>&);
 template void IImporter::LoadExport<UMaterialFunctionInterface>(const TSharedPtr<FJsonObject>*, TObjectPtr<UMaterialFunctionInterface>&);
 template void IImporter::LoadExport<USoundNode>(const TSharedPtr<FJsonObject>*, TObjectPtr<USoundNode>&);
+
+UObject* IImporter::CreateAsset(UObject* CreatedAsset) {
+	if (CreatedAsset) {
+		ImporterExport.Object = CreatedAsset;
+        
+		return CreatedAsset;
+	}
+    
+	return nullptr;
+}
 
 template <typename T>
 T* IImporter::Create() {
@@ -258,16 +270,6 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
     return InObject;
 }
 
-UObject* IImporter::CreateAsset(UObject* CreatedAsset) {
-	if (CreatedAsset) {
-		ImporterExport.Object = CreatedAsset;
-        
-		return CreatedAsset;
-	}
-    
-	return nullptr;
-}
-
 void IImporter::Save() const {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
@@ -283,7 +285,7 @@ void IImporter::Save() const {
 	}
 }
 
-bool IImporter::OnAssetCreation(UObject* Asset) {
+bool IImporter::OnAssetCreation(UObject* Asset) const {
 	const bool Synced = HandleAssetCreation(Asset, Package);
 	if (Synced) {
 		Save();

@@ -288,10 +288,9 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 #endif
 
 	UPackage* Package = CreateAssetPackage(*PackagePath);
-	UPackage* OutermostPackage = Package->GetOutermost();
 	Package->FullyLoad();
 
-	FTextureCreatorUtilities TextureCreator = FTextureCreatorUtilities(AssetName, Path, Package, OutermostPackage, bUseOctetStream);
+	FTextureCreatorUtilities TextureCreator = FTextureCreatorUtilities(AssetName, Path, Package, bUseOctetStream);
 
 	if (Type == "Texture2D") {
 		TextureCreator.CreateTexture<UTexture2D>(Texture, Data, JsonExport);

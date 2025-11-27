@@ -9,8 +9,8 @@ class IDataTableImporter : public IImporter {
 public:
 	using FTableRowMap = TMap<FName, TSharedPtr<FStructOnScope>>;
 
-	IDataTableImporter(const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
-		IImporter(FilePath, JsonObject, Package, OutermostPackage, AllJsonObjects) {
+	IDataTableImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
+		IImporter(JsonObject, Package, AllJsonObjects) {
 	}
 
 	virtual UObject* CreateAsset(UObject* CreatedAsset) override;

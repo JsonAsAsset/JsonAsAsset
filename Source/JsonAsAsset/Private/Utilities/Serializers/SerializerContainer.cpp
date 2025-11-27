@@ -3,11 +3,15 @@
 #include "Utilities/Serializers/SerializerContainer.h"
 
 /* Serializer Constructor */
-USerializerContainer::USerializerContainer(UPackage* Package, UPackage* OutermostPackage) : Package(Package), OutermostPackage(OutermostPackage) {
+USerializerContainer::USerializerContainer(UPackage* Package) : Package(Package) {
 	CreateSerializers();
+
+	if (Package) {
+		OutermostPackage = Package->GetOutermost();
+	}
 }
 
-USerializerContainer::USerializerContainer() : USerializerContainer(nullptr, nullptr) {
+USerializerContainer::USerializerContainer() : USerializerContainer(nullptr) {
 }
 
 UObjectSerializer* USerializerContainer::GetObjectSerializer() const {

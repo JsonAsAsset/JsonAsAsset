@@ -31,7 +31,7 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 		Name.Split("_C", &Name, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
 	}
 
-	UClass* Class = FindClassByType(Type);
+	const UClass* Class = FindClassByType(Type);
 	
 	if (Class == nullptr) return;
 
@@ -96,35 +96,27 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 	
 	/* Try to find the importer using a factory delegate */
 	if (const FImporterFactoryDelegate* Factory = FindFactoryForAssetType(Type)) {
-		Importer = (*Factory)(File, Export, LocalPackage, LocalOutermostPackage, Exports);
+		Importer = (*Factory)(Export, LocalPackage, Exports);
 	}
 
 	/* If it inherits DataAsset, use the data asset importer */
 	if (Importer == nullptr && InheritsDataAsset) {
-		Importer = new IDataAssetImporter(File, Export, LocalPackage, LocalOutermostPackage, Exports);
+		Importer = new IDataAssetImporter(Export, LocalPackage, Exports);
 	}
 
 	/* By default, (with no existing importer) use the templated importer with the asset class. */
 	if (Importer == nullptr) {
 		Importer = new ITemplatedImporter<UObject>(
-			File, Export, LocalPackage, LocalOutermostPackage, Exports
+			Export, LocalPackage, Exports
 		);
 	}
 
 	/* TODO: Don't hardcode this. */
 	if (IsAssetTypeImportableUsingCloud(Type)) {
 		Importer = new ITextureImporter<UTextureLightProfile>(
-			File, Export, LocalPackage, LocalOutermostPackage, Exports
+			Export, LocalPackage, Exports
 		);
 	}
-
-	/*if (ObjectSerializer != nullptr && PropertySerializer != nullptr) {
-		Importer->PropertySerializer->ExportsContainer = GetPropertySerializer()->ExportsContainer;
-		Importer->PropertySerializer->Importer = Importer;
-	}
-
-	Package = LocalPackage;*/
-	/*SetupImportTracking();*/
 
 	/* Import the asset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	bool Successful = false; {
@@ -134,12 +126,6 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 			UE_LOG(LogJsonAsAsset, Error, TEXT("Importer exception: %s"), *FString(Exception));
 		}
 	}
-
-	/*if (Importer) {
-		if (Importer->ImportedAsset != nullptr) {
-			ImportedAsset = Importer->ImportedAsset;
-		}
-	}*/
 
 	if (bHideNotifications) {
 		return;
@@ -180,21 +166,9 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 }
 
 void IImportReader::ImportReference(const FString& File) {
-	/* ~~~~  Parse JSON into UE JSON Reader ~~~~ */
-	FString ContentBefore;
-	FFileHelper::LoadFileToString(ContentBefore, *File);
-
-	FString Content = FString(TEXT("{\"data\": "));
-	Content.Append(ContentBefore);
-	Content.Append(FString("}"));
-
-	TSharedPtr<FJsonObject> JsonParsed;
-	const TSharedRef<TJsonReader<TCHAR>> JsonReader = TJsonReaderFactory<TCHAR>::Create(Content);
-	/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-	if (FJsonSerializer::Deserialize(JsonReader, JsonParsed)) {
-		const TArray<TSharedPtr<FJsonValue>> DataObjects = JsonParsed->GetArrayField(TEXT("data"));
-
-		ReadExportsAndImport(DataObjects, File);
+	TArray<TSharedPtr<FJsonValue>> DataObjects; {
+		DeserializeJSON(File, DataObjects);
 	}
+	
+	ReadExportsAndImport(DataObjects, File);
 }

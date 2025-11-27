@@ -6,8 +6,8 @@
 
 class IPoseAssetImporter final : public IImporter {
 public:
-	IPoseAssetImporter(const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
-		IImporter(FilePath, JsonObject, Package, OutermostPackage, AllJsonObjects), PoseAsset(nullptr) {
+	IPoseAssetImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
+		IImporter(JsonObject, Package, AllJsonObjects), PoseAsset(nullptr) {
 	}
 
 	UPoseAsset* PoseAsset;

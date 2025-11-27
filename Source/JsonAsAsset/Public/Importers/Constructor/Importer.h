@@ -21,9 +21,8 @@ public:
     IImporter() : ParentObject(nullptr) {}
 
     /* Importer Constructor */
-    IImporter(const FString& FilePath, 
-              const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
-              UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects = {});
+    IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
+              const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects = {});
 
     virtual ~IImporter() override {}
 
@@ -41,7 +40,6 @@ public:
 
 protected:
     /* Class variables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    FString FilePath;
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     
 public:
@@ -73,7 +71,7 @@ public:
     /*
      * Handle edit changes, and add it to the content browser
      */
-    bool OnAssetCreation(UObject* Asset);
+    bool OnAssetCreation(UObject* Asset) const;
     
     virtual void ApplyModifications() {};
 

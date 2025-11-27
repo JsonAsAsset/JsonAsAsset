@@ -6,8 +6,8 @@
 
 class IMaterialFunctionImporter : public IMaterialGraph {
 public:
-	IMaterialFunctionImporter(const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
-		IMaterialGraph(FilePath, JsonObject, Package, OutermostPackage, AllJsonObjects) {
+	IMaterialFunctionImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
+		IMaterialGraph(JsonObject, Package, AllJsonObjects) {
 	}
 
 	virtual UObject* CreateAsset(UObject* CreatedAsset) override;

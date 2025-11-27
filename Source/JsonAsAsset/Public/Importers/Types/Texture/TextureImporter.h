@@ -8,8 +8,8 @@
 template <typename AssetType>
 class ITextureImporter : public IImporter {
 public:
-	ITextureImporter(const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
-		IImporter(FilePath, JsonObject, Package, OutermostPackage, AllJsonObjects) {
+	ITextureImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
+		IImporter(JsonObject, Package, AllJsonObjects) {
 	}
 
 	virtual bool Import() override;

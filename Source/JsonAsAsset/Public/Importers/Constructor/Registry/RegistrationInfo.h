@@ -9,7 +9,7 @@
 class IImporter;
 
 /* Easy way to find importers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-using FImporterFactoryDelegate = TFunction<IImporter*(const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& Exports)>;
+using FImporterFactoryDelegate = TFunction<IImporter*(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& Exports)>;
 
 /* Registration info for an importer */
 struct FImporterRegistrationInfo {
@@ -48,6 +48,6 @@ inline FImporterFactoryDelegate* FindFactoryForAssetType(const FString& AssetTyp
 }
 
 template <typename T>
-IImporter* CreateImporter(const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& Exports) {
-	return new T(FilePath, JsonObject, Package, OutermostPackage, Exports);
+IImporter* CreateImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& Exports) {
+	return new T(JsonObject, Package, Exports);
 }

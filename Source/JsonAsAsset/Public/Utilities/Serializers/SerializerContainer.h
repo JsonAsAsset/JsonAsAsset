@@ -8,7 +8,7 @@
 class JSONASASSET_API USerializerContainer {
 public:
     /* Constructors ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    explicit USerializerContainer(UPackage* Package, UPackage* OutermostPackage);
+    explicit USerializerContainer(UPackage* Package);
     USerializerContainer();
 
     /* Virtual Constructor */

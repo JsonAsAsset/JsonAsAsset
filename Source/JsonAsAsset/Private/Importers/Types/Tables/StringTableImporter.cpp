@@ -13,8 +13,8 @@ bool IStringTableImporter::Import() {
 	/* Create StringTable */
 	UStringTable* StringTable = Create<UStringTable>();
 
-	if (AssetData->HasField(TEXT("StringTable"))) {
-		const TSharedPtr<FJsonObject> StringTableData = AssetData->GetObjectField(TEXT("StringTable"));
+	if (GetAssetData()->HasField(TEXT("StringTable"))) {
+		const TSharedPtr<FJsonObject> StringTableData = GetAssetData()->GetObjectField(TEXT("StringTable"));
 		const FStringTableRef MutableStringTable = StringTable->GetMutableStringTable();
 
 		/* Set Table Namespace */

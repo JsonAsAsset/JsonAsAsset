@@ -14,7 +14,7 @@ UObject* ICurveVectorImporter::CreateAsset(UObject* CreatedAsset) {
 
 bool ICurveVectorImporter::Import() {
 	/* Array of containers */
-	TArray<TSharedPtr<FJsonValue>> FloatCurves = AssetData->GetArrayField(TEXT("FloatCurves"));
+	TArray<TSharedPtr<FJsonValue>> FloatCurves = GetAssetData()->GetArrayField(TEXT("FloatCurves"));
 
 	UCurveVector* CurveVectorAsset = Create<UCurveVector>();
 

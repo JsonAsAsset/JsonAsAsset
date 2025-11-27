@@ -38,7 +38,7 @@ bool ISkeletonImporter::Import() {
 
 	/* Deserialize Skeleton */
 	DeserializeExports(Skeleton);
-	GetObjectSerializer()->DeserializeObjectProperties(AssetData, Skeleton);
+	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), Skeleton);
 
 	ApplySkeletalAssetData(Skeleton);
 
@@ -81,7 +81,7 @@ void ISkeletonImporter::ApplyModifications() {
 		if (CurveMetaDataProperties->HasField(TEXT("CurveMetaData"))) {
 			const TArray<TSharedPtr<FJsonValue>> CurveMetaData = CurveMetaDataProperties->GetArrayField(TEXT("CurveMetaData"));
 
-			FJsonObject* NameMappings = EnsureObjectField(AssetData, "NameMappings");
+			FJsonObject* NameMappings = EnsureObjectField(GetAssetData(), "NameMappings");
 			FJsonObject* AnimationCurves = EnsureObjectField(NameMappings, "AnimationCurves");
 			AnimationCurves->SetField("GuidMap", nullptr);
 			AnimationCurves->SetField("UidMap", nullptr);
@@ -100,7 +100,7 @@ void ISkeletonImporter::ApplyModifications() {
 }
 
 void ISkeletonImporter::ApplySkeletalChanges(USkeleton* Skeleton) const {
-	const TSharedPtr<FJsonObject> ReferenceSkeletonObject = AssetData->GetObjectField(TEXT("ReferenceSkeleton"));
+	const TSharedPtr<FJsonObject> ReferenceSkeletonObject = GetAssetData()->GetObjectField(TEXT("ReferenceSkeleton"));
 
 	/* Get access to ReferenceSkeleton */
 	FReferenceSkeleton& ReferenceSkeleton = const_cast<FReferenceSkeleton&>(Skeleton->GetReferenceSkeleton());
@@ -146,12 +146,12 @@ void ISkeletonImporter::ApplySkeletalChanges(USkeleton* Skeleton) const {
 void ISkeletonImporter::ApplySkeletalAssetData(USkeleton* Skeleton) const {
 	/* AnimationCurves ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 #if ENGINE_UE4
-	if (AssetData->HasField("NameMappings")
-		&& AssetData->GetObjectField("NameMappings")->Values.Num() > 0
-		&& AssetData->GetObjectField("NameMappings")->HasField(TEXT("AnimationCurves"))
-		&& AssetData->GetObjectField("NameMappings")->GetObjectField(TEXT("AnimationCurves"))->HasField(TEXT("CurveMetaDataMap"))) {
+	if (GetAssetData()->HasField("NameMappings")
+		&& GetAssetData()->GetObjectField("NameMappings")->Values.Num() > 0
+		&& GetAssetData()->GetObjectField("NameMappings")->HasField(TEXT("AnimationCurves"))
+		&& GetAssetData()->GetObjectField("NameMappings")->GetObjectField(TEXT("AnimationCurves"))->HasField(TEXT("CurveMetaDataMap"))) {
 
-		TSharedPtr<FJsonObject> NameMappings = AssetData->GetObjectField("NameMappings");
+		TSharedPtr<FJsonObject> NameMappings = GetAssetData()->GetObjectField("NameMappings");
 		TSharedPtr<FJsonObject> AnimationCurves = NameMappings->GetObjectField("AnimationCurves");
 		TSharedPtr<FJsonObject> CurveMetaDataMap = AnimationCurves->GetObjectField("CurveMetaDataMap");
 
@@ -168,7 +168,7 @@ void ISkeletonImporter::ApplySkeletalAssetData(USkeleton* Skeleton) const {
 #endif
 	
 	/* AnimRetargetSources ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	const TSharedPtr<FJsonObject> AnimRetargetSources = AssetData->GetObjectField(TEXT("AnimRetargetSources"));
+	const TSharedPtr<FJsonObject> AnimRetargetSources = GetAssetData()->GetObjectField(TEXT("AnimRetargetSources"));
 
 	for (const TPair<FString, TSharedPtr<FJsonValue>>& Pair : AnimRetargetSources->Values) {
 		const FName KeyName = FName(*Pair.Key);

@@ -18,7 +18,7 @@ bool IBlendSpaceImporter::Import() {
 	
 	BlendSpace->Modify();
 	
-	GetObjectSerializer()->DeserializeObjectProperties(AssetData, BlendSpace);
+	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), BlendSpace);
 
 	/* Ensure internal state is refreshed after adding all samples */
 	BlendSpace->ValidateSampleData();

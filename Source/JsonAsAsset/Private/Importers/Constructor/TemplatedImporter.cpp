@@ -21,7 +21,7 @@ bool ITemplatedImporter<AssetType>::Import() {
 
 	GetObjectSerializer()->DeserializeExports(AllJsonObjects);
 	
-	GetObjectSerializer()->DeserializeObjectProperties(AssetData, Asset);
+	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), Asset);
 
 	return OnAssetCreation(Asset);
 }

@@ -40,8 +40,8 @@ UObject* IUserDefinedStructImporter::CreateAsset(UObject* CreatedAsset) {
 bool IUserDefinedStructImporter::Import() {
     UUserDefinedStruct* UserDefinedStruct = Create<UUserDefinedStruct>();
 
-    DefaultProperties = AssetData->GetObjectField(TEXT("DefaultProperties"));
-    GetObjectSerializer()->DeserializeObjectProperties(KeepPropertiesShared(AssetData,
+    DefaultProperties = GetAssetData()->GetObjectField(TEXT("DefaultProperties"));
+    GetObjectSerializer()->DeserializeObjectProperties(KeepPropertiesShared(GetAssetData(),
     {
         "Guid",
         "StructFlags"
@@ -71,7 +71,7 @@ bool IUserDefinedStructImporter::Import() {
     /* Remove default variable */
     FStructureEditorUtils::GetVarDesc(UserDefinedStruct).Pop();
 
-    const TArray<TSharedPtr<FJsonValue>> ChildProperties = AssetData->GetArrayField(TEXT("ChildProperties"));
+    const TArray<TSharedPtr<FJsonValue>> ChildProperties = GetAssetData()->GetArrayField(TEXT("ChildProperties"));
     
     for (const TSharedPtr<FJsonValue> Property : ChildProperties) {
         const TSharedPtr<FJsonObject> PropertyObject = Property->AsObject();

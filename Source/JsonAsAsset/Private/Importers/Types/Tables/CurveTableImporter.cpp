@@ -15,12 +15,12 @@ UObject* ICurveTableImporter::CreateAsset(UObject* CreatedAsset) {
 }
 
 bool ICurveTableImporter::Import() {
-	const TSharedPtr<FJsonObject> RowData = AssetData->GetObjectField(TEXT("Rows"));
+	const TSharedPtr<FJsonObject> RowData = GetAssetData()->GetObjectField(TEXT("Rows"));
 	UCurveTable* CurveTable = Create<UCurveTable>();
 
 	/* Used to determine curve type */
 	ECurveTableMode CurveTableMode = ECurveTableMode::RichCurves; {
-		if (FString CurveMode; AssetData->TryGetStringField(TEXT("CurveTableMode"), CurveMode))
+		if (FString CurveMode; GetAssetData()->TryGetStringField(TEXT("CurveTableMode"), CurveMode))
 			CurveTableMode = static_cast<ECurveTableMode>(StaticEnum<ECurveTableMode>()->GetValueByNameString(CurveMode));
 
 		UCurveTableAccessor* CurveTableAccessor = Cast<UCurveTableAccessor>(CurveTable);

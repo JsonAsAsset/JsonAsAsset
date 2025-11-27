@@ -31,6 +31,8 @@ public:
     /* TODO: Rename to Export after refactor */
     FUObjectExport ImporterExport;
 
+    TSharedPtr<FJsonObject> GetAssetData() const;
+
 public:
     TArray<TSharedPtr<FJsonValue>> AllJsonObjects;
 
@@ -39,7 +41,6 @@ protected:
     TSharedPtr<FJsonObject> JsonObject;
     FString FilePath;
 
-    TSharedPtr<FJsonObject> AssetData;
     UClass* AssetClass;
     FString AssetName;
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -66,7 +67,6 @@ public:
 
 public:
     UObject* ParentObject;
-    UObject* ImportedAsset;
     
 public:
     void Save() const;

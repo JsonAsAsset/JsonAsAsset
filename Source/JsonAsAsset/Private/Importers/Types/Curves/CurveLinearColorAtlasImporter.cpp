@@ -30,17 +30,17 @@ bool ICurveLinearColorAtlasImporter::Import() {
 	Object->UpdateResource();
 
 	bool bHasAnyDirtyTextures = false;
-	if (AssetData->TryGetBoolField(TEXT("bHasAnyDirtyTextures"), bHasAnyDirtyTextures)) {
+	if (GetAssetData()->TryGetBoolField(TEXT("bHasAnyDirtyTextures"), bHasAnyDirtyTextures)) {
 		Object->bHasAnyDirtyTextures = bHasAnyDirtyTextures;
 	}
 
 	bool bIsDirty = false;
-	if (AssetData->TryGetBoolField(TEXT("bIsDirty"), bIsDirty)) {
+	if (GetAssetData()->TryGetBoolField(TEXT("bIsDirty"), bIsDirty)) {
 		Object->bIsDirty = bIsDirty;
 	}
 
 	bool bShowDebugColorsForNullGradients = false;
-	if (AssetData->TryGetBoolField(TEXT("bShowDebugColorsForNullGradients"), bShowDebugColorsForNullGradients)) {
+	if (GetAssetData()->TryGetBoolField(TEXT("bShowDebugColorsForNullGradients"), bShowDebugColorsForNullGradients)) {
 		Object->bShowDebugColorsForNullGradients = bShowDebugColorsForNullGradients;
 	}
 
@@ -51,7 +51,7 @@ bool ICurveLinearColorAtlasImporter::Import() {
 #endif
 	
 #if !UE4_27_ONLY_BELOW && !UE5_6_BEYOND
-	if (AssetData->TryGetBoolField(TEXT("bSquareResolution"), bSquareResolution)) {
+	if (GetAssetData()->TryGetBoolField(TEXT("bSquareResolution"), bSquareResolution)) {
 		Object->bSquareResolution = bSquareResolution;
 	}
 #endif
@@ -64,12 +64,12 @@ bool ICurveLinearColorAtlasImporter::Import() {
 	double TextureHeight = 0.0f;
 #endif
 	
-	if (AssetData->TryGetNumberField(TEXT("TextureSize"), TextureSize)) {
+	if (GetAssetData()->TryGetNumberField(TEXT("TextureSize"), TextureSize)) {
 		Object->TextureSize = TextureSize;
 	}
 
 #if !UE4_27_ONLY_BELOW && !UE5_6_BEYOND
-	if (AssetData->TryGetNumberField(TEXT("TextureHeight"), TextureHeight)) {
+	if (GetAssetData()->TryGetNumberField(TEXT("TextureHeight"), TextureHeight)) {
 		Object->TextureHeight = TextureHeight;
 	}
 #endif
@@ -82,7 +82,7 @@ bool ICurveLinearColorAtlasImporter::Import() {
 	FProperty* GradientCurvesProperty = FindFProperty<FProperty>(Object->GetClass(), "GradientCurves");
 	FPropertyChangedEvent PropertyChangedEvent(GradientCurvesProperty, EPropertyChangeType::ArrayAdd);
 
-	const TArray<TSharedPtr<FJsonValue>> GradientCurves = AssetData->GetArrayField(TEXT("GradientCurves"));
+	const TArray<TSharedPtr<FJsonValue>> GradientCurves = GetAssetData()->GetArrayField(TEXT("GradientCurves"));
 	TArray<TObjectPtr<UCurveLinearColor>> CurvesLocal;
 
 #if ENGINE_UE5

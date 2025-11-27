@@ -21,14 +21,14 @@ bool IMaterialInstanceConstantImporter::Import() {
 	};
 
 	for (const FString& FieldName : ParameterFields) {
-		if (AssetData->HasField(FieldName)) {
-			TArray<TSharedPtr<FJsonValue>> Params = AssetData->GetArrayField(FieldName);
+		if (GetAssetData()->HasField(FieldName)) {
+			TArray<TSharedPtr<FJsonValue>> Params = GetAssetData()->GetArrayField(FieldName);
 			ConvertParameterNamesToInfos(Params);
-			AssetData->SetArrayField(FieldName, Params);
+			GetAssetData()->SetArrayField(FieldName, Params);
 		}
 	}
 	
-	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(AssetData,
+	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(),
 	{
 		"CachedReferencedTextures"
 	}), MaterialInstanceConstant);
@@ -46,11 +46,11 @@ bool IMaterialInstanceConstantImporter::Import() {
 	}
 
 	/* Read from potential properties inside of asset data */
-	if (AssetData->HasField(TEXT("StaticParametersRuntime"))) {
-		ReadStaticParameters(AssetData->GetObjectField(TEXT("StaticParametersRuntime")), StaticSwitchParametersObjects, StaticComponentMaskParametersObjects);
+	if (GetAssetData()->HasField(TEXT("StaticParametersRuntime"))) {
+		ReadStaticParameters(GetAssetData()->GetObjectField(TEXT("StaticParametersRuntime")), StaticSwitchParametersObjects, StaticComponentMaskParametersObjects);
 	}
-	if (AssetData->HasField(TEXT("StaticParameters"))) {
-		ReadStaticParameters(AssetData->GetObjectField(TEXT("StaticParameters")), StaticSwitchParametersObjects, StaticComponentMaskParametersObjects);
+	if (GetAssetData()->HasField(TEXT("StaticParameters"))) {
+		ReadStaticParameters(GetAssetData()->GetObjectField(TEXT("StaticParameters")), StaticSwitchParametersObjects, StaticComponentMaskParametersObjects);
 	}
 
 	/* ~~~~~~~~~ STATIC PARAMETERS ~~~~~~~~~~~ */

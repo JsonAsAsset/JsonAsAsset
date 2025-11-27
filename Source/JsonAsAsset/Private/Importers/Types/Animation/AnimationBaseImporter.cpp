@@ -52,7 +52,7 @@ bool IAnimationBaseImporter::Import() {
 	GetObjectSerializer()->DeserializeExports(AllJsonObjects);
 
 	/* Deserialize properties */
-	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(AssetData, {
+	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(), {
 		"NumFrames",
 		"TrackToSkeletonMapTable",
 		"SequenceLength",
@@ -83,8 +83,8 @@ bool IAnimationBaseImporter::Import() {
 	/* Some CUE4Parse versions have different named objects for curves ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	const TSharedPtr<FJsonObject>* RawCurveData;
 	
-	if (AssetData->TryGetObjectField(TEXT("RawCurveData"), RawCurveData))
-		FloatCurves = AssetData->GetObjectField(TEXT("RawCurveData"))->GetArrayField(TEXT("FloatCurves"));
+	if (GetAssetData()->TryGetObjectField(TEXT("RawCurveData"), RawCurveData))
+		FloatCurves = GetAssetData()->GetObjectField(TEXT("RawCurveData"))->GetArrayField(TEXT("FloatCurves"));
 	
 	if (JsonObject->TryGetObjectField(TEXT("CompressedCurveData"), RawCurveData))
 		FloatCurves = JsonObject->GetObjectField(TEXT("CompressedCurveData"))->GetArrayField(TEXT("FloatCurves"));

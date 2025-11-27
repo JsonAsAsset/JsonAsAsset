@@ -13,7 +13,7 @@ bool IDataTableImporter::Import() {
 	FString TableStruct; {
 		/* --- Properties --> RowStruct --> ObjectName */
 		/* --- Class'StructClass' --> StructClass */
-		AssetData->GetObjectField(TEXT("RowStruct"))
+		GetAssetData()->GetObjectField(TEXT("RowStruct"))
 			->GetStringField(TEXT("ObjectName")).
 			Split("'", nullptr, &TableStruct);
 		TableStruct.Split("'", &TableStruct, nullptr);
@@ -43,7 +43,7 @@ bool IDataTableImporter::Import() {
 
 	/* Access Property Serializer */
 	const UPropertySerializer* ObjectPropertySerializer = GetObjectSerializer()->GetPropertySerializer();
-	const TSharedPtr<FJsonObject> RowData = AssetData->GetObjectField(TEXT("Rows"));
+	const TSharedPtr<FJsonObject> RowData = GetAssetData()->GetObjectField(TEXT("Rows"));
 
 	/* Loop throughout row data, and deserialize */
 	for (TPair<FString, TSharedPtr<FJsonValue>>& Pair : RowData->Values) {

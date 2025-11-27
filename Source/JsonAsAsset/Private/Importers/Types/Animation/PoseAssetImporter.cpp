@@ -11,7 +11,7 @@ bool IPoseAssetImporter::Import() {
 	PoseAsset = Create<UPoseAsset>();
 
 	/* Set Skeleton, so we can use it in the uncooking process */
-	GetObjectSerializer()->DeserializeObjectProperties(KeepPropertiesShared(AssetData,
+	GetObjectSerializer()->DeserializeObjectProperties(KeepPropertiesShared(GetAssetData(),
 	{
 		"Skeleton",
 		"bAdditivePose"
@@ -21,7 +21,7 @@ bool IPoseAssetImporter::Import() {
 	ReverseCookLocalSpacePose(PoseAsset->GetSkeleton());
 
 	/* Final operation to set properties */
-	GetObjectSerializer()->DeserializeObjectProperties(AssetData, PoseAsset);
+	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), PoseAsset);
 
 	/* If the user wants to specify a pose asset animation */
 	if (UAnimSequence* OptionalAnimationSequence = GetSelectedAsset<UAnimSequence>(true)) {
@@ -34,13 +34,13 @@ bool IPoseAssetImporter::Import() {
 void IPoseAssetImporter::ReverseCookLocalSpacePose(USkeleton* Skeleton) const {
 	/* If PoseContainer or Tracks don't exist, no need to perform any operations */
 	if (
-		!AssetData->HasField(TEXT("PoseContainer")) ||
-		!AssetData->GetObjectField(TEXT("PoseContainer"))->HasField(TEXT("Tracks"))
+		!GetAssetData()->HasField(TEXT("PoseContainer")) ||
+		!GetAssetData()->GetObjectField(TEXT("PoseContainer"))->HasField(TEXT("Tracks"))
 	) {
 		return;
 	}
 	
-	const TSharedPtr<FJsonObject> PoseContainer = AssetData->GetObjectField(TEXT("PoseContainer"));
+	const TSharedPtr<FJsonObject> PoseContainer = GetAssetData()->GetObjectField(TEXT("PoseContainer"));
 	const TArray<TSharedPtr<FJsonValue>> TracksJson = PoseContainer->GetArrayField(TEXT("Tracks"));
 	const TArray<TSharedPtr<FJsonValue>> PosesJson = PoseContainer->GetArrayField(TEXT("Poses"));
 

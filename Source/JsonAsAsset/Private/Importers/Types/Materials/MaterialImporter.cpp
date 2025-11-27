@@ -115,7 +115,7 @@ bool IMaterialImporter::Import() {
 
 	const TSharedPtr<FJsonObject>* ShadingModelsPtr;
 	
-	if (AssetData->TryGetObjectField(TEXT("ShadingModels"), ShadingModelsPtr)) {
+	if (GetAssetData()->TryGetObjectField(TEXT("ShadingModels"), ShadingModelsPtr)) {
 		int ShadingModelField;
 		
 		if (ShadingModelsPtr->Get()->TryGetNumberField(TEXT("ShadingModelField"), ShadingModelField)) {
@@ -128,7 +128,7 @@ bool IMaterialImporter::Import() {
 	}
 
 	/* Deserialize any properties */
-	GetObjectSerializer()->DeserializeObjectProperties(AssetData, Material);
+	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), Material);
 
 	Material->UpdateCachedExpressionData();
 	

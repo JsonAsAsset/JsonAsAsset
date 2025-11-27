@@ -43,7 +43,7 @@ bool IMaterialFunctionImporter::Import() {
 	PropagateExpressions(ExpressionContainer);
 
 	/* Deserialize any properties */
-	GetObjectSerializer()->DeserializeObjectProperties(AssetData, MaterialFunction);
+	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), MaterialFunction);
 	
 	MaterialFunction->PreEditChange(nullptr);
 	MaterialFunction->PostEditChange();

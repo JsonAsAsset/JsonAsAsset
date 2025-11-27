@@ -37,7 +37,7 @@ IImporter::IImporter(const FString& AssetName, const FString& FilePath,
 		JsonObject->SetObjectField(TEXT("Properties"), TSharedPtr<FJsonObject>());
 	}
 
-	AssetData = JsonObject->GetObjectField(TEXT("Properties"));
+	ImporterExport.JsonObject = JsonObject->GetObjectField(TEXT("Properties"));
 
 	/* Move asset properties defined outside "Properties" and move it inside */
 	for (const auto& Pair : JsonObject->Values) {
@@ -49,9 +49,13 @@ IImporter::IImporter(const FString& AssetName, const FString& FilePath,
 			!PropertyName.Equals(TEXT("Flags")) &&
 			!PropertyName.Equals(TEXT("Properties"))
 		) {
-			AssetData->SetField(PropertyName, Pair.Value);
+			ImporterExport.JsonObject->SetField(PropertyName, Pair.Value);
 		}
 	}
+}
+
+TSharedPtr<FJsonObject> IImporter::GetAssetData() const {
+	return ImporterExport.JsonObject;
 }
 
 /* TODO: Got a feeling FORCEINLINE will fix this */
@@ -236,7 +240,7 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
 
 UObject* IImporter::CreateAsset(UObject* CreatedAsset) {
 	if (CreatedAsset) {
-		ImportedAsset = CreatedAsset;
+		ImporterExport.Object = CreatedAsset;
         
 		return CreatedAsset;
 	}
@@ -260,8 +264,6 @@ void IImporter::Save() const {
 }
 
 bool IImporter::OnAssetCreation(UObject* Asset) {
-	ImportedAsset = Asset;
-	
 	const bool Synced = HandleAssetCreation(Asset, Package);
 	if (Synced) {
 		Save();

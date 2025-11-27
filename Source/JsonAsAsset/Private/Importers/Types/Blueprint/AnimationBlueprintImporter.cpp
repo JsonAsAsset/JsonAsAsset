@@ -31,7 +31,7 @@ bool IAnimationBlueprintImporter::Import() {
 	
 	AnimBlueprint = GetSelectedAsset<UAnimBlueprint>(true);
 	if (!AnimBlueprint) {
-		const TSharedPtr<FJsonObject> SuperStruct = AssetData->GetObjectField(TEXT("SuperStruct"));
+		const TSharedPtr<FJsonObject> SuperStruct = GetAssetData()->GetObjectField(TEXT("SuperStruct"));
 		UClass* ParentClass = LoadClass(SuperStruct);
 
 		AnimBlueprint = CreateAnimBlueprint(ParentClass);
@@ -51,7 +51,7 @@ bool IAnimationBlueprintImporter::Import() {
 		"RootComponent"
 	}), GeneratedClass->GetDefaultObject());
 
-	ObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(AssetData, {
+	ObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(), {
 		"FuncMap",
 		"bCooked",
 		"Children",
@@ -67,8 +67,8 @@ bool IAnimationBlueprintImporter::Import() {
 	}
 
 	/* Array of sync group names cached to use at later points of importing */
-	if (AssetData->HasField(TEXT("SyncGroupNames"))) {
-		for (const TSharedPtr<FJsonValue> SyncGroupNameValue : AssetData->GetArrayField(TEXT("SyncGroupNames"))) {
+	if (GetAssetData()->HasField(TEXT("SyncGroupNames"))) {
+		for (const TSharedPtr<FJsonValue> SyncGroupNameValue : GetAssetData()->GetArrayField(TEXT("SyncGroupNames"))) {
 			SyncGroupNames.Add(SyncGroupNameValue->AsString());
 		}
 	}
@@ -92,8 +92,8 @@ bool IAnimationBlueprintImporter::Import() {
 	}
 
 	/* Sets "State" and "Machine" for each state result */
-	if (AssetData->HasField(TEXT("BakedStateMachines"))) {
-		BakedStateMachines = AssetData->GetArrayField(TEXT("BakedStateMachines"));
+	if (GetAssetData()->HasField(TEXT("BakedStateMachines"))) {
+		BakedStateMachines = GetAssetData()->GetArrayField(TEXT("BakedStateMachines"));
     
 		for (const TSharedPtr<FJsonValue>& MachineValue : BakedStateMachines) {
 			const TSharedPtr<FJsonObject> MachineObject = MachineValue->AsObject();
@@ -635,8 +635,8 @@ void IAnimationBlueprintImporter::ConnectAnimGraphNodes(FUObjectExportContainer&
 /* In newer versions of Unreal Engine, EvaluateGraphExposedInputs was moved to the main AnimBlueprintGeneratedClass class */
 /* Here, we move them into the node data to use more easily */
 void IAnimationBlueprintImporter::ProcessEvaluateGraphExposedInputs(const TSharedPtr<FJsonObject>& AnimNodeProperties) const {
-	if (!AssetData->HasField(TEXT("EvaluateGraphExposedInputs"))) return;
-	TArray<TSharedPtr<FJsonValue>> EvaluateInputs = AssetData->GetArrayField(TEXT("EvaluateGraphExposedInputs"));
+	if (!GetAssetData()->HasField(TEXT("EvaluateGraphExposedInputs"))) return;
+	TArray<TSharedPtr<FJsonValue>> EvaluateInputs = GetAssetData()->GetArrayField(TEXT("EvaluateGraphExposedInputs"));
 	
 	for (const TSharedPtr<FJsonValue> Value : EvaluateInputs) {
 		TSharedPtr<FJsonObject> InputObj = Value->AsObject();

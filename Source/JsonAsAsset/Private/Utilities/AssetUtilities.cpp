@@ -154,7 +154,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
     ReverseRedirectPath(GamePath);
 
 	/* Supported Assets */
-	if (IImporter::CanImport(Type, true) || bIsTexture) {
+	if (CanImport(Type, true) || bIsTexture) {
 		if (bIsTexture) {
 			UTexture* Texture;
 			const FString NewPath = RealPath;

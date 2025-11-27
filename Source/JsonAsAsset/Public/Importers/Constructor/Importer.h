@@ -11,6 +11,9 @@
 #include "Macros.h"
 #include "Registry/RegistrationInfo.h"
 
+/* ReSharper disable once CppUnusedIncludeDirective */
+#include "TypesHelper.h"
+
 /* Global handler for converting JSON to assets */
 class JSONASASSET_API IImporter : public USerializerContainer {
 public:
@@ -42,14 +45,6 @@ public:
     virtual bool Import() {
         return false;
     }
-
-public:
-    /* Accepted Types ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    static bool IsAssetTypeImportableUsingCloud(const FString& ImporterType);
-    static bool CanImportWithCloud(const FString& ImporterType);
-    static bool IsAssetTypeExperimental(const FString& ImporterType);
-    static bool CanImport(const FString& ImporterType, const bool IsCloud = false, const UClass* Class = nullptr);
-    static bool CanImportAny(TArray<FString>& Types);
 
 public:
     /* Loads a single <T> object ptr */

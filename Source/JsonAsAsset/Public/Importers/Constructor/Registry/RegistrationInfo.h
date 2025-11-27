@@ -25,13 +25,13 @@ struct FImporterRegistrationInfo {
 	FImporterRegistrationInfo() = default;
 };
 
-static TMap<TArray<FString>, FImporterRegistrationInfo>& GetFactoryRegistry() {
+inline TMap<TArray<FString>, FImporterRegistrationInfo>& GetFactoryRegistry() {
 	static TMap<TArray<FString>, FImporterRegistrationInfo> Registry;
         
 	return Registry;
 }
 
-static FImporterFactoryDelegate* FindFactoryForAssetType(const FString& AssetType) {
+inline FImporterFactoryDelegate* FindFactoryForAssetType(const FString& AssetType) {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
 	for (auto& Pair : GetFactoryRegistry()) {
@@ -48,6 +48,6 @@ static FImporterFactoryDelegate* FindFactoryForAssetType(const FString& AssetTyp
 }
 
 template <typename T>
-static IImporter* CreateImporter(const FString& AssetName, const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& Exports, UClass* AssetClass) {
+IImporter* CreateImporter(const FString& AssetName, const FString& FilePath, const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, UPackage* OutermostPackage, const TArray<TSharedPtr<FJsonValue>>& Exports, UClass* AssetClass) {
 	return new T(AssetName, FilePath, JsonObject, Package, OutermostPackage, Exports, AssetClass);
 }

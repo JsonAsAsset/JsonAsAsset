@@ -8,7 +8,6 @@
 #include "Utilities/AssetUtilities.h"
 
 #include "Misc/MessageDialog.h"
-#include "UObject/SavePackage.h"
 
 /* Slate Icons */
 #include "Styling/SlateIconFinder.h"

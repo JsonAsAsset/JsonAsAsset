@@ -10,7 +10,8 @@
 #include "Utilities/AssetUtilities.h"
 #include "Utilities/Serializers/SerializerContainer.h"
 
-/* TODO: Really feeling like I should rewrite all of this */
+/* ReSharper disable once CppUnusedIncludeDirective */
+#include "Macros.h"
 
 /* AssetType/Category ~ Defined in CPP */
 extern TMap<FString, TArray<FString>> ImporterTemplatedTypes;
@@ -28,27 +29,6 @@ inline TArray<FString> ExtraCloudTypes = {
 inline const TArray<FString> ExperimentalAssetTypes = {
     "AnimBlueprintGeneratedClass"
 };
-
-FORCEINLINE uint32 GetTypeHash(const TArray<FString>& Array) {
-    uint32 Hash = 0;
-    
-    for (const FString& Str : Array) {
-        Hash = HashCombine(Hash, GetTypeHash(Str));
-    }
-    
-    return Hash;
-}
-
-#define REGISTER_IMPORTER(ImporterClass, AcceptedTypes, Category) \
-namespace { \
-    struct FAutoRegister_##ImporterClass { \
-        FAutoRegister_##ImporterClass() { \
-            IImporter::FImporterRegistrationInfo Info( FString(Category), &IImporter::CreateImporter<ImporterClass> ); \
-            IImporter::GetFactoryRegistry().Add(AcceptedTypes, Info); \
-        } \
-    }; \
-    static FAutoRegister_##ImporterClass AutoRegister_##ImporterClass; \
-}
 
 /* Global handler for converting JSON to assets */
 class JSONASASSET_API IImporter : public USerializerContainer {

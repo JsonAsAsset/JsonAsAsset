@@ -24,8 +24,7 @@
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 /* Importer Constructor */
-IImporter::IImporter(
-		  const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
+IImporter::IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
 		  const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects)
 	: USerializerContainer(Package), AllJsonObjects(AllJsonObjects),
 	  ParentObject(nullptr)

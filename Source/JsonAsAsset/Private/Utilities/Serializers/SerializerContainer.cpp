@@ -3,11 +3,11 @@
 #include "Utilities/Serializers/SerializerContainer.h"
 
 /* Serializer Constructor */
-USerializerContainer::USerializerContainer(UPackage* Package) : Package(Package) {
+USerializerContainer::USerializerContainer(UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects) : Package(Package), AllJsonObjects(AllJsonObjects) {
 	CreateSerializers();
 }
 
-USerializerContainer::USerializerContainer() : USerializerContainer(nullptr) {
+USerializerContainer::USerializerContainer() : USerializerContainer(nullptr, {}) {
 }
 
 UObjectSerializer* USerializerContainer::GetObjectSerializer() const {

@@ -26,7 +26,7 @@
 /* Importer Constructor */
 IImporter::IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
 		  const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects)
-	: USerializerContainer(Package), AllJsonObjects(AllJsonObjects)
+	: USerializerContainer(Package, AllJsonObjects)
 {
 	/* Create Properties field if it doesn't exist */
 	if (!JsonObject->HasField(TEXT("Properties"))) {

@@ -8,7 +8,7 @@
 class JSONASASSET_API USerializerContainer {
 public:
     /* Constructors ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    explicit USerializerContainer(UPackage* Package);
+    explicit USerializerContainer(UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects);
     USerializerContainer();
 
     /* Virtual Constructor */

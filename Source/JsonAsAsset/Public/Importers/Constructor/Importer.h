@@ -28,6 +28,10 @@ public:
     virtual ~IImporter() override {}
 
 public:
+    /* TODO: Rename to Export after refactor */
+    FUObjectExport ImporterExport;
+
+public:
     TArray<TSharedPtr<FJsonValue>> AllJsonObjects;
 
 protected:
@@ -46,22 +50,10 @@ public:
         return false;
     }
 
-    virtual UObject* CreateAsset(UObject* CreatedAsset = nullptr) {
-        if (CreatedAsset) {
-            ImportedAsset = CreatedAsset;
-            
-            return CreatedAsset;
-        }
-        
-        return nullptr;
-    }
+    virtual UObject* CreateAsset(UObject* CreatedAsset = nullptr);
 
     template<typename T>
-    T* Create() {
-        UObject* TargetAsset = CreateAsset(nullptr);
-
-        return Cast<T>(TargetAsset);
-    }
+    T* Create();
 
 public:
     /* Loads a single <T> object ptr */

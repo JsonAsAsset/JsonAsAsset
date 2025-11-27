@@ -379,6 +379,13 @@ template void IImporter::LoadExport<UMaterialFunctionInterface>(const TSharedPtr
 template void IImporter::LoadExport<USoundNode>(const TSharedPtr<FJsonObject>*, TObjectPtr<USoundNode>&);
 
 template <typename T>
+T* IImporter::Create() {
+	UObject* TargetAsset = CreateAsset(nullptr);
+
+	return Cast<T>(TargetAsset);
+}
+
+template <typename T>
 void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectPtr<T>& Object) {
 	FString ObjectType, ObjectName, ObjectPath, Outer;
 	PackageIndex->Get()->GetStringField(TEXT("ObjectName")).Split("'", &ObjectType, &ObjectName);
@@ -538,6 +545,16 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
     }
 
     return InObject;
+}
+
+UObject* IImporter::CreateAsset(UObject* CreatedAsset) {
+	if (CreatedAsset) {
+		ImportedAsset = CreatedAsset;
+        
+		return CreatedAsset;
+	}
+    
+	return nullptr;
 }
 
 void IImporter::ImportReference(const FString& File) {

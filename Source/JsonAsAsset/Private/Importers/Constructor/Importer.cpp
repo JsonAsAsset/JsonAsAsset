@@ -99,9 +99,9 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
 	if (!Settings->AssetSettings.GameName.IsEmpty()) {
-		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.GameName + "/Content"), TEXT("/Game"));
+		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.GameName + "/Content/"), TEXT("/Game/"));
 		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.GameName + "/Plugins"), TEXT(""));
-		ObjectPath = ObjectPath.Replace(TEXT("/Content"), TEXT(""));
+		ObjectPath = ObjectPath.Replace(TEXT("/Content/"), TEXT("/"));
 	}
 
 	ObjectPath = ObjectPath.Replace(TEXT("Engine/Content"), TEXT("/Engine"));

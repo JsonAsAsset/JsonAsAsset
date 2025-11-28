@@ -32,7 +32,7 @@ bool IMaterialImporter::Import() {
 
 	/* Define material data from the JSON */
 	FUObjectExportContainer ExpressionContainer;
-	TSharedPtr<FJsonObject> Props = FindMaterialData(Material, GetAssetType(), Material->GetName(), ExpressionContainer);
+	TSharedPtr<FJsonObject> Props = FindMaterialData(GetAssetType(), ExpressionContainer);
 
 	/* Map out each expression for easier access */
 	ConstructExpressions(ExpressionContainer);

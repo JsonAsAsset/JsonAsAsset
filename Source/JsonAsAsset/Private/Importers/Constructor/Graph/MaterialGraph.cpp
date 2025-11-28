@@ -16,34 +16,27 @@
 #include "Materials/MaterialExpressionTextureBase.h"
 #endif
 
-TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(UObject* Parent, const FString& Type, const FString& Outer, FUObjectExportContainer& Container) {
+TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(const FString& Type, FUObjectExportContainer& Container) {
 	TSharedPtr<FJsonObject> EditorOnlyData;
 
-	/* Filter array if needed */
-	for (const TSharedPtr Value : JsonObjects) {
-		TSharedPtr<FJsonObject> Object = TSharedPtr(Value->AsObject());
-
-		FString ExportType = Object->GetStringField(TEXT("Type"));
+	for (FUObjectExport Export : AssetContainer.Exports) {
+		FString ExportType = Export.GetType().ToString();
 
 		/* If an editor only data object is found, just set it */
 		if (ExportType == Type + "EditorOnlyData") {
-			EditorOnlyData = Object;
+			EditorOnlyData = Export.JsonObject;
 			continue;
 		}
 
 		/* For older versions, the "editor" data is in the main UMaterial/UMaterialFunction export */
 		if (ExportType == Type) {
-			EditorOnlyData = Object;
+			EditorOnlyData = Export.JsonObject;
 			continue;
 		}
 
 		/* Add to the list of expressions */
-		Container.Exports.Add(FUObjectExport(
-			FName(Outer),
-			Object,
-			nullptr,
-			Parent
-		));
+		Export.Parent = AssetExport.Object;
+		Container.Exports.Add(Export);
 	}
 
 	return EditorOnlyData->GetObjectField(TEXT("Properties"));

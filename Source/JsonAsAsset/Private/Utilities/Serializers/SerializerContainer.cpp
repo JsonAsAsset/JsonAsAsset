@@ -5,6 +5,7 @@
 /* Serializer Constructor */
 USerializerContainer::USerializerContainer(UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects) : JsonObjects(JsonObjects) {
 	AssetExport.Package = Package;
+	AssetContainer.Fill(JsonObjects);
 	
 	CreateSerializer();
 }

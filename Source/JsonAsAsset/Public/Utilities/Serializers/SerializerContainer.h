@@ -18,6 +18,7 @@ public:
     /* AssetExport ~~~~~~~~~~~~~~~> */
 public:
     FUObjectExport AssetExport;
+    FUObjectExportContainer AssetContainer;
 
     virtual FString GetAssetName() const;
     virtual FString GetAssetType() const;

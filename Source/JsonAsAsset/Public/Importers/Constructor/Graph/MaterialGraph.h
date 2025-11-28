@@ -16,7 +16,7 @@ public:
 	
 protected:
 	/* Find Material's Data, and creates a container of material nodes */
-	TSharedPtr<FJsonObject> FindMaterialData(UObject* Parent, const FString& Type, const FString& Outer, FUObjectExportContainer& Container);
+	TSharedPtr<FJsonObject> FindMaterialData(const FString& Type, FUObjectExportContainer& Container);
 
 	/* Functions to Handle Expressions */
 	static void SetExpressionParent(UObject* Parent, UMaterialExpression* Expression, const TSharedPtr<FJsonObject>& Json);

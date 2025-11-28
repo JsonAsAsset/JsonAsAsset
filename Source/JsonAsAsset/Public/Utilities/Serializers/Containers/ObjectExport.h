@@ -67,7 +67,7 @@ struct FUObjectExport {
 		if (!JsonObject.IsValid() || !JsonObject->HasField(TEXT("Name"))) {
 			return "";
 		}
-		
+
 		return FName(*JsonObject->GetStringField(TEXT("Name")));
 	}
 

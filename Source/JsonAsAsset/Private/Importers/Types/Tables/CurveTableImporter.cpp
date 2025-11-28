@@ -11,7 +11,7 @@ public:
 };
 
 UObject* ICurveTableImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<UCurveTable>(Package, UCurveTable::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<UCurveTable>(GetPackage(), UCurveTable::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
 }
 
 bool ICurveTableImporter::Import() {

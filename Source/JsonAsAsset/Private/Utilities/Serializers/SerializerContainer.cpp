@@ -4,11 +4,9 @@
 
 /* Serializer Constructor */
 USerializerContainer::USerializerContainer(UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects) : Package(Package), AllJsonObjects(AllJsonObjects) {
-	CreateSerializers();
+	CreateSerializer();
 }
-
-USerializerContainer::USerializerContainer() : USerializerContainer(nullptr, {}) {
-}
+USerializerContainer::USerializerContainer() : USerializerContainer(nullptr, {}) { }
 
 UObjectSerializer* USerializerContainer::GetObjectSerializer() const {
 	return ObjectSerializer;
@@ -18,8 +16,37 @@ UPropertySerializer* USerializerContainer::GetPropertySerializer() const {
 	return GetObjectSerializer()->PropertySerializer;
 }
 
-void USerializerContainer::CreateSerializers() {
-	PropertySerializer = NewObject<UPropertySerializer>();
+void USerializerContainer::CreateSerializer() {
 	ObjectSerializer = NewObject<UObjectSerializer>();
-	ObjectSerializer->SetPropertySerializer(PropertySerializer);
+	GetObjectSerializer()->SetPropertySerializer(NewObject<UPropertySerializer>());
 }
+
+/* AssetExport ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~> */
+FString USerializerContainer::GetAssetName() const {
+	return AssetExport.GetName().ToString();
+}
+
+FString USerializerContainer::GetAssetType() const {
+	return AssetExport.GetType().ToString();
+}
+
+TSharedPtr<FJsonObject> USerializerContainer::GetAssetData() const {
+	return AssetExport.GetProperties();
+}
+
+TSharedPtr<FJsonObject> USerializerContainer::GetAssetExport() const {
+	return AssetExport.JsonObject;
+}
+
+UClass* USerializerContainer::GetAssetClass() {
+	return AssetExport.GetClass();
+}
+
+void USerializerContainer::SetParent(UObject* Parent) {
+	AssetExport.Parent = Parent;
+}
+
+UObject* USerializerContainer::GetParent() const {
+	return AssetExport.Parent;
+}
+/* AssetExport <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

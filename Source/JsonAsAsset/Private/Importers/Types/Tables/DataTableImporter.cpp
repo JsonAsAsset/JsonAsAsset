@@ -3,7 +3,7 @@
 #include "Importers/Types/Tables/DataTableImporter.h"
 
 UObject* IDataTableImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<UDataTable>(Package, UDataTable::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<UDataTable>(GetPackage(), UDataTable::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
 }
 
 bool IDataTableImporter::Import() {

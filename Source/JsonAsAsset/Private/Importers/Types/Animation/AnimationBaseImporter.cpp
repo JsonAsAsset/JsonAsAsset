@@ -24,7 +24,7 @@ bool IAnimationBaseImporter::Import() {
 	UAnimSequenceBase* AnimSequenceBase = GetSelectedAsset<UAnimSequenceBase>(true, JsonName);
 
 	if (!AnimSequenceBase && GetAssetClass()->IsChildOf<UAnimMontage>()) {
-		AnimSequenceBase = NewObject<UAnimMontage>(Package, GetAssetClass(), *JsonName, RF_Public | RF_Standalone);
+		AnimSequenceBase = NewObject<UAnimMontage>(GetPackage(), GetAssetClass(), *JsonName, RF_Public | RF_Standalone);
 	}
 
 	if (!AnimSequenceBase) {

@@ -27,16 +27,6 @@ public:
     virtual ~IImporter() override {}
 
 public:
-    FString GetAssetName() const;
-    FString GetAssetType() const;
-    TSharedPtr<FJsonObject> GetAssetData() const;
-    TSharedPtr<FJsonObject> GetAssetExport() const;
-    UClass* GetAssetClass();
-
-    void SetParent(UObject* Parent);
-    UObject* GetParent() const;
-
-public:
     /* Overriden in child classes, returns false if failed. */
     virtual bool Import() {
         return false;

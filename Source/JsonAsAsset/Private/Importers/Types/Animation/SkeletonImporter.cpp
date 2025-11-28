@@ -3,7 +3,7 @@
 #include "Importers/Types/Animation/SkeletonImporter.h"
 
 UObject* ISkeletonImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<USkeleton>(Package, USkeleton::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<USkeleton>(GetPackage(), USkeleton::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
 }
 
 bool ISkeletonImporter::Import() {
@@ -125,7 +125,7 @@ void ISkeletonImporter::ApplySkeletalChanges(USkeleton* Skeleton) const {
 		
 		TSharedPtr<FJsonObject> BonePoseTransform = FinalRefBonePose[BoneIndex]->AsObject();
 		FTransform Transform; {
-			PropertySerializer->DeserializeStruct(TBaseStructure<FTransform>::Get(), BonePoseTransform.ToSharedRef(), &Transform);
+			GetPropertySerializer()->DeserializeStruct(TBaseStructure<FTransform>::Get(), BonePoseTransform.ToSharedRef(), &Transform);
 		}
 
 		FMeshBoneInfo MeshBoneInfo = FMeshBoneInfo(Name, "", ParentIndex);
@@ -186,7 +186,7 @@ void ISkeletonImporter::ApplySkeletalAssetData(USkeleton* Skeleton) const {
 			TSharedPtr<FJsonObject> ReferencePoseObject = ReferencePoseTransformValue->AsObject();
 			
 			FTransform Transform; {
-				PropertySerializer->DeserializeStruct(TBaseStructure<FTransform>::Get(), ReferencePoseObject.ToSharedRef(), &Transform);
+				GetPropertySerializer()->DeserializeStruct(TBaseStructure<FTransform>::Get(), ReferencePoseObject.ToSharedRef(), &Transform);
 			}
 
 			ReferencePose.Add(Transform);

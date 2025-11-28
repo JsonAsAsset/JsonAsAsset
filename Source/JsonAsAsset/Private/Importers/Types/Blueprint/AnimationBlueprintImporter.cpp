@@ -46,12 +46,12 @@ bool IAnimationBlueprintImporter::Import() {
 	if (!RootAnimNodeProperties.IsValid()) return false;
 
 	const UBlueprintGeneratedClass* GeneratedClass = Cast<UBlueprintGeneratedClass>(AnimBlueprint->GeneratedClass);
-	ObjectSerializer->Exports = AllJsonObjects;
-	ObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(RootAnimNodeProperties, {
+	GetObjectSerializer()->Exports = AllJsonObjects;
+	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(RootAnimNodeProperties, {
 		"RootComponent"
 	}), GeneratedClass->GetDefaultObject());
 
-	ObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(), {
+	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(), {
 		"FuncMap",
 		"bCooked",
 		"Children",
@@ -159,7 +159,7 @@ UAnimBlueprint* IAnimationBlueprintImporter::CreateAnimBlueprint(UClass* ParentC
 		BlueprintType = BPTYPE_Interface;
 	}
 
-	UBlueprint* Blueprint = FKismetEditorUtilities::CreateBlueprint(ParentClass, Package, FName(*GetAssetName()), BlueprintType, UAnimBlueprint::StaticClass(), UAnimBlueprintGeneratedClass::StaticClass());
+	UBlueprint* Blueprint = FKismetEditorUtilities::CreateBlueprint(ParentClass, GetPackage(), FName(*GetAssetName()), BlueprintType, UAnimBlueprint::StaticClass(), UAnimBlueprintGeneratedClass::StaticClass());
 
 	if (Blueprint != nullptr) {
 		return Cast<UAnimBlueprint>(CreateAsset(Blueprint));

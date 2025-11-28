@@ -32,7 +32,7 @@ IImporter::IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Packag
 		JsonObject->SetObjectField(TEXT("Properties"), TSharedPtr<FJsonObject>());
 	}
 
-	ImporterExport.JsonObject = JsonObject;
+	AssetExport.JsonObject = JsonObject;
 
 	/* Move asset properties defined outside "Properties" and move it inside */
 	for (const auto& Pair : JsonObject->Values) {
@@ -44,47 +44,19 @@ IImporter::IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Packag
 			!PropertyName.Equals(TEXT("Flags")) &&
 			!PropertyName.Equals(TEXT("Properties"))
 		) {
-			ImporterExport.GetProperties()->SetField(PropertyName, Pair.Value);
+			AssetExport.GetProperties()->SetField(PropertyName, Pair.Value);
 		}
 	}
 
-	ImporterExport.NameOverride = ImporterExport.GetName();
+	AssetExport.NameOverride = AssetExport.GetName();
 	
 	/* BlueprintGeneratedClass is post-fixed with _C */
-	if (ImporterExport.GetType().ToString().Contains("BlueprintGeneratedClass")) {
+	if (AssetExport.GetType().ToString().Contains("BlueprintGeneratedClass")) {
 		FString NewName; {
-			ImporterExport.NameOverride.ToString().Split("_C", &NewName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
-			ImporterExport.NameOverride = FName(*NewName);
+			AssetExport.NameOverride.ToString().Split("_C", &NewName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+			AssetExport.NameOverride = FName(*NewName);
 		}
 	}
-}
-
-FString IImporter::GetAssetName() const {
-	return ImporterExport.GetName().ToString();
-}
-
-FString IImporter::GetAssetType() const {
-	return ImporterExport.GetType().ToString();
-}
-
-TSharedPtr<FJsonObject> IImporter::GetAssetData() const {
-	return ImporterExport.JsonObject->GetObjectField(TEXT("Properties"));
-}
-
-TSharedPtr<FJsonObject> IImporter::GetAssetExport() const {
-	return ImporterExport.JsonObject;
-}
-
-UClass* IImporter::GetAssetClass() {
-	return ImporterExport.GetClass();
-}
-
-void IImporter::SetParent(UObject* Parent) {
-	ImporterExport.Parent = Parent;
-}
-
-UObject* IImporter::GetParent() const {
-	return ImporterExport.Parent;
 }
 
 /* TODO: Got a feeling FORCEINLINE will fix this */
@@ -100,7 +72,7 @@ template void IImporter::LoadExport<USoundNode>(const TSharedPtr<FJsonObject>*, 
 
 UObject* IImporter::CreateAsset(UObject* CreatedAsset) {
 	if (CreatedAsset) {
-		ImporterExport.Object = CreatedAsset;
+		AssetExport.Object = CreatedAsset;
         
 		return CreatedAsset;
 	}
@@ -182,7 +154,7 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 
 	Object = LoadedObject;
 
-	if (!Object && ObjectSerializer != nullptr && PropertySerializer != nullptr) {
+	if (!Object && GetObjectSerializer() != nullptr && GetPropertySerializer() != nullptr) {
 		const FUObjectExport Export = GetPropertySerializer()->ExportsContainer.Find(ObjectName);
 		
 		if (Export.IsValid() && Export.Object != nullptr && Export.Object->IsA(T::StaticClass())) {
@@ -281,19 +253,19 @@ void IImporter::Save() const {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
 	/* Ensure the package is valid before proceeding */
-	if (Package == nullptr) {
+	if (GetPackage() == nullptr) {
 		UE_LOG(LogJsonAsAsset, Error, TEXT("IImporter::Save: Package is null"));
 		return;
 	}
 
 	/* User option to save packages on import */
 	if (Settings->AssetSettings.bSaveAssets) {
-		SavePackage(Package);
+		SavePackage(GetPackage());
 	}
 }
 
 bool IImporter::OnAssetCreation(UObject* Asset) const {
-	const bool Synced = HandleAssetCreation(Asset, Package);
+	const bool Synced = HandleAssetCreation(Asset, GetPackage());
 	if (Synced) {
 		Save();
 	}
@@ -302,7 +274,7 @@ bool IImporter::OnAssetCreation(UObject* Asset) const {
 }
 
 void IImporter::DeserializeExports(UObject* Parent, const bool bCreateObjects) {
-	GetObjectSerializer()->SetExportForDeserialization(ImporterExport.JsonObject, Parent);
+	GetObjectSerializer()->SetExportForDeserialization(AssetExport.JsonObject, Parent);
 	GetObjectSerializer()->Parent = Parent;
     
 	GetObjectSerializer()->DeserializeExports(AllJsonObjects, bCreateObjects);

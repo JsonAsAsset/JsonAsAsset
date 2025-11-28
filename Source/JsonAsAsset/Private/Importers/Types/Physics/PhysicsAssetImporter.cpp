@@ -6,7 +6,7 @@
 #include "PhysicsEngine/PhysicsConstraintTemplate.h"
 
 UObject* IPhysicsAssetImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<UPhysicsAsset>(Package, UPhysicsAsset::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<UPhysicsAsset>(GetPackage(), UPhysicsAsset::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
 }
 
 bool IPhysicsAssetImporter::Import() {
@@ -87,7 +87,7 @@ bool IPhysicsAssetImporter::Import() {
 		CleanName.RemoveFromEnd(TEXT("_PhysicsAsset"));
 		CleanName.RemoveFromEnd(TEXT("_Physics"));
 
-		const FString SearchPath = FPackageName::GetLongPackagePath(Package->GetName());
+		const FString SearchPath = FPackageName::GetLongPackagePath(GetPackage()->GetName());
 		const FString Path1 = SearchPath / CleanName;
 		const FString Path2 = FString::Printf(TEXT("%s.%s"), *SearchPath, *CleanName);
 

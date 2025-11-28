@@ -6,7 +6,7 @@
 #include "Internationalization/StringTableCore.h"
 
 UObject* IStringTableImporter::CreateAsset(UObject* CreatedAsset) {
-	return IImporter::CreateAsset(NewObject<UStringTable>(Package, UStringTable::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
+	return IImporter::CreateAsset(NewObject<UStringTable>(GetPackage(), UStringTable::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
 }
 
 bool IStringTableImporter::Import() {

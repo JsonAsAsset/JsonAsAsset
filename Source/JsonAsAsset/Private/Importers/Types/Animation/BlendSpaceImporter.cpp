@@ -6,9 +6,9 @@
 
 UObject* IBlendSpaceImporter::CreateAsset(UObject* CreatedAsset) {
 #if ENGINE_UE5
-	auto BlendSpace = NewObject<UBlendSpace>(Package, GetAssetClass(), *GetAssetName(), RF_Public | RF_Standalone);
+	auto BlendSpace = NewObject<UBlendSpace>(GetPackage(), GetAssetClass(), *GetAssetName(), RF_Public | RF_Standalone);
 #else
-	UBlendSpaceBase* BlendSpace = NewObject<UBlendSpaceBase>(Package, GetAssetClass(), *GetAssetName(), RF_Public | RF_Standalone);
+	UBlendSpaceBase* BlendSpace = NewObject<UBlendSpaceBase>(GetPackage(), GetAssetClass(), *GetAssetName(), RF_Public | RF_Standalone);
 #endif
 	
 	return IImporter::CreateAsset(BlendSpace);

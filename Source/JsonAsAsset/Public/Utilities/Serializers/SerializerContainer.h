@@ -13,27 +13,45 @@ public:
 
     /* Virtual Constructor */
     virtual ~USerializerContainer() {}
-
-    UPackage* Package;
     
-    /* TODO: Rename to Export after refactor */
-    FUObjectExport ImporterExport;
-    FUObjectExportContainer ImporterContainer;
-
-public:
-    /* TODO: Refactor into ImporterContainer */
+    FUObjectExportContainer AssetContainer;
     TArray<TSharedPtr<FJsonValue>> AllJsonObjects;
 
-    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+    /* AssetExport ~~~~~~~~~~~~~~~> */
+public:
+    FUObjectExport AssetExport;
+
+    virtual FString GetAssetName() const;
+    virtual FString GetAssetType() const;
+    virtual UClass* GetAssetClass();
+    
+    virtual TSharedPtr<FJsonObject> GetAssetData() const;
+    virtual TSharedPtr<FJsonObject> GetAssetExport() const;
+
+    virtual UObject* GetParent() const;
+    virtual void SetParent(UObject* Parent);
+
+    /* Serializer ~~~~~~~~~~~~~~~> */
 public:
     FORCEINLINE UObjectSerializer* GetObjectSerializer() const;
     FORCEINLINE UPropertySerializer* GetPropertySerializer() const;
-
-public:
-    UPropertySerializer* PropertySerializer;
+    
+protected:
+    void CreateSerializer();
+    
+private:
     UObjectSerializer* ObjectSerializer;
 
+    // testing
+public:
+    UPackage* GetPackage() const {
+        return Package;
+    }
+
+    void SetPackage(UPackage* NewPackage) {
+        Package = NewPackage;
+    }
+    
 private:
-    void CreateSerializers();
-    /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+    UPackage* Package;
 };

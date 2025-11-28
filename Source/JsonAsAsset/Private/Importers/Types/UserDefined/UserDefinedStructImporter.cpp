@@ -34,7 +34,7 @@ static const TMap<FString, EPinContainerType> ContainerTypeMap = {
 };
 
 UObject* IUserDefinedStructImporter::CreateAsset(UObject* CreatedAsset) {
-    return IImporter::CreateAsset(FStructureEditorUtils::CreateUserDefinedStruct(Package, *GetAssetName(), RF_Standalone | RF_Public | RF_Transactional));
+    return IImporter::CreateAsset(FStructureEditorUtils::CreateUserDefinedStruct(GetPackage(), *GetAssetName(), RF_Standalone | RF_Public | RF_Transactional));
 }
 
 bool IUserDefinedStructImporter::Import() {
@@ -126,7 +126,7 @@ void IUserDefinedStructImporter::ImportPropertyIntoStruct(UUserDefinedStruct* Us
 
     /* Get Property Value and deserialize the values */
     void* PropertyValue = Property->ContainerPtrToValuePtr<void>(InstanceMemory);
-    PropertySerializer->DeserializePropertyValue(Property, PropertyJsonValue.ToSharedRef(), PropertyValue);
+    GetPropertySerializer()->DeserializePropertyValue(Property, PropertyJsonValue.ToSharedRef(), PropertyValue);
 
     /* Get the default value as a string */
     FString DefaultValue;

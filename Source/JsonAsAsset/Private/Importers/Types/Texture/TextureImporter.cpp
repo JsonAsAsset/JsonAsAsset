@@ -10,7 +10,7 @@ template class ITextureImporter<UTextureLightProfile>;
 template <typename AssetType>
 bool ITextureImporter<AssetType>::Import() {
 	TObjectPtr<AssetType> T;
-	DownloadWrapper<AssetType>(T, "TextureLightProfile", GetAssetName(), Package->GetPathName());
+	DownloadWrapper<AssetType>(T, "TextureLightProfile", GetAssetName(), GetPackage()->GetPathName());
 	
 	return true;
 }

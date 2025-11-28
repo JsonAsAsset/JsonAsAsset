@@ -1,10 +1,11 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2025 */
 
 #include "Importers/Types/Animation/BlendSpaceImporter.h"
-#include "Animation/BlendSpace.h"
 
 #if ENGINE_UE4
 #include "Animation/BlendSpaceBase.h"
+#else
+#include "Animation/BlendSpace.h"
 #endif
 
 UObject* IBlendSpaceImporter::CreateAsset(UObject* CreatedAsset) {

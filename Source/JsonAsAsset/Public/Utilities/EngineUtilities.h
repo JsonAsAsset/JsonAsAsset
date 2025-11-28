@@ -219,8 +219,8 @@ inline bool IsProcessRunning(const FString& ProcessName) {
 	return bIsRunning;
 }
 
-inline TSharedPtr<FJsonObject> GetExport(const FString& Type, TArray<TSharedPtr<FJsonValue>> AllJsonObjects, const bool bGetProperties = false) {
-	for (const TSharedPtr Value : AllJsonObjects) {
+inline TSharedPtr<FJsonObject> GetExport(const FString& Type, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool bGetProperties = false) {
+	for (const TSharedPtr Value : JsonObjects) {
 		const TSharedPtr<FJsonObject> ValueObject = Value->AsObject();
 
 		if (ValueObject->GetStringField(TEXT("Type")) == Type) {
@@ -235,8 +235,8 @@ inline TSharedPtr<FJsonObject> GetExport(const FString& Type, TArray<TSharedPtr<
 	return nullptr;
 }
 
-inline TSharedPtr<FJsonObject> GetExportByName(const FString& Name, TArray<TSharedPtr<FJsonValue>> AllJsonObjects, const bool bGetProperties = false) {
-	for (const TSharedPtr Value : AllJsonObjects) {
+inline TSharedPtr<FJsonObject> GetExportByName(const FString& Name, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool bGetProperties = false) {
+	for (const TSharedPtr Value : JsonObjects) {
 		const TSharedPtr<FJsonObject> ValueObject = Value->AsObject();
 
 		if (ValueObject->GetStringField(TEXT("Name")) == Name) {
@@ -251,7 +251,7 @@ inline TSharedPtr<FJsonObject> GetExportByName(const FString& Name, TArray<TShar
 	return nullptr;
 }
 
-inline TSharedPtr<FJsonObject> GetExport(const FJsonObject* PackageIndex, TArray<TSharedPtr<FJsonValue>> AllJsonObjects) {
+inline TSharedPtr<FJsonObject> GetExport(const FJsonObject* PackageIndex, TArray<TSharedPtr<FJsonValue>> JsonObjects) {
 	FString ObjectName = PackageIndex->GetStringField(TEXT("ObjectName")); /* Class'Asset:ExportName' */
 	FString ObjectPath = PackageIndex->GetStringField(TEXT("ObjectPath")); /* Path/Asset.Index */
 	FString Outer;
@@ -274,8 +274,8 @@ inline TSharedPtr<FJsonObject> GetExport(const FJsonObject* PackageIndex, TArray
 
 	int Index = 0;
 
-	/* Search for the object in the AllJsonObjects array */
-	for (const TSharedPtr<FJsonValue>& Value : AllJsonObjects) {
+	/* Search for the object in the JsonObjects array */
+	for (const TSharedPtr<FJsonValue>& Value : JsonObjects) {
 		const TSharedPtr<FJsonObject> ValueObject = Value->AsObject();
 
 		FString Name;
@@ -284,7 +284,7 @@ inline TSharedPtr<FJsonObject> GetExport(const FJsonObject* PackageIndex, TArray
 				FString OuterName = ValueObject->GetStringField(TEXT("Outer"));
 
 				if (OuterName == Outer) {
-					return AllJsonObjects[Index]->AsObject();
+					return JsonObjects[Index]->AsObject();
 				}
 			} else {
 				return ValueObject;
@@ -685,10 +685,10 @@ inline UObjectSerializer* CreateObjectSerializer() {
 	return ObjectSerializer;
 }
 
-inline TArray<TSharedPtr<FJsonValue>> GetExportsStartingWith(const FString& Start, const FString& Property, TArray<TSharedPtr<FJsonValue>> AllJsonObjects) {
+inline TArray<TSharedPtr<FJsonValue>> GetExportsStartingWith(const FString& Start, const FString& Property, TArray<TSharedPtr<FJsonValue>> JsonObjects) {
 	TArray<TSharedPtr<FJsonValue>> FilteredObjects;
 
-	for (const TSharedPtr<FJsonValue>& JsonObjectValue : AllJsonObjects) {
+	for (const TSharedPtr<FJsonValue>& JsonObjectValue : JsonObjects) {
 		if (JsonObjectValue->Type == EJson::Object) {
 			TSharedPtr<FJsonObject> JsonObject = JsonObjectValue->AsObject();
 
@@ -706,8 +706,8 @@ inline TArray<TSharedPtr<FJsonValue>> GetExportsStartingWith(const FString& Star
 	return FilteredObjects;
 }
 
-inline TSharedPtr<FJsonObject> GetExportStartingWith(const FString& Start, const FString& Property, TArray<TSharedPtr<FJsonValue>> AllJsonObjects, const bool bExportProperties = false) {
-	for (const TSharedPtr<FJsonValue>& JsonObjectValue : AllJsonObjects) {
+inline TSharedPtr<FJsonObject> GetExportStartingWith(const FString& Start, const FString& Property, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool bExportProperties = false) {
+	for (const TSharedPtr<FJsonValue>& JsonObjectValue : JsonObjects) {
 		if (JsonObjectValue->Type == EJson::Object) {
 			TSharedPtr<FJsonObject> JsonObject = JsonObjectValue->AsObject();
 
@@ -730,8 +730,8 @@ inline TSharedPtr<FJsonObject> GetExportStartingWith(const FString& Start, const
 	return TSharedPtr<FJsonObject>();
 }
 
-inline TSharedPtr<FJsonObject> GetExportMatchingWith(const FString& Match, const FString& Property, TArray<TSharedPtr<FJsonValue>> AllJsonObjects, const bool bExportProperties = false) {
-	for (const TSharedPtr<FJsonValue>& JsonObjectValue : AllJsonObjects) {
+inline TSharedPtr<FJsonObject> GetExportMatchingWith(const FString& Match, const FString& Property, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool bExportProperties = false) {
+	for (const TSharedPtr<FJsonValue>& JsonObjectValue : JsonObjects) {
 		if (JsonObjectValue->Type == EJson::Object) {
 			TSharedPtr<FJsonObject> JsonObject = JsonObjectValue->AsObject();
 

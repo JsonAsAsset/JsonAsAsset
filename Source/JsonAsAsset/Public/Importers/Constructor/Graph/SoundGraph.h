@@ -12,8 +12,8 @@
 */
 class ISoundGraph : public IImporter {
 public:
-	ISoundGraph(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
-		IImporter(JsonObject, Package, AllJsonObjects) {
+	ISoundGraph(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
+		IImporter(JsonObject, Package, JsonObjects) {
 	}
 
 protected:

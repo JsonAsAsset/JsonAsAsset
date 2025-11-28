@@ -15,7 +15,7 @@
 #include "AnimDataController.h"
 #endif
 
-bool ReadAnimationData(const TSharedPtr<FJsonObject>& Properties, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects, const TSharedPtr<FJsonObject>& JsonObject, UAnimSequenceBase* AnimSequenceBase) {
+bool ReadAnimationData(const TSharedPtr<FJsonObject>& Properties, const TArray<TSharedPtr<FJsonValue>>& JsonObjects, const TSharedPtr<FJsonObject>& JsonObject, UAnimSequenceBase* AnimSequenceBase) {
 	FString AssetName = JsonObject->GetStringField(TEXT("Name"));
 
 	TArray<TSharedPtr<FJsonValue>> FloatCurves;
@@ -39,7 +39,7 @@ bool ReadAnimationData(const TSharedPtr<FJsonObject>& Properties, const TArray<T
 	ObjectSerializer->SetExportForDeserialization(JsonObject, AnimSequenceBase);
 	ObjectSerializer->Parent = AnimSequenceBase;
 
-	ObjectSerializer->DeserializeExports(AllJsonObjects);
+	ObjectSerializer->DeserializeExports(JsonObjects);
 
 	/* Deserialize properties */
 	ObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(Properties, {

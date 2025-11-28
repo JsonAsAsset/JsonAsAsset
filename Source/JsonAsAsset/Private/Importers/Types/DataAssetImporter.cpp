@@ -14,7 +14,7 @@ bool IDataAssetImporter::Import() {
 	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), DataAsset);
 	GetObjectSerializer()->Parent = DataAsset;
 
-	GetObjectSerializer()->DeserializeExports(AllJsonObjects);
+	GetObjectSerializer()->DeserializeExports(JsonObjects);
 
 	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), DataAsset);
 	

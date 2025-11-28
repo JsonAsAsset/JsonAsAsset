@@ -3,9 +3,13 @@
 #include "Utilities/Serializers/SerializerContainer.h"
 
 /* Serializer Constructor */
-USerializerContainer::USerializerContainer(UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects) : Package(Package), AllJsonObjects(AllJsonObjects) {
+USerializerContainer::USerializerContainer(UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects) : JsonObjects(JsonObjects) {
+	AssetExport.Package = Package;
+	AssetContainer.Fill(JsonObjects);
+	
 	CreateSerializer();
 }
+
 USerializerContainer::USerializerContainer() : USerializerContainer(nullptr, {}) { }
 
 UObjectSerializer* USerializerContainer::GetObjectSerializer() const {
@@ -48,5 +52,13 @@ void USerializerContainer::SetParent(UObject* Parent) {
 
 UObject* USerializerContainer::GetParent() const {
 	return AssetExport.Parent;
+}
+
+UPackage* USerializerContainer::GetPackage() const {
+	return AssetExport.Package;
+}
+
+void USerializerContainer::SetPackage(UPackage* NewPackage) {
+	AssetExport.Package = NewPackage;
 }
 /* AssetExport <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

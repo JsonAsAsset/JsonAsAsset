@@ -152,7 +152,7 @@ inline void HarvestAndTagConnectedStateMachineNodes(const FString& StartKey, con
 	}
 }
 
-inline void HandlePropertyBinding(FUObjectExport NodeExport, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects, UAnimGraphNode_Base* Node, IImporter* Importer, UAnimBlueprint* AnimBlueprint) {
+inline void HandlePropertyBinding(FUObjectExport NodeExport, const TArray<TSharedPtr<FJsonValue>>& JsonObjects, UAnimGraphNode_Base* Node, IImporter* Importer, UAnimBlueprint* AnimBlueprint) {
 	const TSharedPtr<FJsonObject> NodeProperties = NodeExport.JsonObject;
 	
 	/* Let the user know that this node has nodes plugged into it */
@@ -211,7 +211,7 @@ inline void HandlePropertyBinding(FUObjectExport NodeExport, const TArray<TShare
 					PropertyBinding.bIsBound = true;
 					PropertyBinding.PropertyPath.Append({ SourcePropertyName });
 
-					TSharedPtr<FJsonObject> SourcePropertyObject = GetExportMatchingWith(SourcePropertyName, "Name", AllJsonObjects);
+					TSharedPtr<FJsonObject> SourcePropertyObject = GetExportMatchingWith(SourcePropertyName, "Name", JsonObjects);
 					if (PinCategory == "struct" && SourcePropertyObject.IsValid() && SourcePropertyObject->HasField(TEXT("Struct"))) {
 						TSharedPtr<FJsonObject> StructObject = SourcePropertyObject->GetObjectField(TEXT("Struct"));
 

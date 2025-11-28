@@ -24,8 +24,8 @@
 
 /* Importer Constructor */
 IImporter::IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
-		  const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects)
-	: USerializerContainer(Package, AllJsonObjects)
+		  const TArray<TSharedPtr<FJsonValue>>& JsonObjects)
+	: USerializerContainer(Package, JsonObjects)
 {
 	/* Create Properties field if it doesn't exist */
 	if (!JsonObject->HasField(TEXT("Properties"))) {
@@ -277,7 +277,7 @@ void IImporter::DeserializeExports(UObject* Parent, const bool bCreateObjects) {
 	GetObjectSerializer()->SetExportForDeserialization(AssetExport.JsonObject, Parent);
 	GetObjectSerializer()->Parent = Parent;
     
-	GetObjectSerializer()->DeserializeExports(AllJsonObjects, bCreateObjects);
+	GetObjectSerializer()->DeserializeExports(JsonObjects, bCreateObjects);
 	ApplyModifications();
 }
 

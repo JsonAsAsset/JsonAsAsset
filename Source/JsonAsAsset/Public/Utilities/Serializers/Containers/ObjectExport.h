@@ -30,7 +30,7 @@ struct FUObjectExport {
 
 	/* Parent of this expression */
 	UObject* Parent;
-	UObject* Package;
+	UPackage* Package;
 	int Position;
 
 	explicit FUObjectExport(const TSharedPtr<FJsonObject>& JsonObject)

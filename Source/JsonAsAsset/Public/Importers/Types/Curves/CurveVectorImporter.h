@@ -6,8 +6,8 @@
 
 class ICurveVectorImporter : public IImporter {
 public:
-	ICurveVectorImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
-		IImporter(JsonObject, Package, AllJsonObjects) {
+	ICurveVectorImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
+		IImporter(JsonObject, Package, JsonObjects) {
 	}
 
 	virtual UObject* CreateAsset(UObject* CreatedAsset) override;

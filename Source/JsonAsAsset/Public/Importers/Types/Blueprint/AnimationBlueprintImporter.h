@@ -9,8 +9,8 @@ class UAnimGraphNode_Base;
 
 class IAnimationBlueprintImporter final : public IImporter {
 public:
-	IAnimationBlueprintImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
-		IImporter(JsonObject, Package, AllJsonObjects), AnimBlueprint(nullptr)
+	IAnimationBlueprintImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
+		IImporter(JsonObject, Package, JsonObjects), AnimBlueprint(nullptr)
 	{
 	}
 

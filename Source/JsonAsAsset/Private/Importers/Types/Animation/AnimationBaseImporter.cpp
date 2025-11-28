@@ -49,7 +49,7 @@ bool IAnimationBaseImporter::Import() {
 	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), AnimSequenceBase);
 	GetObjectSerializer()->Parent = AnimSequenceBase;
 
-	GetObjectSerializer()->DeserializeExports(AllJsonObjects);
+	GetObjectSerializer()->DeserializeExports(JsonObjects);
 
 	/* Deserialize properties */
 	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(), {

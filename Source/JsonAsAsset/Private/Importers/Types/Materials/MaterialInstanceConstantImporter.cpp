@@ -37,7 +37,7 @@ bool IMaterialInstanceConstantImporter::Import() {
 	TArray<TSharedPtr<FJsonValue>> StaticComponentMaskParametersObjects;
 	
 	/* Optional Editor Data [contains static switch parameters] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	const TSharedPtr<FJsonObject> EditorOnlyData = GetExport("MaterialInstanceEditorOnlyData", AllJsonObjects, true);
+	const TSharedPtr<FJsonObject> EditorOnlyData = GetExport("MaterialInstanceEditorOnlyData", JsonObjects, true);
 
 	if (EditorOnlyData.IsValid()) {
 		if (EditorOnlyData->HasField(TEXT("StaticParameters"))) {

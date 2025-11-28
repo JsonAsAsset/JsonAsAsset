@@ -8,14 +8,15 @@
 class JSONASASSET_API USerializerContainer {
 public:
     /* Constructors ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    explicit USerializerContainer(UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects);
-    USerializerContainer();
+    explicit USerializerContainer(UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects);
 
     /* Virtual Constructor */
     virtual ~USerializerContainer() {}
     
+    USerializerContainer();
+
     FUObjectExportContainer AssetContainer;
-    TArray<TSharedPtr<FJsonValue>> AllJsonObjects;
+    TArray<TSharedPtr<FJsonValue>> JsonObjects;
 
     /* AssetExport ~~~~~~~~~~~~~~~> */
 public:
@@ -27,6 +28,9 @@ public:
     
     virtual TSharedPtr<FJsonObject> GetAssetData() const;
     virtual TSharedPtr<FJsonObject> GetAssetExport() const;
+
+    virtual UPackage* GetPackage() const;
+    virtual void SetPackage(UPackage* NewPackage);
 
     virtual UObject* GetParent() const;
     virtual void SetParent(UObject* Parent);
@@ -41,17 +45,4 @@ protected:
     
 private:
     UObjectSerializer* ObjectSerializer;
-
-    // testing
-public:
-    UPackage* GetPackage() const {
-        return Package;
-    }
-
-    void SetPackage(UPackage* NewPackage) {
-        Package = NewPackage;
-    }
-    
-private:
-    UPackage* Package;
 };

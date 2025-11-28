@@ -10,8 +10,8 @@
 */
 class IMaterialGraph : public IImporter {
 public:
-	IMaterialGraph(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& AllJsonObjects):
-		IImporter(JsonObject, Package, AllJsonObjects) {
+	IMaterialGraph(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
+		IImporter(JsonObject, Package, JsonObjects) {
 	}
 	
 protected:

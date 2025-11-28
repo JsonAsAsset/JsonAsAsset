@@ -23,7 +23,7 @@ TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(UObject* Parent, const 
 	TSharedPtr<FJsonObject> EditorOnlyData;
 
 	/* Filter array if needed */
-	for (const TSharedPtr<FJsonValue> Value : AllJsonObjects) {
+	for (const TSharedPtr<FJsonValue> Value : JsonObjects) {
 		TSharedPtr<FJsonObject> Object = TSharedPtr<FJsonObject>(Value->AsObject());
 
 		FString ExportType = Object->GetStringField(TEXT("Type"));

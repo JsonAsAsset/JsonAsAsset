@@ -4,11 +4,14 @@
 
 #include "Modules/Versioning.h"
 #include "Utilities/Compatibility.h"
+#include "Utilities/EngineUtilities.h"
 
 void IVersioningDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	if (!GJsonAsAssetVersioning.bIsValid) {
 		return;
 	}
+
+	if (!GJsonAsAssetVersioning.bNewVersionAvailable && !GJsonAsAssetVersioning.bFutureVersion) return;
 	
 	MenuBuilder.BeginSection("JsonAsAssetVersioningSection", FText::FromString("Version"));
 	
@@ -45,7 +48,7 @@ void IVersioningDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FUIAction(
 			FExecuteAction::CreateLambda([this]() {
 				if (GJsonAsAssetVersioning.bNewVersionAvailable) {
-					FPlatformProcess::LaunchURL(*GJsonAsAssetVersioning.HTMLUrl, nullptr, nullptr);
+					LaunchURL(GJsonAsAssetVersioning.HTMLUrl);
 				}
 			})
 		),

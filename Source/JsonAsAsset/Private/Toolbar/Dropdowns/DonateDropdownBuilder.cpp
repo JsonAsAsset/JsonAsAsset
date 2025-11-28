@@ -4,16 +4,21 @@
 
 #include "JsonAsAsset.h"
 #include "Modules/UI/StyleModule.h"
+#include "Utilities/EngineUtilities.h"
 
 void IDonateDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
+	MenuBuilder.BeginSection("JsonAsAssetDonateSection", FText::FromString("Donation"));
+	
 	MenuBuilder.AddMenuEntry(
-		FText::FromString("Support Us"),
+		FText::FromString("Become A Supporter"),
 		FText::FromString(""),
 		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Heart")),
 		FUIAction(
 			FExecuteAction::CreateLambda([this] {
-				FPlatformProcess::LaunchURL(*Donation::KO_FI, nullptr, nullptr);
+				LaunchURL(Donation::KO_FI);
 			})
 		)
 	);
+	
+	MenuBuilder.EndSection();
 }

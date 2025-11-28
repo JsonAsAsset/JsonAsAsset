@@ -29,7 +29,7 @@ bool Cloud::Status::Check(const UJsonAsAssetSettings* Settings) {
 
 		Info.HyperlinkText = FText::FromString("Learn how to setup");
 		Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
-			FPlatformProcess::LaunchURL(*GitHub::README::Cloud, nullptr, nullptr);
+			LaunchURL(GitHub::README::Cloud);
 		});
 
 		Info.bFireAndForget = false;
@@ -54,7 +54,7 @@ bool Cloud::Status::Check(const UJsonAsAssetSettings* Settings) {
 
 		Info.HyperlinkText = FText::FromString("Learn how to setup");
 		Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
-			FPlatformProcess::LaunchURL(*GitHub::README::Cloud, nullptr, nullptr);
+			LaunchURL(GitHub::README::Cloud);
 		});
 
 		Info.bFireAndForget = false;

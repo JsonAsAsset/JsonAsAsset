@@ -90,7 +90,7 @@ void FJsonAsAssetVersioning::Update() {
 
 			Info.HyperlinkText = FText::FromString("GitHub Release");
 			Info.Hyperlink = FSimpleDelegate::CreateLambda([CapturedUrl]() {
-				FPlatformProcess::LaunchURL(*CapturedUrl, nullptr, nullptr);
+				LaunchURL(CapturedUrl);
 			});
 
 			Info.bFireAndForget = true;

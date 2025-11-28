@@ -2,9 +2,7 @@
 
 #pragma once
 
-/**
- * Holds helper functions for JsonAsAsset.
-*/
+/* Holds helper functions for JsonAsAsset. */
 
 #include "Framework/Notifications/NotificationManager.h"
 #include "Widgets/Notifications/SNotificationList.h"
@@ -1139,4 +1137,8 @@ inline bool HandleAssetCreation(UObject* Asset, UPackage* Package) {
 	Asset->PostLoad();
 	
 	return true;
+}
+
+inline void LaunchURL(const FString& URL) {
+	FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
 }

@@ -21,7 +21,7 @@ void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "SessionFrontEnd.TabIcon"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this] {
-				FPlatformProcess::LaunchURL(*GitHub::README::Cloud, nullptr, nullptr);
+				LaunchURL(GitHub::README::Cloud);
 			})
 		)
 	);

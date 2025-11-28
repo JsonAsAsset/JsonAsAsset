@@ -5,6 +5,7 @@
 #include "JsonAsAsset.h"
 #include "Interfaces/IPluginManager.h"
 #include "Utilities/Compatibility.h"
+#include "Utilities/EngineUtilities.h"
 
 void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
     const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin("JsonAsAsset");
@@ -21,7 +22,7 @@ void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FSlateIcon(FAppStyle::Get().GetStyleSetName(), "LevelEditor.Tabs.Viewports"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this]() {
-				FPlatformProcess::LaunchURL(*GitHub::README::AssetTypes, nullptr, nullptr);
+				LaunchURL(GitHub::README::AssetTypes);
 			})
 		)
 	);
@@ -36,7 +37,7 @@ void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 #endif
 		FUIAction(
 			FExecuteAction::CreateLambda([this] {
-				FPlatformProcess::LaunchURL(*GitHub::URL, nullptr, nullptr);
+				LaunchURL(GitHub::URL);
 			})
 		),
 		NAME_None

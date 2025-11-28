@@ -98,7 +98,7 @@ void FJsonAsAssetVersioning::Update() {
 			Info.ExpireDuration = 13.5f;
 			Info.bUseLargeFont = false;
 			Info.bUseThrobber = false;
-			Info.Image = FJsonAsAssetStyle::Get().GetBrush("JsonAsAsset.Toolbar.Icon");
+			Info.Image = FJsonAsAssetStyle::Get().GetBrush("Toolbar.Icon");
 
 			FSlateNotificationManager::Get().AddNotification(Info);
 			IsNotificationShown = true;

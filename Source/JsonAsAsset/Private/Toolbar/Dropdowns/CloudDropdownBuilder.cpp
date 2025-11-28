@@ -1,6 +1,8 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2025 */
 
 #include "Toolbar/Dropdowns/CloudDropdownBuilder.h"
+
+#include "JsonAsAsset.h"
 #include "Utilities/EngineUtilities.h"
 
 void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
@@ -19,8 +21,7 @@ void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "SessionFrontEnd.TabIcon"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this] {
-				const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#cloud";
-				FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
+				FPlatformProcess::LaunchURL(*GitHub::README::Cloud, nullptr, nullptr);
 			})
 		)
 	);

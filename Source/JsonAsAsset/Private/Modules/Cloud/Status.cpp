@@ -1,5 +1,6 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2025 */
 
+#include "JsonAsAsset.h"
 #include "Modules/Cloud/Cloud.h"
 #include "Modules/UI/StyleModule.h"
 #include "Utilities/EngineUtilities.h"
@@ -28,8 +29,7 @@ bool Cloud::Status::Check(const UJsonAsAssetSettings* Settings) {
 
 		Info.HyperlinkText = FText::FromString("Learn how to setup");
 		Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
-			const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#cloud";
-			FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
+			FPlatformProcess::LaunchURL(*GitHub::README::Cloud, nullptr, nullptr);
 		});
 
 		Info.bFireAndForget = false;
@@ -37,7 +37,7 @@ bool Cloud::Status::Check(const UJsonAsAssetSettings* Settings) {
 		Info.ExpireDuration = 3.0f;
 		Info.bUseLargeFont = false;
 		Info.bUseThrobber = false;
-		Info.Image = FJsonAsAssetStyle::Get().GetBrush("JsonAsAsset.Toolbar.Icon");
+		Info.Image = FJsonAsAssetStyle::Get().GetBrush("Toolbar.Icon");
 
 		CloudNotification = FSlateNotificationManager::Get().AddNotification(Info);
 		CloudNotification.Pin()->SetCompletionState(SNotificationItem::CS_Pending);
@@ -54,8 +54,7 @@ bool Cloud::Status::Check(const UJsonAsAssetSettings* Settings) {
 
 		Info.HyperlinkText = FText::FromString("Learn how to setup");
 		Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
-			const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#cloud";
-			FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
+			FPlatformProcess::LaunchURL(*GitHub::README::Cloud, nullptr, nullptr);
 		});
 
 		Info.bFireAndForget = false;
@@ -63,7 +62,7 @@ bool Cloud::Status::Check(const UJsonAsAssetSettings* Settings) {
 		Info.ExpireDuration = 3.0f;
 		Info.bUseLargeFont = false;
 		Info.bUseThrobber = false;
-		Info.Image = FJsonAsAssetStyle::Get().GetBrush("JsonAsAsset.Toolbar.Icon");
+		Info.Image = FJsonAsAssetStyle::Get().GetBrush("Toolbar.Icon");
 
 		CloudNotification = FSlateNotificationManager::Get().AddNotification(Info);
 		CloudNotification.Pin()->SetCompletionState(SNotificationItem::CS_Pending);

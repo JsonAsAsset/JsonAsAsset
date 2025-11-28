@@ -11,6 +11,20 @@
 
 class UJsonAsAssetSettings;
 
+struct GitHub {
+    static inline FString URL = "https://github.com/JsonAsAsset/JsonAsAsset";
+    
+    struct README {
+        static inline FString Link = URL + "?tab=readme-ov-file#asset-types";
+        static inline FString AssetTypes = Link + "#asset-types";
+        static inline FString Cloud = Link + "#cloud";
+    };
+};
+
+struct Donation {
+    static inline FString KO_FI = "https://ko-fi.com/t4ctor";
+};
+
 class FJsonAsAssetModule : public IModuleInterface {
 public:
     virtual void StartupModule() override;

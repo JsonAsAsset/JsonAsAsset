@@ -2,6 +2,7 @@
 
 #include "Toolbar/Dropdowns/ParentDropdownBuilder.h"
 
+#include "JsonAsAsset.h"
 #include "Interfaces/IPluginManager.h"
 #include "Utilities/Compatibility.h"
 
@@ -20,8 +21,7 @@ void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FSlateIcon(FAppStyle::Get().GetStyleSetName(), "LevelEditor.Tabs.Viewports"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this]() {
-				const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset?tab=readme-ov-file#asset-types";
-				FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
+				FPlatformProcess::LaunchURL(*GitHub::README::AssetTypes, nullptr, nullptr);
 			})
 		)
 	);
@@ -36,8 +36,7 @@ void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 #endif
 		FUIAction(
 			FExecuteAction::CreateLambda([this] {
-				const FString URL = "https://github.com/JsonAsAsset/JsonAsAsset";
-				FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
+				FPlatformProcess::LaunchURL(*GitHub::URL, nullptr, nullptr);
 			})
 		),
 		NAME_None

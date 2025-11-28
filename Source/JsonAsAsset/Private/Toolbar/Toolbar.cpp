@@ -18,6 +18,7 @@
 #include "Toolbar/Dropdowns/ActionRequiredDropdownBuilder.h"
 #include "Toolbar/Dropdowns/GeneralDropdownBuilder.h"
 #include "Toolbar/Dropdowns/CloudDropdownBuilder.h"
+#include "Toolbar/Dropdowns/DonateDropdownBuilder.h"
 #include "Toolbar/Dropdowns/ParentDropdownBuilder.h"
 #include "Toolbar/Dropdowns/ToolsDropdownBuilder.h"
 #include "Toolbar/Dropdowns/VersioningDropdownBuilder.h"
@@ -50,7 +51,7 @@ void FJsonAsAssetToolbar::Register() {
 		
 		TAttribute<FSlateIcon>::Create(
 			TAttribute<FSlateIcon>::FGetter::CreateLambda([this]() -> FSlateIcon {
-				return FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("JsonAsAsset.Toolbar.Icon"));
+				return FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Icon"));
 			})
 		),
 		
@@ -98,7 +99,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 		NAME_None,
 		FText::FromString(Plugin->GetDescriptor().VersionName),
 		FText::FromString("Execute JsonAsAsset"),
-		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("JsonAsAsset.Toolbar.Icon"))
+		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Icon"))
 	);
 
 	Builder.AddComboButton(
@@ -111,7 +112,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 		FOnGetContent::CreateRaw(this, &FJsonAsAssetToolbar::CreateMenuDropdown),
 		FText::FromString(Plugin->GetDescriptor().VersionName),
 		FText::FromString("Open JsonAsAsset's Menu"),
-		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("JsonAsAsset.Toolbar.Icon")),
+		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Icon")),
 		true
 	);
 }
@@ -183,6 +184,7 @@ TSharedRef<SWidget> FJsonAsAssetToolbar::CreateMenuDropdown() {
 		MakeShared<IActionRequiredDropdownBuilder>(),
 		MakeShared<ICloudDropdownBuilder>(),
 		MakeShared<IGeneralDropdownBuilder>(),
+		MakeShared<IDonateDropdownBuilder>(),
 		MakeShared<IVersioningDropdownBuilder>()
 	};
 

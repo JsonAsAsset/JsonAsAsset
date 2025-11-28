@@ -10,7 +10,7 @@
 #include "Factories/TextureRenderTargetFactoryNew.h"
 #include "nvimage/DirectDrawSurface.h"
 #include "nvimage/Image.h"
-#include "NVTT/ThirdParty/NVTTStream.h"
+#include "ThirdParty/NVTT/ThirdParty/NVTTStream.h"
 #include "Utilities/EngineUtilities.h"
 
 template bool FTextureCreatorUtilities::CreateTexture<UTexture2D>(UTexture*&, TArray<uint8>&, const TSharedPtr<FJsonObject>&);

@@ -4,13 +4,7 @@
 
 #include "Settings/JsonAsAssetSettings.h"
 
-/* Utilities */
-#include "Utilities/AssetUtilities.h"
-
 #include "Misc/MessageDialog.h"
-
-/* Slate Icons */
-#include "Styling/SlateIconFinder.h"
 
 /* ~~~~~~~~~~~~~ Templated Engine Classes ~~~~~~~~~~~~~ */
 #include "Materials/MaterialParameterCollection.h"
@@ -59,6 +53,16 @@ IImporter::IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Packag
 	}
 }
 
+UObject* IImporter::CreateAsset(UObject* CreatedAsset) {
+	if (CreatedAsset) {
+		AssetExport.Object = CreatedAsset;
+    
+		return CreatedAsset;
+	}
+
+	return nullptr;
+}
+
 template void IImporter::LoadExport<UMaterialInterface>(const TSharedPtr<FJsonObject>*, TObjectPtr<UMaterialInterface>&);
 template void IImporter::LoadExport<USubsurfaceProfile>(const TSharedPtr<FJsonObject>*, TObjectPtr<USubsurfaceProfile>&);
 template void IImporter::LoadExport<UTexture>(const TSharedPtr<FJsonObject>*, TObjectPtr<UTexture>&);
@@ -68,23 +72,6 @@ template void IImporter::LoadExport<USoundWave>(const TSharedPtr<FJsonObject>*, 
 template void IImporter::LoadExport<UObject>(const TSharedPtr<FJsonObject>*, TObjectPtr<UObject>&);
 template void IImporter::LoadExport<UMaterialFunctionInterface>(const TSharedPtr<FJsonObject>*, TObjectPtr<UMaterialFunctionInterface>&);
 template void IImporter::LoadExport<USoundNode>(const TSharedPtr<FJsonObject>*, TObjectPtr<USoundNode>&);
-
-UObject* IImporter::CreateAsset(UObject* CreatedAsset) {
-	if (CreatedAsset) {
-		AssetExport.Object = CreatedAsset;
-        
-		return CreatedAsset;
-	}
-    
-	return nullptr;
-}
-
-template <typename T>
-T* IImporter::Create() {
-	UObject* TargetAsset = CreateAsset(nullptr);
-
-	return Cast<T>(TargetAsset);
-}
 
 template <typename T>
 void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectPtr<T>& Object) {
@@ -187,64 +174,6 @@ TArray<TObjectPtr<T>> IImporter::LoadExport(const TArray<TSharedPtr<FJsonValue>>
 	}
 
 	return Array;
-}
-
-template <class T>
-TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path) {
-    const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
-
-    if (Type == "Texture") Type = "Texture2D";
-    
-    if (Settings->bEnableCloudServer && (
-        InObject == nullptr ||
-            Settings->AssetSettings.Texture.bReDownloadTextures &&
-            Type == "Texture2D"
-        )
-        && !Path.StartsWith("Engine/") && !Path.StartsWith("/Engine/")
-    ) {
-        const UObject* DefaultObject = GetClassDefaultObject(T::StaticClass());
-
-        if (DefaultObject != nullptr && !Name.IsEmpty() && !Path.IsEmpty()) {
-            bool bDownloadStatus = false;
-
-            FString NewPath = Path;
-            ReverseRedirectPath(NewPath);
-
-            /* Try importing the asset */
-            if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), FSoftObjectPath(Type + "'" + Path + "." + Name + "'").ToString(), Type, InObject, bDownloadStatus)) {
-                const FText AssetNameText = FText::FromString(Name);
-                const FSlateBrush* IconBrush = FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail"));
-
-                if (bDownloadStatus) {
-                    AppendNotification(
-                        FText::FromString("Locally Downloaded: " + Type),
-                        AssetNameText,
-                        2.0f,
-                        IconBrush,
-                        SNotificationItem::CS_Success,
-                        false,
-                        310.0f
-                    );
-
-                    GetMessageLog().Message(EMessageSeverity::Info, FText::FromString("Locally Downloaded Asset: " + Name + " (" + Type + ")"));
-                } else {
-                    AppendNotification(
-                        FText::FromString("Download Failed: " + Type),
-                        AssetNameText,
-                        5.0f,
-                        IconBrush,
-                        SNotificationItem::CS_Fail,
-                        false,
-                        310.0f
-                    );
-
-                    GetMessageLog().Error(FText::FromString("Failed to locally download asset: " + Name + " (" + Type + ")"));
-                }
-            }
-        }
-    }
-
-    return InObject;
 }
 
 void IImporter::Save() const {

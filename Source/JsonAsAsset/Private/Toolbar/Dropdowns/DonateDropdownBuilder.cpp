@@ -11,7 +11,7 @@ void IDonateDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Become A Supporter"),
-		FText::FromString(""),
+		FText::FromString("Help support JsonAsAsset's development"),
 		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Heart")),
 		FUIAction(
 			FExecuteAction::CreateLambda([this] {

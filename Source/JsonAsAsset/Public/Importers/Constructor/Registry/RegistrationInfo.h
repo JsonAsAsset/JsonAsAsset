@@ -36,7 +36,7 @@ inline FImporterFactoryDelegate* FindFactoryForAssetType(const FString& AssetTyp
 
 	for (auto& Pair : GetFactoryRegistry()) {
 		if (!Settings->bEnableExperiments) {
-			if (ExperimentalAssetTypes.Contains(AssetType)) return nullptr;
+			if (ImportTypes::Experimental.Contains(AssetType)) return nullptr;
 		}
             
 		if (Pair.Key.Contains(AssetType)) {

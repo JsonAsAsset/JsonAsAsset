@@ -2,13 +2,11 @@
 
 #include "Importers/Constructor/Types.h"
 
-/*
- * Define supported asset class names here
- *
- * An empty string "" is a separator line
- * A string starting with "# ..." is a category
- */
-TMap<FString, TArray<FString>> ImporterTemplatedTypes = {
+#include "Settings/JsonAsAssetSettings.h"
+#include "Utilities/EngineUtilities.h"
+
+/* Define supported template asset class here */
+TMap<FString, TArray<FString>> ImportTypes::Templated = {
 	{
 		TEXT("Curve Assets"),
 		{
@@ -80,3 +78,25 @@ TMap<FString, TArray<FString>> ImporterTemplatedTypes = {
 		}
 	}
 };
+
+bool ImportTypes::Cloud::Allowed(const FString& Type) {
+	if (Blacklisted.Contains(Type)) {
+		return false;
+	}
+
+	if (Extra.Contains(Type)) {
+		return true;
+	}
+
+	return true;
+}
+
+bool ImportTypes::Allowed(const FString& ImporterType) {
+	if (Experimental.Contains(ImporterType)) {
+		const UJsonAsAssetSettings* Settings = GetSettings();
+
+		if (!Settings->bEnableExperiments) return false;
+	}
+
+	return true;
+}

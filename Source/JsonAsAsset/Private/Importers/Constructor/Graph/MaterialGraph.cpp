@@ -5,11 +5,8 @@
 /* Expressions */
 #include "Factories/MaterialFunctionFactoryNew.h"
 #include "Materials/MaterialExpressionComment.h"
-#include "Materials/MaterialExpressionFeatureLevelSwitch.h"
 #include "Materials/MaterialExpressionFunctionInput.h"
 #include "Materials/MaterialExpressionFunctionOutput.h"
-#include "Materials/MaterialExpressionShadingPathSwitch.h"
-#include "Materials/MaterialExpressionQualitySwitch.h"
 #include "Materials/MaterialExpressionReroute.h"
 #include "Utilities/AssetUtilities.h"
 #include "Utilities/EngineUtilities.h"
@@ -23,8 +20,8 @@ TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(UObject* Parent, const 
 	TSharedPtr<FJsonObject> EditorOnlyData;
 
 	/* Filter array if needed */
-	for (const TSharedPtr<FJsonValue> Value : JsonObjects) {
-		TSharedPtr<FJsonObject> Object = TSharedPtr<FJsonObject>(Value->AsObject());
+	for (const TSharedPtr Value : JsonObjects) {
+		TSharedPtr<FJsonObject> Object = TSharedPtr(Value->AsObject());
 
 		FString ExportType = Object->GetStringField(TEXT("Type"));
 

@@ -9,7 +9,6 @@
 #include "Misc/MessageDialog.h"
 #include "Modules/Cloud/Cloud.h"
 #include "Sound/SoundCue.h"
-#include "Settings/JsonAsAssetSettings.h"
 #include "Utilities/EngineUtilities.h"
 
 void ISoundGraph::ConstructNodes(USoundCue* SoundCue, TArray<TSharedPtr<FJsonValue>> JsonArray, TMap<FString, USoundNode*>& OutNodes) {

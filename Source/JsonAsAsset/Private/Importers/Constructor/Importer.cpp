@@ -59,7 +59,6 @@ IImporter::IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Packag
 	}
 }
 
-/* TODO: Got a feeling FORCEINLINE will fix this */
 template void IImporter::LoadExport<UMaterialInterface>(const TSharedPtr<FJsonObject>*, TObjectPtr<UMaterialInterface>&);
 template void IImporter::LoadExport<USubsurfaceProfile>(const TSharedPtr<FJsonObject>*, TObjectPtr<USubsurfaceProfile>&);
 template void IImporter::LoadExport<UTexture>(const TSharedPtr<FJsonObject>*, TObjectPtr<UTexture>&);
@@ -194,7 +193,6 @@ template <class T>
 TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path) {
     const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
-    /* TODO: Remove this? */
     if (Type == "Texture") Type = "Texture2D";
     
     if (Settings->bEnableCloudServer && (
@@ -274,7 +272,7 @@ bool IImporter::OnAssetCreation(UObject* Asset) const {
 }
 
 void IImporter::DeserializeExports(UObject* Parent, const bool bCreateObjects) {
-	GetObjectSerializer()->SetExportForDeserialization(AssetExport.JsonObject, Parent);
+	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), Parent);
 	GetObjectSerializer()->Parent = Parent;
     
 	GetObjectSerializer()->DeserializeExports(JsonObjects, bCreateObjects);

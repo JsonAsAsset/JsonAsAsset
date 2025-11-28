@@ -20,9 +20,7 @@ bool IImportReader::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports,
 	return true;
 }
 
-void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports,
-	const TSharedPtr<FJsonObject>& Export, FString File, const bool bHideNotifications)
-{
+void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, const bool bHideNotifications) {
 	const FString Type = Export->GetStringField(TEXT("Type"));
 	FString Name = Export->GetStringField(TEXT("Name"));
 
@@ -111,7 +109,7 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 	}
 
 	/* TODO: Don't hardcode this. */
-	if (IsAssetTypeImportableUsingCloud(Type)) {
+	if (ImportTypes::Cloud::Extra.Contains(Type)) {
 		Importer = new ITextureImporter<UTextureLightProfile>(
 			Export, LocalPackage, Exports
 		);
@@ -132,11 +130,6 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 
 	if (Successful) {
 		UE_LOG(LogJsonAsAsset, Log, TEXT("Successfully imported \"%s\" as \"%s\""), *Name, *Type);
-
-		/* TODO: Remove this? */
-		if (Type != "AnimSequence" && Type != "AnimMontage") {
-			Importer->Save();
-		}
 
 		/* Import Successful Notification */
 		AppendNotification(

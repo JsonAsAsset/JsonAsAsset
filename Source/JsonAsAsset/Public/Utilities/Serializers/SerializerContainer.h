@@ -14,10 +14,7 @@ public:
     virtual ~USerializerContainer() {}
     
     USerializerContainer();
-
-    FUObjectExportContainer AssetContainer;
-    TArray<TSharedPtr<FJsonValue>> JsonObjects;
-
+    
     /* AssetExport ~~~~~~~~~~~~~~~> */
 public:
     FUObjectExport AssetExport;
@@ -27,7 +24,7 @@ public:
     virtual UClass* GetAssetClass();
     
     virtual TSharedPtr<FJsonObject> GetAssetData() const;
-    virtual TSharedPtr<FJsonObject> GetAssetExport() const;
+    virtual TSharedPtr<FJsonObject>& GetAssetExport();
 
     virtual UPackage* GetPackage() const;
     virtual void SetPackage(UPackage* NewPackage);
@@ -45,4 +42,8 @@ protected:
     
 private:
     UObjectSerializer* ObjectSerializer;
+
+public:
+    /* TODO: Refactor somehow */
+    TArray<TSharedPtr<FJsonValue>> JsonObjects;
 };

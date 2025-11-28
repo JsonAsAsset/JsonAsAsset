@@ -2,19 +2,27 @@
 
 #pragma once
 
-/* AssetType/Category ~ Defined in CPP */
-extern TMap<FString, TArray<FString>> ImporterTemplatedTypes;
+struct ImportTypes {
+	/* AssetType/Category ~ Defined in CPP */
+	static TMap<FString, TArray<FString>> Templated;
+	
+	struct Cloud {
+		static inline TArray<FString> Blacklisted = {
+			"AnimSequence",
+			"AnimMontage",
+			"AnimBlueprintGeneratedClass"
+		};
 
-inline TArray<FString> BlacklistedCloudTypes = {
-	"AnimSequence",
-	"AnimMontage",
-	"AnimBlueprintGeneratedClass"
-};
+		static inline TArray<FString> Extra = {
+			"TextureLightProfile"
+		};
 
-inline TArray<FString> ExtraCloudTypes = {
-	"TextureLightProfile"
-};
+		static bool Allowed(const FString& Type);
+	};
 
-inline const TArray<FString> ExperimentalAssetTypes = {
-	"AnimBlueprintGeneratedClass"
+	static inline TArray<FString> Experimental = {
+		"AnimBlueprintGeneratedClass"
+	};
+
+	static bool Allowed(const FString& ImporterType);
 };

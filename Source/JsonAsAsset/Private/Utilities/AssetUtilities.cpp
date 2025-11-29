@@ -19,18 +19,16 @@
 #include "HttpModule.h"
 #include "Importers/Constructor/ImportReader.h"
 #include "Interfaces/IHttpResponse.h"
-#include "Serialization/JsonReader.h"
-#include "Serialization/JsonSerializer.h"
 #include "Utilities/RemoteUtilities.h"
 
 /* CreateAssetPackage Implementations ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-UPackage* FAssetUtilities::CreateAssetPackage(const FString& FullPath) {
+UPackage* FAssetUtilities::CreateAssetPackage(const FString& Path) {
 	UPackage* Package = CreatePackage(
 		/* 4.25, 4.26.0 and below need an Outer */
 #if UE4_25_BELOW || (UE4_26_0)
 		nullptr, 
 #endif
-		*FullPath);
+		*Path);
 	Package->FullyLoad();
 
 	return Package;
@@ -182,7 +180,6 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 			return true;
 		}
 
-		//
 		const TSharedPtr<FJsonObject> JsonObject = Response->GetArrayField(TEXT("exports"))[0]->AsObject();
 		FString PackagePath;
 		FString AssetName;

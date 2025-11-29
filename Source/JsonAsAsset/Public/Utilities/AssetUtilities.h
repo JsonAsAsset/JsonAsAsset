@@ -2,13 +2,9 @@
 
 #pragma once
 
-class JSONASASSET_API FAssetUtilities {
+struct JSONASASSET_API FAssetUtilities {
 public:
-	/*
-	* Creates a UPackage to create assets in the Content Browser.
-	* 
-	* @return Package
-	*/
+	/* Creates a UPackage to create assets in the Content Browser. */
 	static UPackage* CreateAssetPackage(const FString& FullPath);
 	static UPackage* CreateAssetPackage(const FString& Name, const FString& OutputPath);
 	static UPackage* CreateAssetPackage(const FString& Name, const FString& OutputPath, FString& FailureReason);

@@ -10,7 +10,6 @@
 #include "Materials/MaterialParameterCollection.h"
 #include "Engine/SubsurfaceProfile.h"
 #include "Curves/CurveLinearColor.h"
-#include "Logging/MessageLog.h"
 #include "Modules/Log.h"
 #include "Sound/SoundNode.h"
 #include "Utilities/EngineUtilities.h"

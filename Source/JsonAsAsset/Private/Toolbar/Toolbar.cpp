@@ -5,8 +5,6 @@
 #include "Utilities/Compatibility.h"
 #include "Utilities/EngineUtilities.h"
 
-#include "Importers/Constructor/Importer.h"
-
 #if ENGINE_UE5
 #include "Modules/UI/StyleModule.h"
 #endif
@@ -158,8 +156,11 @@ void FJsonAsAssetToolbar::ImportAction() {
 
 	/* Conditional Settings Checks */
 	if (!UJsonAsAssetSettings::EnsureExportDirectoryIsValid(Settings)) return;
-	if (!Cloud::Status::Check(Settings)) return;
-	Cloud::Update();
+	
+	if (Settings->bEnableCloudServer) {
+		if (!Cloud::Status::Check(Settings)) return;
+		Cloud::Update();
+	}
 
 	/* Dialog for a JSON File */
 	TArray<FString> OutFileNames = OpenFileDialog("Select a JSON File", "JSON Files|*.json");

@@ -4,11 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Modules/Tools/ToolBase.h"
-#include "ConvexCollision.generated.h"
 
-USTRUCT()
-struct FToolConvexCollision : public FToolBase {
-	GENERATED_BODY()
+class TToolConvexCollision : public TToolBase {
 public:
-	static void Execute();
+	void Execute();
 };

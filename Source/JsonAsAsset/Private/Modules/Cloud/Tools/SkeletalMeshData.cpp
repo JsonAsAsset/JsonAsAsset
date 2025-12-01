@@ -37,7 +37,7 @@
 
 class UClothingAssetCommon;
 
-void FSkeletalMeshData::Execute() {
+void TSkeletalMeshData::Execute() {
 	TArray<FAssetData> AssetDataList = GetAssetsInSelectedFolder();
 
 	USkeletalMesh* SkeletalMeshSelected = GetSelectedAsset<USkeletalMesh>(true);
@@ -156,22 +156,21 @@ void FSkeletalMeshData::Execute() {
 				}
 
 				/* Create an object serializer */
-				UObjectSerializer* ObjectSerializer = CreateObjectSerializer();
-
-				ObjectSerializer->SetExportForDeserialization(JsonObject, SkeletalMesh);
-				ObjectSerializer->Parent = SkeletalMesh;
+				GetObjectSerializer()->ExportsToNotDeserialize.Empty();
+				GetObjectSerializer()->SetExportForDeserialization(JsonObject, SkeletalMesh);
+				GetObjectSerializer()->Parent = SkeletalMesh;
 				
 				SkeletalMesh->GetMeshOnlySocketList().Empty();
 
-				ObjectSerializer->DeserializeExports(Exports);
+				GetObjectSerializer()->DeserializeExports(Exports);
 
-				for (const FUObjectExport UObjectExport : ObjectSerializer->GetPropertySerializer()->ExportsContainer.Exports) {
+				for (const FUObjectExport UObjectExport : GetObjectSerializer()->GetPropertySerializer()->ExportsContainer.Exports) {
 					if (USkeletalMeshSocket* Socket = Cast<USkeletalMeshSocket>(UObjectExport.Object)) {
 						SkeletalMesh->GetMeshOnlySocketList().Add(Socket);
 					}
 				}
 
-				ObjectSerializer->DeserializeObjectProperties(KeepPropertiesShared(Properties, {
+				GetObjectSerializer()->DeserializeObjectProperties(KeepPropertiesShared(Properties, {
 					// "MeshClothingAssets"
 					"PhysicsAsset",
 					"PostProcessAnimBlueprint",
@@ -228,7 +227,7 @@ void FSkeletalMeshData::Execute() {
 	}
 }
 
-TArray<FSkeletalMaterial> FSkeletalMeshData::GetMaterials(USkeletalMesh* Mesh) {
+TArray<FSkeletalMaterial> TSkeletalMeshData::GetMaterials(USkeletalMesh* Mesh) {
 #if ENGINE_UE4 && ENGINE_MINOR_VERSION > 27
 	return Mesh->GetMaterials();
 #else

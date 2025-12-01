@@ -114,6 +114,8 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 		ClassName = ReadPathFromObject(&TemplateObject).Replace(TEXT("Default__"), TEXT(""));
 	}
 
+	if (ClassName.Contains("'")) return;
+
 	const UClass* Class = FindClassByType(ClassName);
 	
 	if (!Class) {

@@ -7,7 +7,7 @@
 
 #include "PhysicsEngine/BodySetup.h"
 
-void FToolConvexCollision::Execute() {
+void TToolConvexCollision::Execute() {
 	TArray<FAssetData> AssetDataList = GetAssetsInSelectedFolder();
 
 	if (AssetDataList.Num() == 0) {
@@ -59,22 +59,20 @@ void FToolConvexCollision::Execute() {
 				StaticMesh->DistanceFieldSelfShadowBias = 0.0;
 
 				/* Create an object serializer */
-				UObjectSerializer* ObjectSerializer = CreateObjectSerializer();
-
 				StaticMesh->Sockets.Empty();
 
-				ObjectSerializer->SetExportForDeserialization(JsonObject, StaticMesh);
-				ObjectSerializer->Parent = StaticMesh;
+				GetObjectSerializer()->SetExportForDeserialization(JsonObject, StaticMesh);
+				GetObjectSerializer()->Parent = StaticMesh;
 
-				ObjectSerializer->DeserializeExports(Exports);
+				GetObjectSerializer()->DeserializeExports(Exports);
 
-				for (const FUObjectExport UObjectExport : ObjectSerializer->GetPropertySerializer()->ExportsContainer.Exports) {
+				for (const FUObjectExport UObjectExport : GetObjectSerializer()->GetPropertySerializer()->ExportsContainer.Exports) {
 					if (UStaticMeshSocket* Socket = Cast<UStaticMeshSocket>(UObjectExport.Object)) {
 						StaticMesh->AddSocket(Socket);
 					}
 				}
 				
-				ObjectSerializer->DeserializeObjectProperties(RemovePropertiesShared(Properties, {
+				GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(Properties, {
 					"StaticMaterials",
 					"Sockets"
 				}), StaticMesh);
@@ -87,8 +85,7 @@ void FToolConvexCollision::Execute() {
 			BodySetup->AggGeom.EmptyElements();
 			BodySetup->CollisionTraceFlag = CTF_UseDefault;
 
-			const UObjectSerializer* ObjectSerializer = CreateObjectSerializer();
-			ObjectSerializer->DeserializeObjectProperties(Properties, BodySetup);
+			GetObjectSerializer()->DeserializeObjectProperties(Properties, BodySetup);
 
 			BodySetup->PostEditChange();
 

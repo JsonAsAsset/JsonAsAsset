@@ -230,7 +230,7 @@ bool ReadAnimationData(const TSharedPtr<FJsonObject>& Properties, const TArray<T
 	return true;
 }
 
-void FToolAnimationData::Execute() {
+void TToolAnimationData::Execute() {
 	TArray<FAssetData> AssetDataList = GetAssetsInSelectedFolder();
 
 	if (AssetDataList.Num() == 0) {

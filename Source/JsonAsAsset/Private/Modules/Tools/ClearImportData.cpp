@@ -5,7 +5,7 @@
 #include "Factories/FbxAnimSequenceImportData.h"
 #include "Utilities/EngineUtilities.h"
 
-void FToolClearImportData::Execute() {
+void TToolClearImportData::Execute() {
 	TArray<FAssetData> AssetDataList = GetAssetsInSelectedFolder();
 
 	if (AssetDataList.Num() == 0) {

@@ -3,11 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ToolBase.generated.h"
+#include "Utilities/Serializers/SerializerContainer.h"
 
-USTRUCT()
-struct FToolBase {
-	GENERATED_BODY()
-public:
-	static void Execute() { };
+class TToolBase : public USerializerContainer {
 };

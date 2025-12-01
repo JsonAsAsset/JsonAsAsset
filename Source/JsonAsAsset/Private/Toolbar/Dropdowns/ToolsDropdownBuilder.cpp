@@ -30,7 +30,10 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
 
 					FUIAction(
-						FExecuteAction::CreateStatic(&FToolClearImportData::Execute)
+						FExecuteAction::CreateLambda([] {
+							TToolClearImportData* Tool = new TToolClearImportData();
+							Tool->Execute();
+						})
 					),
 					NAME_None
 				);
@@ -67,6 +70,12 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 			InnerMenuBuilder.EndSection();
 
 			if (Settings->bEnableCloudServer) {
+				static TSkeletalMeshData* SkeletalMeshTool;
+
+				if (SkeletalMeshTool == nullptr) {
+					SkeletalMeshTool = new TSkeletalMeshData();
+				}
+				
 				InnerMenuBuilder.BeginSection("JsonAsAssetCloudToolsSection", FText::FromString("Cloud"));
 				
 				InnerMenuBuilder.AddMenuEntry(
@@ -75,7 +84,10 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
 
 					FUIAction(
-						FExecuteAction::CreateStatic(&FToolConvexCollision::Execute),
+						FExecuteAction::CreateLambda([] {
+							TToolConvexCollision* Tool = new TToolConvexCollision();
+							Tool->Execute();
+						}),
 						FCanExecuteAction::CreateLambda([this] {
 							return Cloud::Status::IsOpened();
 						})
@@ -89,7 +101,10 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
 
 					FUIAction(
-						FExecuteAction::CreateStatic(&FToolAnimationData::Execute),
+						FExecuteAction::CreateLambda([] {
+							TToolAnimationData* Tool = new TToolAnimationData();
+							Tool->Execute();
+						}),
 						FCanExecuteAction::CreateLambda([this] {
 							return Cloud::Status::IsOpened();
 						})
@@ -104,8 +119,10 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 
 					FUIAction(
 						FExecuteAction::CreateLambda([] {
-							FSkeletalMeshData SkeletalMeshData = FSkeletalMeshData();
-							SkeletalMeshData.Execute();
+							if (SkeletalMeshTool != nullptr)
+							{
+								SkeletalMeshTool->Execute();
+							}
 						}),
 						FCanExecuteAction::CreateLambda([this] {
 							return Cloud::Status::IsOpened();

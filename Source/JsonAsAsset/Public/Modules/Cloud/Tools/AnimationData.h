@@ -4,11 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Modules/Tools/ToolBase.h"
-#include "AnimationData.generated.h"
 
-USTRUCT()
-struct FToolAnimationData : public FToolBase {
-	GENERATED_BODY()
+class TToolAnimationData : public TToolBase {
 public:
-	static void Execute();
+	void Execute();
 };

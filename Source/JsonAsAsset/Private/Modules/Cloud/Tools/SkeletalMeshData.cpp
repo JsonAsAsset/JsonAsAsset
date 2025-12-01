@@ -24,6 +24,7 @@
 #endif
 
 #include "MaterialStatsCommon.h"
+#include "EditorFramework/AssetImportData.h"
 #include "Importers/Constructor/Importer.h"
 
 #if ENGINE_UE5
@@ -133,6 +134,25 @@ void FSkeletalMeshData::Execute() {
 					} else break;
 
 					SkeletalMaterialIndex++;
+				}
+
+				if (Properties->HasField(TEXT("LODInfo"))) {
+					TArray<TSharedPtr<FJsonValue>> LODInfo = Properties->GetArrayField(TEXT("LODInfo"));
+
+					for (const TSharedPtr<FJsonValue>& LOD : LODInfo) {
+						if (!LOD.IsValid() || !LOD->AsObject().IsValid()) {
+							continue;
+						}
+
+						const TSharedPtr<FJsonObject> LODObject = LOD->AsObject();
+						if (!LODObject->HasField(TEXT("SourceImportFilename"))) continue;
+
+						FString SourceImportFilename = LODObject->GetStringField(TEXT("SourceImportFilename"));
+						if (SourceImportFilename.IsEmpty()) continue;
+
+						SkeletalMesh->SetAssetImportData(NewObject<UAssetImportData>(SkeletalMesh, TEXT("AssetImportData")));
+						SkeletalMesh->GetAssetImportData()->SourceData.SourceFiles.Add(SourceImportFilename);
+					}
 				}
 
 				/* Create an object serializer */

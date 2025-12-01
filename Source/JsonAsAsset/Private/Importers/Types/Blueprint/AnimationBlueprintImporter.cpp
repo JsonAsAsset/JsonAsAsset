@@ -500,6 +500,13 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 				}
 			}
 		}
+
+		if (NodeProperties->HasField(TEXT("LocalJointOffset"))) {
+			auto LocalJointOffset = NodeProperties->GetObjectField(TEXT("LocalJointOffset"));
+			LocalJointOffset->SetNumberField("X", -LocalJointOffset->GetNumberField(TEXT("X")));
+			LocalJointOffset->SetNumberField("Y", -LocalJointOffset->GetNumberField(TEXT("Y")));
+			LocalJointOffset->SetNumberField("Z", -LocalJointOffset->GetNumberField(TEXT("Z")));
+		}
 		
 		GetObjectSerializer()->DeserializeObjectProperties(NodeProperties, Node);
 

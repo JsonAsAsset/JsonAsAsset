@@ -132,12 +132,6 @@ Follow these steps to install **JsonAsAsset**:
    Extract the downloaded files to your project's `Plugins` folder. If the folder doesn't exist, create it in the root directory of your project.
 7. **Open Your Project**  
    Launch your Unreal Engine project.
-8. **Access the Plugins Window:**  
-   Navigate to **Edit → Plugins**.
-10. **Enable JsonAsAsset:**  
-   In the Plugins window, search for `JsonAsAsset` and enable it.
-11. **Restart the Editor:**  
-   Restart the Unreal Engine editor to apply the changes.
 
 <a name="cloud"></a>
 ### Set up the Cloud ✨
@@ -189,6 +183,7 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+
 
 
 

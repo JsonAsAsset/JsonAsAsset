@@ -50,7 +50,7 @@ This project aims to streamline the porting and modding experience, making it ea
 <a name="licensing"></a>
 ### Licensing
 
-JsonAsAsset is licensed under the MIT License, read more in the [LICENSE](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/LICENSE) file. The plugin also uses [Detex](https://github.com/hglm/detex) and [NVIDIA Texture Tools](https://docs.nvidia.com/texture-tools/index.html).
+JsonAsAsset is licensed under the MIT License. Read more in the [LICENSE](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/LICENSE) file. The plugin also uses [Detex](https://github.com/hglm/detex) and [NVIDIA Texture Tools](https://docs.nvidia.com/texture-tools/index.html).
 
 -----------------
 
@@ -81,7 +81,7 @@ If an asset type isn't listed below, **it's not currently supported by the plugi
 
 |  | Asset Types |
 |--------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| 🟢 **Curve** | CurveFloat, CurveTable, CurveVector, CurveLinearColor, CurveLinearColorAtlas |
+| 🟢 **Curve** | CurveFloat, CurveVector, CurveLinearColor, CurveLinearColorAtlas |
 | 🟣 **Data** | DataAsset, SlateBrushAsset, SlateWidgetStyleAsset, AnimBoneCompressionSettings, AnimCurveCompressionSettings, UserDefinedEnum, UserDefinedStruct |
 | 🔵 **Table** | CurveTable, DataTable, StringTable |
 | 🟠 **Material** | Material, MaterialFunction, MaterialInstanceConstant, MaterialParameterCollection, SubsurfaceProfile |
@@ -99,7 +99,7 @@ If an asset type isn't listed below, **it's not currently supported by the plugi
 
 <a name="material-data-prerequisites"></a>
 #### 🟠 Material Data Prerequisites
-Unreal Engine games made below 4.12 (a guess) will have material data, *any games made above that version will most definitely not have any material data*, and therefore the actual data will be stripped and cannot be imported. **Unless you are using a User Generated Content editor**, then it's possible material data will be there.
+Unreal Engine games made below 4.12 (a guess) will have material data. *Games made above that version will most definitely not have any material data*, and therefore the actual data will be stripped and cannot be imported. **Unless you are using a User Generated Content editor**, then it's possible material data will be there.
 
 #### 🟣 C++ Classes Prerequisites
 If your game uses custom C++ classes or structures, **you need to define them**.
@@ -139,19 +139,19 @@ Follow these steps to install **JsonAsAsset**:
    Restart the Unreal Engine editor to apply the changes.
 
 <a name="cloud"></a>
-### Setup the Cloud ✨
-Make sure Cloud is enabled in Plugin Settings, and setup a Cloud Server. [Click here to get to Cloud releases.](https://github.com/Tectors/j0.dev/releases)
+### Set up the Cloud ✨
+Make sure Cloud is enabled in Plugin Settings, and set up a Cloud Server. [Click here to get to Cloud releases.](https://github.com/Tectors/j0.dev/releases)
 
 Once the Cloud is started, JsonAsAsset will fetch almost every referenced asset for you hands-free.
 
 <a name="workflow"></a>
 ## Workflow
 
-1. Find a asset in [FModel](https://fmodel.app), and save it by right clicking and pressing `Save Properties`. Locate the file on your computer and copy the location.
+1. Find an asset in [FModel](https://fmodel.app), and save it by right-clicking and pressing `Save Properties`. Locate the file on your computer and copy the location.
 
-2. Press onto the [JsonAsAsset](https://github.com/JsonAsAsset/JsonAsAsset) button on your tool-bar, and a file import should pop-up. <img align="right" width="206" height="96" src=https://github.com/user-attachments/assets/6a9bf925-484b-4c23-b0ed-c59d58c5d07c>
+2. Press the [JsonAsAsset](https://github.com/JsonAsAsset/JsonAsAsset) button on your tool-bar, and a file import should pop up. <img align="right" width="206" height="96" src=https://github.com/user-attachments/assets/6a9bf925-484b-4c23-b0ed-c59d58c5d07c>
 
-3. Select the file and press open.
+3. Select the file and press Open.
 
 4. The asset will import, and bring you to the created asset in the content browser.
 
@@ -188,4 +188,5 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+
 

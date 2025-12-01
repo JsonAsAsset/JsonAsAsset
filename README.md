@@ -142,7 +142,7 @@ Follow these steps to install **JsonAsAsset**:
 ### Setup the Cloud ✨
 Make sure Cloud is enabled in Plugin Settings, and setup a Cloud Server. [Click here to get to Cloud releases.](https://github.com/Tectors/j0.dev/releases)
 
-Once the Cloud is started, JsonAsAsset will fetch every referenced asset for you hands-free.
+Once the Cloud is started, JsonAsAsset will fetch almost every referenced asset for you hands-free.
 
 <a name="workflow"></a>
 ## Workflow
@@ -188,3 +188,4 @@ Thanks go to these wonderful people:
 - Logo uses a font by [Brylark](https://ko-fi.com/brylark), support him at his ko-fi!
 
 #### [Would you like to contribute?](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/README.md#key-information-for-contributors-)
+

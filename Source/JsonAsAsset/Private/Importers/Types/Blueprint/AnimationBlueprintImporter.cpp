@@ -501,12 +501,14 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 			}
 		}
 
+#if ENGINE_UE4
 		if (NodeProperties->HasField(TEXT("LocalJointOffset"))) {
 			auto LocalJointOffset = NodeProperties->GetObjectField(TEXT("LocalJointOffset"));
 			LocalJointOffset->SetNumberField("X", -LocalJointOffset->GetNumberField(TEXT("X")));
 			LocalJointOffset->SetNumberField("Y", -LocalJointOffset->GetNumberField(TEXT("Y")));
 			LocalJointOffset->SetNumberField("Z", -LocalJointOffset->GetNumberField(TEXT("Z")));
 		}
+#endif
 		
 		GetObjectSerializer()->DeserializeObjectProperties(NodeProperties, Node);
 

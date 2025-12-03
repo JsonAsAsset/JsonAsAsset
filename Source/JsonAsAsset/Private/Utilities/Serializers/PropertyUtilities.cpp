@@ -334,7 +334,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				}
 			}
 
-			if (Settings->Runtime.MajorVersion == 4 && Settings->Runtime.MinorVersion < 14) {
+			if (Settings->Runtime.MajorVersion == 4 && Settings->Runtime.MinorVersion != -1 && Settings->Runtime.MinorVersion < 14) {
 				FExpressionInput* ExpressionInput = static_cast<FExpressionInput*>(OutValue);
 
 				if (ExpressionInput

@@ -40,8 +40,6 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 	/* Convert from relative path to full path */
 	if (FPaths::IsRelative(File)) File = FPaths::ConvertRelativePathToFull(File);
 
-	RedirectPath(File);
-
 	FString FailureReason;
 	UPackage* LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, FailureReason);
 

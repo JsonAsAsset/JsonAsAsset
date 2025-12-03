@@ -95,10 +95,11 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
             bool bDownloadStatus = false;
 
             FString NewPath = Path;
-            ReverseRedirectPath(NewPath);
 
+            ReverseRedirectPath(NewPath);
+            
             /* Try importing the asset */
-            if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), FSoftObjectPath(Type + "'" + Path + "." + Name + "'").ToString(), Type, InObject, bDownloadStatus)) {
+            if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), Type, InObject, bDownloadStatus)) {
                 const FText AssetNameText = FText::FromString(Name);
                 const FSlateBrush* IconBrush = FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail"));
 

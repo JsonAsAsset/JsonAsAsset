@@ -75,6 +75,8 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 
 			ModifiablePath = "/" + ModifiablePath + "/";
 
+			RedirectPath(ModifiablePath);
+
 			/* Check if plugin exists */
 			if (bIsPlugin && !ModifiablePath.StartsWith("/Game/")) {
 				FString PluginName;
@@ -84,6 +86,9 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 				if (IPluginManager::Get().FindPlugin(PluginName) == nullptr)
 					CreatePlugin(PluginName);
 			}
+		}
+		else {
+			RedirectPath(ModifiablePath);
 		}
 	} else {
 		FString RootName; {
@@ -98,6 +103,8 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 		ModifiablePath.Split("/", &ModifiablePath, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 
 		ModifiablePath = ModifiablePath + "/";
+
+		RedirectPath(ModifiablePath);
 	}
 
 	const FString PathWithGame = ModifiablePath + Name;
@@ -148,7 +155,6 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 		Type == "TextureLightProfile";
 
 	FString GamePath = Path;
-    ReverseRedirectPath(GamePath);
 
 	/* Supported Assets */
 	if (CanImport(Type, true) || bIsTexture) {
@@ -200,7 +206,10 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 			bSuccess = IImportReader::ReadExportsAndImport(Response->GetArrayField(TEXT("exports")), PackagePath, true);
 
 			/* Define found object */
-			OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *RealPath));
+			FString RedirectedPath = RealPath;
+			
+			RedirectPath(RedirectedPath);
+			OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *RedirectedPath));
 
 			return OutObject != nullptr;
 		}
@@ -282,6 +291,8 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 	bUseOctetStream = true;
 #endif
 
+	RedirectPath(PackagePath);
+	
 	UPackage* Package = CreateAssetPackage(*PackagePath);
 	Package->FullyLoad();
 

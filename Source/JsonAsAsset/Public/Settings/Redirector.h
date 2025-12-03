@@ -6,14 +6,33 @@
 #include "Engine/DeveloperSettings.h"
 #include "Redirector.generated.h"
 
+/* A point in a redirector */
 USTRUCT()
-struct FJRedirector
-{
+struct FJRedirectorPoint {
 	GENERATED_BODY()
 public:
-	UPROPERTY(EditAnywhere, Config, Category = PathRedirector)
-	FString Source;
+	/* Original path */
+	UPROPERTY(EditAnywhere, Config, Category = RedirectorPoint)
+	FString From;
 
-	UPROPERTY(EditAnywhere, Config, Category = PathRedirector)
-	FString Target;
+	/* Redirected path */
+	UPROPERTY(EditAnywhere, Config, Category = RedirectorPoint)
+	FString To;
+};
+
+USTRUCT()
+struct FJRedirector {
+	GENERATED_BODY()
+public:
+	/* The name of this redirector */
+	UPROPERTY(EditAnywhere, Config, Category = Redirector)
+	FName Name;
+	
+	/* The points on this redirector */
+	UPROPERTY(EditAnywhere, Config, Category = Redirector)
+	TArray<FJRedirectorPoint> Points;
+	
+	/* Enables this redirector */
+	UPROPERTY(EditAnywhere, Config, Category = Redirector)
+	bool Enable = true;
 };

@@ -80,8 +80,6 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 	ObjectPath = PackageIndex->Get()->GetStringField(TEXT("ObjectPath"));
 	ObjectPath.Split(".", &ObjectPath, nullptr);
 
-	RedirectPath(ObjectPath);
-
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
 	if (!Settings->AssetSettings.GameName.IsEmpty()) {
@@ -100,6 +98,8 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 	if (ObjectName.Contains(".")) {
 		ObjectName.Split(".", &Outer, &ObjectName);
 	}
+
+	RedirectPath(ObjectPath);
 
 	/* Try to load object using the object path and the object name combined */
 	TObjectPtr<T> LoadedObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *(ObjectPath + "." + ObjectName)));
@@ -159,17 +159,10 @@ template <typename T>
 TArray<TObjectPtr<T>> IImporter::LoadExport(const TArray<TSharedPtr<FJsonValue>>& PackageArray, TArray<TObjectPtr<T>> Array) {
 	for (const TSharedPtr<FJsonValue>& ArrayElement : PackageArray) {
 		const TSharedPtr<FJsonObject> ObjectPtr = ArrayElement->AsObject();
+		TObjectPtr<T> Out;
+		LoadExport<T>(&ObjectPtr, Out);
 
-		FString ObjectType, ObjectName, ObjectPath;
-		
-		ObjectPtr->GetStringField(TEXT("ObjectName")).Split("'", &ObjectType, &ObjectName);
-		ObjectPtr->GetStringField(TEXT("ObjectPath")).Split(".", &ObjectPath, nullptr);
-		RedirectPath(ObjectPath);
-
-		ObjectName = ObjectName.Replace(TEXT("'"), TEXT(""));
-
-		TObjectPtr<T> LoadedObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *(ObjectPath + "." + ObjectName)));
-		Array.Add(DownloadWrapper(LoadedObject, ObjectType, ObjectName, ObjectPath));
+		Array.Add(Out);
 	}
 
 	return Array;

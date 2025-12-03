@@ -997,19 +997,30 @@ inline UClass* LoadClass(const TSharedPtr<FJsonObject>& SuperStruct) {
 	return LoadBlueprintClass(ObjectPath);
 }
 
-inline void RedirectPath(FString& OutPath) {
+inline void RedirectPath(FString& Path) {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
-	for (auto [Source, Target] : Settings->AssetSettings.Redirectors) {
-		OutPath = OutPath.Replace(*Source, *Target);
+	for (const FJRedirector& Redirect : Settings->Redirectors) {
+		if (!Redirect.Enable) continue;
+
+		for (const FJRedirectorPoint& Point : Redirect.Points) {
+			Path = Path.Replace(*Point.From, *Point.To);
+		}
 	}
 }
 
-inline void ReverseRedirectPath(FString& OutPath) {
+inline void ReverseRedirectPath(FString& Path) {
 	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
 
-	for (const FJRedirector& Redirect : Settings->AssetSettings.Redirectors) {
-		OutPath = OutPath.Replace(*Redirect.Target, *Redirect.Source);
+	for (const FJRedirector& Redirect : Settings->Redirectors) {
+		if (!Redirect.Enable) {
+			continue;
+		}
+
+		for (int32 i = Redirect.Points.Num() - 1; i >= 0; i--) {
+			const FJRedirectorPoint& Point = Redirect.Points[i];
+			Path = Path.Replace(*Point.To, *Point.From);
+		}
 	}
 }
 

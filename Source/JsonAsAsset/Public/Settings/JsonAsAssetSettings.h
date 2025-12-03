@@ -42,9 +42,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
 	bool bSaveAssets = false;
-
-	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
-	TArray<FJRedirector> Redirectors;
 };
 
 USTRUCT()
@@ -86,6 +83,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, Config, Category = Configuration)
 	FJSettings AssetSettings;
+
+	UPROPERTY(EditAnywhere, Config, Category = Redirectors)
+	TArray<FJRedirector> Redirectors;
 
 	/* Retrieves assets from an API and imports references directly into your project. */
 	UPROPERTY(EditAnywhere, Config, Category = Cloud, DisplayName = "Enable Cloud")

@@ -127,8 +127,15 @@ void Cloud::Update() {
 
 	if (MetadataResponse->HasField(TEXT("major_version"))) {
 		const int MajorVersion = MetadataResponse->GetIntegerField(TEXT("major_version"));
-			
+
+		MutableSettings->Runtime.MajorVersion = MajorVersion;
 		MutableSettings->Runtime.bUE5Target = MajorVersion == 5;
+	}
+
+	if (MetadataResponse->HasField(TEXT("minor_version"))) {
+		const int MinorVersion = MetadataResponse->GetIntegerField(TEXT("minor_version"));
+			
+		MutableSettings->Runtime.MinorVersion = MinorVersion;
 	}
 
 	SavePluginConfig(MutableSettings);

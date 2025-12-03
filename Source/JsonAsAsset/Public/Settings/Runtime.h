@@ -14,6 +14,12 @@ public:
 	/* If the assets being imported, are from UE5 */
 	bool bUE5Target = false;
 
+	/* UE4.22 ~~> 22 */
+	int MinorVersion = -1;
+
+	/* UE4.22 ~~> 4 */
+	int MajorVersion = -1;
+
 	UPROPERTY(Config)
 	FDirectoryPath ExportDirectory;
 };

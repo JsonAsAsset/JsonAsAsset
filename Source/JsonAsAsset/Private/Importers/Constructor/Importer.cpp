@@ -99,6 +99,10 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 		ObjectName.Split(".", &Outer, &ObjectName);
 	}
 
+	if (!ObjectPath.StartsWith(TEXT("/"))) {
+		ObjectPath = "/" + ObjectPath;
+	}
+
 	RedirectPath(ObjectPath);
 
 	/* Try to load object using the object path and the object name combined */

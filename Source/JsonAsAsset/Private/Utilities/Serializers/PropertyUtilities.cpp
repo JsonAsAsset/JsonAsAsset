@@ -333,6 +333,22 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 					ExpressionInput->OutputIndex += 2;
 				}
 			}
+
+			if (Settings->Runtime.MajorVersion == 4 && Settings->Runtime.MinorVersion < 14) {
+				FExpressionInput* ExpressionInput = static_cast<FExpressionInput*>(OutValue);
+
+				if (ExpressionInput
+					&& ExpressionInput->Expression
+					&& ExpressionInput->Expression->GetFName().ToString().Contains("MaterialExpressionBreakMaterialAttributes")) {
+					if (ExpressionInput->OutputIndex > 3) {
+						ExpressionInput->OutputIndex += 1;
+					}
+
+					if (ExpressionInput->OutputIndex > 8) {
+						ExpressionInput->OutputIndex += 1;
+					}
+				}
+			}
 		}
 #endif
 	}

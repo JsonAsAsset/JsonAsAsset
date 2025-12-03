@@ -83,12 +83,23 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 				ModifiablePath.Split("/", nullptr, &PluginName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 				PluginName.Split("/", &PluginName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 
-				if (IPluginManager::Get().FindPlugin(PluginName) == nullptr)
+				if (IPluginManager::Get().FindPlugin(PluginName) == nullptr) {
 					CreatePlugin(PluginName);
+				}
 			}
 		}
 		else {
 			RedirectPath(ModifiablePath);
+
+			if (!ModifiablePath.StartsWith("/Game/") && !ModifiablePath.StartsWith("/Engine/")) {
+				FString PluginName;
+				ModifiablePath.Split("/", nullptr, &PluginName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+				PluginName.Split("/", &PluginName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+
+				if (IPluginManager::Get().FindPlugin(PluginName) == nullptr) {
+					CreatePlugin(PluginName);
+				}
+			}
 		}
 	} else {
 		FString RootName; {
@@ -292,6 +303,16 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 #endif
 
 	RedirectPath(PackagePath);
+
+	if (!PackagePath.StartsWith("/Game/") && !PackagePath.StartsWith("/Engine/")) {
+		FString PluginName;
+		PackagePath.Split("/", nullptr, &PluginName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+		PluginName.Split("/", &PluginName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+
+		if (IPluginManager::Get().FindPlugin(PluginName) == nullptr) {
+			CreatePlugin(PluginName);
+		}
+	}
 	
 	UPackage* Package = CreateAssetPackage(*PackagePath);
 	Package->FullyLoad();

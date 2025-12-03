@@ -34,13 +34,44 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 
 	if (Texture2D == nullptr) return false;
 
-#if ENGINE_UE5
-	Texture2D->SetPlatformData(new FTexturePlatformData());
-#else
-	Texture2D->PlatformData = new FTexturePlatformData();
-#endif
-
 	DeserializeTexture2D(Texture2D, Properties->GetObjectField(TEXT("Properties")));
+
+	const UJsonAsAssetSettings* Settings = GetSettings();
+
+	/* Normal Map Swizzle | Older Unreal Engine 4 builds */
+	if (!bUseOctetStream
+		&& Settings->Runtime.MajorVersion == 4 && Settings->Runtime.MinorVersion != -1 && Settings->Runtime.MinorVersion < 14
+		&&
+		(
+			Texture2D->LODGroup == TEXTUREGROUP_CharacterNormalMap
+			|| Texture2D->LODGroup == TEXTUREGROUP_VehicleNormalMap
+			|| Texture2D->LODGroup == TEXTUREGROUP_WorldNormalMap
+		)) {
+		FTextureSource Source = Texture2D->Source;
+		uint8* SrcData = Source.LockMip(0);
+
+		for (int32 i = 0; i < Texture2D->Source.GetSizeX() * Source.GetSizeY(); i++) {
+			uint8* Partition = SrcData + i * 4;
+
+			const uint8 G = Partition[1];
+			const uint8 R = Partition[2];
+			const uint8 A = Partition[3];
+
+			Partition[0] = R;
+			Partition[1] = G;
+			Partition[2] = A;
+			Partition[3] = 255;
+		}
+
+		Source.UnlockMip(0);
+		Texture2D->UpdateResource();
+	} else {
+#if ENGINE_UE5
+		Texture2D->SetPlatformData(new FTexturePlatformData());
+#else
+		Texture2D->PlatformData = new FTexturePlatformData();
+#endif
+	}
 
 #if ENGINE_UE5
 	FTexturePlatformData* PlatformData = Texture2D->GetPlatformData();
@@ -55,7 +86,7 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 			Texture2D->MipGenSettings = TMGS_NoMipmaps;
 		}
 	}
-
+	
 	if (bUseOctetStream) {
 		DeserializeTexturePlatformData(Texture2D, Data, *PlatformData, Properties);
 	}

@@ -11,11 +11,11 @@ USTRUCT()
 struct FJRedirectorPoint {
 	GENERATED_BODY()
 public:
-	/* Original path */
+	/* Original path. (ex: /Plugin_Name/) */
 	UPROPERTY(EditAnywhere, Config, Category = RedirectorPoint)
 	FString From;
 
-	/* Redirected path */
+	/* Redirected path. (ex: /Plugin_Name/) */
 	UPROPERTY(EditAnywhere, Config, Category = RedirectorPoint)
 	FString To;
 };

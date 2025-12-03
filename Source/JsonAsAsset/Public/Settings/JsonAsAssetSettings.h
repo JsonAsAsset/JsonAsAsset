@@ -84,7 +84,7 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category = Configuration)
 	FJSettings AssetSettings;
 
-	UPROPERTY(EditAnywhere, Config, Category = Redirectors)
+	UPROPERTY(EditAnywhere, Config, Category = Redirectors, meta = (TitleProperty = "Name"))
 	TArray<FJRedirector> Redirectors;
 
 	/* Retrieves assets from an API and imports references directly into your project. */

@@ -2,8 +2,6 @@
 
 #include "Modules/Cloud/Tools/SkeletalMeshData.h"
 
-#include <string>
-
 #include "ClothingAssetBase.h"
 #include "Utilities/EngineUtilities.h"
 
@@ -23,7 +21,6 @@
 #include "Engine/SkinnedAssetCommon.h"
 #endif
 
-#include "MaterialStatsCommon.h"
 #include "EditorFramework/AssetImportData.h"
 #include "Importers/Constructor/Importer.h"
 

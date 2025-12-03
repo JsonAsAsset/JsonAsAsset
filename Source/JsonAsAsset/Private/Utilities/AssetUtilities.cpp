@@ -273,7 +273,7 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 		Path.Split(".", &PackagePath, &AssetName);
 	}
 
-	const bool bUseOctetStream = Type == "TextureLightProfile"
+	bool bUseOctetStream = Type == "TextureLightProfile"
 					   || Type == "TextureCube"
 					   || Type == "VolumeTexture"
 					   || Type == "TextureRenderTarget2D";

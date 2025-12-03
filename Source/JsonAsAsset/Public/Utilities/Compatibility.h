@@ -72,6 +72,18 @@
 	#define UE4_27_ONLY_BELOW 0
 #endif
 
+#if ENGINE_UE4 && ENGINE_MINOR_VERSION >= 27
+	#define UE4_27 1
+#else
+	#define UE4_27 0
+#endif
+
+#if (ENGINE_UE4 && ENGINE_MINOR_VERSION >= 27) || ENGINE_UE5
+	#define UE4_27_AND_UE5 1
+#else
+	#define UE4_27_AND_UE5 0
+#endif
+
 #if ENGINE_UE4 && ENGINE_MINOR_VERSION <= 26
 	#define UE4_26_BELOW 1
 #else

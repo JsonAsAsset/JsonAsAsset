@@ -1142,3 +1142,19 @@ inline bool HandleAssetCreation(UObject* Asset, UPackage* Package) {
 inline void LaunchURL(const FString& URL) {
 	FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);
 }
+
+inline UAssetImportData* GetAssetImportData(USkeletalMesh* InMesh) {
+#if UE4_27_AND_UE5
+	return InMesh->GetAssetImportData();
+#else
+	return InMesh->AssetImportData;
+#endif
+}
+
+inline void SetAssetImportData(USkeletalMesh* InMesh, UAssetImportData* AssetImportData) {
+#if UE4_27_AND_UE5
+	InMesh->SetAssetImportData(AssetImportData);
+#else
+	InMesh->AssetImportData = AssetImportData;
+#endif
+}

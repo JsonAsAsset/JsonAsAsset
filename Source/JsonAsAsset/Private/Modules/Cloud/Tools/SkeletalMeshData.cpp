@@ -150,8 +150,8 @@ void TSkeletalMeshData::Execute() {
 						FString SourceImportFilename = LODObject->GetStringField(TEXT("SourceImportFilename"));
 						if (SourceImportFilename.IsEmpty()) continue;
 
-						SkeletalMesh->SetAssetImportData(NewObject<UAssetImportData>(SkeletalMesh, TEXT("AssetImportData")));
-						SkeletalMesh->GetAssetImportData()->SourceData.SourceFiles.Add(SourceImportFilename);
+						SetAssetImportData(SkeletalMesh, NewObject<UAssetImportData>(SkeletalMesh, TEXT("AssetImportData")));
+						GetAssetImportData(SkeletalMesh)->SourceData.SourceFiles.Add(SourceImportFilename);
 					}
 				}
 

@@ -46,11 +46,7 @@ void TToolClearImportData::Execute() {
 		}
 
 		if (USkeletalMesh* SkeletalMesh = Cast<USkeletalMesh>(Asset)) {
-#if UE4_26
-			SkeletalMesh->AssetImportData = nullptr;
-#else
-			SkeletalMesh->SetAssetImportData(nullptr);
-#endif
+			SetAssetImportData(SkeletalMesh, nullptr);
 			SkeletalMesh->Modify();
 		}
 

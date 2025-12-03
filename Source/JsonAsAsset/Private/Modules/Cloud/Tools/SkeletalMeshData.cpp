@@ -93,7 +93,7 @@ void TSkeletalMeshData::Execute() {
 			if (Type == "SkeletalMesh") {
 				bool UseClothingAssets = false;
 
-#if ENGINE_UE4 && ENGINE_MINOR_VERSION > 27
+#if UE4_27
 				TArray<UClothingAssetBase*> ClothingAssets = SkeletalMesh->GetMeshClothingAssets();
 
 				if (UseClothingAssets) {
@@ -184,7 +184,7 @@ void TSkeletalMeshData::Execute() {
 				SkeletalMesh->Modify();
 				
 				if (UseClothingAssets) {
-#if ENGINE_UE4 && ENGINE_MINOR_VERSION > 27
+#if UE4_27
 					ClothingAssets = SkeletalMesh->GetMeshClothingAssets();
 				
 					for (UClothingAssetBase* ClothingAssetBase : ClothingAssets) {
@@ -228,7 +228,7 @@ void TSkeletalMeshData::Execute() {
 }
 
 TArray<FSkeletalMaterial> TSkeletalMeshData::GetMaterials(USkeletalMesh* Mesh) {
-#if ENGINE_UE4 && ENGINE_MINOR_VERSION > 27
+#if UE4_27
 	return Mesh->GetMaterials();
 #else
 	return Mesh->Materials;

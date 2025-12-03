@@ -39,7 +39,7 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	if (!bUseOctetStream
-		&& Settings->Runtime.MajorVersion == 4 && Settings->Runtime.MinorVersion != -1 && Settings->Runtime.MinorVersion < 14
+		&& Settings->Runtime.IsOlderUE4Target()
 		&&
 		(
 			Texture2D->LODGroup == TEXTUREGROUP_CharacterNormalMap

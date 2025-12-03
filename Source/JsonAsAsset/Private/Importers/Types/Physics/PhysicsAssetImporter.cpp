@@ -21,9 +21,12 @@ bool IPhysicsAssetImporter::Import() {
 
 	DeserializeExports(PhysicsAsset, false);
 	FUObjectExportContainer ExportContainer = GetExportContainer();
-	
+	const UJsonAsAssetSettings* Settings = GetSettings();
+
 	/* SkeletalBodySetups ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	ProcessJsonArrayField(GetAssetData(), TEXT("SkeletalBodySetups"), [&](const TSharedPtr<FJsonObject>& ObjectField) {
+	const FString SkeletalBodySetupsName = !Settings->Runtime.IsOlderUE4Target() ? "SkeletalBodySetups" : "BodySetup";
+
+	ProcessJsonArrayField(GetAssetData(), SkeletalBodySetupsName, [&](const TSharedPtr<FJsonObject>& ObjectField) {
 		const FName ExportName = GetExportNameOfSubobject(ObjectField->GetStringField(TEXT("ObjectName")));
 		const TSharedPtr<FJsonObject> ExportJson = ExportContainer.Find(ExportName).JsonObject;
 

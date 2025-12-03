@@ -20,6 +20,10 @@ public:
 	/* UE4.22 ~~> 4 */
 	int MajorVersion = -1;
 
+	bool IsOlderUE4Target() const {
+		return MajorVersion == 4 && MinorVersion != -1 && MinorVersion < 14;
+	}
+
 	UPROPERTY(Config)
 	FDirectoryPath ExportDirectory;
 };

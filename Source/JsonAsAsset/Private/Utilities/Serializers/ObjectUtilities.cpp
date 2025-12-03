@@ -113,9 +113,12 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 		const TSharedPtr<FJsonObject> TemplateObject = ExportObject->GetObjectField(TEXT("Template"));
 		ClassName = ReadPathFromObject(&TemplateObject).Replace(TEXT("Default__"), TEXT(""));
 	}
-
-	if (ClassName.Contains("'")) return;
-
+	
+	if (ClassName.Contains("'")) {
+		ClassName.Split("'", nullptr, &ClassName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+		ClassName.Split("'", &ClassName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+	}
+	
 	const UClass* Class = FindClassByType(ClassName);
 	
 	if (!Class) {

@@ -38,7 +38,6 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 
 	const UJsonAsAssetSettings* Settings = GetSettings();
 
-	/* Normal Map Swizzle | Older Unreal Engine 4 builds */
 	if (!bUseOctetStream
 		&& Settings->Runtime.MajorVersion == 4 && Settings->Runtime.MinorVersion != -1 && Settings->Runtime.MinorVersion < 14
 		&&
@@ -46,26 +45,25 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 			Texture2D->LODGroup == TEXTUREGROUP_CharacterNormalMap
 			|| Texture2D->LODGroup == TEXTUREGROUP_VehicleNormalMap
 			|| Texture2D->LODGroup == TEXTUREGROUP_WorldNormalMap
+			|| Texture2D->CompressionSettings == TC_Normalmap
 		)) {
-		FTextureSource Source = Texture2D->Source;
-		uint8* SrcData = Source.LockMip(0);
 
-		for (int32 i = 0; i < Texture2D->Source.GetSizeX() * Source.GetSizeY(); i++) {
-			uint8* Partition = SrcData + i * 4;
+		/* Normal Map Swizzle | Older Unreal Engine 4 builds */
+		const int32 Width = Texture2D->Source.GetSizeX();
+		const int32 Height = Texture2D->Source.GetSizeY();
 
-			const uint8 G = Partition[1];
-			const uint8 R = Partition[2];
-			const uint8 A = Partition[3];
-
-			Partition[0] = R;
-			Partition[1] = G;
-			Partition[2] = A;
-			Partition[3] = 255;
+		uint8* Src = Texture2D->Source.LockMip(0);
+		for (int32 i = 0, n = Width * Height; i < n; i++)
+		{
+			uint8* p = Src + i * 4;
+			const uint8 R = p[2], G = p[1], A = p[3];
+			p[0] = R; p[1] = G; p[2] = A; p[3] = 255;
 		}
+		
+		Texture2D->Source.UnlockMip(0);
+	}
 
-		Source.UnlockMip(0);
-		Texture2D->UpdateResource();
-	} else {
+	else {
 #if ENGINE_UE5
 		Texture2D->SetPlatformData(new FTexturePlatformData());
 #else

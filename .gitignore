@@ -15,6 +15,7 @@ Source/JsonAsAsset/Public/Importers/Types/Blueprint/*
 
 # NotForLicensees ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /Source/JsonAsAsset/Private/Extensions/NotForLicensees/*
+/Source/JsonAsAsset/Public/Extensions/NotForLicensees
 
 /Binaries
 
@@ -96,5 +97,5 @@ _[Ss]cripts
 *.v1
 *.sln
 
+
 .idea/
-/Source/JsonAsAsset/Public/Extensions/NotForLicensees

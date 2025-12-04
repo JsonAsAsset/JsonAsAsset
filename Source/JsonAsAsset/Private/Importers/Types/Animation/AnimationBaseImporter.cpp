@@ -80,7 +80,7 @@ bool IAnimationBaseImporter::Import() {
 #endif
 #endif
 
-	/* Some CUE4Parse versions have different named objects for curves ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	/* Some CUEParse versions have different named objects for curves ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	const TSharedPtr<FJsonObject>* RawCurveData;
 	
 	if (GetAssetData()->TryGetObjectField(TEXT("RawCurveData"), RawCurveData))

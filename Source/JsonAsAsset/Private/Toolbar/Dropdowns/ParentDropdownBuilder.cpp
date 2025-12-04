@@ -8,7 +8,7 @@
 #include "Utilities/EngineUtilities.h"
 
 void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
-    const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin("JsonAsAsset");
+    const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(GJsonAsAssetName.ToString());
 	
 	MenuBuilder.BeginSection(
 		"JsonAsAssetSection", 

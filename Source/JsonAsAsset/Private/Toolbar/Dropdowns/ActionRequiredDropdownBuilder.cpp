@@ -5,11 +5,11 @@
 #include "Utilities/EngineUtilities.h"
 
 void IActionRequiredDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
-	UJsonAsAssetSettings* Settings = GetSettings();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	TArray<FString> RequiredActions;
-
-	if (!UJsonAsAssetSettings::IsSetup(Settings, RequiredActions)) {
+	
+	if (!Settings->IsValid(RequiredActions)) {
 		MenuBuilder.BeginSection("JsonAsAssetActionRequired", FText::FromString("Action Required"));
 
 		for (FString Action : RequiredActions) {

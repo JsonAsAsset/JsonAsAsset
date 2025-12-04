@@ -78,7 +78,7 @@ protected:
 
 template <class T>
 TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path) {
-    const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+    const UJsonAsAssetSettings* Settings = GetSettings();
 
     if (Type == "Texture") Type = "Texture2D";
     

@@ -14,6 +14,7 @@
 
 #include "Modules/UI/StyleModule.h"
 #include "Toolbar/Toolbar.h"
+#include "Utilities/EngineUtilities.h"
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #ifdef _MSC_VER
@@ -25,7 +26,7 @@ void FJsonAsAssetModule::StartupModule() {
     FJsonAsAssetStyle::Initialize();
     FJsonAsAssetStyle::ReloadTextures();
 	
-    /* Register toolbar on startup */
+    /* Register Toolbar on startup */
 	FJsonAsAssetToolbar Toolbar;
 
 #if ENGINE_UE5
@@ -47,8 +48,6 @@ void FJsonAsAssetModule::StartupModule() {
 	}
 #endif
 
-    const UJsonAsAssetSettings* Settings = GetMutableDefault<UJsonAsAssetSettings>();
-
     /* Set up message log for JsonAsAsset */
     {
         FMessageLogModule& MessageLogModule = FModuleManager::LoadModuleChecked<FMessageLogModule>("MessageLog");
@@ -56,15 +55,14 @@ void FJsonAsAssetModule::StartupModule() {
         InitOptions.bShowPages = true;
         InitOptions.bAllowClear = true;
         InitOptions.bShowFilters = true;
-        MessageLogModule.RegisterLogListing("JsonAsAsset", FText::FromString("JsonAsAsset"), InitOptions);
+        MessageLogModule.RegisterLogListing(GJsonAsAssetName, FText::FromString(GJsonAsAssetName.ToString()), InitOptions);
     }
+
+    const UJsonAsAssetSettings* Settings = GetSettings();
 	
 	if (!Settings->Versioning.bDisable) {
 		GJsonAsAssetVersioning.Update();
 	}
-
-	/* Update ExportDirectory if empty */
-	Settings->ReadAppData();
 }
 
 void FJsonAsAssetModule::ShutdownModule() {
@@ -78,7 +76,7 @@ void FJsonAsAssetModule::ShutdownModule() {
 	/* Unregister message log listing if the module is loaded */
 	if (FModuleManager::Get().IsModuleLoaded("MessageLog")) {
 		FMessageLogModule& MessageLogModule = FModuleManager::GetModuleChecked<FMessageLogModule>("MessageLog");
-		MessageLogModule.UnregisterLogListing("JsonAsAsset");
+		MessageLogModule.UnregisterLogListing(GJsonAsAssetName);
 	}
 }
 

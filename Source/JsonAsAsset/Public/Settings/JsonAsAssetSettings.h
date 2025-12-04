@@ -9,8 +9,8 @@
 #include "Types/AnimationBlueprintSettings.h"
 #include "Types/MaterialSettings.h"
 #include "Types/TextureSettings.h"
-#include "Runtime.h"
 #include "Redirector.h"
+#include "Interfaces/Validation.h"
 
 #include "JsonAsAssetSettings.generated.h"
 
@@ -54,30 +54,20 @@ public:
 	bool bDisable = false;
 };
 
+extern FName GJsonAsAssetName;
+extern FName GJsonAsAssetSettingsCategoryName;
+
 /* Powerful Unreal Engine Plugin that imports assets from FModel */
 UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig)
-class JSONASASSET_API UJsonAsAssetSettings : public UDeveloperSettings {
+class JSONASASSET_API UJsonAsAssetSettings : public UDeveloperSettings, public IJsonAsAssetValidationInterface {
 	GENERATED_BODY()
 public:
 	UJsonAsAssetSettings();
 
-protected:
-#if WITH_EDITOR
-	/** Gets the section text. */
+	/* Overriden to stop the Editor spacing the words between JsonAsAsset */
 	virtual FText GetSectionText() const override;
-#endif
-
-public:
-	static bool EnsureExportDirectoryIsValid(UJsonAsAssetSettings* Settings);
-
-	static bool IsSetup(UJsonAsAssetSettings* Settings, TArray<FString>& Reasons);
-	static bool IsSetup(UJsonAsAssetSettings* Settings);
-
-	static void ReadAppData();
-public:
-	UPROPERTY(Config)
-	FJRuntime Runtime;
 	
+public:
 	UPROPERTY(EditAnywhere, Config, Category = Configuration)
 	FJVersioningSettings Versioning;
 	

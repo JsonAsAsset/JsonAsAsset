@@ -19,6 +19,7 @@
 #include "HttpModule.h"
 #include "Importers/Constructor/ImportReader.h"
 #include "Interfaces/IHttpResponse.h"
+#include "Settings/Runtime.h"
 #include "Utilities/RemoteUtilities.h"
 
 /* CreateAssetPackage Implementations ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -35,7 +36,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Path) {
 }
 
 UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString& OutputPath, FString& FailureReason) {
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 	
 	FString ModifiablePath = OutputPath;
 	
@@ -43,13 +44,13 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 	if (!ModifiablePath.StartsWith("/Game/") && !ModifiablePath.StartsWith("/Plugins/") && ModifiablePath.Contains("/Content/")) {
 		if (!Settings->AssetSettings.GameName.IsEmpty()) {
 			ModifiablePath = ModifiablePath.Replace(*(Settings->AssetSettings.GameName + "/Content"), TEXT("/Game"));
-			ModifiablePath.Split(*(Settings->Runtime.ExportDirectory.Path + "/"), nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+			ModifiablePath.Split(*(GJsonAsAssetRuntime.ExportDirectory.Path + "/"), nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 			ModifiablePath.Split("/", &ModifiablePath, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 			ModifiablePath += "/";
 		}
 
 		if (!ModifiablePath.StartsWith("/Game/") && !ModifiablePath.StartsWith("/Plugins/") && ModifiablePath.Contains("/Content/")) {
-			ModifiablePath.Split(*(Settings->Runtime.ExportDirectory.Path + "/"), nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+			ModifiablePath.Split(*(GJsonAsAssetRuntime.ExportDirectory.Path + "/"), nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 			ModifiablePath.Split("/", nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 			ModifiablePath.Split("/", &ModifiablePath, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 			/* Ex: RestPath: Plugins/Folder/BaseTextures */
@@ -285,7 +286,7 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 }
 
 bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& JsonExport, const FString& Path, const FString& Type, TArray<uint8> Data, UTexture*& OutTexture) {
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 	UTexture* Texture = nullptr;
 	
 	FString PackagePath;

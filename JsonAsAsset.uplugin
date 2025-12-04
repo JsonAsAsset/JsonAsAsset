@@ -4,7 +4,7 @@
 	"VersionName": "1.4.0",
 	"FriendlyName": "JsonAsAsset",
 	"Description": "Powerful Unreal Engine Plugin that imports assets from FModel",
-	"Category": "Importers",
+	"Category": "Asset Tools",
 	"CreatedBy": "JsonAsAsset",
 	"CreatedByURL": "https://github.com/JsonAsAsset",
 	"DocsURL": "https://github.com/JsonAsAsset/JsonAsAsset",

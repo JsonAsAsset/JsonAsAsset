@@ -6,10 +6,10 @@
 #include "Utilities/EngineUtilities.h"
 
 void ICloudDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
-	UJsonAsAssetSettings* Settings = GetSettings();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 	
 	/* Cloud must be enabled, and if there is an action required, don't create Cloud's dropdown */
-	if (!Settings->bEnableCloudServer || !UJsonAsAssetSettings::IsSetup(Settings)) {
+	if (!Settings->bEnableCloudServer || !Settings->IsValid()) {
 		return;
 	}
 	

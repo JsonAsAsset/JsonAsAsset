@@ -4,13 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
-#include "Runtime.generated.h"
 
-USTRUCT()
-struct FJRuntime
-{
-	GENERATED_BODY()
-public:
+struct FJRuntime {
 	/* If the assets being imported, are from UE5 */
 	bool bUE5Target = false;
 
@@ -20,10 +15,13 @@ public:
 	/* UE4.22 ~~> 4 */
 	int MajorVersion = -1;
 
-	bool IsOlderUE4Target() const {
-		return MajorVersion == 4 && MinorVersion != -1 && MinorVersion < 14;
-	}
-
-	UPROPERTY(Config)
 	FDirectoryPath ExportDirectory;
+
+	/* Helper Functions ~~~~~~~~~~~ */
+	bool IsOlderUE4Target() const;
+
+	/* Update Functions ~~~~~~~~~~~ */
+	void Update();
 };
+
+extern FJRuntime GJsonAsAssetRuntime;

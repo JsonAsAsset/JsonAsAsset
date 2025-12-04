@@ -43,7 +43,7 @@ void FJsonAsAssetVersioning::Update() {
 	Request->SetURL(TEXT("https://api.github.com/repos/JsonAsAsset/JsonAsAsset/releases/latest"));
 	Request->SetVerb(TEXT("GET"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-	Request->SetHeader(TEXT("User-Agent"), TEXT("JsonAsAsset"));
+	Request->SetHeader(TEXT("User-Agent"), GJsonAsAssetName.ToString());
 
 	Request->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, const FHttpResponsePtr& Resp, const bool bSuccess) {
 		/* Check if the request was successful and the response is valid */
@@ -67,7 +67,7 @@ void FJsonAsAssetVersioning::Update() {
 			return;
 		}
 
-		const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin("JsonAsAsset");
+		const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(GJsonAsAssetName.ToString());
 
 		const FString VersionName = JsonObject->GetStringField(TEXT("name"));
 		const FString CurrentVersionName = Plugin->GetDescriptor().VersionName;

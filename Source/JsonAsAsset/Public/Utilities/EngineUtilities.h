@@ -37,6 +37,10 @@
 #include "UObject/SavePackage.h"
 #endif
 
+inline UJsonAsAssetSettings* GetSettings() {
+	return GetMutableDefault<UJsonAsAssetSettings>();
+}
+
 inline void BrowseToAsset(UObject* Asset) {
 	/* Browse to newly added Asset in the Content Browser */
 	const TArray<FAssetData>& Assets = { Asset };
@@ -44,11 +48,7 @@ inline void BrowseToAsset(UObject* Asset) {
 	ContentBrowserModule.Get().SyncBrowserToAssets(Assets);
 }
 
-/**
- * Get the asset currently selected in the Content Browser.
- * 
- * @return Selected Asset
- */
+/* Get the asset currently selected in the Content Browser. */
 template <typename T>
 T* GetSelectedAsset(const bool SuppressErrors = false, FString OptionalAssetNameCheck = "") {
 	const FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
@@ -480,7 +480,7 @@ inline void SavePluginConfig(UDeveloperSettings* EditorSettings) {
 }
 
 inline void OpenPluginSettings() {
-	FModuleManager::LoadModuleChecked<ISettingsModule>("Settings").ShowViewer("Editor", "Plugins", "JsonAsAsset");
+	FModuleManager::LoadModuleChecked<ISettingsModule>("Settings").ShowViewer("Editor", GJsonAsAssetSettingsCategoryName, GJsonAsAssetName);
 }
 
 /* Simple handler for JsonArray */
@@ -576,7 +576,7 @@ inline FString ReadPathFromObject(const TSharedPtr<FJsonObject>* PackageIndex) {
 	ObjectPath = PackageIndex->Get()->GetStringField(TEXT("ObjectPath"));
 	ObjectPath.Split(".", &ObjectPath, nullptr);
 
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	if (!Settings->AssetSettings.GameName.IsEmpty()) {
 		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.GameName + "/Content"), TEXT("/Game"));
@@ -961,7 +961,7 @@ inline TSubclassOf<UObject> LoadClassFromPath(const FString& ObjectName, const F
 }
 
 inline TSubclassOf<UObject> LoadBlueprintClass(FString& ObjectPath) {
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 	
 	if (!Settings->AssetSettings.GameName.IsEmpty()) {
 		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.GameName + "/Content"), TEXT("/Game"));
@@ -998,7 +998,7 @@ inline UClass* LoadClass(const TSharedPtr<FJsonObject>& SuperStruct) {
 }
 
 inline void RedirectPath(FString& Path) {
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	for (const FJRedirector& Redirect : Settings->Redirectors) {
 		if (!Redirect.Enable) continue;
@@ -1010,7 +1010,7 @@ inline void RedirectPath(FString& Path) {
 }
 
 inline void ReverseRedirectPath(FString& Path) {
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	for (const FJRedirector& Redirect : Settings->Redirectors) {
 		if (!Redirect.Enable) {
@@ -1026,13 +1026,13 @@ inline void ReverseRedirectPath(FString& Path) {
 
 inline TSharedRef<IMessageLogListing> GetMessageLogListing() {
 	FMessageLogModule& MessageLogModule = FModuleManager::GetModuleChecked<FMessageLogModule>("MessageLog");
-	const TSharedRef<IMessageLogListing> LogListing = MessageLogModule.GetLogListing("JsonAsAsset");
+	const TSharedRef<IMessageLogListing> LogListing = MessageLogModule.GetLogListing(GJsonAsAssetName);
 
 	return LogListing;
 }
 
 inline FMessageLog GetMessageLog() {
-	return FMessageLog(FName("JsonAsAsset"));
+	return FMessageLog(FName(GJsonAsAssetName));
 }
 
 inline void OpenMessageLog() {
@@ -1051,10 +1051,6 @@ inline void RemoveNotification(TWeakPtr<SNotificationItem> Notification) {
 		Item->Fadeout();
 		Notification.Reset();
 	}
-}
-
-inline UJsonAsAssetSettings* GetSettings() {
-	return GetMutableDefault<UJsonAsAssetSettings>();
 }
 
 inline FJsonObject* EnsureObjectField(FJsonObject* Parent, const FString& FieldName) {

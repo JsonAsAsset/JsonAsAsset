@@ -6,6 +6,7 @@
 #include "Importers/Constructor/TemplatedImporter.h"
 #include "Importers/Types/DataAssetImporter.h"
 #include "Importers/Types/Texture/TextureImporter.h"
+#include "Settings/Runtime.h"
 #include "Styling/SlateIconFinder.h"
 #include "Utilities/AssetUtilities.h"
 #include "Utilities/EngineUtilities.h"
@@ -45,18 +46,18 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 
 	if (LocalPackage == nullptr) {
 		/* Try fixing our Export Directory Settings using the provided File directory if local package not found */
-        UJsonAsAssetSettings* PluginSettings = GetMutableDefault<UJsonAsAssetSettings>();
+        UJsonAsAssetSettings* PluginSettings = GetSettings();
 
-		PluginSettings->ReadAppData();
+		GJsonAsAssetRuntime.Update();
 		LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, FailureReason);
 
 		if (LocalPackage == nullptr) {
-			FString ExportDirectoryCache = PluginSettings->Runtime.ExportDirectory.Path;
+			FString ExportDirectoryCache = GJsonAsAssetRuntime.ExportDirectory.Path;
 		
 			if (FString DirectoryPathFix; File.Split(TEXT("Output/Exports/"), &DirectoryPathFix, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd)) {
 				DirectoryPathFix = DirectoryPathFix + TEXT("Output/Exports");
 
-				PluginSettings->Runtime.ExportDirectory.Path = DirectoryPathFix;
+				GJsonAsAssetRuntime.ExportDirectory.Path = DirectoryPathFix;
 				SavePluginConfig(PluginSettings);
 
 				/* Retry creating the asset package */
@@ -64,7 +65,7 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 
 				/* Undo the change if unsuccessful */
 				if (LocalPackage == nullptr) {
-					PluginSettings->Runtime.ExportDirectory.Path = ExportDirectoryCache;
+					GJsonAsAssetRuntime.ExportDirectory.Path = ExportDirectoryCache;
 
 					SavePluginConfig(PluginSettings);
 				}

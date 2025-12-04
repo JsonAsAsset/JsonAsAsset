@@ -8,6 +8,7 @@
 #include "UObject/TextProperty.h"
 
 /* Struct Serializers */
+#include "Settings/Runtime.h"
 #include "Utilities/Serializers/Structs/DateTimeSerializer.h"
 #include "Utilities/Serializers/Structs/FallbackStructSerializer.h"
 #include "Utilities/Serializers/Structs/TimeSpanSerializer.h"
@@ -320,9 +321,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 #if ENGINE_UE4
 		/* If we're importing from UE5 to UE4, adjust the material attribute nodes to adjust for attributes that don't exist */
 		if (Property->GetCPPType(nullptr, CPPF_None) == TEXT("FExpressionInput")) {
-			UJsonAsAssetSettings* Settings = GetSettings();
-			
-			if (Settings->Runtime.bUE5Target) {
+			if (GJsonAsAssetRuntime.bUE5Target) {
 				FExpressionInput* ExpressionInput = static_cast<FExpressionInput*>(OutValue);
 
 				if (ExpressionInput &&
@@ -334,7 +333,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				}
 			}
 
-			if (Settings->Runtime.IsOlderUE4Target()) {
+			if (GJsonAsAssetRuntime.IsOlderUE4Target()) {
 				FExpressionInput* ExpressionInput = static_cast<FExpressionInput*>(OutValue);
 
 				if (ExpressionInput

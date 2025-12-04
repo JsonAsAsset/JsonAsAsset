@@ -47,7 +47,7 @@ bool IMaterialImporter::Import() {
 	/* Iterate through all the expressions, and set properties */
 	PropagateExpressions(ExpressionContainer);
 
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 
 #if ENGINE_UE5
 	UMaterialEditorOnlyData* EditorOnlyData = Material->GetEditorOnlyData();

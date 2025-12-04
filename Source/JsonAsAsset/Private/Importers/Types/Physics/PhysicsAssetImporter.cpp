@@ -4,6 +4,7 @@
 #include "Utilities/EngineUtilities.h"
 
 #include "PhysicsEngine/PhysicsConstraintTemplate.h"
+#include "Settings/Runtime.h"
 
 UObject* IPhysicsAssetImporter::CreateAsset(UObject* CreatedAsset) {
 	return IImporter::CreateAsset(NewObject<UPhysicsAsset>(GetPackage(), UPhysicsAsset::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
@@ -21,10 +22,9 @@ bool IPhysicsAssetImporter::Import() {
 
 	DeserializeExports(PhysicsAsset, false);
 	FUObjectExportContainer ExportContainer = GetExportContainer();
-	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	/* SkeletalBodySetups ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	const FString SkeletalBodySetupsName = !Settings->Runtime.IsOlderUE4Target() ? "SkeletalBodySetups" : "BodySetup";
+	const FString SkeletalBodySetupsName = !GJsonAsAssetRuntime.IsOlderUE4Target() ? "SkeletalBodySetups" : "BodySetup";
 
 	ProcessJsonArrayField(GetAssetData(), SkeletalBodySetupsName, [&](const TSharedPtr<FJsonObject>& ObjectField) {
 		const FName ExportName = GetExportNameOfSubobject(ObjectField->GetStringField(TEXT("ObjectName")));

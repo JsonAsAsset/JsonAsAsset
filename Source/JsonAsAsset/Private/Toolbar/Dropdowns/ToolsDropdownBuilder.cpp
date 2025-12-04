@@ -14,7 +14,7 @@
 void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	UJsonAsAssetSettings* Settings = GetSettings();
 	
-	if (!UJsonAsAssetSettings::IsSetup(Settings)) {
+	if (!Settings->IsValid()) {
 		return;
 	}
 	

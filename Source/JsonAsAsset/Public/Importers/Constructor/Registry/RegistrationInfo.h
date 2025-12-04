@@ -32,7 +32,7 @@ inline TMap<TArray<FString>, FImporterRegistrationInfo>& GetFactoryRegistry() {
 }
 
 inline FImporterFactoryDelegate* FindFactoryForAssetType(const FString& AssetType) {
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	for (auto& Pair : GetFactoryRegistry()) {
 		if (!Settings->bEnableExperiments) {

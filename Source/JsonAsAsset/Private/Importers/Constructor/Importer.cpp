@@ -80,7 +80,7 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 	ObjectPath = PackageIndex->Get()->GetStringField(TEXT("ObjectPath"));
 	ObjectPath.Split(".", &ObjectPath, nullptr);
 
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	if (!Settings->AssetSettings.GameName.IsEmpty()) {
 		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.GameName + "/Content/"), TEXT("/Game/"));
@@ -173,7 +173,7 @@ TArray<TObjectPtr<T>> IImporter::LoadExport(const TArray<TSharedPtr<FJsonValue>>
 }
 
 void IImporter::Save() const {
-	const UJsonAsAssetSettings* Settings = GetDefault<UJsonAsAssetSettings>();
+	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	/* Ensure the package is valid before proceeding */
 	if (GetPackage() == nullptr) {

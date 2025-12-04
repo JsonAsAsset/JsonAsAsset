@@ -5,6 +5,7 @@
 #include "HttpModule.h"
 #include "GenericPlatform/GenericPlatformHttp.h"
 #include "Settings/JsonAsAssetSettings.h"
+#include "Settings/Runtime.h"
 #include "Utilities/EngineUtilities.h"
 #include "Utilities/RemoteUtilities.h"
 
@@ -114,7 +115,7 @@ TArray<TSharedPtr<FJsonValue>> Cloud::GetExports(const FString& RequestURL, cons
 }
 
 void Cloud::Update() {
-	UJsonAsAssetSettings* MutableSettings = GetMutableDefault<UJsonAsAssetSettings>();
+	UJsonAsAssetSettings* MutableSettings = GetSettings();
 	if (!MutableSettings->bEnableCloudServer) return;
 	
 	const auto MetadataResponse = Get("/api/metadata");
@@ -128,14 +129,14 @@ void Cloud::Update() {
 	if (MetadataResponse->HasField(TEXT("major_version"))) {
 		const int MajorVersion = MetadataResponse->GetIntegerField(TEXT("major_version"));
 
-		MutableSettings->Runtime.MajorVersion = MajorVersion;
-		MutableSettings->Runtime.bUE5Target = MajorVersion == 5;
+		GJsonAsAssetRuntime.MajorVersion = MajorVersion;
+		GJsonAsAssetRuntime.bUE5Target = MajorVersion == 5;
 	}
 
 	if (MetadataResponse->HasField(TEXT("minor_version"))) {
 		const int MinorVersion = MetadataResponse->GetIntegerField(TEXT("minor_version"));
 			
-		MutableSettings->Runtime.MinorVersion = MinorVersion;
+		GJsonAsAssetRuntime.MinorVersion = MinorVersion;
 	}
 
 	SavePluginConfig(MutableSettings);

@@ -10,6 +10,7 @@
 #include "Factories/TextureRenderTargetFactoryNew.h"
 #include "nvimage/DirectDrawSurface.h"
 #include "nvimage/Image.h"
+#include "Settings/Runtime.h"
 #include "ThirdParty/NVTT/ThirdParty/NVTTStream.h"
 #include "Utilities/EngineUtilities.h"
 
@@ -36,10 +37,8 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 
 	DeserializeTexture2D(Texture2D, Properties->GetObjectField(TEXT("Properties")));
 
-	const UJsonAsAssetSettings* Settings = GetSettings();
-
 	if (!bUseOctetStream
-		&& Settings->Runtime.IsOlderUE4Target()
+		&& GJsonAsAssetRuntime.IsOlderUE4Target()
 		&&
 		(
 			Texture2D->LODGroup == TEXTUREGROUP_CharacterNormalMap

@@ -88,13 +88,8 @@ _[Ss]cripts
 *.nupkg
 *.ncrunchsolution
 *.dot[Cc]over
-
 *.v2
 *.db
 *.v1
 *.sln
-
-
 .idea/
-
-

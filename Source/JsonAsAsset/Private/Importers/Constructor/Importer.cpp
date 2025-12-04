@@ -103,7 +103,7 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 		ObjectPath = "/" + ObjectPath;
 	}
 
-	RedirectPath(ObjectPath);
+	FJRedirects::Redirect(ObjectPath);
 
 	/* Try to load object using the object path and the object name combined */
 	TObjectPtr<T> LoadedObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *(ObjectPath + "." + ObjectName)));

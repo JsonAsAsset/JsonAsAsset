@@ -997,33 +997,6 @@ inline UClass* LoadClass(const TSharedPtr<FJsonObject>& SuperStruct) {
 	return LoadBlueprintClass(ObjectPath);
 }
 
-inline void RedirectPath(FString& Path) {
-	const UJsonAsAssetSettings* Settings = GetSettings();
-
-	for (const FJRedirector& Redirect : Settings->Redirectors) {
-		if (!Redirect.Enable) continue;
-
-		for (const FJRedirectorPoint& Point : Redirect.Points) {
-			Path = Path.Replace(*Point.From, *Point.To);
-		}
-	}
-}
-
-inline void ReverseRedirectPath(FString& Path) {
-	const UJsonAsAssetSettings* Settings = GetSettings();
-
-	for (const FJRedirector& Redirect : Settings->Redirectors) {
-		if (!Redirect.Enable) {
-			continue;
-		}
-
-		for (int32 i = Redirect.Points.Num() - 1; i >= 0; i--) {
-			const FJRedirectorPoint& Point = Redirect.Points[i];
-			Path = Path.Replace(*Point.To, *Point.From);
-		}
-	}
-}
-
 inline TSharedRef<IMessageLogListing> GetMessageLogListing() {
 	FMessageLogModule& MessageLogModule = FModuleManager::GetModuleChecked<FMessageLogModule>("MessageLog");
 	const TSharedRef<IMessageLogListing> LogListing = MessageLogModule.GetLogListing(GJsonAsAssetName);

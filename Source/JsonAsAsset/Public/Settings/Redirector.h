@@ -36,3 +36,12 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category = Redirector)
 	bool Enable = true;
 };
+
+/* Redirect Handler */
+struct FJRedirects {
+	static TMap<FString, TArray<FJRedirectorPoint>> History;
+
+	static void Clear();
+	static void Redirect(FString& Path);
+	static void Reverse(FString& Path);
+};

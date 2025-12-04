@@ -76,7 +76,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 
 			ModifiablePath = "/" + ModifiablePath + "/";
 
-			RedirectPath(ModifiablePath);
+			FJRedirects::Redirect(ModifiablePath);
 
 			/* Check if plugin exists */
 			if (bIsPlugin && !ModifiablePath.StartsWith("/Game/")) {
@@ -90,7 +90,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 			}
 		}
 		else {
-			RedirectPath(ModifiablePath);
+			FJRedirects::Redirect(ModifiablePath);
 
 			if (!ModifiablePath.StartsWith("/Game/") && !ModifiablePath.StartsWith("/Engine/")) {
 				FString PluginName;
@@ -116,7 +116,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 
 		ModifiablePath = ModifiablePath + "/";
 
-		RedirectPath(ModifiablePath);
+		FJRedirects::Redirect(ModifiablePath);
 	}
 
 	const FString PathWithGame = ModifiablePath + Name;
@@ -220,7 +220,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 			/* Define found object */
 			FString RedirectedPath = RealPath;
 			
-			RedirectPath(RedirectedPath);
+			FJRedirects::Redirect(RedirectedPath);
 			OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *RedirectedPath));
 
 			return OutObject != nullptr;
@@ -303,7 +303,7 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 	bUseOctetStream = true;
 #endif
 
-	RedirectPath(PackagePath);
+	FJRedirects::Redirect(PackagePath);
 
 	if (!PackagePath.StartsWith("/Game/") && !PackagePath.StartsWith("/Engine/")) {
 		FString PluginName;

@@ -95,8 +95,7 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
             bool bDownloadStatus = false;
 
             FString NewPath = Path;
-
-            ReverseRedirectPath(NewPath);
+            FJRedirects::Reverse(NewPath);
             
             /* Try importing the asset */
             if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), Type, InObject, bDownloadStatus)) {

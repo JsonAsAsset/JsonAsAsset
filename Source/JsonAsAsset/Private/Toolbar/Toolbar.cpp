@@ -163,6 +163,7 @@ void FJsonAsAssetToolbar::ImportAction() {
 
 	/* Update Runtime */
 	GJsonAsAssetRuntime.Update();
+	FJRedirects::Clear();
 
 	/* Dialog for a JSON File */
 	TArray<FString> OutFileNames = OpenFileDialog("Select a JSON File", "JSON Files|*.json");

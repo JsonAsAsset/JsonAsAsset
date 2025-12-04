@@ -1,7 +1,7 @@
 # Key information for contributors: 🎓
 
 Cloud Server's API is located at [Tectors/j0.dev](https://github.com/Tectors/j0.dev/tree/main/Source/vj0.Cloud)
-It uses CUE4Parse to read game files, and it interacts with the config files inside of the project.
+It uses CUEParse to read game files, and it interacts with the config files inside of the project.
 
 ##### Adding Asset Types
 > *Asset types without manual code will use **basic** importing, meaning it will only take the properties of the base object and import them.*
@@ -16,7 +16,7 @@ Adding **manual** asset type imports is done in the [`JsonAsAsset/Public/Importe
 JsonAsAsset's settings are in [`Public/Settings/JsonAsAssetSettings.h`](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/JsonAsAsset/Public/Settings/JsonAsAssetSettings.h)
 
 ##### General Information
-This plugin's importing feature uses data based off [CUE4Parse](https://github.com/FabianFG/CUE4Parse)'s JSON export format.
+This plugin's importing feature uses data based off [CUEParse](https://github.com/FabianFG/CUE4Parse)'s JSON export format.
 
 ##### Cloning JsonAsAsset
 ```

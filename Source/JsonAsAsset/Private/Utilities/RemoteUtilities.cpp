@@ -33,6 +33,7 @@ TSharedPtr<IHttpResponse, ESPMode::ThreadSafe>
 	while (EHttpRequestStatus::Processing == HttpRequest->GetStatus()) {
 		const double AppTime = FPlatformTime::Seconds();
 		FHttpModule::Get().GetHttpManager().Tick(AppTime - LastTime);
+		
 		LastTime = AppTime;
 		FPlatformProcess::Sleep(LoopDelay);
 	}

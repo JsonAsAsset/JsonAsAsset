@@ -9,8 +9,6 @@
 #include "Modules/ModuleInterface.h"
 #endif
 
-class UJsonAsAssetSettings;
-
 struct GitHub {
     static inline FString URL = "https://github.com/JsonAsAsset/JsonAsAsset";
     

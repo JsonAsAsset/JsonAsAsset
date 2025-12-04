@@ -8,8 +8,6 @@
 #include "LevelEditor.h"
 #endif
 
-#include "Settings/JsonAsAssetSettings.h"
-#include "MessageLogModule.h"
 #include "Modules/Versioning.h"
 
 #include "Modules/UI/StyleModule.h"

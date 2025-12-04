@@ -155,21 +155,6 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				Importer->SetParent(ObjectSerializer->Parent);
 				Importer->LoadExport(&JsonValueAsObject, Object);
 
-				if (Object == nullptr) {
-					if (ObjectProperty && ObjectProperty->PropertyClass) {
-						UStruct* Struct = ObjectProperty->PropertyClass;
-
-						FFailedPropertyInfo PropertyInfo;
-						PropertyInfo.ClassName = ObjectProperty->PropertyClass->GetName();
-						PropertyInfo.SuperStructName = Struct->GetSuperStruct() ? Struct->GetSuperStruct()->GetName() : TEXT("None");
-						PropertyInfo.ObjectPath = JsonValueAsObject->GetStringField(TEXT("ObjectPath"));
-						
-						if (!FailedProperties.Contains(PropertyInfo)) {
-							FailedProperties.Add(PropertyInfo);
-						}
-					}
-				}
-
 				if (Object != nullptr && !Cast<UActorComponent>(Object.Get())) {
 					ObjectProperty->SetObjectPropertyValue(OutValue, Object);
 				}
@@ -448,10 +433,6 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 	else {
 		UE_LOG(LogJsonAsAssetPropertySerializer, Fatal, TEXT("Found unsupported property type when deserializing value: %s"), *Property->GetClass()->GetName());
 	}
-}
-
-void UPropertySerializer::ClearCachedData() {
-	FailedProperties.Empty();
 }
 
 void UPropertySerializer::DisablePropertySerialization(UStruct* Struct, const FName PropertyName) {

@@ -24,8 +24,6 @@ UObjectSerializer::UObjectSerializer(): Parent(nullptr), PropertySerializer(null
 
 void UObjectSerializer::SetupExports(const TArray<TSharedPtr<FJsonValue>>& InObjects) {
 	Exports = InObjects;
-	
-	PropertySerializer->ClearCachedData();
 }
 
 UPackage* FindOrLoadPackage(const FString& PackageName) {

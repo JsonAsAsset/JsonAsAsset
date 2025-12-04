@@ -13,46 +13,12 @@
 
 class IImporter;
 
-USTRUCT()
-struct FFailedPropertyInfo
-{
-	GENERATED_BODY()
-public:
-	FString ClassName;
-	FString ObjectPath;
-	FString SuperStructName;
-
-	bool operator==(const FFailedPropertyInfo& Other) const {
-		return ClassName == Other.ClassName && SuperStructName == Other.SuperStructName && ObjectPath == Other.ObjectPath;
-	}
-};
-
 UCLASS()
 class JSONASASSET_API UPropertySerializer : public UObject
 {
 	GENERATED_BODY()
-
-public:
-	friend class UObjectSerializer;
-
-	UPROPERTY()
-	UObjectSerializer* ObjectSerializer;
-
-	IImporter* Importer;
-	
-	TArray<FProperty*> BlacklistedProperties;
-	TSharedPtr<FStructSerializer> FallbackStructSerializer;
-	TMap<UScriptStruct*, TSharedPtr<FStructSerializer>> StructSerializers;
 public:
 	UPropertySerializer();
-
-	bool bFallbackToParentTrace = true;
-
-	FUObjectExportContainer ExportsContainer;
-	TArray<FString> BlacklistedPropertyNames;
-	TArray<FFailedPropertyInfo> FailedProperties;
-	
-	void ClearCachedData();
 
 	/** Disables property serialization entirely */
 	void DisablePropertySerialization(UStruct* Struct, FName PropertyName);
@@ -65,6 +31,23 @@ public:
 	void DeserializeStruct(UScriptStruct* Struct, const TSharedRef<FJsonObject>& Value, void* OutValue) const;
 private:
 	FStructSerializer* GetStructSerializer(const UScriptStruct* Struct) const;
+	
+public:
+	friend class UObjectSerializer;
+
+	UPROPERTY()
+	UObjectSerializer* ObjectSerializer;
+
+	IImporter* Importer;
+	
+	TArray<FProperty*> BlacklistedProperties;
+	TSharedPtr<FStructSerializer> FallbackStructSerializer;
+	TMap<UScriptStruct*, TSharedPtr<FStructSerializer>> StructSerializers;
+
+	bool bFallbackToParentTrace = true;
+
+	FUObjectExportContainer ExportsContainer;
+	TArray<FString> BlacklistedPropertyNames;
 };
 
 /* Use to handle differentiating formats produced by CUE4Parse */

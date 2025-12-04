@@ -10,7 +10,6 @@ public:
 	FTextureCreatorUtilities(const FString& AssetName, const FString& FilePath, UPackage* Package, const bool bUseOctetStream)
 		: bUseOctetStream(bUseOctetStream), AssetName(AssetName), FilePath(FilePath), Package(Package)
 	{
-		Package = Package->GetOutermost();
 		PropertySerializer = NewObject<UPropertySerializer>();
 		ObjectSerializer = NewObject<UObjectSerializer>();
 

@@ -25,6 +25,7 @@ public:
     void DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExports, bool bCreateObjects = true);
     void DeserializeExport(FUObjectExport& Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap);
 
+public:
     UPROPERTY()
     UObject* Parent;
 

@@ -1,8 +1,6 @@
 # Binaries/Intermediate ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Intermediate/*
-Binaries/Win64/UnrealEditor.modules
-Binaries/Win64/UE4Editor.modules
-/Binaries
+Binaries/*
 
 # Particle System Importing is not finalized ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Source/JsonAsAsset/Public/Importers/Types/Cascade/*
@@ -98,4 +96,5 @@ _[Ss]cripts
 
 
 .idea/
+
 

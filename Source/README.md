@@ -5,7 +5,7 @@ It uses CUE4Parse to read game files, and it interacts with the config files ins
 
 ##### Adding Asset Types
 > *Asset types without manual code will use **basic** importing, meaning it will only take the properties of the base object and import them.*
-- Normal Asset types are found in [`JsonAsAsset/Private/Importers/Constructor/Importer.cpp`](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/JsonAsAsset/Private/Importers/Constructor/Importer.cpp#L82) You don't need to add anything here if you made a custom IImporter with the REGISTER_IMPORTER macro.
+- Normal Asset types are found in [`JsonAsAsset/Private/Importers/Constructor/Types.cpp`](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/JsonAsAsset/Private/Importers/Constructor/Types.cpp#9) You don't need to add anything here if you made a custom IImporter with the REGISTER_IMPORTER macro.
 
 ##### Custom Logic for Asset Types
 

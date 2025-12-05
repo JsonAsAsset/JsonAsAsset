@@ -578,8 +578,8 @@ inline FString ReadPathFromObject(const TSharedPtr<FJsonObject>* PackageIndex) {
 
 	const UJsonAsAssetSettings* Settings = GetSettings();
 
-	if (!Settings->AssetSettings.GameName.IsEmpty()) {
-		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.GameName + "/Content"), TEXT("/Game"));
+	if (!Settings->AssetSettings.ProjectName.IsEmpty()) {
+		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.ProjectName + "/Content"), TEXT("/Game"));
 	}
 
 	ObjectPath = ObjectPath.Replace(TEXT("Engine/Content"), TEXT("/Engine"));
@@ -963,8 +963,8 @@ inline TSubclassOf<UObject> LoadClassFromPath(const FString& ObjectName, const F
 inline TSubclassOf<UObject> LoadBlueprintClass(FString& ObjectPath) {
 	const UJsonAsAssetSettings* Settings = GetSettings();
 	
-	if (!Settings->AssetSettings.GameName.IsEmpty()) {
-		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.GameName + "/Content"), TEXT("/Game"));
+	if (!Settings->AssetSettings.ProjectName.IsEmpty()) {
+		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.ProjectName + "/Content"), TEXT("/Game"));
 	}
 	
 	FString FullPath = ObjectPath; 

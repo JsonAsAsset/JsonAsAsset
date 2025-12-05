@@ -123,7 +123,7 @@ void Cloud::Update() {
 	
 	if (MetadataResponse->HasField(TEXT("name"))) {
 		FString Name = MetadataResponse->GetStringField(TEXT("name"));
-		MutableSettings->AssetSettings.GameName = Name;
+		MutableSettings->AssetSettings.ProjectName = Name;
 	}
 
 	if (MetadataResponse->HasField(TEXT("major_version"))) {

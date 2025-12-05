@@ -42,8 +42,8 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 	
 	/* References Automatically Formatted */
 	if (!ModifiablePath.StartsWith("/Game/") && !ModifiablePath.StartsWith("/Plugins/") && ModifiablePath.Contains("/Content/")) {
-		if (!Settings->AssetSettings.GameName.IsEmpty()) {
-			ModifiablePath = ModifiablePath.Replace(*(Settings->AssetSettings.GameName + "/Content"), TEXT("/Game"));
+		if (!Settings->AssetSettings.ProjectName.IsEmpty()) {
+			ModifiablePath = ModifiablePath.Replace(*(Settings->AssetSettings.ProjectName + "/Content"), TEXT("/Game"));
 			ModifiablePath.Split(*(GJsonAsAssetRuntime.ExportDirectory.Path + "/"), nullptr, &ModifiablePath, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 			ModifiablePath.Split("/", &ModifiablePath, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 			ModifiablePath += "/";

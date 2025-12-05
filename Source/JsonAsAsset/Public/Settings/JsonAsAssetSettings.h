@@ -14,6 +14,9 @@
 
 #include "JsonAsAssetSettings.generated.h"
 
+extern FName GJsonAsAssetName;
+extern FName GJsonAsAssetSettingsCategoryName;
+
 USTRUCT()
 struct FJSettings
 {
@@ -36,9 +39,8 @@ public:
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
 	FJMaterialSettings Material;
 
-	/* Game's Project Name */
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
-	FString GameName;
+	FString ProjectName;
 	
 	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
 	bool bSaveAssets = false;
@@ -54,9 +56,6 @@ public:
 	bool bDisable = false;
 };
 
-extern FName GJsonAsAssetName;
-extern FName GJsonAsAssetSettingsCategoryName;
-
 /* Powerful Unreal Engine Plugin that imports assets from FModel */
 UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig)
 class JSONASASSET_API UJsonAsAssetSettings : public UDeveloperSettings, public IJsonAsAssetValidationInterface {
@@ -68,10 +67,10 @@ public:
 	virtual FText GetSectionText() const override;
 	
 public:
-	UPROPERTY(EditAnywhere, Config, Category = Configuration)
+	UPROPERTY(EditAnywhere, Config, Category = Settings)
 	FJVersioningSettings Versioning;
 	
-	UPROPERTY(EditAnywhere, Config, Category = Configuration)
+	UPROPERTY(EditAnywhere, Config, Category = Settings)
 	FJSettings AssetSettings;
 
 	UPROPERTY(EditAnywhere, Config, Category = Redirectors, meta = (TitleProperty = "Name"))
@@ -82,6 +81,6 @@ public:
 	bool bEnableCloudServer = true;
 
 	/* Enables experimental/developing features of JsonAsAsset. Features may not work as intended. */
-	UPROPERTY(EditAnywhere, Config, Category = Configuration, AdvancedDisplay)
+	UPROPERTY(EditAnywhere, Config, Category = Settings, AdvancedDisplay)
 	bool bEnableExperiments = false;
 };

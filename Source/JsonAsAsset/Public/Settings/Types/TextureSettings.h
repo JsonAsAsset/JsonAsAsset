@@ -12,7 +12,7 @@ struct FJTextureSettings
 {
 	GENERATED_BODY()
 public:
-	/* Re-download textures already existing. (slow operation) */
+	/* Re-download textures that already exist. */
 	UPROPERTY(EditAnywhere, Config, AdvancedDisplay, DisplayName = "Redownload Textures", Category = Texture)
 	bool bReDownloadTextures = false;
 };

@@ -1,6 +1,22 @@
 # Information
 This plugin's importing feature uses data based off [CUEParse](https://github.com/FabianFG/CUE4Parse)'s JSON export format.
 
+# Code Style
+❌
+```c++
+bool Cloud::Status::IsOpened()
+{
+	return IsProcessRunning("j0.dev.exe");
+}
+```
+
+✅
+```c++
+bool Cloud::Status::IsOpened() {
+	return IsProcessRunning("j0.dev.exe");
+}
+```
+
 # Cloud ☁️
 
 Cloud Server's API is located at [Tectors/j0.dev](https://github.com/Tectors/j0.dev/tree/main/Source/vj0.Cloud)

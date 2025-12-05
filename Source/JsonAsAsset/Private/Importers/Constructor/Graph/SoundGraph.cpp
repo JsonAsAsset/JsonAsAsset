@@ -140,7 +140,7 @@ void ISoundGraph::SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*
 				} else {
 					/* Import SoundWave */
 					FString AudioURL = FString::Format(*(Cloud::URL + "/api/export?raw=false&path={0}"), { AssetPtr });
-					FString Extension = "org";
+					FString Extension = "ogg";
 					FString AbsoluteSavePath = FString::Format(*("{0}Cache/{1}." + Extension), { FPaths::ProjectDir(), FPaths::GetBaseFilename(AssetPtr) });
 
 					ImportSoundWave(AudioURL, AbsoluteSavePath, AssetPtr, WavePlayerNode);

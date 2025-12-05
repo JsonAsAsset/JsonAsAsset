@@ -1,22 +1,20 @@
-# Key information for contributors: 🎓
+# Information
+This plugin's importing feature uses data based off [CUEParse](https://github.com/FabianFG/CUE4Parse)'s JSON export format.
+
+# Cloud ☁️
 
 Cloud Server's API is located at [Tectors/j0.dev](https://github.com/Tectors/j0.dev/tree/main/Source/vj0.Cloud)
-It uses CUEParse to read game files, and it interacts with the config files inside of the project.
 
-##### Adding Asset Types
+# Settings
+Link: [`Public/Settings/JsonAsAssetSettings.h`](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/JsonAsAsset/Public/Settings/JsonAsAssetSettings.h)
+
+## Adding Asset Types
 > *Asset types without manual code will use **basic** importing, meaning it will only take the properties of the base object and import them.*
 - Normal Asset types are found in [`JsonAsAsset/Private/Importers/Constructor/Types.cpp`](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/JsonAsAsset/Private/Importers/Constructor/Types.cpp#9) You don't need to add anything here if you made a custom IImporter with the REGISTER_IMPORTER macro.
 
 ##### Custom Logic for Asset Types
 
 Adding **manual** asset type imports is done in the [`JsonAsAsset/Public/Importers/Types`](https://github.com/JsonAsAsset/JsonAsAsset/tree/main/Source/JsonAsAsset/Public/Importers/Types) folder. Use other importers for reference on how to create one.
-
-##### Settings
-
-JsonAsAsset's settings are in [`Public/Settings/JsonAsAssetSettings.h`](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/JsonAsAsset/Public/Settings/JsonAsAssetSettings.h)
-
-##### General Information
-This plugin's importing feature uses data based off [CUEParse](https://github.com/FabianFG/CUE4Parse)'s JSON export format.
 
 ##### Cloning JsonAsAsset
 ```

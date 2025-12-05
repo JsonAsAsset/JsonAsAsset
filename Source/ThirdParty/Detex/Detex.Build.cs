@@ -1,17 +1,14 @@
 ﻿using UnrealBuildTool;
 using System.IO;
 
-public class Detex : ModuleRules
-{
-	public Detex(ReadOnlyTargetRules Target) : base(Target)
-	{
+public class Detex : ModuleRules {
+	public Detex(ReadOnlyTargetRules Target) : base(Target) {
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "ThirdParty/detex"));
 		PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "ThirdParty/detex"));
 
-		PrivateDependencyModuleNames.AddRange(new[]
-		{
+		PrivateDependencyModuleNames.AddRange(new[] {
 			"Core",
 			"CoreUObject"
 		});

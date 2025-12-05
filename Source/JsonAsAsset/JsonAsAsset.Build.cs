@@ -3,10 +3,8 @@
 using UnrealBuildTool;
 
 /* NOTE: Please make sure to put UE5 only modules in the #if statement below, we want UE4 and UE5 compatibility */
-public class JsonAsAsset : ModuleRules
-{
-	public JsonAsAsset(ReadOnlyTargetRules Target) : base(Target)
-	{
+public class JsonAsAsset : ModuleRules {
+	public JsonAsAsset(ReadOnlyTargetRules Target) : base(Target)  {
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
             
 #if UE_5_0_OR_LATER
@@ -17,8 +15,7 @@ public class JsonAsAsset : ModuleRules
 		CppStandard = CppStandardVersion.Cpp17;
 #endif
 
-		PublicDependencyModuleNames.AddRange(new[]
-		{
+		PublicDependencyModuleNames.AddRange(new[] {
 			"Core",
 			"Json",
 			"JsonUtilities",
@@ -36,8 +33,7 @@ public class JsonAsAsset : ModuleRules
 			"ClothingSystemRuntimeCommon"
 		});
 
-		PrivateDependencyModuleNames.AddRange(new[]
-		{
+		PrivateDependencyModuleNames.AddRange(new[] {
 			"Projects",
 			"InputCore",
 			"ToolMenus",

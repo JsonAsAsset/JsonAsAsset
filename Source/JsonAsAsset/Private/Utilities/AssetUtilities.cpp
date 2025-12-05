@@ -14,8 +14,6 @@
 #include "Settings/JsonAsAssetSettings.h"
 #include "Dom/JsonObject.h"
 
-#include "UObject/SavePackage.h"
-
 #include "HttpModule.h"
 #include "Importers/Constructor/ImportReader.h"
 #include "Interfaces/IHttpResponse.h"

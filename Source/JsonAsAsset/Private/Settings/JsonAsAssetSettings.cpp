@@ -6,7 +6,7 @@
 #include "Widgets/SBoxPanel.h"
 
 FName GJsonAsAssetName = FName("JsonAsAsset");
-FName GJsonAsAssetSettingsCategoryName = FName("Asset Tools");
+FName GJsonAsAssetSettingsCategoryName = FName("General");
 
 UJsonAsAssetSettings::UJsonAsAssetSettings() {
 	CategoryName = GJsonAsAssetSettingsCategoryName;

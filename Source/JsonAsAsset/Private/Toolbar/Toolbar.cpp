@@ -12,7 +12,6 @@
 #include "Importers/Constructor/ImportReader.h"
 #include "Interfaces/IPluginManager.h"
 #include "Modules/Cloud/Cloud.h"
-#include "Modules/UI/StyleModule.h"
 #include "Settings/Runtime.h"
 #include "Toolbar/Dropdowns/ActionRequiredDropdownBuilder.h"
 #include "Toolbar/Dropdowns/GeneralDropdownBuilder.h"

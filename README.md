@@ -35,7 +35,7 @@
 
 ### Description
 
-JsonAsAsset is an [Unreal Engine](https://www.unrealengine.com/en-US) plugin that reads [JSON](https://www.json.org/json-en.html) files from CUEParse [(FModel)](https://fmodel.app), and rebuilds assets like materials, data tables, physics assets, and more.
+JsonAsAsset is an [Unreal Engine](https://www.unrealengine.com/en-US) plugin that reads [JSON](https://www.json.org/json-en.html) files from FModel [(FModel)](https://fmodel.app), and rebuilds assets like materials, data tables, physics assets, and more.
 
 ✨ [Contributors](#contribute)
 

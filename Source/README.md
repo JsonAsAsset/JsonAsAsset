@@ -1,5 +1,5 @@
 # Information
-This plugin's importing feature uses data based off [CUEParse](https://github.com/FabianFG/CUE4Parse)'s JSON export format.
+This plugin's importing feature uses data based off [UEParse](https://github.com/FabianFG/CUE4Parse)'s JSON export format.
 
 # Code Style
 ❌

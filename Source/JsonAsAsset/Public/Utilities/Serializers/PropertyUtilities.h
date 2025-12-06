@@ -50,7 +50,7 @@ public:
 	TArray<FString> BlacklistedPropertyNames;
 };
 
-/* Use to handle differentiating formats produced by CUEParse */
+/* Use to handle differentiating formats produced by UEParse */
 inline bool PassthroughPropertyHandler(FProperty* Property, const FString& PropertyName, void* PropertyValue, const TSharedPtr<FJsonObject>& Properties, UPropertySerializer* PropertySerializer) {
 	/* Handles static arrays in the format of: PropertyName[Index] */
 	if (Property->ArrayDim != 1) {

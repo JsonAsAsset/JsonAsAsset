@@ -71,7 +71,7 @@ bool ReadAnimationData(const TSharedPtr<FJsonObject>& Properties, const TArray<T
 #endif
 #endif
 
-	/* Some CUEParse versions have different named objects for curves ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	/* Some UEParse versions have different named objects for curves ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	const TSharedPtr<FJsonObject>* RawCurveData;
 	
 	if (Properties->TryGetObjectField(TEXT("RawCurveData"), RawCurveData))

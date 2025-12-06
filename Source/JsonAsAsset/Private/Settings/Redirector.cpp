@@ -32,7 +32,7 @@ void FJRedirects::Clear() {
 }
 
 void FJRedirects::Redirect(FString& Path) {
-	TArray<FJRedirectorPoint> AppliedPointers;
+	TArray<FJRedirectorPoint> Points;
 
 	const UJsonAsAssetSettings* Settings = GetSettings();
 
@@ -41,7 +41,7 @@ void FJRedirects::Redirect(FString& Path) {
 
 		for (const FJRedirectorPoint& Point : Redirect.Points) {
 			if (Path.Contains(Point.From)) {
-				AppliedPointers.Add(Point);
+				Points.Add(Point);
 				
 				Path = Path.Replace(*Point.From, *Point.To);
 			}
@@ -49,7 +49,7 @@ void FJRedirects::Redirect(FString& Path) {
 	}
 
 	TArray<FJRedirectorPoint>& Pointers = History.FindOrAdd(Path);
-	Pointers.Append(AppliedPointers);
+	Pointers.Append(Points);
 }
 
 void FJRedirects::Reverse(FString& Path) {

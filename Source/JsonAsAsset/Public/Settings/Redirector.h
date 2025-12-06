@@ -31,17 +31,17 @@ private:
 	UPROPERTY(EditAnywhere, Config, Category = Metadata)
 	TArray<FString> Profiles;
 	
-	/* The name of this redirector */
+	/* The name of this redirector. */
 	UPROPERTY(EditAnywhere, Config, Category = Redirector)
 	FName Name;
 
 public:
-	/* The points on this redirector */
+	/* The points on this redirector. */
 	UPROPERTY(EditAnywhere, Config, Category = Redirector)
 	TArray<FJRedirectorPoint> Points;
 
 private:
-	/* Enables this redirector */
+	/* Enables this redirector. */
 	UPROPERTY(EditAnywhere, Config, Category = Redirector)
 	bool Enable = true;
 };

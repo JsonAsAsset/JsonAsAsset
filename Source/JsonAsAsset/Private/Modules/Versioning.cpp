@@ -57,10 +57,7 @@ void FJsonAsAssetVersioning::Update() {
 
 		/* Deserialize the JSON response */
 		TSharedPtr<FJsonObject> JsonObject;
-		const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(ResponseString);
-		if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid()) {
-			return;
-		}
+		if (!DeserializeJSONObject(ResponseString, JsonObject)) return;
 
 		/* It must have the name property */
 		if (!JsonObject->HasField(TEXT("name"))) {

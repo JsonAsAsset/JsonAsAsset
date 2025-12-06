@@ -182,13 +182,13 @@ TSharedRef<SWidget> FJsonAsAssetToolbar::CreateMenuDropdown() {
 	FMenuBuilder MenuBuilder(false, nullptr);
 
 	TArray<TSharedRef<IParentDropdownBuilder>> Dropdowns = {
+		MakeShared<IVersioningDropdownBuilder>(),
 		MakeShared<IParentDropdownBuilder>(),
 		MakeShared<IToolsDropdownBuilder>(),
 		MakeShared<IActionRequiredDropdownBuilder>(),
 		MakeShared<ICloudDropdownBuilder>(),
 		MakeShared<IGeneralDropdownBuilder>(),
-		MakeShared<IDonateDropdownBuilder>(),
-		MakeShared<IVersioningDropdownBuilder>()
+		MakeShared<IDonateDropdownBuilder>()
 	};
 
 	for (const TSharedRef<IParentDropdownBuilder>& Dropdown : Dropdowns) {

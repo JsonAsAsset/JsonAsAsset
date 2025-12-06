@@ -3,8 +3,6 @@
 #include "Importers/Constructor/Graph/SoundGraph.h"
 
 #include "AssetToolsModule.h"
-#include "HttpModule.h"
-#include "Interfaces/IHttpResponse.h"
 #include "IAssetTools.h"
 #include "Misc/MessageDialog.h"
 #include "Modules/Cloud/Cloud.h"
@@ -120,8 +118,7 @@ void ISoundGraph::SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*
 		}
 
 		/* Deserialize Node Properties */
-		GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(NodeProperties, TArray<FString>
-		{
+		GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(NodeProperties, TArray<FString> {
 			"ChildNodes"
 		}), *CurrentNode);
 
@@ -132,18 +129,25 @@ void ISoundGraph::SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*
 			if (NodeProperties->HasField(TEXT("SoundWaveAssetPtr"))) {
 				FString AssetPtr = NodeProperties->TryGetField(TEXT("SoundWaveAssetPtr"))->AsObject()->GetStringField(TEXT("AssetPathName"));
 
+				if (NodeProperties->HasTypedField<EJson::String>(TEXT("SoundWaveAssetPtr"))) {
+					AssetPtr = NodeProperties->GetStringField(TEXT("SoundWaveAssetPtr"));
+				}
+
 				USoundWave* SoundWave = Cast<USoundWave>(StaticLoadObject(USoundWave::StaticClass(), nullptr, *AssetPtr));
 				
 				/* Already exists */
 				if (SoundWave != nullptr) {
 					WavePlayerNode->SetSoundWave(SoundWave);
 				} else {
-					/* Import SoundWave */
-					FString AudioURL = FString::Format(*(Cloud::URL + "/api/export?raw=false&path={0}"), { AssetPtr });
-					FString Extension = "ogg";
-					FString AbsoluteSavePath = FString::Format(*("{0}Cache/{1}." + Extension), { FPaths::ProjectDir(), FPaths::GetBaseFilename(AssetPtr) });
-
-					ImportSoundWave(AudioURL, AbsoluteSavePath, AssetPtr, WavePlayerNode);
+					const TSharedPtr<FJsonObject> Response = Cloud::Export::GetRaw(AssetPtr, {
+						{
+							"save",
+							"true"
+						}
+					});
+					if (Response == nullptr) continue;
+					
+					OnDownloadSoundWave(Response->GetStringField("file"), AssetPtr, WavePlayerNode);
 				}
 			}
 		}
@@ -161,51 +165,33 @@ void ISoundGraph::ConnectSoundNode(const USoundNode* NodeToConnect, const USound
 	}
 }
 
-void ISoundGraph::ImportSoundWave(const FString& URL, FString SavePath, FString AssetPtr, USoundNodeWavePlayer* Node) const {
-	const TSharedRef<IHttpRequest, ESPMode::ThreadSafe> HttpRequest = FHttpModule::Get().CreateRequest();
-	
-	HttpRequest->OnProcessRequestComplete().BindLambda([this, SavePath, AssetPtr, Node](const FHttpRequestPtr& Request, const FHttpResponsePtr& Response, const bool bWasSuccessful)
-	{
-		OnDownloadSoundWave(Request, Response, bWasSuccessful, SavePath, AssetPtr, Node);
-	});
-
-	HttpRequest->SetURL(URL);
-	HttpRequest->SetVerb("GET");
-	HttpRequest->ProcessRequest();
-}
-
-void ISoundGraph::OnDownloadSoundWave(FHttpRequestPtr Request, const FHttpResponsePtr& Response, bool bWasSuccessful, FString SavePath, FString AssetPtr, USoundNodeWavePlayer* Node) {
-	if (bWasSuccessful && Response.IsValid()) {
-		FFileHelper::SaveArrayToFile(Response->GetContent(), *SavePath);
-
-		if (!FPaths::FileExists(SavePath)) {
-			FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Format(TEXT("Failed To Find File {0} In Cache!"), { SavePath })));
-			return;
-		}
-
-		IAssetTools& AssetTools = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools").Get();
-		UAutomatedAssetImportData* ImportData = NewObject<UAutomatedAssetImportData>();
-		ImportData->Filenames.Add(SavePath);
-		ImportData->DestinationPath = FPaths::GetPath(AssetPtr);
-		ImportData->bReplaceExisting = true;
-		
-		auto AssetsImported = AssetTools.ImportAssetsAutomated(ImportData);
-		if (!AssetsImported.IsValidIndex(0)) {
-			USoundWave* SoundWave = Cast<USoundWave>(StaticLoadObject(USoundWave::StaticClass(), nullptr, *AssetPtr));
-			Node->SetSoundWave(SoundWave);
-
-			return;
-		}
-		
-		USoundWave* ImportedWave = Cast<USoundWave>(AssetsImported[0]);
-
-		if (!ImportedWave) {
-			FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Format(TEXT("Failed To Import Wave {0}!"), { AssetPtr })));
-			return;
-		}
-
-		Node->SetSoundWave(ImportedWave);
-	} else {
-		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Format(TEXT("Failed To Download Audio {0}!"), { SavePath })));
+void ISoundGraph::OnDownloadSoundWave(FString SavePath, FString AssetPtr, USoundNodeWavePlayer* Node) {
+	if (!FPaths::FileExists(SavePath)) {
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Format(TEXT("Failed To Find File {0} In Cache!"), { SavePath })));
+		return;
 	}
+
+	IAssetTools& AssetTools = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools").Get();
+	UAutomatedAssetImportData* ImportData = NewObject<UAutomatedAssetImportData>();
+	ImportData->Filenames.Add(SavePath);
+	ImportData->DestinationPath = FPaths::GetPath(AssetPtr);
+	ImportData->bReplaceExisting = true;
+	
+	auto AssetsImported = AssetTools.ImportAssetsAutomated(ImportData);
+	if (!AssetsImported.IsValidIndex(0)) {
+		USoundWave* SoundWave = Cast<USoundWave>(StaticLoadObject(USoundWave::StaticClass(), nullptr, *AssetPtr));
+		Node->SetSoundWave(SoundWave);
+		
+		return;
+	}
+	
+	USoundWave* ImportedWave = Cast<USoundWave>(AssetsImported[0]);
+
+	if (!ImportedWave) {
+		FMessageDialog::Open(EAppMsgType::Ok, FText::FromString(FString::Format(TEXT("Failed To Import Wave {0}!"), { AssetPtr })));
+		return;
+	}
+
+	ImportedWave->AssetImportData = nullptr;
+	Node->SetSoundWave(ImportedWave);
 }

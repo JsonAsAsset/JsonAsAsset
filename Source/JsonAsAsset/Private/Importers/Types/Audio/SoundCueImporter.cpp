@@ -21,8 +21,7 @@ bool ISoundCueImporter::Import() {
 	}
 	/* End of importing nodes ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(), TArray<FString>
-	{
+	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(), TArray<FString> {
 		"FirstNode"
 	}), SoundCue);
 	

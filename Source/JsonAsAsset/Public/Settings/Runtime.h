@@ -5,6 +5,10 @@
 #include "CoreMinimal.h"
 #include "Engine/DeveloperSettings.h"
 
+struct FJCloudProfile {
+	FString Name;
+};
+
 struct FJRuntime {
 	/* If the assets being imported, are from UE5 */
 	bool bUE5Target = false;
@@ -14,6 +18,8 @@ struct FJRuntime {
 
 	/* UE4.22 ~~> 4 */
 	int MajorVersion = -1;
+
+	FJCloudProfile Profile;
 
 	FDirectoryPath ExportDirectory;
 

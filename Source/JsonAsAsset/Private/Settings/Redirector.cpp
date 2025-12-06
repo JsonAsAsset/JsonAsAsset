@@ -3,11 +3,24 @@
 #include "Settings/Redirector.h"
 
 #include "Settings/JsonAsAssetSettings.h"
+#include "Settings/Runtime.h"
 #include "Utilities/EngineUtilities.h"
 
 /************************************
  **** Redirect History ************ */
 TMap<FString, TArray<FJRedirectorPoint>> FJRedirects::History;
+
+bool FJRedirector::IsEnabled() const {
+	bool bIsEnabled = Enable;
+
+	if (!GJsonAsAssetRuntime.Profile.Name.IsEmpty()) {
+		if (Profiles.Num() > 0 && !Profiles.Contains(GJsonAsAssetRuntime.Profile.Name)) {
+			bIsEnabled = false;
+		}
+	}
+	
+	return bIsEnabled;
+}
 
 void FJRedirects::Clear() {
 	History.Empty();
@@ -19,7 +32,7 @@ void FJRedirects::Redirect(FString& Path) {
 	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	for (const FJRedirector& Redirect : Settings->Redirectors) {
-		if (!Redirect.Enable) continue;
+		if (!Redirect.IsEnabled()) continue;
 
 		for (const FJRedirectorPoint& Point : Redirect.Points) {
 			if (Path.Contains(Point.From)) {

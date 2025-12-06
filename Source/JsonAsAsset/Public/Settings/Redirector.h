@@ -24,14 +24,23 @@ USTRUCT()
 struct FJRedirector {
 	GENERATED_BODY()
 public:
+	bool IsEnabled() const;
+	
+private:
+	/* Profiles allowed when using this redirector. (Empty = Allowed By Default) */
+	UPROPERTY(EditAnywhere, Config, Category = Metadata)
+	TArray<FString> Profiles;
+	
 	/* The name of this redirector */
 	UPROPERTY(EditAnywhere, Config, Category = Redirector)
 	FName Name;
-	
+
+public:
 	/* The points on this redirector */
 	UPROPERTY(EditAnywhere, Config, Category = Redirector)
 	TArray<FJRedirectorPoint> Points;
-	
+
+private:
 	/* Enables this redirector */
 	UPROPERTY(EditAnywhere, Config, Category = Redirector)
 	bool Enable = true;

@@ -174,6 +174,7 @@ void ISoundGraph::OnDownloadSoundWave(FString SavePath, FString AssetPtr, USound
 	IAssetTools& AssetTools = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools").Get();
 	UAutomatedAssetImportData* ImportData = NewObject<UAutomatedAssetImportData>();
 	ImportData->Filenames.Add(SavePath);
+	FJRedirects::Redirect(AssetPtr);
 	ImportData->DestinationPath = FPaths::GetPath(AssetPtr);
 	ImportData->bReplaceExisting = true;
 	

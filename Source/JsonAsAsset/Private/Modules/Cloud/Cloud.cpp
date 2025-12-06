@@ -139,5 +139,11 @@ void Cloud::Update() {
 		GJsonAsAssetRuntime.MinorVersion = MinorVersion;
 	}
 
+	if (MetadataResponse->HasField(TEXT("profile"))) {
+		const auto Profile = MetadataResponse->GetObjectField(TEXT("profile"));
+
+		GJsonAsAssetRuntime.Profile.Name = Profile->GetStringField(TEXT("name"));
+	}
+
 	SavePluginConfig(MutableSettings);
 }

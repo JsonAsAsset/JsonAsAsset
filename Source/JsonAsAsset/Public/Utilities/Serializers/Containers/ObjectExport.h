@@ -110,10 +110,16 @@ protected:
 struct FUObjectExportContainer {
 	/* Array of Expression Exports */
 	TArray<FUObjectExport> Exports;
+	TArray<TSharedPtr<FJsonValue>> JsonObjects = {};
 	
 	FUObjectExportContainer() {};
+	FUObjectExportContainer(const TArray<TSharedPtr<FJsonValue>>& Array) {
+		Fill(Array);
+	}
 
 	void Fill(TArray<TSharedPtr<FJsonValue>> Array) {
+		JsonObjects = Array;
+		
 		int Index = -1;
 	
 		for (const TSharedPtr Value : Array) {
@@ -232,4 +238,10 @@ struct FUObjectExportContainer {
 	int Num() const {
 		return Exports.Num();
 	}
+
+	auto begin() { return Exports.begin(); }
+	auto end() { return Exports.end(); }
+
+	auto begin() const { return Exports.begin(); }
+	auto end() const { return Exports.end(); }
 };

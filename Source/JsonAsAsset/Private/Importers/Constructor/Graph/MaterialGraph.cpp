@@ -19,7 +19,7 @@
 TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(const FString& Type, FUObjectExportContainer& Container) {
 	TSharedPtr<FJsonObject> EditorOnlyData;
 
-	for (FUObjectExport Export : AssetContainer.Exports) {
+	for (FUObjectExport Export : AssetContainer) {
 		FString ExportType = Export.GetType().ToString();
 
 		/* If an editor only data object is found, just set it */
@@ -44,7 +44,7 @@ TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(const FString& Type, FU
 
 void IMaterialGraph::ConstructExpressions(FUObjectExportContainer& Container) {
 	/* Go through each expression, and create the expression */
-	for (FUObjectExport& Export : Container.Exports) {
+	for (FUObjectExport& Export : Container) {
 		/* Invalid Json Object */
 		if (!Export.JsonObject.IsValid()) {
 			continue;
@@ -66,7 +66,7 @@ void IMaterialGraph::ConstructExpressions(FUObjectExportContainer& Container) {
 }
 
 void IMaterialGraph::PropagateExpressions(FUObjectExportContainer& Container) {
-	for (FUObjectExport Export : Container.Exports) {
+	for (FUObjectExport Export : Container) {
 		/* Get variables from the export data */
 		UObject* Parent = Export.Parent;
 

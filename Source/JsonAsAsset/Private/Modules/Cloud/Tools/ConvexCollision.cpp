@@ -66,7 +66,7 @@ void TToolConvexCollision::Execute() {
 
 				GetObjectSerializer()->DeserializeExports(Exports);
 
-				for (const FUObjectExport UObjectExport : GetObjectSerializer()->GetPropertySerializer()->ExportsContainer.Exports) {
+				for (const FUObjectExport UObjectExport : GetObjectSerializer()->GetPropertySerializer()->ExportsContainer) {
 					if (UStaticMeshSocket* Socket = Cast<UStaticMeshSocket>(UObjectExport.Object)) {
 						StaticMesh->AddSocket(Socket);
 					}

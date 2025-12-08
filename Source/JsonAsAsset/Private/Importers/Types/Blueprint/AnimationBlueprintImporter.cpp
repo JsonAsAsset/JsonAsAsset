@@ -190,7 +190,7 @@ void IAnimationBlueprintImporter::CreateGraph(const TSharedPtr<FJsonObject>& Ani
 	ConnectAnimGraphNodes(Container, AnimGraph);
 	AutoLayoutAnimGraphNodes(Container.Exports);
 
-	for (const FUObjectExport ExportNode : Container.Exports) {
+	for (const FUObjectExport ExportNode : Container) {
 		const TSharedPtr<FJsonObject> ExportJsonObject = ExportNode.JsonObject;
 		
 		if (UAnimGraphNode_StateMachine* StateMachine = Cast<UAnimGraphNode_StateMachine>(ExportNode.Object)) {
@@ -261,7 +261,7 @@ void IAnimationBlueprintImporter::CreateGraph(const TSharedPtr<FJsonObject>& Ani
 						Graph->MyResultNode = nullptr;
 					}
 
-					for (const FUObjectExport& StateMachineExport : StateMachineContainer.Exports) {
+					for (const FUObjectExport& StateMachineExport : StateMachineContainer) {
 						if (UAnimGraphNode_StateResult* StateResult = Cast<UAnimGraphNode_StateResult>(StateMachineExport.Object)) {
 							Graph->MyResultNode = StateResult;
 						}
@@ -455,7 +455,7 @@ void IAnimationBlueprintImporter::CreateAnimGraphNodes(UEdGraph* AnimGraph, cons
 }
 
 void IAnimationBlueprintImporter::AddNodesToGraph(UEdGraph* AnimGraph, FUObjectExportContainer& Container) {
-    for (const FUObjectExport& Export : Container.Exports) {
+    for (const FUObjectExport& Export : Container) {
         if (!IsValid(Export.Object) || !Export.JsonObject.IsValid())
             continue;
 
@@ -470,7 +470,7 @@ void IAnimationBlueprintImporter::AddNodesToGraph(UEdGraph* AnimGraph, FUObjectE
 void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContainer& Container) {
 	GetObjectSerializer()->GetPropertySerializer()->BlacklistedPropertyNames.Add(TEXT("LinkID"));
 
-	for (FUObjectExport NodeExport : Container.Exports) {
+	for (FUObjectExport NodeExport : Container) {
 		if (NodeExport.Object == nullptr) continue;
 
 		UAnimGraphNode_Base* Node = Cast<UAnimGraphNode_Base>(NodeExport.Object);
@@ -556,7 +556,7 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 }
 
 void IAnimationBlueprintImporter::ConnectAnimGraphNodes(FUObjectExportContainer& Container, UEdGraph* AnimGraph) {
-    for (const FUObjectExport Export : Container.Exports) {
+    for (const FUObjectExport Export : Container) {
         UAnimGraphNode_Base* Node = Cast<UAnimGraphNode_Base>(Export.Object);
         const TSharedPtr<FJsonObject> Json = Export.JsonObject;
 

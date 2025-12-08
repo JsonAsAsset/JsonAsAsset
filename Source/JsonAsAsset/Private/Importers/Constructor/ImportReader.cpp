@@ -11,19 +11,19 @@
 #include "Utilities/AssetUtilities.h"
 #include "Utilities/EngineUtilities.h"
 
-bool IImportReader::ReadExportsAndImport(TArray<TSharedPtr<FJsonValue>> Exports, const FString& File, bool bHideNotifications) {
-	for (const TSharedPtr<FJsonValue>& ExportPtr : Exports) {
-		if (ExportPtr->Type != EJson::Object) continue;
-		
-		ReadExportAndImport(Exports, ExportPtr->AsObject(), File, bHideNotifications);
+bool IImportReader::ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const FString& File, const bool bHideNotifications) {
+	FUObjectExportContainer Container = Exports;
+	
+	for (FUObjectExport Export : Container) {
+		ReadExportAndImport(Container, Export, File, bHideNotifications);
 	}
 
 	return true;
 }
 
-void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const TSharedPtr<FJsonObject>& Export, FString File, const bool bHideNotifications) {
-	const FString Type = Export->GetStringField(TEXT("Type"));
-	FString Name = Export->GetStringField(TEXT("Name"));
+void IImportReader::ReadExportAndImport(const FUObjectExportContainer& Container, const FUObjectExport& Export, FString File, const bool bHideNotifications) {
+	const FString Type = Export.GetType().ToString();
+	FString Name = Export.GetName().ToString();
 
 	/* BlueprintGeneratedClass is post-fixed with _C */
 	if (Type.Contains("BlueprintGeneratedClass")) {
@@ -92,27 +92,29 @@ void IImportReader::ReadExportAndImport(const TArray<TSharedPtr<FJsonValue>>& Ex
 	
 	/* Try to find the importer using a factory delegate */
 	if (const FImporterFactoryDelegate* Factory = FindFactoryForAssetType(Type)) {
-		Importer = (*Factory)(Export, LocalPackage, Exports);
+		Importer = (*Factory)(Export.JsonObject, LocalPackage, Container.JsonObjects);
 	}
 
 	/* If it inherits DataAsset, use the data asset importer */
 	if (Importer == nullptr && InheritsDataAsset) {
-		Importer = new IDataAssetImporter(Export, LocalPackage, Exports);
+		Importer = new IDataAssetImporter(Export.JsonObject, LocalPackage, Container.JsonObjects);
 	}
 
 	/* By default, (with no existing importer) use the templated importer with the asset class. */
 	if (Importer == nullptr) {
 		Importer = new ITemplatedImporter<UObject>(
-			Export, LocalPackage, Exports
+			Export.JsonObject, LocalPackage, Container.JsonObjects
 		);
 	}
 
 	/* TODO: Don't hardcode this. */
 	if (ImportTypes::Cloud::Extra.Contains(Type)) {
 		Importer = new ITextureImporter<UTextureLightProfile>(
-			Export, LocalPackage, Exports
+			Export.JsonObject, LocalPackage, Container.JsonObjects
 		);
 	}
+
+	Importer->AssetContainer = Container;
 
 	/* Import the asset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	bool Successful = false; {

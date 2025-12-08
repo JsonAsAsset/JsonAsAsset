@@ -77,7 +77,7 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 	if (bCreateObjects) {
 		TMap<TSharedPtr<FJsonObject>, UObject*> ExportsMap;
 		
-		for (FUObjectExport& Export : PropertySerializer->ExportsContainer.Exports) {
+		for (FUObjectExport& Export : PropertySerializer->ExportsContainer) {
 			DeserializeExport(Export, ExportsMap);
 		}
 

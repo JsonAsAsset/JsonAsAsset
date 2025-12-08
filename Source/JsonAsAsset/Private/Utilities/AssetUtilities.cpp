@@ -245,12 +245,22 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 
 	const TSharedPtr<FJsonObject> JsonExport = Response[0]->AsObject();
 	const FString Type = JsonExport->GetStringField(TEXT("Type"));
+
+	bool bIsVectorDisplacementMap = false;
+
+	if (JsonExport->HasField(TEXT("Properties"))) {
+		if (JsonExport->GetObjectField(TEXT("Properties"))->HasField(TEXT("CompressionSettings"))) {
+			bIsVectorDisplacementMap =
+				JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_VectorDisplacementmap")
+				|| JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_HDR");
+		}
+	}
 	
 	TArray<uint8> Data = TArray<uint8>();
 	bool bUseOctetStream = Type == "TextureLightProfile"
 	                       || Type == "TextureCube"
 	                       || Type == "VolumeTexture"
-	                       || Type == "TextureRenderTarget2D";
+	                       || Type == "TextureRenderTarget2D" || bIsVectorDisplacementMap;
 
 #if UE4_26_BELOW
 	bUseOctetStream = true;
@@ -292,10 +302,19 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 		Path.Split(".", &PackagePath, &AssetName);
 	}
 
+	bool bIsVectorDisplacementMap = false;
+
+	if (JsonExport->HasField(TEXT("Properties"))) {
+		if (JsonExport->GetObjectField(TEXT("Properties"))->HasField(TEXT("CompressionSettings"))) {
+			bIsVectorDisplacementMap = JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_VectorDisplacementmap")
+				|| JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_HDR");
+		}
+	}
+	
 	bool bUseOctetStream = Type == "TextureLightProfile"
-					   || Type == "TextureCube"
-					   || Type == "VolumeTexture"
-					   || Type == "TextureRenderTarget2D";
+						   || Type == "TextureCube"
+						   || Type == "VolumeTexture"
+						   || Type == "TextureRenderTarget2D" || bIsVectorDisplacementMap;
 
 #if UE4_26_BELOW
 	bUseOctetStream = true;

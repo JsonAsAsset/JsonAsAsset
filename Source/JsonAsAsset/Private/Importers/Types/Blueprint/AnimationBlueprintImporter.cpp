@@ -16,6 +16,7 @@
 #include "Importers/Types/Blueprint/Utilities/AnimNodeLayoutUtillties.h"
 #include "Importers/Types/Blueprint/Utilities/StateMachineUtilities.h"
 #include "Kismet2/KismetEditorUtilities.h"
+#include "Settings/Runtime.h"
 
 #if ENGINE_UE5
 #include "UObject/UnrealTypePrivate.h"
@@ -502,11 +503,14 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 		}
 
 #if ENGINE_UE4
-		if (NodeProperties->HasField(TEXT("LocalJointOffset"))) {
-			auto LocalJointOffset = NodeProperties->GetObjectField(TEXT("LocalJointOffset"));
-			LocalJointOffset->SetNumberField("X", -LocalJointOffset->GetNumberField(TEXT("X")));
-			LocalJointOffset->SetNumberField("Y", -LocalJointOffset->GetNumberField(TEXT("Y")));
-			LocalJointOffset->SetNumberField("Z", -LocalJointOffset->GetNumberField(TEXT("Z")));
+		/* Looks like UE5 flipped axes on LocalJointOffset */
+		if (GJsonAsAssetRuntime.bUE5Target) {
+			if (NodeProperties->HasField(TEXT("LocalJointOffset"))) {
+				auto LocalJointOffset = NodeProperties->GetObjectField(TEXT("LocalJointOffset"));
+				LocalJointOffset->SetNumberField("X", -LocalJointOffset->GetNumberField(TEXT("X")));
+				LocalJointOffset->SetNumberField("Y", -LocalJointOffset->GetNumberField(TEXT("Y")));
+				LocalJointOffset->SetNumberField("Z", -LocalJointOffset->GetNumberField(TEXT("Z")));
+			}
 		}
 #endif
 		

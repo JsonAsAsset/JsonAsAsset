@@ -37,11 +37,11 @@ bool IMaterialInstanceConstantImporter::Import() {
 	TArray<TSharedPtr<FJsonValue>> StaticComponentMaskParametersObjects;
 	
 	/* Optional Editor Data [contains static switch parameters] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	const TSharedPtr<FJsonObject> EditorOnlyData = AssetContainer.FindByType(FString("MaterialInstanceEditorOnlyData")).GetProperties();
+	FUObjectExport EditorOnlyData = AssetContainer.FindByType(FString("MaterialInstanceEditorOnlyData"));
 
 	if (EditorOnlyData.IsValid()) {
-		if (EditorOnlyData->HasField(TEXT("StaticParameters"))) {
-			ReadStaticParameters(EditorOnlyData->GetObjectField(TEXT("StaticParameters")), StaticSwitchParametersObjects, StaticComponentMaskParametersObjects);
+		if (EditorOnlyData.GetProperties()->HasField(TEXT("StaticParameters"))) {
+			ReadStaticParameters(EditorOnlyData.GetProperties()->GetObjectField(TEXT("StaticParameters")), StaticSwitchParametersObjects, StaticComponentMaskParametersObjects);
 		}
 	}
 

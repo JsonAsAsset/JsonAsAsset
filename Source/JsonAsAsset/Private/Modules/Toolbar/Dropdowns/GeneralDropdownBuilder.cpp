@@ -10,7 +10,7 @@ void IGeneralDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Open Plugin Settings"),
-		FText::FromString("Navigate to the JsonAsAsset plugin settings"),
+		FText::FromString("Navigate to plugin settings"),
 #if ENGINE_UE5
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.Settings"),
 #else
@@ -25,7 +25,7 @@ void IGeneralDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	);
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Open Message Log"),
-		FText::FromString("View message logs of JsonAsAsset"),
+		FText::FromString("View message logs"),
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "MessageLog.TabIcon"),
 		FUIAction(
 			FExecuteAction::CreateLambda([this] {

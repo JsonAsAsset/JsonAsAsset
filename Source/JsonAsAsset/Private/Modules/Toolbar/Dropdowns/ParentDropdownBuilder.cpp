@@ -15,19 +15,8 @@ void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 
 	/* Start Of Section ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	MenuBuilder.AddMenuEntry(
-		FText::FromString("Asset Types"),
-		FText::FromString("List of supported assets for JsonAsAsset"),
-		FSlateIcon(FAppStyle::Get().GetStyleSetName(), "LevelEditor.Tabs.Viewports"),
-		FUIAction(
-			FExecuteAction::CreateLambda([this]() {
-				LaunchURL(GitHub::README::AssetTypes);
-			})
-		)
-	);
-
-	MenuBuilder.AddMenuEntry(
 	FText::FromString("Documentation"),
-	FText::FromString("View JsonAsAsset documentation"),
+	FText::FromString("View documentation"),
 #if ENGINE_UE5
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.Documentation"),
 #else

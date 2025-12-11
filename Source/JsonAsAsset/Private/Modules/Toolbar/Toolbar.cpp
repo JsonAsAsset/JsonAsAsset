@@ -10,9 +10,7 @@
 #include "Modules/Metadata.h"
 #include "Modules/Cloud/Cloud.h"
 #include "Settings/Runtime.h"
-#include "Modules/Toolbar/Dropdowns/ActionRequiredDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/GeneralDropdownBuilder.h"
-#include "Modules/Toolbar/Dropdowns/CloudDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/DonateDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/ParentDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/ToolsDropdownBuilder.h"
@@ -22,12 +20,21 @@ class FMessageLogModule;
 
 void FJsonAsAssetToolbar::Register() {
 #if ENGINE_UE5
-	UToolMenu* ContentBrowserToolbarMenu = UToolMenus::Get()->ExtendMenu("ContentBrowser.Toolbar");
-	FToolMenuSection& Section = ContentBrowserToolbarMenu->FindOrAddSection("New");
+	/* false: uses top toolbar. true: uses content browser toolbar */
+	static bool bUseToolbar = false;
 	
-	/* Extend the menu */
-	UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar.PlayToolBar");
-	/*FToolMenuSection& Section = Menu->FindOrAddSection(GJsonAsAssetName);*/
+	UToolMenu* Menu;
+
+	if (bUseToolbar) {
+		Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar.PlayToolBar");
+	} else {
+		Menu = UToolMenus::Get()->ExtendMenu("ContentBrowser.Toolbar");
+	}
+
+	FToolMenuSection& Section =
+		bUseToolbar
+		? Menu->FindOrAddSection(GJsonAsAssetName)
+		: Menu->FindOrAddSection("New");
 	
 	/* Displays JsonAsAsset's icon along with the Version */
 	FToolMenuEntry ActionButton = Section.AddEntry(FToolMenuEntry::InitToolBarButton(
@@ -68,7 +75,7 @@ void FJsonAsAssetToolbar::Register() {
 		),
 		FOnGetContent::CreateStatic(&CreateMenuDropdown),
 		FText::FromString(GJsonAsAssetName.ToString()),
-		FText::FromString("Open JsonAsAsset's Menu"),
+		FText::FromString(""),
 		FSlateIcon(),
 		true
 	));
@@ -99,7 +106,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 		),
 		FOnGetContent::CreateStatic(&FJsonAsAssetToolbar::CreateMenuDropdown),
 		FText::FromString(FJMetadata::Version),
-		FText::FromString("Open JsonAsAsset's Menu"),
+		FText::FromString(""),
 		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Icon")),
 		true
 	);
@@ -171,10 +178,8 @@ TSharedRef<SWidget> FJsonAsAssetToolbar::CreateMenuDropdown() {
 		MakeShared<IVersioningDropdownBuilder>(),
 		MakeShared<IParentDropdownBuilder>(),
 		MakeShared<IToolsDropdownBuilder>(),
-		MakeShared<IActionRequiredDropdownBuilder>(),
-		MakeShared<ICloudDropdownBuilder>(),
+		MakeShared<IDonateDropdownBuilder>(),
 		MakeShared<IGeneralDropdownBuilder>(),
-		MakeShared<IDonateDropdownBuilder>()
 	};
 
 	for (const TSharedRef<IParentDropdownBuilder>& Dropdown : Dropdowns) {

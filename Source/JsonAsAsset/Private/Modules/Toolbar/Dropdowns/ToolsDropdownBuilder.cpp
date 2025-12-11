@@ -20,7 +20,7 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	
 	MenuBuilder.AddSubMenu(
 		FText::FromString("Asset Tools"),
-		FText::FromString("Tools bundled with JsonAsAsset"),
+		FText::FromString("Tools bundled"),
 		FNewMenuDelegate::CreateLambda([this, Settings](FMenuBuilder& InnerMenuBuilder) {
 			InnerMenuBuilder.BeginSection("JsonAsAssetToolsSection", FText::FromString("Tools"));
 			{

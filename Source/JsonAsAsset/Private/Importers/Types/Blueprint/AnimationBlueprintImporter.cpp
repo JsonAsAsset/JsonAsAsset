@@ -40,14 +40,14 @@ bool IAnimationBlueprintImporter::Import() {
 
 	if (!AnimBlueprint) return false;
 
-	const TSharedPtr<FJsonObject> RootAnimNodeDefaults = GetExportStartingWith("Default__", "Name", JsonObjects);
+	const TSharedPtr<FJsonObject> RootAnimNodeDefaults = GetExportStartingWith("Default__", "Name", AssetContainer.JsonObjects);
 	if (!RootAnimNodeDefaults.IsValid()) return false;
 	
 	RootAnimNodeProperties = RootAnimNodeDefaults->GetObjectField(TEXT("Properties"));
 	if (!RootAnimNodeProperties.IsValid()) return false;
 
 	const UBlueprintGeneratedClass* GeneratedClass = Cast<UBlueprintGeneratedClass>(AnimBlueprint->GeneratedClass);
-	GetObjectSerializer()->Exports = JsonObjects;
+	GetObjectSerializer()->Exports = AssetContainer.JsonObjects;
 	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(RootAnimNodeProperties, {
 		"RootComponent"
 	}), GeneratedClass->GetDefaultObject());
@@ -542,7 +542,7 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 			}
 		}
 
-		HandlePropertyBinding(NodeExport, JsonObjects, Node, this, AnimBlueprint);
+		HandlePropertyBinding(NodeExport, AssetContainer.JsonObjects, Node, this, AnimBlueprint);
 
 		const UJsonAsAssetSettings* Settings = GetSettings();
 		if (Settings->AssetSettings.AnimationBlueprint.bSaveNodeKeysInComments) {

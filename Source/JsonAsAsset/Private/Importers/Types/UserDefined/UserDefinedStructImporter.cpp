@@ -48,7 +48,7 @@ bool IUserDefinedStructImporter::Import() {
     }), UserDefinedStruct);
 
     /* Struct Metadata [Editor Only Data] */
-    CookedStructMetaData = GetExport("StructCookedMetaData", JsonObjects, true);
+    CookedStructMetaData = GetExport("StructCookedMetaData", AssetContainer.JsonObjects, true);
     
     if (CookedStructMetaData.IsValid() && CookedStructMetaData->HasField(TEXT("StructMetaData"))) {
         TArray<TSharedPtr<FJsonValue>> ObjectMetaData = CookedStructMetaData->GetObjectField(TEXT("StructMetaData"))->GetObjectField(TEXT("ObjectMetaData"))->GetArrayField(TEXT("ObjectMetaData"));

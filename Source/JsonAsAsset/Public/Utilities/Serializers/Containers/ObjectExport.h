@@ -126,7 +126,7 @@ struct FUObjectExportContainer {
 			Index++;
 
 			TSharedPtr<FJsonObject> Object = Value->AsObject();
-			if (!Object->HasField(TEXT("Name"))) continue;
+			if (!Object->HasField(TEXT("Name")) || !Object->HasField(TEXT("Type"))) continue;
 
 			/* Add it to the referenced objects */
 			Exports.Add(FUObjectExport(Object, nullptr, nullptr, Index));

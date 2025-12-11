@@ -3,13 +3,9 @@
 #pragma once
 
 #include "Importers/Constructor/Importer.h"
-#include "Interfaces/IHttpRequest.h"
 #include "Sound/SoundNodeWavePlayer.h"
 
-/*
- * Sound Graph Handler
- * Handles everything needed to create a sound graph from JSON.
-*/
+/* Handles everything needed to create a sound graph from JSON. */
 class ISoundGraph : public IImporter {
 public:
 	ISoundGraph(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
@@ -24,8 +20,8 @@ protected:
 	/* Creates an empty USoundNode */
 	static USoundNode* CreateEmptyNode(FName Name, FName Type, USoundCue* SoundCue);
 
-	static void ConstructNodes(USoundCue* SoundCue, TArray<TSharedPtr<FJsonValue>> JsonArray, TMap<FString, USoundNode*>& OutNodes);
-	void SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*> SoundCueNodes, TArray<TSharedPtr<FJsonValue>> JsonObjectArray) const;
+	void ConstructNodes(USoundCue* SoundCue, TMap<FString, USoundNode*>& OutNodes);
+	void SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*> SoundCueNodes) const;
 
 	/* Sound Wave Import */
 	static void OnDownloadSoundWave(FString SavePath, FString AssetPtr, USoundNodeWavePlayer* Node);

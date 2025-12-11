@@ -16,8 +16,8 @@ bool ISoundCueImporter::Import() {
 	if (SoundCue) {
 		TMap<FString, USoundNode*> SoundCueNodes;
 		
-		ConstructNodes(SoundCue, JsonObjects, SoundCueNodes);
-		SetupNodes(SoundCue, SoundCueNodes, JsonObjects);
+		ConstructNodes(SoundCue, SoundCueNodes);
+		SetupNodes(SoundCue, SoundCueNodes);
 	}
 	/* End of importing nodes ~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 

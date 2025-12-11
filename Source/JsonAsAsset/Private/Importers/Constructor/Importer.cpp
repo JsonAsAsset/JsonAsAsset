@@ -200,7 +200,7 @@ void IImporter::DeserializeExports(UObject* Parent, const bool bCreateObjects) {
 	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), Parent);
 	GetObjectSerializer()->Parent = Parent;
     
-	GetObjectSerializer()->DeserializeExports(JsonObjects, bCreateObjects);
+	GetObjectSerializer()->DeserializeExports(AssetContainer.JsonObjects, bCreateObjects);
 	ApplyModifications();
 }
 

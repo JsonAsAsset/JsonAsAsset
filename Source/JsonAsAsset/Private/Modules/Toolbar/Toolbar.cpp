@@ -136,13 +136,11 @@ bool FJsonAsAssetToolbar::IsToolBarVisible() {
 }
 
 bool FJsonAsAssetToolbar::IsActionEnabled() {
-	return GetSettings()->IsValid();
+	return true;
 }
 
 FText FJsonAsAssetToolbar::GetTooltipText() {
-	return !GetSettings()->IsValid()
-		? FText::FromString("The button is disabled due to your settings being improperly setup. Please modify your settings to execute JsonAsAsset.")
-		: FText::FromString("Execute JsonAsAsset");
+	return FText::FromString("Execute JsonAsAsset");
 }
 
 void FJsonAsAssetToolbar::ImportAction() {

@@ -57,7 +57,7 @@ public:
 
 /* Powerful Unreal Engine Plugin that imports assets from FModel */
 UCLASS(Config = EditorPerProjectUserSettings, DefaultConfig)
-class JSONASASSET_API UJsonAsAssetSettings : public UDeveloperSettings, public IJsonAsAssetValidationInterface {
+class JSONASASSET_API UJsonAsAssetSettings : public UDeveloperSettings {
 	GENERATED_BODY()
 public:
 	UJsonAsAssetSettings();

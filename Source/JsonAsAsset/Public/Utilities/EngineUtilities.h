@@ -23,10 +23,11 @@
 #include "IMessageLogListing.h"
 #include "ISettingsModule.h"
 #include "TlHelp32.h"
-#include "Json.h"
 #include "MessageLogModule.h"
+#include "Interfaces/IPluginManager.h"
 #include "Logging/MessageLog.h"
 #include "Modules/Log.h"
+#include "Modules/Metadata.h"
 #include "Modules/Cloud/Cloud.h"
 
 #if (ENGINE_MAJOR_VERSION != 4 || ENGINE_MINOR_VERSION < 27)
@@ -1137,4 +1138,8 @@ inline void SetAssetImportData(USkeletalMesh* InMesh, UAssetImportData* AssetImp
 #else
 	InMesh->AssetImportData = AssetImportData;
 #endif
+}
+
+inline TSharedPtr<IPlugin> GetPlugin(const FString& Name) {
+	return IPluginManager::Get().FindPlugin(Name);
 }

@@ -10,7 +10,7 @@
 #endif
 
 #include "Importers/Constructor/ImportReader.h"
-#include "Interfaces/IPluginManager.h"
+#include "Modules/Metadata.h"
 #include "Modules/Cloud/Cloud.h"
 #include "Settings/Runtime.h"
 #include "Modules/Toolbar/Dropdowns/ActionRequiredDropdownBuilder.h"
@@ -23,27 +23,29 @@
 
 class FMessageLogModule;
 
-/* ReSharper disable once CppMemberFunctionMayBeStatic */
 void FJsonAsAssetToolbar::Register() {
 #if ENGINE_UE5
-	/* Get Plugin's VersionName, example: 1.0.0 */
-    const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(GJsonAsAssetName.ToString());
-	const FString VersionName = Plugin->GetDescriptor().VersionName;
-
+	UToolMenu* ContentBrowserToolbarMenu = UToolMenus::Get()->ExtendMenu("ContentBrowser.Toolbar");
+	FToolMenuSection& Section = ContentBrowserToolbarMenu->FindOrAddSection("New");
+	
+	/* Extend the menu */
+	UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar.PlayToolBar");
+	/*FToolMenuSection& Section = Menu->FindOrAddSection(GJsonAsAssetName);*/
+	
 	/* Displays JsonAsAsset's icon along with the Version */
-	FToolMenuEntry ActionButton = FToolMenuEntry::InitToolBarButton(
+	FToolMenuEntry ActionButton = Section.AddEntry(FToolMenuEntry::InitToolBarButton(
 		GJsonAsAssetName,
 		
 		FToolUIActionChoice(
 			FUIAction(
-				FExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::ImportAction),
-				FCanExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::IsActionEnabled),
+				FExecuteAction::CreateStatic(&ImportAction),
+				FCanExecuteAction::CreateStatic(&IsActionEnabled),
 				FGetActionCheckState(),
-				FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
+				FIsActionButtonVisible::CreateStatic(&IsToolBarVisible)
 			)
 		),
 		
-		FText::FromString(VersionName),
+		FText::FromString(FJMetadata::Version),
 		
 		TAttribute<FText>::CreateRaw(this, &FJsonAsAssetToolbar::GetTooltipText),
 		
@@ -54,39 +56,30 @@ void FJsonAsAssetToolbar::Register() {
 		),
 		
 		EUserInterfaceActionType::Button
-	);
+	));
 	
 	ActionButton.StyleNameOverride = "CalloutToolbar";
 
 	/* Menu dropdown */
-	const FToolMenuEntry MenuButton = FToolMenuEntry::InitComboButton(
-		"JsonAsAssetMenu",
+	const FToolMenuEntry MenuButton = Section.AddEntry(FToolMenuEntry::InitComboButton(
+		"JsonAsAsset.Menu",
 		FUIAction(
 			FExecuteAction(),
 			FCanExecuteAction(),
 			FGetActionCheckState(),
 			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
 		),
-		FOnGetContent::CreateRaw(this, &FJsonAsAssetToolbar::CreateMenuDropdown),
+		FOnGetContent::CreateStatic(&CreateMenuDropdown),
 		FText::FromString(GJsonAsAssetName.ToString()),
 		FText::FromString("Open JsonAsAsset's Menu"),
 		FSlateIcon(),
 		true
-	);
-
-	/* Extend the menu */
-	UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar.PlayToolBar");
-	FToolMenuSection& Section = Menu->FindOrAddSection(GJsonAsAssetName);
-
-	Section.AddEntry(ActionButton);
-	Section.AddEntry(MenuButton);
+	));
 #endif
 }
 
 #if ENGINE_UE4
 void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
-    const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(GJsonAsAssetName.ToString());
-	
 	Builder.AddToolBarButton(
 		FUIAction(
 			FExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::ImportAction),
@@ -95,7 +88,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
 		),
 		NAME_None,
-		FText::FromString(Plugin->GetDescriptor().VersionName),
+		FText::FromString(FJMetadata::Version),
 		FText::FromString("Execute JsonAsAsset"),
 		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Icon"))
 	);
@@ -108,7 +101,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
 		),
 		FOnGetContent::CreateRaw(this, &FJsonAsAssetToolbar::CreateMenuDropdown),
-		FText::FromString(Plugin->GetDescriptor().VersionName),
+		FText::FromString(FJMetadata::Version),
 		FText::FromString("Open JsonAsAsset's Menu"),
 		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Icon")),
 		true
@@ -138,19 +131,16 @@ bool FJsonAsAssetToolbar::IsToolBarVisible() {
 	return bVisible;
 }
 
-/* ReSharper disable once CppMemberFunctionMayBeStatic */
-bool FJsonAsAssetToolbar::IsActionEnabled() const {
+bool FJsonAsAssetToolbar::IsActionEnabled() {
 	return GetSettings()->IsValid();
 }
 
-/* ReSharper disable once CppMemberFunctionMayBeStatic */
-FText FJsonAsAssetToolbar::GetTooltipText() const {
+FText FJsonAsAssetToolbar::GetTooltipText() {
 	return !GetSettings()->IsValid()
 		? FText::FromString("The button is disabled due to your settings being improperly setup. Please modify your settings to execute JsonAsAsset.")
 		: FText::FromString("Execute JsonAsAsset");
 }
 
-/* ReSharper disable once CppMemberFunctionMayBeStatic */
 void FJsonAsAssetToolbar::ImportAction() {
 	const UJsonAsAssetSettings* Settings = GetSettings();
 
@@ -177,7 +167,6 @@ void FJsonAsAssetToolbar::ImportAction() {
 	}
 }
 
-/* ReSharper disable once CppMemberFunctionMayBeStatic */
 TSharedRef<SWidget> FJsonAsAssetToolbar::CreateMenuDropdown() {
 	FMenuBuilder MenuBuilder(false, nullptr);
 

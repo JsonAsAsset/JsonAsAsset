@@ -20,11 +20,13 @@
 #endif
 
 void FJsonAsAssetModule::StartupModule() {
-    /* Initialize plugin style, reload textures, and register commands */
+	FJMetadata::Initialize();
+	
+    /* Initialize plugin style, reload textures */
     FJsonAsAssetStyle::Initialize();
     FJsonAsAssetStyle::ReloadTextures();
 
-    /* Register Toolbar on startup */
+    /* Register Toolbar */
 	FJsonAsAssetToolbar Toolbar;
 
 #if ENGINE_UE5

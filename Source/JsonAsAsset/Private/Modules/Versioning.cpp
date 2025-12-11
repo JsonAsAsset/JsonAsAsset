@@ -4,8 +4,8 @@
 
 #include "HttpModule.h"
 #include "Interfaces/IHttpResponse.h"
-#include "Interfaces/IPluginManager.h"
 #include "Modules/Log.h"
+#include "Modules/Metadata.h"
 #include "Modules/UI/StyleModule.h"
 #include "Serialization/JsonSerializer.h"
 #include "Utilities/EngineUtilities.h"
@@ -63,14 +63,12 @@ void FJsonAsAssetVersioning::Update() {
 		if (!JsonObject->HasField(TEXT("name"))) {
 			return;
 		}
-
-		const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(GJsonAsAssetName.ToString());
-
+		
 		const FString VersionName = JsonObject->GetStringField(TEXT("name"));
-		const FString CurrentVersionName = Plugin->GetDescriptor().VersionName;
+		const FString CurrentVersionName = FJMetadata::Version;
 
 		const int LatestVersion = ConvertVersionStringToInt(VersionName);
-		const int CurrentVersion = ConvertVersionStringToInt(Plugin->GetDescriptor().VersionName);
+		const int CurrentVersion = ConvertVersionStringToInt(FJMetadata::Version);
 
 		Reset(CurrentVersion, LatestVersion, JsonObject->GetStringField(TEXT("html_url")), VersionName, CurrentVersionName);
 

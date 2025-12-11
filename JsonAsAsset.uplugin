@@ -18,7 +18,7 @@
 		{
 			"Name": "JsonAsAsset",
 			"Type": "Editor",
-			"LoadingPhase": "Default",
+			"LoadingPhase": "PostDefault",
 			"PlatformDenyList": [
 				"Android"
 			]

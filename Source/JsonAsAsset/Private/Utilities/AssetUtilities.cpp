@@ -10,7 +10,6 @@
 #include "Sound/SoundNode.h"
 #include "Engine/SubsurfaceProfile.h"
 #include "Materials/MaterialParameterCollection.h"
-#include "Interfaces/IPluginManager.h"
 #include "Settings/JsonAsAssetSettings.h"
 #include "Dom/JsonObject.h"
 
@@ -82,7 +81,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 				ModifiablePath.Split("/", nullptr, &PluginName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 				PluginName.Split("/", &PluginName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 
-				if (IPluginManager::Get().FindPlugin(PluginName) == nullptr) {
+				if (GetPlugin(PluginName) == nullptr) {
 					CreatePlugin(PluginName);
 				}
 			}
@@ -95,7 +94,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 				ModifiablePath.Split("/", nullptr, &PluginName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 				PluginName.Split("/", &PluginName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 
-				if (IPluginManager::Get().FindPlugin(PluginName) == nullptr) {
+				if (GetPlugin(PluginName) == nullptr) {
 					CreatePlugin(PluginName);
 				}
 			}
@@ -106,7 +105,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 			RootName.Split("/", &RootName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 		}
 
-		if (RootName != "Game" && RootName != "Engine" && IPluginManager::Get().FindPlugin(RootName) == nullptr) {
+		if (RootName != "Game" && RootName != "Engine" && GetPlugin(RootName) == nullptr) {
 			CreatePlugin(RootName);
 		}
 
@@ -178,7 +177,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 			}
 
 			/* Missing Plugin: Create it */
-			if (RootName != "Game" && RootName != "Engine" && IPluginManager::Get().FindPlugin(RootName) == nullptr) {
+			if (RootName != "Game" && RootName != "Engine" && GetPlugin(RootName) == nullptr) {
 				CreatePlugin(RootName);
 			}
 
@@ -209,7 +208,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 				RootName.Split("/", &RootName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 			}
 
-			if (RootName != "Game" && RootName != "Engine" && IPluginManager::Get().FindPlugin(RootName) == nullptr) {
+			if (RootName != "Game" && RootName != "Engine" && GetPlugin(RootName) == nullptr) {
 				CreatePlugin(RootName);
 			}
 
@@ -327,7 +326,7 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 		PackagePath.Split("/", nullptr, &PluginName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 		PluginName.Split("/", &PluginName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 
-		if (IPluginManager::Get().FindPlugin(PluginName) == nullptr) {
+		if (GetPlugin(PluginName) == nullptr) {
 			CreatePlugin(PluginName);
 		}
 	}

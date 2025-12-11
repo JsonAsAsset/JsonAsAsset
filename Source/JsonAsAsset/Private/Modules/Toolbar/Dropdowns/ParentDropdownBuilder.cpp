@@ -3,16 +3,14 @@
 #include "Modules/Toolbar/Dropdowns/ParentDropdownBuilder.h"
 
 #include "JsonAsAsset.h"
-#include "Interfaces/IPluginManager.h"
+#include "Modules/Metadata.h"
 #include "Utilities/Compatibility.h"
 #include "Utilities/EngineUtilities.h"
 
 void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
-    const TSharedPtr<IPlugin> Plugin = IPluginManager::Get().FindPlugin(GJsonAsAssetName.ToString());
-	
 	MenuBuilder.BeginSection(
 		"JsonAsAssetSection", 
-		FText::FromString(Plugin->GetDescriptor().VersionName)
+		FText::FromString(FJMetadata::Version)
 	);
 
 	/* Start Of Section ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

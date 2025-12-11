@@ -14,7 +14,6 @@
 
 #include "JsonAsAssetSettings.generated.h"
 
-extern FName GJsonAsAssetName;
 extern FName GJsonAsAssetSettingsCategoryName;
 
 USTRUCT()

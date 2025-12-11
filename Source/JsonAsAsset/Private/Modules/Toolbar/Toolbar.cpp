@@ -1,6 +1,6 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2025 */
 
-#include "Toolbar/Toolbar.h"
+#include "Modules/Toolbar/Toolbar.h"
 
 #include "Utilities/Compatibility.h"
 #include "Utilities/EngineUtilities.h"
@@ -13,13 +13,13 @@
 #include "Interfaces/IPluginManager.h"
 #include "Modules/Cloud/Cloud.h"
 #include "Settings/Runtime.h"
-#include "Toolbar/Dropdowns/ActionRequiredDropdownBuilder.h"
-#include "Toolbar/Dropdowns/GeneralDropdownBuilder.h"
-#include "Toolbar/Dropdowns/CloudDropdownBuilder.h"
-#include "Toolbar/Dropdowns/DonateDropdownBuilder.h"
-#include "Toolbar/Dropdowns/ParentDropdownBuilder.h"
-#include "Toolbar/Dropdowns/ToolsDropdownBuilder.h"
-#include "Toolbar/Dropdowns/VersioningDropdownBuilder.h"
+#include "Modules/Toolbar/Dropdowns/ActionRequiredDropdownBuilder.h"
+#include "Modules/Toolbar/Dropdowns/GeneralDropdownBuilder.h"
+#include "Modules/Toolbar/Dropdowns/CloudDropdownBuilder.h"
+#include "Modules/Toolbar/Dropdowns/DonateDropdownBuilder.h"
+#include "Modules/Toolbar/Dropdowns/ParentDropdownBuilder.h"
+#include "Modules/Toolbar/Dropdowns/ToolsDropdownBuilder.h"
+#include "Modules/Toolbar/Dropdowns/VersioningDropdownBuilder.h"
 
 class FMessageLogModule;
 

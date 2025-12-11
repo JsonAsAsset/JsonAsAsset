@@ -11,7 +11,7 @@
 #include "Modules/Versioning.h"
 
 #include "Modules/UI/StyleModule.h"
-#include "Toolbar/Toolbar.h"
+#include "Modules/Toolbar/Toolbar.h"
 #include "Utilities/EngineUtilities.h"
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -23,7 +23,7 @@ void FJsonAsAssetModule::StartupModule() {
     /* Initialize plugin style, reload textures, and register commands */
     FJsonAsAssetStyle::Initialize();
     FJsonAsAssetStyle::ReloadTextures();
-	
+
     /* Register Toolbar on startup */
 	FJsonAsAssetToolbar Toolbar;
 

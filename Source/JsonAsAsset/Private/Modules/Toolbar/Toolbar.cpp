@@ -21,7 +21,7 @@ class FMessageLogModule;
 void FJsonAsAssetToolbar::Register() {
 #if ENGINE_UE5
 	/* false: uses top toolbar. true: uses content browser toolbar */
-	static bool bUseToolbar = false;
+	static bool bUseToolbar = true;
 	
 	UToolMenu* Menu;
 

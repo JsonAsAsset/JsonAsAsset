@@ -14,10 +14,6 @@
 void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	UJsonAsAssetSettings* Settings = GetSettings();
 	
-	if (!Settings->IsValid()) {
-		return;
-	}
-	
 	MenuBuilder.AddSubMenu(
 		FText::FromString("Asset Tools"),
 		FText::FromString("Tools bundled"),

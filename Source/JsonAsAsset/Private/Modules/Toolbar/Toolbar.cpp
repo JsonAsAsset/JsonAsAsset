@@ -176,8 +176,8 @@ TSharedRef<SWidget> FJsonAsAssetToolbar::CreateMenuDropdown() {
 		MakeShared<IVersioningDropdownBuilder>(),
 		MakeShared<IParentDropdownBuilder>(),
 		MakeShared<IToolsDropdownBuilder>(),
-		MakeShared<IDonateDropdownBuilder>(),
 		MakeShared<IGeneralDropdownBuilder>(),
+		MakeShared<IDonateDropdownBuilder>(),
 	};
 
 	for (const TSharedRef<IParentDropdownBuilder>& Dropdown : Dropdowns) {

@@ -9,7 +9,7 @@ struct JSONASASSET_API FJsonAsAssetToolbar {
 	void Register();
 	
 #if ENGINE_UE4
-	void UE4Register(FToolBarBuilder& Builder);
+	static void UE4Register(FToolBarBuilder& Builder);
 #endif
 	
 	/* Checks if JsonAsAsset is fit to function, and opens a JSON file dialog */

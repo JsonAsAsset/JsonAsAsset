@@ -20,6 +20,7 @@
 #include "Modules/Toolbar/Dropdowns/ParentDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/ToolsDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/VersioningDropdownBuilder.h"
+#include "Modules/UI/StyleModule.h"
 
 class FMessageLogModule;
 
@@ -82,8 +83,8 @@ void FJsonAsAssetToolbar::Register() {
 void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 	Builder.AddToolBarButton(
 		FUIAction(
-			FExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::ImportAction),
-			FCanExecuteAction::CreateRaw(this, &FJsonAsAssetToolbar::IsActionEnabled),
+			FExecuteAction::CreateStatic(&ImportAction),
+			FCanExecuteAction::CreateStatic(&IsActionEnabled),
 			FGetActionCheckState(),
 			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
 		),
@@ -100,7 +101,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 			FGetActionCheckState(),
 			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
 		),
-		FOnGetContent::CreateRaw(this, &FJsonAsAssetToolbar::CreateMenuDropdown),
+		FOnGetContent::CreateStatic(&FJsonAsAssetToolbar::CreateMenuDropdown),
 		FText::FromString(FJMetadata::Version),
 		FText::FromString("Open JsonAsAsset's Menu"),
 		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Icon")),

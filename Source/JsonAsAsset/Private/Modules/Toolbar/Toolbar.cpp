@@ -35,9 +35,9 @@ void FJsonAsAssetToolbar::Register() {
 		bUseToolbar
 		? Menu->FindOrAddSection(GJsonAsAssetName)
 		: Menu->FindOrAddSection("New");
-	
+
 	/* Displays JsonAsAsset's icon along with the Version */
-	FToolMenuEntry ActionButton = Section.AddEntry(FToolMenuEntry::InitToolBarButton(
+	FToolMenuEntry& ActionButton = Section.AddEntry(FToolMenuEntry::InitToolBarButton(
 		GJsonAsAssetName,
 		
 		FToolUIActionChoice(
@@ -51,13 +51,9 @@ void FJsonAsAssetToolbar::Register() {
 		
 		FText::FromString(FJMetadata::Version),
 		
-		TAttribute<FText>::CreateRaw(this, &FJsonAsAssetToolbar::GetTooltipText),
+		FText::FromString("Execute JsonAsAsset"),
 		
-		TAttribute<FSlateIcon>::Create(
-			TAttribute<FSlateIcon>::FGetter::CreateLambda([this]() -> FSlateIcon {
-				return FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Icon"));
-			})
-		),
+		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Icon")),
 		
 		EUserInterfaceActionType::Button
 	));
@@ -66,7 +62,7 @@ void FJsonAsAssetToolbar::Register() {
 
 	/* Menu dropdown */
 	const FToolMenuEntry MenuButton = Section.AddEntry(FToolMenuEntry::InitComboButton(
-		"JsonAsAsset.Menu",
+		"JsonAsAssetMenu",
 		FUIAction(
 			FExecuteAction(),
 			FCanExecuteAction(),

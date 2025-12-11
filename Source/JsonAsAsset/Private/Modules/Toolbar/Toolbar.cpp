@@ -5,10 +5,7 @@
 #include "Utilities/Compatibility.h"
 #include "Utilities/EngineUtilities.h"
 
-#if ENGINE_UE5
 #include "Modules/UI/StyleModule.h"
-#endif
-
 #include "Importers/Constructor/ImportReader.h"
 #include "Modules/Metadata.h"
 #include "Modules/Cloud/Cloud.h"
@@ -20,7 +17,6 @@
 #include "Modules/Toolbar/Dropdowns/ParentDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/ToolsDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/VersioningDropdownBuilder.h"
-#include "Modules/UI/StyleModule.h"
 
 class FMessageLogModule;
 

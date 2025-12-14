@@ -27,7 +27,7 @@ public:
 	};
 
 public:
-	static void Update();
+	static bool Update();
 	
 	/* Export Endpoints ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 public:

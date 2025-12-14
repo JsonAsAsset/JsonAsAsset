@@ -43,7 +43,7 @@ void FJsonAsAssetToolbar::Register() {
 		FToolUIActionChoice(
 			FUIAction(
 				FExecuteAction::CreateStatic(&ImportAction),
-				FCanExecuteAction::CreateStatic(&IsActionEnabled),
+				FCanExecuteAction(),
 				FGetActionCheckState(),
 				FIsActionButtonVisible::CreateStatic(&IsToolBarVisible)
 			)
@@ -83,7 +83,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 	Builder.AddToolBarButton(
 		FUIAction(
 			FExecuteAction::CreateStatic(&ImportAction),
-			FCanExecuteAction::CreateStatic(&IsActionEnabled),
+			FCanExecuteAction(),
 			FGetActionCheckState(),
 			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
 		),
@@ -131,21 +131,12 @@ bool FJsonAsAssetToolbar::IsToolBarVisible() {
 	return bVisible;
 }
 
-bool FJsonAsAssetToolbar::IsActionEnabled() {
-	return true;
-}
-
-FText FJsonAsAssetToolbar::GetTooltipText() {
-	return FText::FromString("Execute JsonAsAsset");
-}
-
 void FJsonAsAssetToolbar::ImportAction() {
 	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	/* Conditional Settings Checks */
 	if (Settings->bEnableCloudServer) {
-		if (!Cloud::Status::Check(Settings)) return;
-		Cloud::Update();
+		if (!Cloud::Status::Check(Settings) || !Cloud::Update()) return;
 	}
 
 	/* Update Runtime */
@@ -173,7 +164,7 @@ TSharedRef<SWidget> FJsonAsAssetToolbar::CreateMenuDropdown() {
 		MakeShared<IParentDropdownBuilder>(),
 		MakeShared<IToolsDropdownBuilder>(),
 		MakeShared<IGeneralDropdownBuilder>(),
-		MakeShared<IDonateDropdownBuilder>(),
+		MakeShared<IDonateDropdownBuilder>()
 	};
 
 	for (const TSharedRef<IParentDropdownBuilder>& Dropdown : Dropdowns) {

@@ -19,6 +19,4 @@ struct JSONASASSET_API FJsonAsAssetToolbar {
 	static TSharedRef<SWidget> CreateMenuDropdown();
 	
 	static bool IsToolBarVisible();
-	static bool IsActionEnabled();
-	FText GetTooltipText();
 };

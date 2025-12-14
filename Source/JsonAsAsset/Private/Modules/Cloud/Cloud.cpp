@@ -114,12 +114,12 @@ TArray<TSharedPtr<FJsonValue>> Cloud::GetExports(const FString& RequestURL, cons
 	return JsonObject->GetArrayField(TEXT("exports"));
 }
 
-void Cloud::Update() {
+bool Cloud::Update() {
 	UJsonAsAssetSettings* MutableSettings = GetSettings();
-	if (!MutableSettings->bEnableCloudServer) return;
+	if (!MutableSettings->bEnableCloudServer) return false;
 	
 	const auto MetadataResponse = Get("/api/metadata");
-	if (!MetadataResponse.IsValid()) return;
+	if (!MetadataResponse.IsValid()) return false;
 	
 	if (MetadataResponse->HasField(TEXT("name"))) {
 		FString Name = MetadataResponse->GetStringField(TEXT("name"));
@@ -146,4 +146,6 @@ void Cloud::Update() {
 	}
 
 	SavePluginConfig(MutableSettings);
+
+	return true;
 }

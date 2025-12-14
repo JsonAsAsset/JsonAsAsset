@@ -23,15 +23,4 @@ void IGeneralDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		),
 		NAME_None
 	);
-	MenuBuilder.AddMenuEntry(
-		FText::FromString("Open Message Log"),
-		FText::FromString("View message logs"),
-		FSlateIcon(FAppStyle::GetAppStyleSetName(), "MessageLog.TabIcon"),
-		FUIAction(
-			FExecuteAction::CreateLambda([this] {
-				OpenMessageLog();
-			})
-		),
-		NAME_None
-	);
 }

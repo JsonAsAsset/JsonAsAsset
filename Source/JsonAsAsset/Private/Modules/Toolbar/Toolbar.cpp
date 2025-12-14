@@ -16,8 +16,6 @@
 #include "Modules/Toolbar/Dropdowns/ToolsDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/VersioningDropdownBuilder.h"
 
-class FMessageLogModule;
-
 void FJsonAsAssetToolbar::Register() {
 #if ENGINE_UE5
 	/* false: uses top toolbar. true: uses content browser toolbar */
@@ -150,8 +148,6 @@ void FJsonAsAssetToolbar::ImportAction() {
 	}
 
 	for (FString& File : OutFileNames) {
-		EmptyMessageLog();
-
 		IImportReader::ImportReference(File);
 	}
 }

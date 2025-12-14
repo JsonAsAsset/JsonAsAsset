@@ -112,8 +112,6 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
                         false,
                         310.0f
                     );
-
-                    GetMessageLog().Message(EMessageSeverity::Info, FText::FromString("Locally Downloaded Asset: " + Name + " (" + Type + ")"));
                 } else {
                     AppendNotification(
                         FText::FromString("Download Failed: " + Type),
@@ -124,8 +122,6 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
                         false,
                         310.0f
                     );
-
-                    GetMessageLog().Error(FText::FromString("Failed to locally download asset: " + Name + " (" + Type + ")"));
                 }
             }
         }

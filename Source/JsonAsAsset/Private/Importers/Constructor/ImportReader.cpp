@@ -142,8 +142,6 @@ void IImportReader::ReadExportAndImport(const FUObjectExportContainer& Container
 			false,
 			350.0f
 		);
-
-		GetMessageLog().Message(EMessageSeverity::Info, FText::FromString("Imported Asset: " + Name + " (" + Type + ")"));
 	} else {
 		/* Import Failed Notification */
 		AppendNotification(

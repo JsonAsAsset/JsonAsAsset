@@ -48,16 +48,6 @@ void FJsonAsAssetModule::StartupModule() {
 	}
 #endif
 
-    /* Set up message log for JsonAsAsset */
-    {
-        FMessageLogModule& MessageLogModule = FModuleManager::LoadModuleChecked<FMessageLogModule>("MessageLog");
-        FMessageLogInitializationOptions InitOptions;
-        InitOptions.bShowPages = true;
-        InitOptions.bAllowClear = true;
-        InitOptions.bShowFilters = true;
-        MessageLogModule.RegisterLogListing(GJsonAsAssetName, FText::FromString(GJsonAsAssetName.ToString()), InitOptions);
-    }
-
     const UJsonAsAssetSettings* Settings = GetSettings();
 	
 	if (!Settings->Versioning.bDisable) {
@@ -72,12 +62,6 @@ void FJsonAsAssetModule::ShutdownModule() {
 
 	/* Shutdown the plugin style */
 	FJsonAsAssetStyle::Shutdown();
-
-	/* Unregister message log listing if the module is loaded */
-	if (FModuleManager::Get().IsModuleLoaded("MessageLog")) {
-		FMessageLogModule& MessageLogModule = FModuleManager::GetModuleChecked<FMessageLogModule>("MessageLog");
-		MessageLogModule.UnregisterLogListing(GJsonAsAssetName);
-	}
 }
 
 IMPLEMENT_MODULE(FJsonAsAssetModule, JsonAsAsset)

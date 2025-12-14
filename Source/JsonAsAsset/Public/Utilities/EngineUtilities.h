@@ -3,7 +3,6 @@
 #pragma once
 
 /* Holds helper functions for JsonAsAsset. */
-
 #include "Framework/Notifications/NotificationManager.h"
 #include "Widgets/Notifications/SNotificationList.h"
 #include "Utilities/Serializers/PropertyUtilities.h"
@@ -20,12 +19,9 @@
 #include "RemoteUtilities.h"
 #include "PluginUtils.h"
 #include "HttpModule.h"
-#include "IMessageLogListing.h"
 #include "ISettingsModule.h"
 #include "TlHelp32.h"
-#include "MessageLogModule.h"
 #include "Interfaces/IPluginManager.h"
-#include "Logging/MessageLog.h"
 #include "Modules/Log.h"
 #include "Modules/Metadata.h"
 #include "Modules/Cloud/Cloud.h"
@@ -143,7 +139,7 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 
 	if (SelectedFolders.Num() == 0) {
 		UE_LOG(LogJsonAsAsset, Warning, TEXT("No folder selected in the Content Browser."));
-		return AssetDataList; 
+		return AssetDataList;
 	}
 
 	const FString CurrentFolder = SelectedFolders[0];
@@ -996,25 +992,6 @@ inline UClass* LoadClass(const TSharedPtr<FJsonObject>& SuperStruct) {
 	ObjectPath.Split(".", &ObjectPath, nullptr);
 
 	return LoadBlueprintClass(ObjectPath);
-}
-
-inline TSharedRef<IMessageLogListing> GetMessageLogListing() {
-	FMessageLogModule& MessageLogModule = FModuleManager::GetModuleChecked<FMessageLogModule>("MessageLog");
-	const TSharedRef<IMessageLogListing> LogListing = MessageLogModule.GetLogListing(GJsonAsAssetName);
-
-	return LogListing;
-}
-
-inline FMessageLog GetMessageLog() {
-	return FMessageLog(FName(GJsonAsAssetName));
-}
-
-inline void OpenMessageLog() {
-	GetMessageLog().Open(EMessageSeverity::Info, true);
-}
-
-inline void EmptyMessageLog() {
-	GetMessageLogListing()->ClearMessages();
 }
 
 inline void RemoveNotification(TWeakPtr<SNotificationItem> Notification) {

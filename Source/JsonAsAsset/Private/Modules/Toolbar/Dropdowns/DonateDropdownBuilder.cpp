@@ -7,7 +7,7 @@
 #include "Utilities/EngineUtilities.h"
 
 void IDonateDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
-	MenuBuilder.BeginSection("JsonAsAssetDonateSection", FText::FromString("Donation"));
+	MenuBuilder.BeginSection("JsonAsAssetSupportSection", FText::FromString("Support"));
 	
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Become A Supporter"),

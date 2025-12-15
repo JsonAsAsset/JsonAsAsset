@@ -127,6 +127,7 @@ TArray<TObjectPtr<T>> IImporter::LoadExport(const TArray<TSharedPtr<FJsonValue>>
 	for (const TSharedPtr<FJsonValue>& ArrayElement : PackageArray) {
 		const TSharedPtr<FJsonObject> ObjectPtr = ArrayElement->AsObject();
 		TObjectPtr<T> Out;
+		
 		LoadExport<T>(&ObjectPtr, Out);
 
 		Array.Add(Out);

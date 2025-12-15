@@ -23,10 +23,6 @@ public:
     /* Constructors ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
     IImporter() {}
 
-    /* Importer Constructor */
-    IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
-              const TArray<TSharedPtr<FJsonValue>>& JsonObjects = {});
-
     virtual ~IImporter() override {}
 
 public:

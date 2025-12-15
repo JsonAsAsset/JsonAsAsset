@@ -112,6 +112,7 @@ struct FUObjectExportContainer {
 	TArray<FUObjectExport> Exports;
 	TArray<TSharedPtr<FJsonValue>> JsonObjects = {};
 	
+public:
 	FUObjectExportContainer() {};
 	FUObjectExportContainer(const TArray<TSharedPtr<FJsonValue>>& Array) {
 		Fill(Array);

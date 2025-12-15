@@ -6,10 +6,6 @@
 
 class IPoseAssetImporter final : public IImporter {
 public:
-	IPoseAssetImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
-		IImporter(JsonObject, Package, JsonObjects), PoseAsset(nullptr) {
-	}
-
 	UPoseAsset* PoseAsset;
 
 	virtual UObject* CreateAsset(UObject* CreatedAsset) override;

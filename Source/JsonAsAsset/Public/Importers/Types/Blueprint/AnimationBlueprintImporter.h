@@ -9,11 +9,6 @@ class UAnimGraphNode_Base;
 
 class IAnimationBlueprintImporter final : public IImporter {
 public:
-	IAnimationBlueprintImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
-		IImporter(JsonObject, Package, JsonObjects), AnimBlueprint(nullptr)
-	{
-	}
-
 	virtual bool Import() override;
 
 private:
@@ -43,7 +38,7 @@ private:
 	
 protected:
 	/* Global Cached data to reuse */
-	UAnimBlueprint* AnimBlueprint;
+	UAnimBlueprint* AnimBlueprint = nullptr;
 	
 	TArray<FString> NodesKeys;
 	TArray<FString> ReversedNodesKeys;

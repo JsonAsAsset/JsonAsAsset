@@ -15,43 +15,6 @@
 #include "Utilities/EngineUtilities.h"
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-/* Importer Constructor */
-IImporter::IImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, 
-		  const TArray<TSharedPtr<FJsonValue>>& JsonObjects)
-	: USerializerContainer(Package, JsonObjects)
-{
-	/* Create Properties field if it doesn't exist */
-	if (!JsonObject->HasField(TEXT("Properties"))) {
-		JsonObject->SetObjectField(TEXT("Properties"), TSharedPtr<FJsonObject>());
-	}
-
-	AssetExport.JsonObject = JsonObject;
-
-	/* Move asset properties defined outside "Properties" and move it inside */
-	for (const auto& Pair : JsonObject->Values) {
-		const FString& PropertyName = Pair.Key;
-    
-		if (!PropertyName.Equals(TEXT("Type")) &&
-			!PropertyName.Equals(TEXT("Name")) &&
-			!PropertyName.Equals(TEXT("Class")) &&
-			!PropertyName.Equals(TEXT("Flags")) &&
-			!PropertyName.Equals(TEXT("Properties"))
-		) {
-			AssetExport.GetProperties()->SetField(PropertyName, Pair.Value);
-		}
-	}
-
-	AssetExport.NameOverride = AssetExport.GetName();
-	
-	/* BlueprintGeneratedClass is post-fixed with _C */
-	if (AssetExport.GetType().ToString().Contains("BlueprintGeneratedClass")) {
-		FString NewName; {
-			AssetExport.NameOverride.ToString().Split("_C", &NewName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
-			AssetExport.NameOverride = FName(*NewName);
-		}
-	}
-}
-
 UObject* IImporter::CreateAsset(UObject* CreatedAsset) {
 	if (CreatedAsset) {
 		AssetExport.Object = CreatedAsset;

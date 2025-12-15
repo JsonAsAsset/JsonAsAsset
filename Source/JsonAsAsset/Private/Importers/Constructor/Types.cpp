@@ -19,8 +19,6 @@ TMap<FString, TArray<FString>> ImportTypes::Templated = {
 		{
 			TEXT("SlateBrushAsset"),
 			TEXT("SlateWidgetStyleAsset"),
-			TEXT("AnimBoneCompressionSettings"),
-			TEXT("AnimCurveCompressionSettings"),
 			TEXT("LandscapeLayerInfoObject"),
 			TEXT("HLODProxy")
 		}

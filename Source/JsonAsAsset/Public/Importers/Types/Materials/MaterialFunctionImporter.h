@@ -6,10 +6,6 @@
 
 class IMaterialFunctionImporter : public IMaterialGraph {
 public:
-	IMaterialFunctionImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
-		IMaterialGraph(JsonObject, Package, JsonObjects) {
-	}
-
 	virtual UObject* CreateAsset(UObject* CreatedAsset) override;
 	virtual bool Import() override;
 };

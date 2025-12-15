@@ -304,7 +304,7 @@ inline void CreateStateMachineGraph(
 			/* Use if needed */
 			const FUObjectExport DelegateExport = RootContainer.Find(DelegateExportName);
 
-			HandlePropertyBinding(DelegateExport, Importer->JsonObjects, TransitionResult, Importer, AnimBlueprint);
+			HandlePropertyBinding(DelegateExport, Importer->AssetContainer.JsonObjects, TransitionResult, Importer, AnimBlueprint);
 
 			TransitionResult->NodeComment = DelegateExportName;
 			TransitionResult->bCommentBubbleVisible = true;

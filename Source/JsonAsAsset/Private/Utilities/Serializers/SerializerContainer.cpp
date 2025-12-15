@@ -2,15 +2,43 @@
 
 #include "Utilities/Serializers/SerializerContainer.h"
 
-/* Serializer Constructor */
-USerializerContainer::USerializerContainer(UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects) : JsonObjects(JsonObjects) {
-	AssetExport.Package = Package;
-	AssetContainer = JsonObjects;
-	
+USerializerContainer::USerializerContainer() {
 	CreateSerializer();
 }
 
-USerializerContainer::USerializerContainer() : USerializerContainer(nullptr, {}) { }
+void USerializerContainer::Initialize(FUObjectExport& Export, FUObjectExportContainer& Container) {
+	AssetContainer = Container;
+	AssetExport = Export;
+	
+	/* Create Properties field if it doesn't exist */
+	if (!AssetExport.JsonObject->HasField(TEXT("Properties"))) {
+		AssetExport.JsonObject->SetObjectField(TEXT("Properties"), TSharedPtr<FJsonObject>());
+	}
+
+	/* Move asset properties defined outside "Properties" and move it inside */
+	for (const auto& Pair : AssetExport.JsonObject->Values) {
+		const FString& PropertyName = Pair.Key;
+    
+		if (!PropertyName.Equals(TEXT("Type")) &&
+			!PropertyName.Equals(TEXT("Name")) &&
+			!PropertyName.Equals(TEXT("Class")) &&
+			!PropertyName.Equals(TEXT("Flags")) &&
+			!PropertyName.Equals(TEXT("Properties"))
+		) {
+			AssetExport.GetProperties()->SetField(PropertyName, Pair.Value);
+		}
+	}
+
+	AssetExport.NameOverride = AssetExport.GetName();
+	
+	/* BlueprintGeneratedClass is post-fixed with _C */
+	if (AssetExport.GetType().ToString().Contains("BlueprintGeneratedClass")) {
+		FString NewName; {
+			AssetExport.NameOverride.ToString().Split("_C", &NewName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+			AssetExport.NameOverride = FName(*NewName);
+		}
+	}
+}
 
 UObjectSerializer* USerializerContainer::GetObjectSerializer() const {
 	return ObjectSerializer;

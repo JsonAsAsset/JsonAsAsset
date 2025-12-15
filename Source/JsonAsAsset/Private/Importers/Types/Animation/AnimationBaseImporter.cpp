@@ -46,11 +46,8 @@ bool IAnimationBaseImporter::Import() {
 		CastedAnimSequence->Notifies.Empty();
 	}
 
-	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), AnimSequenceBase);
-	GetObjectSerializer()->Parent = AnimSequenceBase;
-
-	GetObjectSerializer()->DeserializeExports(AssetContainer.JsonObjects);
-
+	DeserializeExports(AnimSequenceBase);
+	
 	/* Deserialize properties */
 	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(), {
 		"NumFrames",

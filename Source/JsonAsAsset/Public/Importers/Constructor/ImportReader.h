@@ -8,6 +8,6 @@
 class JSONASASSET_API IImportReader {
 public:
 	static bool ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const FString& File, bool bHideNotifications = false);
-	static void ReadExportAndImport(const FUObjectExportContainer& Container, const FUObjectExport& Export, FString File, bool bHideNotifications = false);
+	static void ReadExportAndImport(FUObjectExportContainer& Container, FUObjectExport& Export, FString File, bool bHideNotifications = false);
 	static void ImportReference(const FString& File);
 };

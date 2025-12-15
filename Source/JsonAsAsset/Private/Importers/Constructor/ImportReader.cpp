@@ -21,7 +21,7 @@ bool IImportReader::ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& E
 	return true;
 }
 
-void IImportReader::ReadExportAndImport(const FUObjectExportContainer& Container, const FUObjectExport& Export, FString File, const bool bHideNotifications) {
+void IImportReader::ReadExportAndImport(FUObjectExportContainer& Container, FUObjectExport& Export, FString File, const bool bHideNotifications) {
 	const FString Type = Export.GetType().ToString();
 	FString Name = Export.GetName().ToString();
 
@@ -92,29 +92,26 @@ void IImportReader::ReadExportAndImport(const FUObjectExportContainer& Container
 	
 	/* Try to find the importer using a factory delegate */
 	if (const FImporterFactoryDelegate* Factory = FindFactoryForAssetType(Type)) {
-		Importer = (*Factory)(Export.JsonObject, LocalPackage, Container.JsonObjects);
+		Importer = (*Factory)();
 	}
 
 	/* If it inherits DataAsset, use the data asset importer */
 	if (Importer == nullptr && InheritsDataAsset) {
-		Importer = new IDataAssetImporter(Export.JsonObject, LocalPackage, Container.JsonObjects);
+		Importer = new IDataAssetImporter();
 	}
 
 	/* By default, (with no existing importer) use the templated importer with the asset class. */
 	if (Importer == nullptr) {
-		Importer = new ITemplatedImporter<UObject>(
-			Export.JsonObject, LocalPackage, Container.JsonObjects
-		);
+		Importer = new ITemplatedImporter<UObject>();
 	}
 
 	/* TODO: Don't hardcode this. */
 	if (ImportTypes::Cloud::Extra.Contains(Type)) {
-		Importer = new ITextureImporter<UTextureLightProfile>(
-			Export.JsonObject, LocalPackage, Container.JsonObjects
-		);
+		Importer = new ITextureImporter<UTextureLightProfile>();
 	}
 
-	Importer->AssetContainer = Container;
+	Export.Package = LocalPackage;
+	Importer->Initialize(Export, Container);
 
 	/* Import the asset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	bool Successful = false; {

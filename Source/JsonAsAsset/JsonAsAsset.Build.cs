@@ -6,7 +6,7 @@ using UnrealBuildTool;
 public class JsonAsAsset : ModuleRules {
 	public JsonAsAsset(ReadOnlyTargetRules Target) : base(Target)  {
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-            
+		
 #if UE_5_0_OR_LATER
 	    /* Unreal Engine 5 and later */
 	    CppStandard = CppStandardVersion.Cpp20;
@@ -53,7 +53,7 @@ public class JsonAsAsset : ModuleRules {
 			"Detex",
 			"NVTT",
 			"RenderCore",
-			"AnimGraphRuntime", 
+			"AnimGraphRuntime",
 			"AnimGraph",
 
 #if UE_5_0_OR_LATER

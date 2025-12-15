@@ -7,13 +7,12 @@
 
 class JSONASASSET_API USerializerContainer {
 public:
-    /* Constructors ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-    explicit USerializerContainer(UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects);
-
     /* Virtual Constructor */
+    USerializerContainer();
+    
     virtual ~USerializerContainer() {}
     
-    USerializerContainer();
+    virtual void Initialize(FUObjectExport& Export, FUObjectExportContainer& Container);
     
     /* AssetExport ~~~~~~~~~~~~~~~> */
 public:
@@ -37,14 +36,10 @@ public:
 public:
     FORCEINLINE UObjectSerializer* GetObjectSerializer() const;
     FORCEINLINE UPropertySerializer* GetPropertySerializer() const;
-    
+
 protected:
     void CreateSerializer();
     
 private:
     UObjectSerializer* ObjectSerializer;
-
-public:
-    /* TODO: Refactor somehow */
-    TArray<TSharedPtr<FJsonValue>> JsonObjects;
 };

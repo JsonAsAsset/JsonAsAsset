@@ -9,11 +9,6 @@
  * Handles everything needed to create a material graph from JSON.
 */
 class IMaterialGraph : public IImporter {
-public:
-	IMaterialGraph(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
-		IImporter(JsonObject, Package, JsonObjects) {
-	}
-	
 protected:
 	/* Find Material's Data, and creates a container of material nodes */
 	TSharedPtr<FJsonObject> FindMaterialData(const FString& Type, FUObjectExportContainer& Container);

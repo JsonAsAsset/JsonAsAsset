@@ -11,11 +11,7 @@ bool IDataAssetImporter::Import() {
 	UDataAsset* DataAsset = Create<UDataAsset>();
 	auto _ = DataAsset->MarkPackageDirty();
 
-	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), DataAsset);
-	GetObjectSerializer()->Parent = DataAsset;
-
-	GetObjectSerializer()->DeserializeExports(JsonObjects);
-
+	DeserializeExports(DataAsset);
 	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), DataAsset);
 	
 	return OnAssetCreation(DataAsset);

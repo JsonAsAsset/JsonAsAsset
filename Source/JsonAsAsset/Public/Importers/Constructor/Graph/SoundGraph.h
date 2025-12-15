@@ -7,11 +7,6 @@
 
 /* Handles everything needed to create a sound graph from JSON. */
 class ISoundGraph : public IImporter {
-public:
-	ISoundGraph(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
-		IImporter(JsonObject, Package, JsonObjects) {
-	}
-
 protected:
 	/* Graph Functions */
 	static void ConnectEdGraphNode(UEdGraphNode* NodeToConnect, UEdGraphNode* NodeToConnectTo, int Pin);

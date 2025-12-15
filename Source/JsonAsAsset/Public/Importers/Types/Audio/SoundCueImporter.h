@@ -6,10 +6,6 @@
 
 class ISoundCueImporter : public ISoundGraph {
 public:
-	ISoundCueImporter(const TSharedPtr<FJsonObject>& JsonObject, UPackage* Package, const TArray<TSharedPtr<FJsonValue>>& JsonObjects):
-		ISoundGraph(JsonObject, Package, JsonObjects) {
-	}
-
 	virtual UObject* CreateAsset(UObject* CreatedAsset) override;
 	virtual bool Import() override;
 };

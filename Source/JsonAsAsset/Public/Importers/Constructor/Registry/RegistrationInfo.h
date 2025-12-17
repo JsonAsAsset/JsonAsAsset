@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Importers/Constructor/Types.h"
+#include "Utilities/EngineUtilities.h"
 #include "Settings/JsonAsAssetSettings.h"
 
 class IImporter;

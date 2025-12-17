@@ -265,6 +265,10 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 	bUseOctetStream = true;
 #endif
 
+#if UE5_5_BEYOND
+	bUseOctetStream = true;
+#endif
+
 	/* ~~~~~~~~~~~~~~~ Download Texture Data ~~~~~~~~~~~~ */
 	if (Type != "TextureRenderTarget2D") {
 		FHttpModule* HttpModule = &FHttpModule::Get();
@@ -319,6 +323,10 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 	bUseOctetStream = true;
 #endif
 
+#if UE5_5_BEYOND
+	bUseOctetStream = true;
+#endif
+	
 	FJRedirects::Redirect(PackagePath);
 
 	if (!PackagePath.StartsWith("/Game/") && !PackagePath.StartsWith("/Engine/")) {

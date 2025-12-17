@@ -30,6 +30,12 @@
 	#define UE5_6_BEYOND 0
 #endif
 
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 5
+	#define UE5_5_BEYOND 1
+#else
+	#define UE5_5_BEYOND 0
+#endif
+
 #if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 3
 	#define UE5_3_BEYOND 1
 #else

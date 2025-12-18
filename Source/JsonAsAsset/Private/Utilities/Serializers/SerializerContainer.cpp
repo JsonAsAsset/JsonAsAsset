@@ -78,6 +78,10 @@ void USerializerContainer::SetParent(UObject* Parent) {
 	AssetExport.Parent = Parent;
 }
 
+UObject* USerializerContainer::GetAsset() {
+	return AssetExport.Object;
+}
+
 UObject* USerializerContainer::GetParent() const {
 	return AssetExport.Parent;
 }

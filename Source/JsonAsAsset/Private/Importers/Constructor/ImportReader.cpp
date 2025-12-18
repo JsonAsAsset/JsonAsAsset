@@ -11,17 +11,17 @@
 #include "Utilities/AssetUtilities.h"
 #include "Utilities/EngineUtilities.h"
 
-bool IImportReader::ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const FString& File, const bool bHideNotifications) {
+bool IImportReader::ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const FString& File, IImporter*& OutImporter, const bool bHideNotifications) {
 	FUObjectExportContainer Container = Exports;
 	
 	for (FUObjectExport Export : Container) {
-		ReadExportAndImport(Container, Export, File, bHideNotifications);
+		if (IImporter* Importer = ReadExportAndImport(Container, Export, File, bHideNotifications)) OutImporter = Importer;
 	}
 
 	return true;
 }
 
-void IImportReader::ReadExportAndImport(FUObjectExportContainer& Container, FUObjectExport& Export, FString File, const bool bHideNotifications) {
+IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer& Container, FUObjectExport& Export, FString File, const bool bHideNotifications) {
 	const FString Type = Export.GetType().ToString();
 	FString Name = Export.GetName().ToString();
 
@@ -32,11 +32,11 @@ void IImportReader::ReadExportAndImport(FUObjectExportContainer& Container, FUOb
 
 	const UClass* Class = FindClassByType(Type);
 	
-	if (Class == nullptr) return;
+	if (Class == nullptr) return nullptr;
 
 	/* Check if this export can be imported */
 	const bool InheritsDataAsset = Class->IsChildOf(UDataAsset::StaticClass());
-	if (!CanImport(Type, false, Class)) return;
+	if (!CanImport(Type, false, Class)) return nullptr;
 
 	/* Convert from relative path to full path */
 	if (FPaths::IsRelative(File)) File = FPaths::ConvertRelativePathToFull(File);
@@ -84,7 +84,7 @@ void IImportReader::ReadExportAndImport(FUObjectExportContainer& Container, FUOb
 			350.0f
 		);
 
-		return;
+		return nullptr;
 	}
 
 	/* Importer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -123,7 +123,7 @@ void IImportReader::ReadExportAndImport(FUObjectExportContainer& Container, FUOb
 	}
 
 	if (bHideNotifications) {
-		return;
+		return Importer;
 	}
 
 	if (Successful) {
@@ -151,12 +151,22 @@ void IImportReader::ReadExportAndImport(FUObjectExportContainer& Container, FUOb
 			350.0f
 		);
 	}
+
+	return Importer;
 }
 
-void IImportReader::ImportReference(const FString& File) {
-	TArray<TSharedPtr<FJsonValue>> DataObjects; {
-		DeserializeJSON(File, DataObjects);
+IImporter* IImportReader::ImportReference(const FString& File) {
+	FString FilePath = File;
+	if (FilePath.Contains("\\")) {
+		FilePath = File.Replace(TEXT("\\"), TEXT("/"));
 	}
 	
-	ReadExportsAndImport(DataObjects, File);
+	TArray<TSharedPtr<FJsonValue>> DataObjects; {
+		DeserializeJSON(FilePath, DataObjects);
+	}
+
+	IImporter* Importer = nullptr;
+	ReadExportsAndImport(DataObjects, FilePath, Importer);
+	
+	return Importer;
 }

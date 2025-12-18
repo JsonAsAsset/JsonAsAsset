@@ -212,7 +212,8 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 				CreatePlugin(RootName);
 			}
 
-			bSuccess = IImportReader::ReadExportsAndImport(Response->GetArrayField(TEXT("exports")), PackagePath, true);
+			IImporter* OutImporter;
+			bSuccess = IImportReader::ReadExportsAndImport(Response->GetArrayField(TEXT("exports")), PackagePath, OutImporter, true);
 
 			/* Define found object */
 			FString RedirectedPath = RealPath;

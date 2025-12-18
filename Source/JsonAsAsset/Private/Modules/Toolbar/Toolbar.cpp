@@ -105,6 +105,7 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 		true
 	);
 }
+
 #endif
 
 bool FJsonAsAssetToolbar::IsToolBarVisible() {
@@ -129,17 +130,23 @@ bool FJsonAsAssetToolbar::IsToolBarVisible() {
 	return bVisible;
 }
 
-void FJsonAsAssetToolbar::ImportAction() {
+bool FJsonAsAssetToolbar::IsFitToFunction() {
 	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	/* Conditional Settings Checks */
 	if (Settings->bEnableCloudServer) {
-		if (!Cloud::Status::Check(Settings) || !Cloud::Update()) return;
+		if (!Cloud::Status::Check(Settings) || !Cloud::Update()) return false;
 	}
 
 	/* Update Runtime */
 	GJsonAsAssetRuntime.Update();
 	FJRedirects::Clear();
+
+	return true;
+}
+
+void FJsonAsAssetToolbar::ImportAction() {
+	if (!IsFitToFunction()) return;
 
 	/* Dialog for a JSON File */
 	TArray<FString> OutFileNames = OpenFileDialog("Select a JSON File", "JSON Files|*.json");

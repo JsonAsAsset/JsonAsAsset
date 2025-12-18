@@ -11,6 +11,9 @@ struct JSONASASSET_API FJsonAsAssetToolbar {
 #if ENGINE_UE4
 	static void UE4Register(FToolBarBuilder& Builder);
 #endif
+
+	/* Checks if JsonAsAsset is fit to function */
+	static bool IsFitToFunction();
 	
 	/* Checks if JsonAsAsset is fit to function, and opens a JSON file dialog */
 	static void ImportAction();

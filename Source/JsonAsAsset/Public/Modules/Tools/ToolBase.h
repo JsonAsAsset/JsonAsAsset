@@ -5,5 +5,4 @@
 #include "CoreMinimal.h"
 #include "Utilities/Serializers/SerializerContainer.h"
 
-class TToolBase : public USerializerContainer {
-};
+class TToolBase : public USerializerContainer { };

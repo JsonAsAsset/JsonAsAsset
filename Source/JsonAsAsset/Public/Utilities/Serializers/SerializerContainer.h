@@ -32,6 +32,8 @@ public:
     virtual UObject* GetParent() const;
     virtual void SetParent(UObject* Parent);
 
+    virtual UObject* GetAsset();
+
     /* Serializer ~~~~~~~~~~~~~~~> */
 public:
     FORCEINLINE UObjectSerializer* GetObjectSerializer() const;

@@ -166,6 +166,40 @@ public:
 		return FUObjectExport();
 	}
 
+	TArray<FUObjectExport> GetExportsWithPropertyNameStartingWith(const FString& PropertyName, const FString& StartingWith) {
+		TArray<FUObjectExport> Result;
+		
+		for (FUObjectExport& Export : Exports) {
+			if (Export.IsJsonValid() && Export.JsonObject->HasField(PropertyName)) {
+				const FString TypeValue = Export.JsonObject->GetStringField(PropertyName);
+
+				if (TypeValue.StartsWith(StartingWith)) {
+					Result.Add(Export);
+				}
+			}
+		}
+
+		return Result;
+	}
+
+	TSharedPtr<FJsonObject> GetExportByObjectPath(const TSharedPtr<FJsonObject>& Object) {
+		const TSharedPtr<FJsonObject> ValueObject = TSharedPtr(Object);
+
+		FString IndexAsString; {
+			ValueObject->GetStringField(TEXT("ObjectPath")).Split(".", nullptr, &IndexAsString);
+		}
+
+		for (FUObjectExport& Export : Exports) {
+			if (Export.IsJsonValid()) {
+				if (Export.Position == FCString::Atod(*IndexAsString)) {
+					return Export.JsonObject;
+				}
+			}
+		}
+
+		return nullptr;
+	}
+
 	FUObjectExport Find(const int Position) {
 		for (FUObjectExport& Export : Exports) {
 			if (Export.Position == Position) {

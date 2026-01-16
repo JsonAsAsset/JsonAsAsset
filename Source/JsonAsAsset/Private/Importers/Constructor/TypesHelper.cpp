@@ -43,7 +43,7 @@ bool CanImport(const FString& Type, const bool IsCloud, const UClass* Class) {
 
 	if (Class->IsChildOf(UTexture::StaticClass())) return false;
 
-	/* If the Class has an asset type action, it's importable */
+	/*/* If the Class has an asset type action, it's importable #1#
 	const FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
 	const IAssetTools& AssetTools = AssetToolsModule.Get();
 	
@@ -56,7 +56,7 @@ bool CanImport(const FString& Type, const bool IsCloud, const UClass* Class) {
 
 			if (SupportedClass == Class) return true;
 		}
-	}
+	}*/
 
 	return false;
 }

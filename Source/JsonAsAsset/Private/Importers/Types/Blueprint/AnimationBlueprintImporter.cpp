@@ -456,8 +456,9 @@ void IAnimationBlueprintImporter::CreateAnimGraphNodes(UEdGraph* AnimGraph, cons
 
 void IAnimationBlueprintImporter::AddNodesToGraph(UEdGraph* AnimGraph, FUObjectExportContainer& Container) {
     for (const FUObjectExport& Export : Container) {
-        if (!IsValid(Export.Object) || !Export.JsonObject.IsValid())
+        if (!IsValid(Export.Object) || !Export.JsonObject.IsValid()) {
             continue;
+        }
 
         UAnimGraphNode_Base* Node = Cast<UAnimGraphNode_Base>(Export.Object);
 

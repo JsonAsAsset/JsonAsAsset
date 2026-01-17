@@ -82,6 +82,11 @@ UObject* USerializerContainer::GetAsset() {
 	return AssetExport.Object;
 }
 
+template<typename T>
+T* USerializerContainer::GetTypedAsset() const {
+	return AssetExport.Object ? Cast<T>(AssetExport.Object) : nullptr;
+}
+
 UObject* USerializerContainer::GetParent() const {
 	return AssetExport.Parent;
 }

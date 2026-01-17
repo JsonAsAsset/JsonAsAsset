@@ -33,6 +33,9 @@ public:
     virtual void SetParent(UObject* Parent);
 
     virtual UObject* GetAsset();
+    
+    template <class T>
+    T* GetTypedAsset() const;
 
     /* Serializer ~~~~~~~~~~~~~~~> */
 public:

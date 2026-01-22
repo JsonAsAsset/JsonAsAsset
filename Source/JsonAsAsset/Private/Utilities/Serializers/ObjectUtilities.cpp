@@ -146,7 +146,7 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 		ObjectOuter = Parent;
 	}
 
-	UObject* NewUObject = NewObject<UObject>(ObjectOuter, Class, FName(*Name));
+	UObject* NewUObject = NewObject<UObject>(ObjectOuter, Class, FName(*Name), RF_Public | RF_Transactional);
 
 	if (ExportObject->HasField(TEXT("Properties"))) {
 		const TSharedPtr<FJsonObject> Properties = ExportObject->GetObjectField(TEXT("Properties"));

@@ -4,12 +4,10 @@
 
 #include "Importers/Constructor/Importer.h"
 #include "Importers/Constructor/ImportReader.h"
+#include "Modules/Toolbar/Dropdowns/CloudToolsDropdownBuilder.h"
 #include "Utilities/EngineUtilities.h"
 
-#include "Modules/Cloud/Tools/AnimationData.h"
 #include "Modules/Tools/ClearImportData.h"
-#include "Modules/Cloud/Tools/ConvexCollision.h"
-#include "Modules/Cloud/Tools/SkeletalMeshData.h"
 
 void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	UJsonAsAssetSettings* Settings = GetSettings();
@@ -41,8 +39,7 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 
 					FUIAction(
 						FExecuteAction::CreateLambda([] {
-							for (FString Folder : OpenFolderDialog("Folder of JSON files"))
-							{
+							for (FString Folder : OpenFolderDialog("Folder of JSON files")) {
 								TArray<FString> JsonFiles;
 								IFileManager::Get().FindFilesRecursive(
 									JsonFiles,
@@ -53,8 +50,7 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 									false
 								);
 
-								for (FString& JsonPath : JsonFiles)
-								{
+								for (FString& JsonPath : JsonFiles) {
 									IImportReader::ImportReference(JsonPath);
 								}
 							}
@@ -62,73 +58,20 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					),
 					NAME_None
 				);
+
+#if ENGINE_UE4
+				if (Settings->bEnableCloudServer) {
+					TArray<TSharedRef<IParentDropdownBuilder>> Dropdowns = {
+						MakeShared<ICloudToolsDropdownBuilder>()
+					};
+
+					for (const TSharedRef<IParentDropdownBuilder>& Dropdown : Dropdowns) {
+						Dropdown->Build(InnerMenuBuilder);
+					}
+				}
+#endif
 			}
 			InnerMenuBuilder.EndSection();
-
-			if (Settings->bEnableCloudServer) {
-				static TSkeletalMeshData* SkeletalMeshTool;
-
-				if (SkeletalMeshTool == nullptr) {
-					SkeletalMeshTool = new TSkeletalMeshData();
-				}
-				
-				InnerMenuBuilder.BeginSection("JsonAsAssetCloudToolsSection", FText::FromString("Cloud"));
-				
-				InnerMenuBuilder.AddMenuEntry(
-					FText::FromString("Import Static Mesh Properties"),
-					FText::FromString("Imports collision, properties and more using Cloud and applies it to the corresponding assets in the content browser folder."),
-					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
-
-					FUIAction(
-						FExecuteAction::CreateLambda([] {
-							TToolConvexCollision* Tool = new TToolConvexCollision();
-							Tool->Execute();
-						}),
-						FCanExecuteAction::CreateLambda([this] {
-							return Cloud::Status::IsOpened();
-						})
-					),
-					NAME_None
-				);
-
-				InnerMenuBuilder.AddMenuEntry(
-					FText::FromString("Import Animation Data"),
-					FText::FromString("Imports Animation Data using Cloud and applies it to the corresponding assets in the content browser folder."),
-					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
-
-					FUIAction(
-						FExecuteAction::CreateLambda([] {
-							TToolAnimationData* Tool = new TToolAnimationData();
-							Tool->Execute();
-						}),
-						FCanExecuteAction::CreateLambda([this] {
-							return Cloud::Status::IsOpened();
-						})
-					),
-					NAME_None
-				);
-
-				InnerMenuBuilder.AddMenuEntry(
-					FText::FromString("Import Skeletal Mesh Data"),
-					FText::FromString("Imports Skeletal Mesh Data using Cloud and applies it to the corresponding assets in the content browser folder."),
-					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
-
-					FUIAction(
-						FExecuteAction::CreateLambda([] {
-							if (SkeletalMeshTool != nullptr)
-							{
-								SkeletalMeshTool->Execute();
-							}
-						}),
-						FCanExecuteAction::CreateLambda([this] {
-							return Cloud::Status::IsOpened();
-						})
-					),
-					NAME_None
-				);
-
-				InnerMenuBuilder.EndSection();
-			}
 		}),
 		false,
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "DeveloperTools.MenuIcon")

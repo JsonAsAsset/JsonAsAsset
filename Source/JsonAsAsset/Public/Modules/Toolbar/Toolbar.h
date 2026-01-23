@@ -7,6 +7,7 @@
 
 struct JSONASASSET_API FJsonAsAssetToolbar {
 	void Register();
+	void AddCloudButtons(FToolMenuSection& Section);
 	
 #if ENGINE_UE4
 	static void UE4Register(FToolBarBuilder& Builder);
@@ -20,6 +21,7 @@ struct JSONASASSET_API FJsonAsAssetToolbar {
 
 	/* UI Display ~~~~~~~~~~~~~~ */
 	static TSharedRef<SWidget> CreateMenuDropdown();
+	static TSharedRef<SWidget> CreateCloudMenuDropdown();
 	
 	static bool IsToolBarVisible();
 };

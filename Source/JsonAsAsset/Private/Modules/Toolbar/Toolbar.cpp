@@ -9,6 +9,7 @@
 #include "Importers/Constructor/ImportReader.h"
 #include "Modules/Metadata.h"
 #include "Modules/Cloud/Cloud.h"
+#include "Modules/Toolbar/Dropdowns/CloudToolsDropdownBuilder.h"
 #include "Settings/Runtime.h"
 #include "Modules/Toolbar/Dropdowns/GeneralDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/DonateDropdownBuilder.h"
@@ -69,6 +70,65 @@ void FJsonAsAssetToolbar::Register() {
 		),
 		FOnGetContent::CreateStatic(&CreateMenuDropdown),
 		FText::FromString(GJsonAsAssetName.ToString()),
+		FText::FromString(""),
+		FSlateIcon(),
+		true
+	));
+
+	AddCloudButtons(Section);
+#endif
+}
+
+void FJsonAsAssetToolbar::AddCloudButtons(FToolMenuSection& Section)
+{
+#if ENGINE_UE5
+	/* Adds the Cloud button to the toolbar */
+	FToolMenuEntry& ActionButton = Section.AddEntry(FToolMenuEntry::InitToolBarButton(
+		"JsonAsAssetCloud",
+		
+		FToolUIActionChoice(
+			FUIAction(
+				FExecuteAction::CreateLambda([this] {
+					UJsonAsAssetSettings* Settings = GetSettings();
+					
+					Settings->bEnableCloudServer = !Settings->bEnableCloudServer;
+				}),
+				FCanExecuteAction(),
+				FGetActionCheckState(),
+				FIsActionButtonVisible::CreateStatic(&IsToolBarVisible)
+			)
+		),
+		
+		TAttribute<FText>::CreateLambda([this] {
+			const UJsonAsAssetSettings* Settings = GetSettings();
+			
+			return Settings->bEnableCloudServer
+				? FText::FromString("On")
+				: FText::FromString("Off");
+		}),
+		
+		FText::FromString(""),
+		
+		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Cloud")),
+		
+		EUserInterfaceActionType::Button
+	));
+	
+	ActionButton.StyleNameOverride = "CalloutToolbar";
+
+	/* Menu dropdown */
+	const FToolMenuEntry MenuButton = Section.AddEntry(FToolMenuEntry::InitComboButton(
+		"JsonAsAssetCloudMenu",
+		FUIAction(
+			FExecuteAction(),
+			FCanExecuteAction::CreateLambda([] {
+				return GetSettings()->bEnableCloudServer;
+			}),
+			FGetActionCheckState(),
+			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
+		),
+		FOnGetContent::CreateStatic(&CreateCloudMenuDropdown),
+		FText::FromString(""),
 		FText::FromString(""),
 		FSlateIcon(),
 		true
@@ -168,6 +228,20 @@ TSharedRef<SWidget> FJsonAsAssetToolbar::CreateMenuDropdown() {
 		MakeShared<IToolsDropdownBuilder>(),
 		MakeShared<IGeneralDropdownBuilder>(),
 		MakeShared<IDonateDropdownBuilder>()
+	};
+
+	for (const TSharedRef<IParentDropdownBuilder>& Dropdown : Dropdowns) {
+		Dropdown->Build(MenuBuilder);
+	}
+	
+	return MenuBuilder.MakeWidget();
+}
+
+TSharedRef<SWidget> FJsonAsAssetToolbar::CreateCloudMenuDropdown() {
+	FMenuBuilder MenuBuilder(false, nullptr);
+
+	TArray<TSharedRef<IParentDropdownBuilder>> Dropdowns = {
+		MakeShared<ICloudToolsDropdownBuilder>()
 	};
 
 	for (const TSharedRef<IParentDropdownBuilder>& Dropdown : Dropdowns) {

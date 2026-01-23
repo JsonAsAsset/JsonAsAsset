@@ -7,7 +7,6 @@
 #include "Modules/Log.h"
 #include "Modules/Metadata.h"
 #include "Modules/UI/StyleModule.h"
-#include "Serialization/JsonSerializer.h"
 #include "Utilities/EngineUtilities.h"
 
 FJsonAsAssetVersioning GJsonAsAssetVersioning;

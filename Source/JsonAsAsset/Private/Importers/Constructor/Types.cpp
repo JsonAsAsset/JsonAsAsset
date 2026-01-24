@@ -73,6 +73,7 @@ TMap<FString, TArray<FString>> ImportTypes::Templated = {
 		TEXT("Sequencer Assets"),
 		{
 			TEXT("CameraAnim"),
+			TEXT("ForceFeedbackEffect")
 		}
 	}
 };

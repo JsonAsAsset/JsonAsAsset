@@ -1,4 +1,4 @@
-﻿/* Copyright JsonAsAsset Contributors 2024-2025 */
+﻿/* Copyright JsonAsAsset Contributors 2024-2026 */
 
 #include "Modules/Tools/ClearImportData.h"
 #include "EditorFramework/AssetImportData.h"

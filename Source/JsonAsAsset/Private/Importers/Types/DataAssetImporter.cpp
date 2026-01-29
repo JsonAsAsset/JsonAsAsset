@@ -1,4 +1,4 @@
-/* Copyright JsonAsAsset Contributors 2024-2025 */
+/* Copyright JsonAsAsset Contributors 2024-2026 */
 
 #include "Importers/Types/DataAssetImporter.h"
 #include "Engine/DataAsset.h"

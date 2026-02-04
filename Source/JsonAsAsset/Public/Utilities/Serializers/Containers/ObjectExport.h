@@ -110,10 +110,10 @@ protected:
 struct FUObjectExportContainer {
 	/* Array of Expression Exports */
 	TArray<FUObjectExport> Exports;
-	TArray<TSharedPtr<FJsonValue>> JsonObjects = {};
+	TArray<TSharedPtr<FJsonValue>> JsonObjects = { };
 	
 public:
-	FUObjectExportContainer() {};
+	FUObjectExportContainer() { }
 	FUObjectExportContainer(const TArray<TSharedPtr<FJsonValue>>& Array) {
 		Fill(Array);
 	}

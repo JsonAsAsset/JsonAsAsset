@@ -57,7 +57,7 @@ public:
      */
     bool OnAssetCreation(UObject* Asset) const;
     
-    virtual void ApplyModifications() {};
+    virtual void ApplyModifications() { }
 
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 public:

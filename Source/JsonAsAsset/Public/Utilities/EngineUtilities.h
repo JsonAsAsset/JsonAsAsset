@@ -142,7 +142,13 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 		return AssetDataList;
 	}
 
-	const FString CurrentFolder = SelectedFolders[0];
+	FString CurrentFolder = SelectedFolders[0];
+
+#if ENGINE_UE5
+	if (CurrentFolder.StartsWith(TEXT("/All"))) {
+		CurrentFolder.RightChopInline(4);
+	}
+#endif
 
 	/* Check if the folder is the root folder, and show a prompt if */
 	if (CurrentFolder == "/Game") {

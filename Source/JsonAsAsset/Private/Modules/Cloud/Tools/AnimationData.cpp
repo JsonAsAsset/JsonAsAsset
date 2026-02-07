@@ -248,7 +248,7 @@ void TToolAnimationData::Execute() {
 		if (AnimSequence == nullptr) continue;
 
 		/* Request to API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		FString ObjectPath = AssetData.ObjectPath.ToString();
+		FString ObjectPath = GetAssetObjectPath(AssetData);
 
 		const TSharedPtr<FJsonObject> Response = Cloud::Export::GetRaw(ObjectPath);
 		if (Response == nullptr || ObjectPath.IsEmpty()) continue;

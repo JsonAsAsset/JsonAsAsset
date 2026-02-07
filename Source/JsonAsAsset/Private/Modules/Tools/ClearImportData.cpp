@@ -20,7 +20,7 @@ void TToolClearImportData::Execute() {
 	};
 
 	for (const FAssetData& AssetData : AssetDataList) {
-		if (!AssetData.IsValid() || !SupportedClasses.Contains(AssetData.AssetClass)) {
+		if (!AssetData.IsValid() || !SupportedClasses.Contains(GetAssetDataClass(AssetData))) {
 			continue;
 		}
 		

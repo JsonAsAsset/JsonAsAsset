@@ -52,7 +52,7 @@ void TSkeletalMeshData::Execute() {
 
 	for (const FAssetData& AssetData : AssetDataList) {
 		if (!AssetData.IsValid()) continue;
-		if (AssetData.AssetClass != "SkeletalMesh") continue;
+		if (GetAssetDataClass(AssetData) != "SkeletalMesh") continue;
 		
 		UObject* Asset = AssetData.GetAsset();
 		if (Asset == nullptr) continue;
@@ -61,7 +61,7 @@ void TSkeletalMeshData::Execute() {
 		if (SkeletalMesh == nullptr) continue;
 
 		/* Request to API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		FString ObjectPath = AssetData.ObjectPath.ToString();
+		FString ObjectPath = GetAssetObjectPath(AssetData);
 
 		const TSharedPtr<FJsonObject> Response = Cloud::Export::GetRaw(ObjectPath);
 		if (Response == nullptr || ObjectPath.IsEmpty()) continue;

@@ -1126,3 +1126,19 @@ inline void SetAssetImportData(USkeletalMesh* InMesh, UAssetImportData* AssetImp
 inline TSharedPtr<IPlugin> GetPlugin(const FString& Name) {
 	return IPluginManager::Get().FindPlugin(Name);
 }
+
+inline FName GetAssetDataClass(const FAssetData& AssetData) {
+#if ENGINE_UE4
+	return AssetData.AssetClass;
+#else
+	return AssetData.AssetClassPath.GetAssetName();
+#endif
+}
+
+inline FString GetAssetObjectPath(const FAssetData& AssetData) {
+#if ENGINE_UE4
+	return AssetData.ObjectPath.ToString();
+#else
+	return AssetData.GetObjectPathString();
+#endif
+}

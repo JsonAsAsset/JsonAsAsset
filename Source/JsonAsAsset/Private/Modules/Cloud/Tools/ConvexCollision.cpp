@@ -16,7 +16,7 @@ void TToolConvexCollision::Execute() {
 
 	for (const FAssetData& AssetData : AssetDataList) {
 		if (!AssetData.IsValid()) continue;
-		if (AssetData.AssetClass != "StaticMesh") continue;
+		if (GetAssetDataClass(AssetData) != "StaticMesh") continue;
 		
 		UObject* Asset = AssetData.GetAsset();
 		if (Asset == nullptr) continue;
@@ -25,7 +25,7 @@ void TToolConvexCollision::Execute() {
 		if (StaticMesh == nullptr) continue;
 
 		/* Request to API ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		FString ObjectPath = AssetData.ObjectPath.ToString();
+		FString ObjectPath = GetAssetObjectPath(AssetData);
 
 		const TSharedPtr<FJsonObject> Response = Cloud::Export::GetRaw(ObjectPath);
 		if (Response == nullptr || ObjectPath.IsEmpty()) continue;
@@ -98,7 +98,7 @@ void TToolConvexCollision::Execute() {
 
 			/* Notification */
 			AppendNotification(
-				FText::FromString("Imported Convex Collision: " + StaticMesh->GetName()),
+				FText::FromString("Imported SM Data: " + StaticMesh->GetName()),
 				FText::FromString(StaticMesh->GetName()),
 				3.5f,
 				FAppStyle::GetBrush("PhysicsAssetEditor.EnableCollision.Small"),

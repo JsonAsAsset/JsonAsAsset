@@ -71,6 +71,23 @@ void TToolConvexCollision::Execute() {
 						StaticMesh->AddSocket(Socket);
 					}
 				}
+
+				if (Properties->HasField(TEXT("StaticMaterials"))) {
+					const TArray<TSharedPtr<FJsonValue>> StaticMaterials = Properties->GetArrayField(TEXT("StaticMaterials"));
+					
+					int MaterialIndex = 0;
+					for (FStaticMaterial& StaticMaterial : StaticMesh->GetStaticMaterials()) {
+						if (StaticMaterials.IsValidIndex(MaterialIndex))
+						{
+							const TSharedPtr<FJsonObject> StaticMaterialJsonObject = StaticMaterials[MaterialIndex]->AsObject();
+
+							StaticMaterial.MaterialSlotName = *StaticMaterialJsonObject->GetStringField(TEXT("MaterialSlotName"));
+							StaticMaterial.ImportedMaterialSlotName = *StaticMaterialJsonObject->GetStringField(TEXT("ImportedMaterialSlotName"));
+						}
+					
+						MaterialIndex++;
+					}	
+				}
 				
 				GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(Properties, {
 					"StaticMaterials",

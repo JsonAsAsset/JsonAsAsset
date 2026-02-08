@@ -239,7 +239,7 @@ void TToolAnimationData::Execute() {
 
 	for (const FAssetData& AssetData : AssetDataList) {
 		if (!AssetData.IsValid()) continue;
-		if (AssetData.AssetClass != "AnimSequence") continue;
+		if (GetAssetDataClass(AssetData) != "AnimSequence") continue;
 		
 		UObject* Asset = AssetData.GetAsset();
 		if (Asset == nullptr) continue;

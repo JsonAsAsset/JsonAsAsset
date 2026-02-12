@@ -82,7 +82,7 @@ inline bool ReadAnimationData(USerializerContainer* Container, bool bUseSelected
 	}), AnimSequenceBase);
 
 	USkeleton* Skeleton = AnimSequenceBase->GetSkeleton();
-	ensure(Skeleton);
+
 	if (!Skeleton) {
 		UE_LOG(LogJsonAsAsset, Error, TEXT("Could not get valid Skeleton"));
 		return false;

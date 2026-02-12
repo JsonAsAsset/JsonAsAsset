@@ -160,14 +160,6 @@ bool IImporter::OnAssetCreation(UObject* Asset) const {
 	return Synced;
 }
 
-void IImporter::DeserializeExports(UObject* Parent, const bool bCreateObjects) {
-	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), Parent);
-	GetObjectSerializer()->Parent = Parent;
-    
-	GetObjectSerializer()->DeserializeExports(AssetContainer.JsonObjects, bCreateObjects);
-	ApplyModifications();
-}
-
 FUObjectExportContainer IImporter::GetExportContainer() const {
 	return GetObjectSerializer()->GetPropertySerializer()->ExportsContainer;
 }

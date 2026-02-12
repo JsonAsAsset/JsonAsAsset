@@ -57,8 +57,6 @@ public:
      */
     bool OnAssetCreation(UObject* Asset) const;
     
-    virtual void ApplyModifications() { }
-
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 public:
     /* Function to check if an asset needs to be imported. Once imported, the asset will be set and returned. */
@@ -66,8 +64,6 @@ public:
     FORCEINLINE static TObjectPtr<T> DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path);
 
 protected:
-    void DeserializeExports(UObject* Parent, bool bCreateObjects = true);
-    
     FORCEINLINE FUObjectExportContainer GetExportContainer() const;
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 };

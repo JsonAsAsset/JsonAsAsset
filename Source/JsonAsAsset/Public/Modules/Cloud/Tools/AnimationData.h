@@ -15,43 +15,36 @@
 #include "AnimDataController.h"
 #endif
 
-inline bool ReadAnimationData(USerializerContainer* Container, bool bUseSelectedAsset, IImporter* Importer = nullptr) {
-	const FString JsonName = Container->GetAssetExport()->GetStringField(TEXT("Name"));
-
-	TArray<TSharedPtr<FJsonValue>> FloatCurves;
-	TArray<TSharedPtr<FJsonValue>> Notifies;
-
+inline bool ReadAnimationData(USerializerContainer* Container, const bool bUseSelectedAsset, const IImporter* Importer = nullptr) {
+	/* Animation Sequence Base reference, either by using the selected asset in the browser, or through an importer */
 	UAnimSequenceBase* AnimSequenceBase = nullptr;
 
 	if (bUseSelectedAsset) {
-		AnimSequenceBase = GetSelectedAsset<UAnimSequenceBase>(true, JsonName);
+		AnimSequenceBase = GetSelectedAsset<UAnimSequenceBase>(true, Container->GetAssetName());
 	}
 	else {
 		if (Container->GetAsset()) {
 			AnimSequenceBase = Cast<UAnimSequenceBase>(Container->GetAsset());
 		}
 	}
-	
+
+	/* Animation Montages: If we're importing a montage, create it */
 	if (!AnimSequenceBase && Container->GetAssetClass()->IsChildOf<UAnimMontage>()) {
-		AnimSequenceBase = NewObject<UAnimMontage>(Container->GetPackage(), Container->GetAssetClass(), *JsonName, RF_Public | RF_Standalone);
+		AnimSequenceBase = NewObject<UAnimMontage>(Container->GetPackage(), Container->GetAssetClass(), *Container->GetAssetName(), RF_Public | RF_Standalone);
 	}
 
 	if (bUseSelectedAsset) {
 		if (!AnimSequenceBase) {
 			UE_LOG(LogJsonAsAsset, Error, TEXT("Could not get valid AnimSequenceBase"));
-			const FText DialogText = FText::Format(
-				FText::FromString(TEXT("Importing an asset of type '{0}' requires a base asset selected to modify. Select one in your content browser.")),
-				FText::FromString("AnimationBaseImporter")
-			);
-
-			FMessageDialog::Open(EAppMsgType::Ok, DialogText);
+			FMessageDialog::Open(EAppMsgType::Ok, FText::FromString("Select a Animation inside of the Content Browser to import data."));
 		
 			return false;
-		}		
+		}
 	}
 
 	if (!AnimSequenceBase) return false;
 
+	/* Empty all Notifies */
 	UAnimSequence* CastedAnimSequence = Cast<UAnimSequence>(AnimSequenceBase);
 
 	if (CastedAnimSequence) {
@@ -97,8 +90,16 @@ inline bool ReadAnimationData(USerializerContainer* Container, bool bUseSelected
 #endif
 #endif
 
+	/* Empty curves */
+#if UE5_2_BEYOND
+	Controller.RemoveAllCurvesOfType(ERawCurveTrackTypes::RCT_Float, false);
+#endif
+
 	/* Some UEParse versions have different named objects for curves ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	const TSharedPtr<FJsonObject>* RawCurveData;
+	
+	TArray<TSharedPtr<FJsonValue>> FloatCurves;
+	TArray<TSharedPtr<FJsonValue>> Notifies;
 	
 	if (Container->GetAssetData()->TryGetObjectField(TEXT("RawCurveData"), RawCurveData)) {
 		FloatCurves = Container->GetAssetData()->GetObjectField(TEXT("RawCurveData"))->GetArrayField(TEXT("FloatCurves"));

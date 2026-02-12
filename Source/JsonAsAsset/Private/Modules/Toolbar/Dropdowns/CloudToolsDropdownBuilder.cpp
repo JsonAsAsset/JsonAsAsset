@@ -15,12 +15,12 @@ void ICloudToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		SkeletalMeshTool = new TSkeletalMeshData();
 	}
 	
-	MenuBuilder.BeginSection("JsonAsAssetCloudToolsSection", FText::FromString("Cloud Tools"));
+	MenuBuilder.BeginSection("JsonAsAssetCloudSection", FText::FromString("Cloud"));
 	
 	MenuBuilder.AddMenuEntry(
-		FText::FromString("Import Static Mesh Properties"),
-		FText::FromString("Imports collision, properties and more using Cloud and applies it to the corresponding assets in the content browser folder."),
-		FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+		FText::FromString("Static Meshes"),
+		FText::FromString("Imports collision and other properties"),
+		FSlateIcon(FAppStyle::GetAppStyleSetName(), "ClassIcon.StaticMeshActor"),
 
 		FUIAction(
 			FExecuteAction::CreateLambda([] {
@@ -35,9 +35,9 @@ void ICloudToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	);
 
 	MenuBuilder.AddMenuEntry(
-		FText::FromString("Import Animation Data"),
-		FText::FromString("Imports Animation Data using Cloud and applies it to the corresponding assets in the content browser folder."),
-		FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+		FText::FromString("Animations"),
+		FText::FromString("Imports curve data, notifies and other properties"),
+		FSlateIcon(FAppStyle::GetAppStyleSetName(), "GraphEditor.Animation_24x"),
 
 		FUIAction(
 			FExecuteAction::CreateLambda([] {
@@ -52,14 +52,13 @@ void ICloudToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	);
 
 	MenuBuilder.AddMenuEntry(
-		FText::FromString("Import Skeletal Mesh Data"),
-		FText::FromString("Imports Skeletal Mesh Data using Cloud and applies it to the corresponding assets in the content browser folder."),
-		FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+		FText::FromString("Skeletal Meshes"),
+		FText::FromString("Imports sockets and other properties"),
+		FSlateIcon(FAppStyle::GetAppStyleSetName(), "ClassIcon.SkeletalMeshComponent"),
 
 		FUIAction(
 			FExecuteAction::CreateLambda([] {
-				if (SkeletalMeshTool != nullptr)
-				{
+				if (SkeletalMeshTool != nullptr) {
 					SkeletalMeshTool->Execute();
 				}
 			}),

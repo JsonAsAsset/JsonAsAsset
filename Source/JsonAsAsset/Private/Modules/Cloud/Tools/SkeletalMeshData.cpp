@@ -225,7 +225,7 @@ void TSkeletalMeshData::Execute() {
 }
 
 TArray<FSkeletalMaterial> TSkeletalMeshData::GetMaterials(USkeletalMesh* Mesh) {
-#if UE4_27
+#if UE4_27 || ENGINE_UE5
 	return Mesh->GetMaterials();
 #else
 	return Mesh->Materials;

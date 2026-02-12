@@ -1142,3 +1142,29 @@ inline FString GetAssetObjectPath(const FAssetData& AssetData) {
 	return AssetData.GetObjectPathString();
 #endif
 }
+
+inline void SetAnimSequenceLength(UAnimSequenceBase* Sequence, const float NewLength) {
+	if (!Sequence || NewLength <= 0.f) {
+		return;
+	}
+
+	const float OldLength = Sequence->GetPlayLength();
+	if (FMath::IsNearlyEqual(OldLength, NewLength)) {
+		return;
+	}
+
+	const FScopedTransaction Transaction(FText::FromString(FString::Printf(TEXT("Change Sequence Length %.3f to %.3f"), OldLength, NewLength)));
+
+	Sequence->Modify();
+#if ENGINE_UE5
+	Sequence->GetController().SetNumberOfFrames(Sequence->GetController().ConvertSecondsToFrameNumber(NewLength), true);
+#else
+	if (UAnimSequence* AnimSequence = Cast<UAnimSequence>(Sequence)) {
+		Sequence->SequenceLength = NewLength;
+		AnimSequence->PostProcessSequence();
+	}
+#endif
+
+	Sequence->PostEditChange();
+	Sequence->MarkPackageDirty();
+}

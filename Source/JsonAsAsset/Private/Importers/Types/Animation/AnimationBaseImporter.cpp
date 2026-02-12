@@ -47,6 +47,13 @@ bool IAnimationBaseImporter::Import() {
 	}
 
 	DeserializeExports(AnimSequenceBase);
+
+	/* Update Sequence Length */
+	if (const auto Data = GetAssetData(); Data->HasField(TEXT("SequenceLength"))) {
+		const float SequenceLength = Data->GetNumberField(TEXT("SequenceLength"));
+
+		SetAnimSequenceLength(AnimSequenceBase, SequenceLength);
+	}
 	
 	/* Deserialize properties */
 	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(), {

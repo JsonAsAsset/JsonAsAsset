@@ -1081,7 +1081,7 @@ inline bool HandleAssetCreation(UObject* Asset, UPackage* Package) {
 		const FString Path = FPackageName::GetLongPackagePath(PackageName);
 		if (!Path.StartsWith(TEXT("/")) || Path.Len() < 2)
 		{
-			SpawnPrompt("User Failsafe (#1)", "To keep crashes from happening due to user setup issues, which would be assumed as the plugin's mishaps.\n\nHere's some reasons why this failsafe happened:\n\n- You didn't export it from FModel\n- Imported it from a random path, not in Exports/.../\n\nPlease reimport next time at the proper location.");
+			SpawnPrompt("User Failsafe", "To keep crashes from happening due to user setup issues, which would be assumed as the plugin's mishaps.\n\nHere's some reasons why this failsafe happened:\n\n- You didn't export it from FModel\n- Imported it from a random path, not in Exports/.../\n\nPlease reimport next time at the proper location.");
 			
 			return false;
 		}

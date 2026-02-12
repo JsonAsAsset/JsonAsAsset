@@ -79,38 +79,31 @@ void FJsonAsAssetToolbar::Register() {
 #endif
 }
 
-void FJsonAsAssetToolbar::AddCloudButtons(FToolMenuSection& Section)
-{
+void FJsonAsAssetToolbar::AddCloudButtons(FToolMenuSection& Section) {
 #if ENGINE_UE5
 	/* Adds the Cloud button to the toolbar */
 	FToolMenuEntry& ActionButton = Section.AddEntry(FToolMenuEntry::InitToolBarButton(
 		"JsonAsAssetCloud",
-		
 		FToolUIActionChoice(
 			FUIAction(
 				FExecuteAction::CreateLambda([this] {
 					UJsonAsAssetSettings* Settings = GetSettings();
 					
 					Settings->bEnableCloudServer = !Settings->bEnableCloudServer;
+					SavePluginSettings(Settings);
 				}),
 				FCanExecuteAction(),
 				FGetActionCheckState(),
 				FIsActionButtonVisible::CreateStatic(&IsToolBarVisible)
 			)
 		),
-		
 		TAttribute<FText>::CreateLambda([this] {
 			const UJsonAsAssetSettings* Settings = GetSettings();
 			
-			return Settings->bEnableCloudServer
-				? FText::FromString("On")
-				: FText::FromString("Off");
+			return Settings->bEnableCloudServer ? FText::FromString("On") : FText::FromString("Off");
 		}),
-		
 		FText::FromString(""),
-		
 		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Cloud")),
-		
 		EUserInterfaceActionType::Button
 	));
 	

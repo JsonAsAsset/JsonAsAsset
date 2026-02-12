@@ -468,7 +468,7 @@ inline TSharedPtr<FJsonObject> KeepPropertiesShared(const TSharedPtr<FJsonObject
 	return RawSharedPtrData;
 }
 
-inline void SavePluginConfig(UDeveloperSettings* EditorSettings) {
+inline void SavePluginSettings(UDeveloperSettings* EditorSettings) {
 	EditorSettings->SaveConfig();
 	
 #if ENGINE_UE5

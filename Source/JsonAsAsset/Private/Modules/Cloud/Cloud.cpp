@@ -145,7 +145,7 @@ bool Cloud::Update() {
 		GJsonAsAssetRuntime.Profile.Name = Profile->GetStringField(TEXT("name"));
 	}
 
-	SavePluginConfig(MutableSettings);
+	SavePluginSettings(MutableSettings);
 
 	return true;
 }

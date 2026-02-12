@@ -58,7 +58,7 @@ IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer& Container
 				DirectoryPathFix = DirectoryPathFix + TEXT("Output/Exports");
 
 				GJsonAsAssetRuntime.ExportDirectory.Path = DirectoryPathFix;
-				SavePluginConfig(PluginSettings);
+				SavePluginSettings(PluginSettings);
 
 				/* Retry creating the asset package */
 				LocalPackage = FAssetUtilities::CreateAssetPackage(Name, File, FailureReason);
@@ -67,7 +67,7 @@ IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer& Container
 				if (LocalPackage == nullptr) {
 					GJsonAsAssetRuntime.ExportDirectory.Path = ExportDirectoryCache;
 
-					SavePluginConfig(PluginSettings);
+					SavePluginSettings(PluginSettings);
 				}
 			}
 		}

@@ -8,6 +8,7 @@
 #include "UObject/TextProperty.h"
 
 /* Struct Serializers */
+#include "Engine/FontFace.h"
 #include "Utilities/Serializers/Structs/DateTimeSerializer.h"
 #include "Utilities/Serializers/Structs/FallbackStructSerializer.h"
 #include "Utilities/Serializers/Structs/TimeSpanSerializer.h"
@@ -161,7 +162,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				if (Object != nullptr) {
 					/* Get the export */
 					if (TSharedPtr<FJsonObject> Export = GetExport(JsonValueAsObject.Get(), ObjectSerializer->Exports)) {
-						if (Export->HasField(TEXT("Properties")) && ObjectSerializer->Parent != nullptr && Export->GetStringField("Outer") == ObjectSerializer->Parent->GetName()) {
+						if (Export->HasField(TEXT("Properties")) && ObjectSerializer->Parent != nullptr && Export->GetStringField(TEXT("Outer")) == ObjectSerializer->Parent->GetName()) {
 							TSharedPtr<FJsonObject> Properties = Export->GetObjectField(TEXT("Properties"));
 
 							if (Export->HasField(TEXT("LODData"))) {
@@ -189,9 +190,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			}
 
 			if (FUObjectExport Export = ExportsContainer.Find(ObjectName); Export.Object != nullptr) {
-				UObject* FoundObject = Export.Object;
-
-				if (FoundObject) {
+				if (UObject* FoundObject = Export.Object) {
 					ObjectProperty->SetObjectPropertyValue(OutValue, FoundObject);
 				}
 			}
@@ -213,9 +212,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				}
 				
 				if (FUObjectExport Export = ExportsContainer.Find(ObjectName, ObjectOuter); Export.Object != nullptr) {
-					UObject* FoundObject = Export.Object;
-
-					if (FoundObject) {
+					if (UObject* FoundObject = Export.Object) {
 						ObjectProperty->SetObjectPropertyValue(OutValue, FoundObject);
 					}
 				}
@@ -226,9 +223,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 					FString Name = Parent->GetName();
 
 					if (FUObjectExport Export = ExportsContainer.Find(ObjectName, Name); Export.Object != nullptr) {
-						UObject* FoundObject = Export.Object;
-
-						if (FoundObject) {
+						if (UObject* FoundObject = Export.Object) {
 							ObjectProperty->SetObjectPropertyValue(OutValue, FoundObject);
 						}
 					}
@@ -250,7 +245,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 
 			auto GameplayTags = JsonValue->AsArray();
 
-			for (TSharedPtr<FJsonValue> GameplayTagValue : GameplayTags) {
+			for (TSharedPtr GameplayTagValue : GameplayTags) {
 				FString GameplayTagString = GameplayTagValue->AsString();
 				FGameplayTag GameplayTag = FGameplayTag::RequestGameplayTag(FName(*GameplayTagString));
 				
@@ -297,6 +292,29 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 
 			const TSharedRef<FJsonValue> NewValue = MakeShareable(new FJsonValueObject(SharedObject));
 			NewJsonValue = NewValue;
+		}
+
+		if (StructProperty->Struct == FFontData::StaticStruct()) {
+			FFontData* FontData = static_cast<FFontData*>(OutValue);
+
+			TSharedPtr<FJsonObject> JsonObject = NewJsonValue->AsObject();
+			
+			if (JsonObject->HasField(TEXT("LocalFontFaceAsset"))) {
+				TSharedPtr<FJsonObject> LocalFontFaceExport = JsonObject->GetObjectField(TEXT("LocalFontFaceAsset"));
+
+				if (Importer == nullptr) {
+					Importer = new IImporter();
+				}
+
+				TObjectPtr<UFontFace> FontFacePtr;
+				
+				Importer->SetParent(ObjectSerializer->Parent);
+				Importer->LoadExport(&LocalFontFaceExport, FontFacePtr);
+
+				if (UFontFace* FontFace = FontFacePtr.Get()) {
+					*FontData = FFontData(FontFace, 0);
+				}
+			}
 		}
 
 		/* To serialize struct, we need its type and value pointer, because struct value doesn't contain type information */

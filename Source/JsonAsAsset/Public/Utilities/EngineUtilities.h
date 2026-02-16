@@ -146,7 +146,11 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 
 #if ENGINE_UE5
 	if (CurrentFolder.StartsWith(TEXT("/All"))) {
-		CurrentFolder.RightChopInline(4);
+		CurrentFolder.RightChopInline(FCString::Strlen(TEXT("/All")));
+	}
+
+	if (CurrentFolder.StartsWith(TEXT("/Plugins"))) {
+		CurrentFolder.RightChopInline(FCString::Strlen(TEXT("/Plugins")));
 	}
 #endif
 

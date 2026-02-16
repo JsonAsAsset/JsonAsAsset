@@ -2,6 +2,7 @@
 
 #include "Modules/Tools/ClearImportData.h"
 #include "EditorFramework/AssetImportData.h"
+#include "Engine/FontFace.h"
 #include "Factories/FbxAnimSequenceImportData.h"
 #include "Utilities/EngineUtilities.h"
 
@@ -16,7 +17,8 @@ void TToolClearImportData::Execute() {
 		"AnimSequence",
 		"SkeletalMesh",
 		"StaticMesh",
-		"Texture"
+		"Texture",
+		"FontFace",
 	};
 
 	for (const FAssetData& AssetData : AssetDataList) {
@@ -43,6 +45,10 @@ void TToolClearImportData::Execute() {
 
 		if (const UTexture* Texture = Cast<UTexture>(Asset)) {
 			Texture->AssetImportData->SourceData.SourceFiles.Empty();
+		}
+
+		if (UFontFace* FontFace = Cast<UFontFace>(Asset)) {
+			FontFace->SourceFilename = FString();
 		}
 
 		if (USkeletalMesh* SkeletalMesh = Cast<USkeletalMesh>(Asset)) {

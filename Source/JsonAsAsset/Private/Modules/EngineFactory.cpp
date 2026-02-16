@@ -13,7 +13,7 @@ UJEngineImplementation::UJEngineImplementation() {
 }
 
 bool UJEngineImplementation::FactoryCanImport(const FString& Filename) {
-	return FPaths::GetExtension(Filename.ToLower()).Equals("json");
+	return false;
 }
 
 UObject* UJEngineImplementation::Import(const FString& Filename) {

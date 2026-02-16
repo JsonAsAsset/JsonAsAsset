@@ -50,6 +50,12 @@ TMap<FString, TArray<FString>> ImportTypes::Templated = {
 			TEXT("PhysicalMaterial"),
 		}
 	},
+{
+		TEXT("UI Assets"),
+		{
+			TEXT("Font"),
+		}
+	},
 	{
 		TEXT("Sound Assets"),
 		{

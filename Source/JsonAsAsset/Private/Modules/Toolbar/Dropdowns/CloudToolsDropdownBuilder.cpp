@@ -6,6 +6,7 @@
 
 #include "Modules/Cloud/Tools/AnimationData.h"
 #include "Modules/Cloud/Tools/ConvexCollision.h"
+#include "Modules/Cloud/Tools/FontData.h"
 #include "Modules/Cloud/Tools/SkeletalMeshData.h"
 
 void ICloudToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
@@ -61,6 +62,23 @@ void ICloudToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 				if (SkeletalMeshTool != nullptr) {
 					SkeletalMeshTool->Execute();
 				}
+			}),
+			FCanExecuteAction::CreateLambda([this] {
+				return Cloud::Status::IsOpened();
+			})
+		),
+		NAME_None
+	);
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Fonts"),
+		FText::FromString("Imports font properties (not vectorized data)"),
+		FSlateIcon(FAppStyle::GetAppStyleSetName(), "ClassIcon.FontFace"),
+
+		FUIAction(
+			FExecuteAction::CreateLambda([] {
+				TToolFontData* Tool = new TToolFontData();
+				Tool->Execute();
 			}),
 			FCanExecuteAction::CreateLambda([this] {
 				return Cloud::Status::IsOpened();

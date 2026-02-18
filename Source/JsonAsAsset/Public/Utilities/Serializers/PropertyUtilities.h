@@ -21,7 +21,7 @@ public:
 	UPropertySerializer();
 
 	/** Disables property serialization entirely */
-	void DisablePropertySerialization(UStruct* Struct, FName PropertyName);
+	void DisablePropertySerialization(const UStruct* Struct, FName PropertyName);
 	void AddStructSerializer(UScriptStruct* Struct, const TSharedPtr<FStructSerializer>& Serializer);
 
 	/** Checks whenever we should serialize property in question at all */
@@ -44,7 +44,7 @@ public:
 	TSharedPtr<FStructSerializer> FallbackStructSerializer;
 	TMap<UScriptStruct*, TSharedPtr<FStructSerializer>> StructSerializers;
 
-	bool bFallbackToParentTrace = true;
+	bool FallbackToParentTrace = true;
 
 	FUObjectExportContainer ExportsContainer;
 	TArray<FString> BlacklistedPropertyNames;

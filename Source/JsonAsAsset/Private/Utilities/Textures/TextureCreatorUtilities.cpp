@@ -21,7 +21,7 @@ template <typename T>
 bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) {
 	UTexture2D* Texture2D;
 
-	if (bUseOctetStream) {
+	if (UseOctetStream) {
 		Texture2D = NewObject<T>(Package, T::StaticClass(), *AssetName, RF_Standalone | RF_Public);
 	} else {
 		UTextureFactory* TextureFactory = NewObject<UTextureFactory>();
@@ -37,7 +37,7 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 
 	DeserializeTexture2D(Texture2D, Properties->GetObjectField(TEXT("Properties")));
 
-	if (!bUseOctetStream
+	if (!UseOctetStream
 		&& GJsonAsAssetRuntime.IsOlderUE4Target()
 		&&
 		(
@@ -84,7 +84,7 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 		}
 	}
 	
-	if (bUseOctetStream) {
+	if (UseOctetStream) {
 		DeserializeTexturePlatformData(Texture2D, Data, *PlatformData, Properties);
 	}
 
@@ -291,7 +291,7 @@ bool FTextureCreatorUtilities::DeserializeTexturePlatformData(UTexture* Texture,
 	if (TexturePlatformData.PixelFormat == PF_B8G8R8A8 || TexturePlatformData.PixelFormat == PF_FloatRGBA || TexturePlatformData.PixelFormat == PF_G16) Size = Data.Num();
 	uint8* DecompressedData = static_cast<uint8*>(FMemory::Malloc(Size));
 
-	if (bUseOctetStream) {
+	if (UseOctetStream) {
 		GetDecompressedTextureData(Data.GetData(), DecompressedData, SizeX, SizeY, SizeZ, Size, TexturePlatformData.PixelFormat);
 	} else {
 		DecompressedData = Data.GetData();

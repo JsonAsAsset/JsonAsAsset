@@ -49,11 +49,11 @@ auto Cloud::SendRequest(const FString& RequestURL, const TMap<FString, FString>&
 	FString FullUrl = URL + RequestURL;
 	
 	if (Parameters.Num() > 0) {
-		bool bFirst = true;
+		bool First = true;
 
 		for (const auto& Pair : Parameters) {
-			FullUrl += bFirst ? TEXT("?") : TEXT("&");
-			bFirst = false;
+			FullUrl += First ? TEXT("?") : TEXT("&");
+			First = false;
 
 			FullUrl += FString::Printf(
 				TEXT("%s=%s"),
@@ -116,7 +116,7 @@ TArray<TSharedPtr<FJsonValue>> Cloud::GetExports(const FString& RequestURL, cons
 
 bool Cloud::Update() {
 	UJsonAsAssetSettings* MutableSettings = GetSettings();
-	if (!MutableSettings->bEnableCloudServer) return false;
+	if (!MutableSettings->EnableCloudServer) return false;
 	
 	const auto MetadataResponse = Get("/api/metadata");
 	if (!MetadataResponse.IsValid()) return false;
@@ -130,7 +130,6 @@ bool Cloud::Update() {
 		const int MajorVersion = MetadataResponse->GetIntegerField(TEXT("major_version"));
 
 		GJsonAsAssetRuntime.MajorVersion = MajorVersion;
-		GJsonAsAssetRuntime.bUE5Target = MajorVersion == 5;
 	}
 
 	if (MetadataResponse->HasField(TEXT("minor_version"))) {

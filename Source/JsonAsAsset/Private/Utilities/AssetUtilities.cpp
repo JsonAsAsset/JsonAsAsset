@@ -52,10 +52,10 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 			ModifiablePath.Split("/", &ModifiablePath, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 			/* Ex: RestPath: Plugins/Folder/BaseTextures */
 			/* Ex: RestPath: Content/SecondaryFolder */
-			const bool bIsPlugin = ModifiablePath.StartsWith("Plugins");
+			const bool IsPlugin = ModifiablePath.StartsWith("Plugins");
 
 			/* Plugins/Folder/BaseTextures -> Folder/BaseTextures */
-			if (bIsPlugin) {
+			if (IsPlugin) {
 				FString PluginName = ModifiablePath;
 				FString RemainingPath;
 				/* PluginName = TestName */
@@ -76,7 +76,7 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 			FJRedirects::Redirect(ModifiablePath);
 
 			/* Check if plugin exists */
-			if (bIsPlugin && !ModifiablePath.StartsWith("/Game/")) {
+			if (IsPlugin && !ModifiablePath.StartsWith("/Game/")) {
 				FString PluginName;
 				ModifiablePath.Split("/", nullptr, &PluginName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
 				PluginName.Split("/", &PluginName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
@@ -156,7 +156,7 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 	}
 
 	/* Supported Texture Classes */
-	const bool bIsTexture = Type ==
+	const bool IsTexture = Type ==
 		"Texture2D" ||
 		Type == "TextureRenderTarget2D" ||
 		Type == "TextureCube" ||
@@ -166,8 +166,8 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 	FString GamePath = Path;
 
 	/* Supported Assets */
-	if (CanImport(Type, true) || bIsTexture) {
-		if (bIsTexture) {
+	if (CanImport(Type, true) || IsTexture) {
+		if (IsTexture) {
 			UTexture* Texture;
 			const FString NewPath = RealPath;
 
@@ -246,28 +246,28 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 	const TSharedPtr<FJsonObject> JsonExport = Response[0]->AsObject();
 	const FString Type = JsonExport->GetStringField(TEXT("Type"));
 
-	bool bIsVectorDisplacementMap = false;
+	bool IsVectorDisplacementMap = false;
 
 	if (JsonExport->HasField(TEXT("Properties"))) {
 		if (JsonExport->GetObjectField(TEXT("Properties"))->HasField(TEXT("CompressionSettings"))) {
-			bIsVectorDisplacementMap =
+			IsVectorDisplacementMap =
 				JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_VectorDisplacementmap")
 				|| JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_HDR");
 		}
 	}
 	
 	TArray<uint8> Data = TArray<uint8>();
-	bool bUseOctetStream = Type == "TextureLightProfile"
+	bool UseOctetStream = Type == "TextureLightProfile"
 	                       || Type == "TextureCube"
 	                       || Type == "VolumeTexture"
-	                       || Type == "TextureRenderTarget2D" || bIsVectorDisplacementMap;
+	                       || Type == "TextureRenderTarget2D" || IsVectorDisplacementMap;
 
 #if UE4_26_BELOW
-	bUseOctetStream = true;
+	UseOctetStream = true;
 #endif
 
 #if UE5_5_BEYOND
-	bUseOctetStream = true;
+	UseOctetStream = true;
 #endif
 
 	/* ~~~~~~~~~~~~~~~ Download Texture Data ~~~~~~~~~~~~ */
@@ -276,7 +276,7 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 		const auto HttpRequest = HttpModule->CreateRequest();
 
 		HttpRequest->SetURL(Cloud::URL + "/api/export?path=" + FetchPath);
-		HttpRequest->SetHeader("content-type", bUseOctetStream ? "application/octet-stream" : "image/png");
+		HttpRequest->SetHeader("content-type", UseOctetStream ? "application/octet-stream" : "image/png");
 		HttpRequest->SetVerb(TEXT("GET"));
 		
 		const auto HttpResponse = FRemoteUtilities::ExecuteRequestSync(HttpRequest);
@@ -306,26 +306,26 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 		Path.Split(".", &PackagePath, &AssetName);
 	}
 
-	bool bIsVectorDisplacementMap = false;
+	bool IsVectorDisplacementMap = false;
 
 	if (JsonExport->HasField(TEXT("Properties"))) {
 		if (JsonExport->GetObjectField(TEXT("Properties"))->HasField(TEXT("CompressionSettings"))) {
-			bIsVectorDisplacementMap = JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_VectorDisplacementmap")
+			IsVectorDisplacementMap = JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_VectorDisplacementmap")
 				|| JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_HDR");
 		}
 	}
 	
-	bool bUseOctetStream = Type == "TextureLightProfile"
+	bool UseOctetStream = Type == "TextureLightProfile"
 						   || Type == "TextureCube"
 						   || Type == "VolumeTexture"
-						   || Type == "TextureRenderTarget2D" || bIsVectorDisplacementMap;
+						   || Type == "TextureRenderTarget2D" || IsVectorDisplacementMap;
 
 #if UE4_26_BELOW
-	bUseOctetStream = true;
+	UseOctetStream = true;
 #endif
 
 #if UE5_5_BEYOND
-	bUseOctetStream = true;
+	UseOctetStream = true;
 #endif
 	
 	FJRedirects::Redirect(PackagePath);
@@ -343,7 +343,7 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 	UPackage* Package = CreateAssetPackage(*PackagePath);
 	Package->FullyLoad();
 
-	FTextureCreatorUtilities TextureCreator = FTextureCreatorUtilities(AssetName, Path, Package, bUseOctetStream);
+	FTextureCreatorUtilities TextureCreator = FTextureCreatorUtilities(AssetName, Path, Package, UseOctetStream);
 
 	if (Type == "Texture2D") {
 		TextureCreator.CreateTexture<UTexture2D>(Texture, Data, JsonExport);
@@ -376,7 +376,7 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 	Package->FullyLoad();
 
 	/* Save texture */
-	if (Settings->AssetSettings.bSaveAssets) {
+	if (Settings->AssetSettings.SaveAssets) {
 		SavePackage(Package);
 	}
 

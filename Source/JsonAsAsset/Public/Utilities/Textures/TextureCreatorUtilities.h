@@ -7,8 +7,8 @@
 
 struct FTextureCreatorUtilities {
 public:
-	FTextureCreatorUtilities(const FString& AssetName, const FString& FilePath, UPackage* Package, const bool bUseOctetStream)
-		: bUseOctetStream(bUseOctetStream), AssetName(AssetName), FilePath(FilePath), Package(Package)
+	FTextureCreatorUtilities(const FString& AssetName, const FString& FilePath, UPackage* Package, const bool UseOctetStream)
+		: UseOctetStream(UseOctetStream), AssetName(AssetName), FilePath(FilePath), Package(Package)
 	{
 		PropertySerializer = NewObject<UPropertySerializer>();
 		ObjectSerializer = NewObject<UObjectSerializer>();
@@ -16,7 +16,7 @@ public:
 		ObjectSerializer->SetPropertySerializer(PropertySerializer);
 	}
 
-	bool bUseOctetStream = true;
+	bool UseOctetStream = true;
 
     template <class T = UObject>
 	bool CreateTexture(UTexture*& OutTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties);

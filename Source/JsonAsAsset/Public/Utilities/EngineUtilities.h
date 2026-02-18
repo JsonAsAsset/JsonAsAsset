@@ -156,17 +156,17 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 
 	/* Check if the folder is the root folder, and show a prompt if */
 	if (CurrentFolder == "/Game") {
-		bool bContinue = false;
+		bool Continue = false;
 		
 		SpawnYesNoPrompt(
 			TEXT("Large Operation"),
 			TEXT("This will stall the editor for a long time. Continue anyway?"),
-			[&](const bool bConfirmed) {
-				bContinue = bConfirmed;
+			[&](const bool Confirmed) {
+				Continue = Confirmed;
 			}
 		);
 
-		if (!bContinue) {
+		if (!Continue) {
 			UE_LOG(LogJsonAsAsset, Warning, TEXT("Action cancelled by user."));
 			return AssetDataList;
 		}
@@ -199,7 +199,7 @@ inline TArray<TSharedPtr<FJsonValue>> RequestExports(const FString& Path) {
 }
 
 inline bool IsProcessRunning(const FString& ProcessName) {
-	bool bIsRunning = false;
+	bool IsRunning = false;
 
 	/* Convert FString to WCHAR */
 	const TCHAR* ProcessNameChar = *ProcessName;
@@ -212,7 +212,7 @@ inline bool IsProcessRunning(const FString& ProcessName) {
 		if (Process32First(Snapshot, &ProcessEntry)) {
 			do {
 				if (_wcsicmp(ProcessEntry.szExeFile, ProcessNameChar) == 0) {
-					bIsRunning = true;
+					IsRunning = true;
 					break;
 				}
 			} while (Process32Next(Snapshot, &ProcessEntry));
@@ -221,15 +221,15 @@ inline bool IsProcessRunning(const FString& ProcessName) {
 		CloseHandle(Snapshot);
 	}
 
-	return bIsRunning;
+	return IsRunning;
 }
 
-inline TSharedPtr<FJsonObject> GetExport(const FString& Type, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool bGetProperties = false) {
+inline TSharedPtr<FJsonObject> GetExport(const FString& Type, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool GetProperties = false) {
 	for (const TSharedPtr Value : JsonObjects) {
 		const TSharedPtr<FJsonObject> ValueObject = Value->AsObject();
 
 		if (ValueObject->GetStringField(TEXT("Type")) == Type) {
-			if (bGetProperties) {
+			if (GetProperties) {
 				return ValueObject->GetObjectField(TEXT("Properties"));
 			}
 			
@@ -240,12 +240,12 @@ inline TSharedPtr<FJsonObject> GetExport(const FString& Type, TArray<TSharedPtr<
 	return nullptr;
 }
 
-inline TSharedPtr<FJsonObject> GetExportByName(const FString& Name, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool bGetProperties = false) {
+inline TSharedPtr<FJsonObject> GetExportByName(const FString& Name, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool GetProperties = false) {
 	for (const TSharedPtr Value : JsonObjects) {
 		const TSharedPtr<FJsonObject> ValueObject = Value->AsObject();
 
 		if (ValueObject->GetStringField(TEXT("Name")) == Name) {
-			if (bGetProperties) {
+			if (GetProperties) {
 				return ValueObject->GetObjectField(TEXT("Properties"));
 			}
 			
@@ -539,13 +539,13 @@ inline void SetNotificationSubText(FNotificationInfo& Notification, const FText&
 
 /* Show the user a Notification */
 inline auto AppendNotification(const FText& Text, const FText& SubText, const float ExpireDuration,
-                               const SNotificationItem::ECompletionState CompletionState, const bool bUseSuccessFailIcons,
+                               const SNotificationItem::ECompletionState CompletionState, const bool UseSuccessFailIcons,
                                const float WidthOverride) -> void
 {
 	FNotificationInfo Info = FNotificationInfo(Text);
 	Info.ExpireDuration = ExpireDuration;
 	Info.bUseLargeFont = true;
-	Info.bUseSuccessFailIcons = bUseSuccessFailIcons;
+	Info.bUseSuccessFailIcons = UseSuccessFailIcons;
 	Info.WidthOverride = FOptionalSize(WidthOverride);
 	
 	SetNotificationSubText(Info, SubText);
@@ -557,12 +557,12 @@ inline auto AppendNotification(const FText& Text, const FText& SubText, const fl
 /* Show the user a Notification with Subtext */
 inline auto AppendNotification(const FText& Text, const FText& SubText, float ExpireDuration,
                                const FSlateBrush* SlateBrush, SNotificationItem::ECompletionState CompletionState,
-                               const bool bUseSuccessFailIcons, const float WidthOverride) -> void
+                               const bool UseSuccessFailIcons, const float WidthOverride) -> void
 {
 	FNotificationInfo Info = FNotificationInfo(Text);
 	Info.ExpireDuration = ExpireDuration;
 	Info.bUseLargeFont = true;
-	Info.bUseSuccessFailIcons = bUseSuccessFailIcons;
+	Info.bUseSuccessFailIcons = UseSuccessFailIcons;
 	Info.WidthOverride = FOptionalSize(WidthOverride);
 	Info.Image = SlateBrush;
 
@@ -711,7 +711,7 @@ inline TArray<TSharedPtr<FJsonValue>> GetExportsStartingWith(const FString& Star
 	return FilteredObjects;
 }
 
-inline TSharedPtr<FJsonObject> GetExportStartingWith(const FString& Start, const FString& Property, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool bExportProperties = false) {
+inline TSharedPtr<FJsonObject> GetExportStartingWith(const FString& Start, const FString& Property, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool ExportProperties = false) {
 	for (const TSharedPtr<FJsonValue>& JsonObjectValue : JsonObjects) {
 		if (JsonObjectValue->Type == EJson::Object) {
 			TSharedPtr<FJsonObject> JsonObject = JsonObjectValue->AsObject();
@@ -721,7 +721,7 @@ inline TSharedPtr<FJsonObject> GetExportStartingWith(const FString& Start, const
 
 				/* Check if the "Type" field starts with the specified string */
 				if (StringValue.StartsWith(Start)) {
-					if (bExportProperties) {
+					if (ExportProperties) {
 						if (JsonObject->HasField(TEXT("Properties"))) {
 							return JsonObject->GetObjectField(TEXT("Properties"));
 						}
@@ -735,7 +735,7 @@ inline TSharedPtr<FJsonObject> GetExportStartingWith(const FString& Start, const
 	return TSharedPtr<FJsonObject>();
 }
 
-inline TSharedPtr<FJsonObject> GetExportMatchingWith(const FString& Match, const FString& Property, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool bExportProperties = false) {
+inline TSharedPtr<FJsonObject> GetExportMatchingWith(const FString& Match, const FString& Property, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool ExportProperties = false) {
 	for (const TSharedPtr<FJsonValue>& JsonObjectValue : JsonObjects) {
 		if (JsonObjectValue->Type == EJson::Object) {
 			TSharedPtr<FJsonObject> JsonObject = JsonObjectValue->AsObject();
@@ -745,7 +745,7 @@ inline TSharedPtr<FJsonObject> GetExportMatchingWith(const FString& Match, const
 
 				/* Check if the "Name" field starts with the specified string */
 				if (StringValue.Equals(Match)) {
-					if (bExportProperties) {
+					if (ExportProperties) {
 						if (JsonObject->HasField(TEXT("Properties"))) {
 							return JsonObject->GetObjectField(TEXT("Properties"));
 						}

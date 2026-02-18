@@ -11,8 +11,8 @@
 
 FJsonAsAssetVersioning GJsonAsAssetVersioning;
 
-void FJsonAsAssetVersioning::SetValid(const bool bValid) {
-	bIsValid = bValid;
+void FJsonAsAssetVersioning::SetValid(const bool Valid) {
+	IsValid = Valid;
 }
 
 void FJsonAsAssetVersioning::Reset(const int InVersion, const int InLatestVersion, const FString& InHTMLUrl, const FString& InVersionName, const FString& InCurrentVersionName) {
@@ -21,10 +21,7 @@ void FJsonAsAssetVersioning::Reset(const int InVersion, const int InLatestVersio
 	VersionName = InVersionName;
 	CurrentVersionName = InCurrentVersionName;
 	HTMLUrl = InHTMLUrl;
-
-	bNewVersionAvailable = LatestVersion > Version;
-	bFutureVersion = Version > LatestVersion;
-	bLatestVersion = !(bNewVersionAvailable || bFutureVersion);
+	
 	SetValid(true);
 }
 
@@ -73,7 +70,7 @@ void FJsonAsAssetVersioning::Update() {
 
 		static bool IsNotificationShown = false;
 
-		if (bNewVersionAvailable && !IsNotificationShown) {
+		if (IsNewVersionAvailable() && !IsNotificationShown) {
 			const FString CapturedUrl = HTMLUrl;
 
 			FNotificationInfo Info(FText::FromString(VersionName + " is now available!"));
@@ -102,4 +99,16 @@ void FJsonAsAssetVersioning::Update() {
 	const auto Response = FRemoteUtilities::ExecuteRequestSync(Request);
 
     Request->ProcessRequest();
+}
+
+bool FJsonAsAssetVersioning::IsNewVersionAvailable() const {
+	return LatestVersion > Version;
+}
+
+bool FJsonAsAssetVersioning::IsFutureVersion() const {
+	return Version > LatestVersion;
+}
+
+bool FJsonAsAssetVersioning::IsLatestVersion() const {
+	return !(IsNewVersionAvailable() || IsFutureVersion());
 }

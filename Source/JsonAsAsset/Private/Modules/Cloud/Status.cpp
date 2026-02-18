@@ -20,7 +20,7 @@ bool Cloud::Status::IsReady() {
 bool Cloud::Status::Check(const UJsonAsAssetSettings* Settings) {
 	RemoveNotification(CloudNotification);
 	
-	if (Settings->bEnableCloudServer && !IsOpened()) {
+	if (Settings->EnableCloudServer && !IsOpened()) {
 		FNotificationInfo Info(FText::FromString("No Cloud Servers are active"));
 		
 		SetNotificationSubText(Info, FText::FromString(

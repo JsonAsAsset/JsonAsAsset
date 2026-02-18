@@ -12,6 +12,10 @@ bool FJRuntime::IsOlderUE4Target() const {
 	return MajorVersion == 4 && MinorVersion != -1 && MinorVersion < 14;
 }
 
+bool FJRuntime::IsUE5() const {
+	return MajorVersion == 5;
+}
+
 void FJRuntime::Update() {
 	FString AppDataPath = FPlatformMisc::GetEnvironmentVariable(TEXT("APPDATA"));
 	AppDataPath = FPaths::Combine(AppDataPath, TEXT("FModel/AppSettings.json"));

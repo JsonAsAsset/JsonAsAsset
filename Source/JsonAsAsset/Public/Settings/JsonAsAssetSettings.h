@@ -28,20 +28,20 @@ public:
 		AnimationBlueprint = FJAnimationBlueprintSettings();
 	}
 
-	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
+	UPROPERTY(EditAnywhere, Config, Category = Settings)
 	FJAnimationBlueprintSettings AnimationBlueprint;
 
-	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
+	UPROPERTY(EditAnywhere, Config, Category = Settings)
 	FJTextureSettings Texture;
 	
-	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
+	UPROPERTY(EditAnywhere, Config, Category = Settings)
 	FJMaterialSettings Material;
 
-	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
+	UPROPERTY(EditAnywhere, Config, Category = Settings)
 	FString ProjectName;
 	
-	UPROPERTY(EditAnywhere, Config, Category = AssetSettings)
-	bool bSaveAssets = false;
+	UPROPERTY(EditAnywhere, Config, Category = Settings)
+	bool SaveAssets = false;
 };
 
 USTRUCT()
@@ -51,7 +51,7 @@ struct FJVersioningSettings
 public:
 	/* Disable checking for newer updates of JsonAsAsset. */
 	UPROPERTY(EditAnywhere, Config, Category = VersioningSettings)
-	bool bDisable = false;
+	bool Disable = false;
 };
 
 /* Powerful Unreal Engine Plugin that imports assets from FModel */
@@ -76,9 +76,9 @@ public:
 
 	/* Retrieves assets from an API and imports references directly into your project. */
 	UPROPERTY(EditAnywhere, Config, Category = Cloud, DisplayName = "Enable Cloud")
-	bool bEnableCloudServer = true;
+	bool EnableCloudServer = true;
 
 	/* Enables experimental/developing features of JsonAsAsset. Features may not work as intended. */
 	UPROPERTY(EditAnywhere, Config, Category = Settings, AdvancedDisplay)
-	bool bEnableExperiments = false;
+	bool EnableExperiments = false;
 };

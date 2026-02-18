@@ -74,9 +74,9 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
 
     if (Type == "Texture") Type = "Texture2D";
     
-    if (Settings->bEnableCloudServer && (
+    if (Settings->EnableCloudServer && (
         InObject == nullptr ||
-            Settings->AssetSettings.Texture.bReDownloadTextures &&
+            Settings->AssetSettings.Texture.UpdateExisingTextures &&
             Type == "Texture2D"
         )
         && !Path.StartsWith("Engine/") && !Path.StartsWith("/Engine/")
@@ -84,17 +84,17 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
         const UObject* DefaultObject = GetClassDefaultObject(T::StaticClass());
 
         if (DefaultObject != nullptr && !Name.IsEmpty() && !Path.IsEmpty()) {
-            bool bDownloadStatus = false;
+            bool DownloadStatus = false;
 
             FString NewPath = Path;
             FJRedirects::Reverse(NewPath);
             
             /* Try importing the asset */
-            if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), Type, InObject, bDownloadStatus)) {
+            if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), Type, InObject, DownloadStatus)) {
                 const FText AssetNameText = FText::FromString(Name);
                 const FSlateBrush* IconBrush = FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail"));
 
-                if (bDownloadStatus) {
+                if (DownloadStatus) {
                     AppendNotification(
                         FText::FromString("Locally Downloaded: " + Type),
                         AssetNameText,

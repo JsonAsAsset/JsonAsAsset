@@ -15,11 +15,11 @@
 #include "AnimDataController.h"
 #endif
 
-inline bool ReadAnimationData(USerializerContainer* Container, const bool bUseSelectedAsset, const IImporter* Importer = nullptr) {
+inline bool ReadAnimationData(USerializerContainer* Container, const bool UseSelectedAsset, const IImporter* Importer = nullptr) {
 	/* Animation Sequence Base reference, either by using the selected asset in the browser, or through an importer */
 	UAnimSequenceBase* AnimSequenceBase = nullptr;
 
-	if (bUseSelectedAsset) {
+	if (UseSelectedAsset) {
 		AnimSequenceBase = GetSelectedAsset<UAnimSequenceBase>(true, Container->GetAssetName());
 	}
 	else {
@@ -33,7 +33,7 @@ inline bool ReadAnimationData(USerializerContainer* Container, const bool bUseSe
 		AnimSequenceBase = NewObject<UAnimMontage>(Container->GetPackage(), Container->GetAssetClass(), *Container->GetAssetName(), RF_Public | RF_Standalone);
 	}
 
-	if (bUseSelectedAsset) {
+	if (UseSelectedAsset) {
 		if (!AnimSequenceBase) {
 			UE_LOG(LogJsonAsAsset, Error, TEXT("Could not get valid AnimSequenceBase"));
 			FMessageDialog::Open(EAppMsgType::Ok, FText::FromString("Select a Animation inside of the Content Browser to import data."));

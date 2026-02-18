@@ -11,17 +11,17 @@
 #include "Utilities/AssetUtilities.h"
 #include "Utilities/EngineUtilities.h"
 
-bool IImportReader::ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const FString& File, IImporter*& OutImporter, const bool bHideNotifications) {
+bool IImportReader::ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const FString& File, IImporter*& OutImporter, const bool HideNotifications) {
 	FUObjectExportContainer Container = Exports;
 	
 	for (FUObjectExport Export : Container) {
-		if (IImporter* Importer = ReadExportAndImport(Container, Export, File, bHideNotifications)) OutImporter = Importer;
+		if (IImporter* Importer = ReadExportAndImport(Container, Export, File, HideNotifications)) OutImporter = Importer;
 	}
 
 	return true;
 }
 
-IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer& Container, FUObjectExport& Export, FString File, const bool bHideNotifications) {
+IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer& Container, FUObjectExport& Export, FString File, const bool HideNotifications) {
 	const FString Type = Export.GetType().ToString();
 	FString Name = Export.GetName().ToString();
 
@@ -122,7 +122,7 @@ IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer& Container
 		}
 	}
 
-	if (bHideNotifications) {
+	if (HideNotifications) {
 		return Importer;
 	}
 

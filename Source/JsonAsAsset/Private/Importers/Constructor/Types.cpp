@@ -100,7 +100,7 @@ bool ImportTypes::Allowed(const FString& ImporterType) {
 	if (Experimental.Contains(ImporterType)) {
 		const UJsonAsAssetSettings* Settings = GetSettings();
 
-		if (!Settings->bEnableExperiments) return false;
+		if (!Settings->EnableExperiments) return false;
 	}
 
 	return true;

@@ -20,18 +20,18 @@
 void FJsonAsAssetToolbar::Register() {
 #if ENGINE_UE5
 	/* false: uses top toolbar. true: uses content browser toolbar */
-	static bool bUseToolbar = false;
+	static bool UseToolbar = false;
 	
 	UToolMenu* Menu;
 
-	if (bUseToolbar) {
+	if (UseToolbar) {
 		Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar.PlayToolBar");
 	} else {
 		Menu = UToolMenus::Get()->ExtendMenu("ContentBrowser.Toolbar");
 	}
 
 	FToolMenuSection& Section =
-		bUseToolbar
+		UseToolbar
 		? Menu->FindOrAddSection(GJsonAsAssetName)
 		: Menu->FindOrAddSection("New");
 
@@ -89,7 +89,7 @@ void FJsonAsAssetToolbar::AddCloudButtons(FToolMenuSection& Section) {
 				FExecuteAction::CreateLambda([this] {
 					UJsonAsAssetSettings* Settings = GetSettings();
 					
-					Settings->bEnableCloudServer = !Settings->bEnableCloudServer;
+					Settings->EnableCloudServer = !Settings->EnableCloudServer;
 					SavePluginSettings(Settings);
 				}),
 				FCanExecuteAction(),
@@ -100,7 +100,7 @@ void FJsonAsAssetToolbar::AddCloudButtons(FToolMenuSection& Section) {
 		TAttribute<FText>::CreateLambda([this] {
 			const UJsonAsAssetSettings* Settings = GetSettings();
 			
-			return Settings->bEnableCloudServer ? FText::FromString("On") : FText::FromString("Off");
+			return Settings->EnableCloudServer ? FText::FromString("On") : FText::FromString("Off");
 		}),
 		FText::FromString(""),
 		FSlateIcon(FJsonAsAssetStyle::Get().GetStyleSetName(), FName("Toolbar.Cloud")),
@@ -115,7 +115,7 @@ void FJsonAsAssetToolbar::AddCloudButtons(FToolMenuSection& Section) {
 		FUIAction(
 			FExecuteAction(),
 			FCanExecuteAction::CreateLambda([] {
-				return GetSettings()->bEnableCloudServer;
+				return GetSettings()->EnableCloudServer;
 			}),
 			FGetActionCheckState(),
 			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)
@@ -162,11 +162,11 @@ void FJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 #endif
 
 bool FJsonAsAssetToolbar::IsToolBarVisible() {
-	bool bVisible = true;
+	bool Visible = true;
 
 	if (static const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"))) {
 		if (CVar->GetInt() == 1) {
-			bVisible = false;
+			Visible = false;
 		}
 	}
 
@@ -175,19 +175,19 @@ bool FJsonAsAssetToolbar::IsToolBarVisible() {
 
 		for (const FWorldContext& WorldContext : WorldContextList) {
 			if (WorldContext.World() && WorldContext.World()->WorldType == EWorldType::PIE) {
-				bVisible = false;
+				Visible = false;
 			}
 		}
 	}
 
-	return bVisible;
+	return Visible;
 }
 
 bool FJsonAsAssetToolbar::IsFitToFunction() {
 	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	/* Conditional Settings Checks */
-	if (Settings->bEnableCloudServer) {
+	if (Settings->EnableCloudServer) {
 		if (!Cloud::Status::Check(Settings) || !Cloud::Update()) return false;
 	}
 

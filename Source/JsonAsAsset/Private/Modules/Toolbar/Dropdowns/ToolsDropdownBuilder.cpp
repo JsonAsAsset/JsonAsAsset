@@ -63,7 +63,7 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 			}
 
 #if ENGINE_UE4
-		if (Settings->bEnableCloudServer) {
+		if (Settings->EnableCloudServer) {
 			TArray<TSharedRef<IParentDropdownBuilder>> Dropdowns = {
 				MakeShared<ICloudToolsDropdownBuilder>()
 			};

@@ -145,9 +145,9 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 
 		if (NewJsonValue->Type == EJson::Object) {
 			auto JsonValueAsObject = NewJsonValue->AsObject();
-			bool bUseDefaultLoadObject = !JsonValueAsObject->GetStringField(TEXT("ObjectName")).Contains(":ParticleModule");
+			bool UseDefaultLoadObject = JsonValueAsObject->GetStringField(TEXT("ObjectName")).Contains(":ParticleModule");
 
-			if (bUseDefaultLoadObject) {
+			if (UseDefaultLoadObject) {
 				if (Importer == nullptr) {
 					Importer = new IImporter();
 				}
@@ -218,7 +218,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				}
 			}
 
-			if (bFallbackToParentTrace) {
+			if (FallbackToParentTrace) {
 				if (UObject* Parent = ObjectSerializer->Parent) {
 					FString Name = Parent->GetName();
 
@@ -323,7 +323,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 #if ENGINE_UE4
 		/* If we're importing from UE5 to UE4, adjust the material attribute nodes to adjust for attributes that don't exist */
 		if (Property->GetCPPType(nullptr, CPPF_None) == TEXT("FExpressionInput")) {
-			if (GJsonAsAssetRuntime.bUE5Target) {
+			if (GJsonAsAssetRuntime.IsUE5()) {
 				FExpressionInput* ExpressionInput = static_cast<FExpressionInput*>(OutValue);
 
 				if (ExpressionInput &&
@@ -399,8 +399,8 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 		}
 	}
 	else if (const FBoolProperty* BoolProperty = CastField<const FBoolProperty>(Property)) {
-		const bool bBooleanValue = NewJsonValue->AsBool();
-		BoolProperty->SetPropertyValue(OutValue, bBooleanValue);
+		const bool BooleanValue = NewJsonValue->AsBool();
+		BoolProperty->SetPropertyValue(OutValue, BooleanValue);
 	}
 	else if (Property->IsA<FStrProperty>()) {
 		const FString StringValue = NewJsonValue->AsString();
@@ -452,7 +452,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 	}
 }
 
-void UPropertySerializer::DisablePropertySerialization(UStruct* Struct, const FName PropertyName) {
+void UPropertySerializer::DisablePropertySerialization(const UStruct* Struct, const FName PropertyName) {
 	FProperty* Property = Struct->FindPropertyByName(PropertyName);
 	checkf(Property, TEXT("Cannot find Property %s in Struct %s"), *PropertyName.ToString(), *Struct->GetPathName());
 	this->BlacklistedProperties.Add(Property);

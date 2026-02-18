@@ -35,7 +35,7 @@ inline FImporterFactoryDelegate* FindFactoryForAssetType(const FString& AssetTyp
 	const UJsonAsAssetSettings* Settings = GetSettings();
 
 	for (auto& Pair : GetFactoryRegistry()) {
-		if (!Settings->bEnableExperiments) {
+		if (!Settings->EnableExperiments) {
 			if (ImportTypes::Experimental.Contains(AssetType)) return nullptr;
 		}
             

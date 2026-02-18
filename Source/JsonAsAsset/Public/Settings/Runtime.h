@@ -10,9 +10,6 @@ struct FJCloudProfile {
 };
 
 struct FJRuntime {
-	/* If the assets being imported, are from UE5 */
-	bool bUE5Target = false;
-
 	/* UE4.22 ~~> 22 */
 	int MinorVersion = -1;
 
@@ -20,11 +17,11 @@ struct FJRuntime {
 	int MajorVersion = -1;
 
 	FJCloudProfile Profile;
-
 	FDirectoryPath ExportDirectory;
 
 	/* Helper Functions ~~~~~~~~~~~ */
 	bool IsOlderUE4Target() const;
+	bool IsUE5() const;
 
 	/* Update Functions ~~~~~~~~~~~ */
 	void Update();

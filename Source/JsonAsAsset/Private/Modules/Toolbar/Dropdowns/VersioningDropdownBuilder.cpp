@@ -7,11 +7,11 @@
 #include "Utilities/EngineUtilities.h"
 
 void IVersioningDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
-	if (!GJsonAsAssetVersioning.bIsValid) {
+	if (!GJsonAsAssetVersioning.IsValid) {
 		return;
 	}
 
-	if (!GJsonAsAssetVersioning.bNewVersionAvailable && !GJsonAsAssetVersioning.bFutureVersion) return;
+	if (!GJsonAsAssetVersioning.IsNewVersionAvailable() && !GJsonAsAssetVersioning.IsFutureVersion()) return;
 	
 	MenuBuilder.BeginSection("JsonAsAssetVersioningSection", FText::FromString("Version"));
 	
@@ -24,13 +24,13 @@ void IVersioningDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 #endif
 
 	/* A new release is available */
-	if (GJsonAsAssetVersioning.bNewVersionAvailable) {
+	if (GJsonAsAssetVersioning.IsNewVersionAvailable()) {
 		Text = FText::FromString("New Version Available");
 		
 		Tooltip = FText::FromString("Update your installation to version " + GJsonAsAssetVersioning.VersionName);
 
 		Icon = FSlateIcon(FAppStyle::GetAppStyleSetName(), "Cascade.AddLODBeforeCurrent.Small");
-	} else if (GJsonAsAssetVersioning.bFutureVersion) {
+	} else if (GJsonAsAssetVersioning.IsFutureVersion()) {
 		Text = FText::FromString("Developmental");
 		
 		Tooltip = FText::FromString("You are currently running a developmental build");
@@ -47,7 +47,7 @@ void IVersioningDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		Icon,
 		FUIAction(
 			FExecuteAction::CreateLambda([this]() {
-				if (GJsonAsAssetVersioning.bNewVersionAvailable) {
+				if (GJsonAsAssetVersioning.IsNewVersionAvailable()) {
 					LaunchURL(GJsonAsAssetVersioning.HTMLUrl);
 				}
 			})

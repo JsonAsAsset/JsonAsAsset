@@ -42,7 +42,7 @@ public:
     FORCEINLINE UObjectSerializer* GetObjectSerializer() const;
     FORCEINLINE UPropertySerializer* GetPropertySerializer() const;
 
-    void DeserializeExports(UObject* Parent, bool bCreateObjects = true);
+    void DeserializeExports(UObject* Parent, bool CreateObjects = true);
 
     virtual void ApplyModifications() { }
 protected:

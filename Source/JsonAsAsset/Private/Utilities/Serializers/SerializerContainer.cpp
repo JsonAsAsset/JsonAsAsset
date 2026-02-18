@@ -48,11 +48,11 @@ UPropertySerializer* USerializerContainer::GetPropertySerializer() const {
 	return GetObjectSerializer()->PropertySerializer;
 }
 
-void USerializerContainer::DeserializeExports(UObject* Parent, const bool bCreateObjects) {
+void USerializerContainer::DeserializeExports(UObject* Parent, const bool CreateObjects) {
 	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), Parent);
 	GetObjectSerializer()->Parent = Parent;
     
-	GetObjectSerializer()->DeserializeExports(AssetContainer.JsonObjects, bCreateObjects);
+	GetObjectSerializer()->DeserializeExports(AssetContainer.JsonObjects, CreateObjects);
 	ApplyModifications();
 }
 

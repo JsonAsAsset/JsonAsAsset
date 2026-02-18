@@ -82,7 +82,7 @@ void IMaterialGraph::PropagateExpressions(FUObjectExportContainer& Container) {
 			continue;
 		}
 		
-		bool bAddToParentExpression = true;
+		bool AddToParentExpression = true;
 		
 		/* Sub-graph (natively only on Unreal Engine 5) */
 		if (Properties->HasField(TEXT("SubgraphExpression"))) {
@@ -110,14 +110,14 @@ void IMaterialGraph::PropagateExpressions(FUObjectExportContainer& Container) {
 			Expression->Function = ParentSubgraphFunction;
 			ParentSubgraphFunction->FunctionExpressions.Add(Expression);
 
-			bAddToParentExpression = false;
+			AddToParentExpression = false;
 #endif
 		}
 
 		GetObjectSerializer()->DeserializeObjectProperties(Properties, Expression);
 		SetExpressionParent(Parent, Expression, Properties);
 
-		if (bAddToParentExpression) {
+		if (AddToParentExpression) {
 			AddExpressionToParent(Parent, Expression);
 		}
 	}

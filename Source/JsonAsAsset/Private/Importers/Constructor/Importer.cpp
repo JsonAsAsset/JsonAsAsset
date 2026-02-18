@@ -146,7 +146,7 @@ void IImporter::Save() const {
 	}
 
 	/* User option to save packages on import */
-	if (Settings->AssetSettings.bSaveAssets) {
+	if (Settings->AssetSettings.SaveAssets) {
 		SavePackage(GetPackage());
 	}
 }

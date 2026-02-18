@@ -23,8 +23,8 @@ TSharedPtr<IHttpResponse, ESPMode::ThreadSafe>
 	
 	, const float LoopDelay)
 {
-	const bool bStartedRequest = HttpRequest->ProcessRequest();
-	if (!bStartedRequest) {
+	const bool StartedRequest = HttpRequest->ProcessRequest();
+	if (!StartedRequest) {
 		UE_LOG(LogJsonAsAsset, Error, TEXT("Failed to start HTTP Request."));
 		return nullptr;
 	}

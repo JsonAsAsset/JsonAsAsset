@@ -50,7 +50,7 @@ void FJsonAsAssetModule::StartupModule() {
 
     const UJsonAsAssetSettings* Settings = GetSettings();
 	
-	if (!Settings->Versioning.bDisable) {
+	if (!Settings->Versioning.Disable) {
 		GJsonAsAssetVersioning.Update();
 	}
 }

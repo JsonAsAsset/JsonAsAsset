@@ -505,7 +505,7 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 
 #if ENGINE_UE4
 		/* Looks like UE5 flipped axes on LocalJointOffset */
-		if (GJsonAsAssetRuntime.bUE5Target) {
+		if (GJsonAsAssetRuntime.IsUE5()) {
 			if (NodeProperties->HasField(TEXT("LocalJointOffset"))) {
 				auto LocalJointOffset = NodeProperties->GetObjectField(TEXT("LocalJointOffset"));
 				LocalJointOffset->SetNumberField("X", -LocalJointOffset->GetNumberField(TEXT("X")));
@@ -546,7 +546,7 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 		HandlePropertyBinding(NodeExport, AssetContainer.JsonObjects, Node, this, AnimBlueprint);
 
 		const UJsonAsAssetSettings* Settings = GetSettings();
-		if (Settings->AssetSettings.AnimationBlueprint.bSaveNodeKeysInComments) {
+		if (Settings->AssetSettings.AnimationBlueprint.NodeIDComments) {
 			Node->NodeComment = NodeExport.GetName().ToString();
 			Node->bCommentBubbleVisible = true;
 		}

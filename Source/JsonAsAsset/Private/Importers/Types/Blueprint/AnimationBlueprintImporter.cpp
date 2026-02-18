@@ -618,7 +618,7 @@ void IAnimationBlueprintImporter::ConnectAnimGraphNodes(FUObjectExportContainer&
                 }
             }
             
-            if (Value->Type == EJson::Object && Value->AsObject()->HasTypedField<EJson::String>("LinkID")) {
+            if (Value->Type == EJson::Object && Value->AsObject()->HasTypedField<EJson::String>(TEXT("LinkID"))) {
                 const FString LinkID = Value->AsObject()->GetStringField(TEXT("LinkID"));
                 UAnimGraphNode_Base* TargetNode = Cast<UAnimGraphNode_Base>(Container.Find(LinkID).Object);
                 

@@ -159,7 +159,7 @@ Once the Cloud is started, JsonAsAsset will fetch almost every referenced asset 
   
 This is a known issue in our code that we haven't fully resolved yet. While previous attempts to fix it have been unsuccessful, here's a partial solution to reduce its occurrence:
 
-- Re-launch your Unreal Engine project, go to JsonAsAsset's plugin settings and enable ***"Skip Result Node Connection"***. Also enable ***"Allow Package Saving"***.
+- Re-launch your Unreal Engine project, go to JsonAsAsset's plugin settings and enable ***"Disconnect Root"***. Also enable ***"Save Assets"***.
 </details>
 
 <a name="contribute"></a>

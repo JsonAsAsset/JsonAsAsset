@@ -32,6 +32,7 @@ protected:
 public:
 	UMaterialExpression* OnMissingNodeClass(FUObjectExport& Export, FUObjectExportContainer& Container);
 	void SpawnMaterialDataMissingNotification() const;
+	void CreatedStubsNotification() const;
 
 #if ENGINE_UE4
 	/*

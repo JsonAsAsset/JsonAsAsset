@@ -22,9 +22,9 @@ public:
 	 *  - Alternatively, manually connect the inputs to the main result node.
 	 */
 	UPROPERTY(EditAnywhere, Config, Category = MaterialSettings)
-	bool SkipResultNodeConnection = false;
+	bool DisconnectRoot = false;
 
 	/* Creates stub versions of materials that have parameters (for Modding) */
 	UPROPERTY(EditAnywhere, Config, Category = MaterialSettings)
-	bool UseStubs = false;
+	bool Stubs = false;
 };

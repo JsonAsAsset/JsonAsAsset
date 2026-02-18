@@ -133,7 +133,7 @@ void ISoundGraph::SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*
 					
 					if (Response == nullptr) continue;
 					
-					OnDownloadSoundWave(Response->GetStringField("file"), AssetPtr, WavePlayerNode);
+					OnDownloadSoundWave(Response->GetStringField(TEXT("file")), AssetPtr, WavePlayerNode);
 				}
 			}
 		}

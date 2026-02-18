@@ -1,6 +1,7 @@
 /* Copyright JsonAsAsset Contributors 2024-2026 */
 
 #include "Importers/Types/Materials/MaterialImporter.h"
+#include "Importers/Types/Materials/MaterialStubs.h"
 
 /* Include Material.h (depends on UE Version) */
 #if (ENGINE_UE5 && ENGINE_MINOR_VERSION < 3) || ENGINE_UE4
@@ -36,18 +37,24 @@ bool IMaterialImporter::Import() {
 
 	/* Map out each expression for easier access */
 	ConstructExpressions(ExpressionContainer);
+
+	const UJsonAsAssetSettings* Settings = GetSettings();
 	
 	/* If Missing Material Data */
 	if (ExpressionContainer.Num() == 0) {
-		SpawnMaterialDataMissingNotification();
+		if (GetSettings()->AssetSettings.Material.Stubs) {
+			CreateStubs(this);
+			CreatedStubsNotification();
+		}
+		else {
+			SpawnMaterialDataMissingNotification();
 
-		return false;
+			return false;
+		}
 	}
 
 	/* Iterate through all the expressions, and set properties */
 	PropagateExpressions(ExpressionContainer);
-
-	const UJsonAsAssetSettings* Settings = GetSettings();
 
 #if ENGINE_UE5
 	UMaterialEditorOnlyData* EditorOnlyData = Material->GetEditorOnlyData();
@@ -55,7 +62,7 @@ bool IMaterialImporter::Import() {
 	UMaterial* EditorOnlyData = Material;
 #endif
 	
-	if (!Settings->AssetSettings.Material.SkipResultNodeConnection) {
+	if (!Settings->AssetSettings.Material.DisconnectRoot) {
 		TArray<FString> IgnoredProperties = TArray<FString> {
 			"ParameterGroupData",
 			"ExpressionCollection",

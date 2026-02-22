@@ -146,7 +146,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 
 		if (NewJsonValue->Type == EJson::Object) {
 			auto JsonValueAsObject = NewJsonValue->AsObject();
-			bool UseDefaultLoadObject = JsonValueAsObject->GetStringField(TEXT("ObjectName")).Contains(":ParticleModule");
+			bool UseDefaultLoadObject = !JsonValueAsObject->GetStringField(TEXT("ObjectName")).Contains(":ParticleModule");
 
 			if (UseDefaultLoadObject) {
 				if (Importer == nullptr) {

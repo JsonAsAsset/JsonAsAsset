@@ -8,6 +8,7 @@
 #include "Modules/Cloud/Tools/ConvexCollision.h"
 #include "Modules/Cloud/Tools/FontData.h"
 #include "Modules/Cloud/Tools/SkeletalMeshData.h"
+#include "Modules/Cloud/Tools/WidgetAnimations.h"
 
 void ICloudToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	static TSkeletalMeshData* SkeletalMeshTool;
@@ -78,6 +79,23 @@ void ICloudToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FUIAction(
 			FExecuteAction::CreateLambda([] {
 				TToolFontData* Tool = new TToolFontData();
+				Tool->Execute();
+			}),
+			FCanExecuteAction::CreateLambda([this] {
+				return Cloud::Status::IsOpened();
+			})
+		),
+		NAME_None
+	);
+	
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Widget Animations"),
+		FText::FromString("Imports widget animations"),
+		FSlateIcon(FAppStyle::GetAppStyleSetName(), "ClassIcon.WidgetBlueprint"),
+
+		FUIAction(
+			FExecuteAction::CreateLambda([] {
+				TWidgetAnimations* Tool = new TWidgetAnimations();
 				Tool->Execute();
 			}),
 			FCanExecuteAction::CreateLambda([this] {

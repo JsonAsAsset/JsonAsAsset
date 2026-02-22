@@ -1172,3 +1172,62 @@ inline void SetAnimSequenceLength(UAnimSequenceBase* Sequence, const float NewLe
 	Sequence->PostEditChange();
 	Sequence->MarkPackageDirty();
 }
+
+inline FString GetAssetPath(const UObject* Object) {
+	if (!Object) {
+		return FString();
+	}
+
+	if (const UPackage* Package = Object->GetOutermost()) {
+		return Package->GetName();
+	}
+
+	return FString();
+}
+
+static void CollectObjectPackagesRecursively(const TSharedPtr<FJsonValue>& Value, FUObjectExportContainer& Container, TArray<FUObjectExport>& Exports) {
+	if (!Value.IsValid()) {
+		return;
+	}
+
+	if (Value->Type == EJson::Object) {
+		const TSharedPtr<FJsonObject>& Object = Value->AsObject();
+		if (!Object.IsValid())
+		{
+			return;
+		}
+
+		/* If it has ObjectName + ObjectPath, then resolve */
+		if (Object->HasField(TEXT("ObjectName")) && Object->HasField(TEXT("ObjectPath"))) {
+			FUObjectExport Resolved = Container.GetExportByObjectPath(Object);
+			
+			Exports.Add(Resolved);
+		}
+
+		/* Recurse through fields */
+		for (const TPair<FString, TSharedPtr<FJsonValue>>& Pair : Object->Values) {
+			CollectObjectPackagesRecursively(Pair.Value, Container, Exports);
+		}
+	}
+	else if (Value->Type == EJson::Array) {
+		for (const TSharedPtr<FJsonValue>& ArrayValue : Value->AsArray()) {
+			CollectObjectPackagesRecursively(ArrayValue, Container, Exports);
+		}
+	}
+}
+
+inline TArray<FUObjectExport> CollectObjectPackages(FUObjectExport Export, FUObjectExportContainer Container) {
+	TArray<FUObjectExport> Exports;
+
+	if (!Export.IsJsonValid()) {
+		return Exports;
+	}
+
+	CollectObjectPackagesRecursively(
+		MakeShared<FJsonValueObject>(Export.JsonObject),
+		Container,
+		Exports
+	);
+
+	return Exports;
+}

@@ -8,6 +8,7 @@
 #include "UObject/TextProperty.h"
 
 /* Struct Serializers */
+#include "MovieSceneSection.h"
 #include "Engine/FontFace.h"
 #include "Utilities/Serializers/Structs/DateTimeSerializer.h"
 #include "Utilities/Serializers/Structs/FallbackStructSerializer.h"
@@ -155,7 +156,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				Importer->SetParent(ObjectSerializer->Parent);
 				Importer->LoadExport(&JsonValueAsObject, Object);
 
-				if (Object != nullptr && !Cast<UActorComponent>(Object.Get())) {
+				if (Object != nullptr && !Object.Get()->IsA(UActorComponent::StaticClass())) {
 					ObjectProperty->SetObjectPropertyValue(OutValue, Object);
 				}
 
@@ -178,6 +179,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			FString ObjectName = JsonValueAsObject->GetStringField(TEXT("ObjectName"));
 			FString ObjectPath = JsonValueAsObject->GetStringField(TEXT("ObjectPath"));
 			FString ObjectOuter;
+			int ObjectIndex = -1;
 
 			if (ObjectName.Contains(".")) {
 				ObjectName.Split(".", &ObjectOuter, &ObjectName);
@@ -187,6 +189,13 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			if (ObjectName.Contains(":")) {
 				ObjectName.Split(":", nullptr, &ObjectName);
 				ObjectName.Split("'", &ObjectName, nullptr);
+			}
+
+			if (ObjectPath.Contains(".")) {
+				FString ObjectIndexString;
+				ObjectPath.Split(".", nullptr, &ObjectIndexString);
+
+				ObjectIndex = FCString::Atoi(*ObjectIndexString);
 			}
 
 			if (FUObjectExport Export = ExportsContainer.Find(ObjectName); Export.Object != nullptr) {
@@ -229,6 +238,14 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 					}
 				}
 			}
+
+			if (ObjectIndex != -1) {
+				if (FUObjectExport Export = ExportsContainer.FindByPosition(ObjectIndex); Export.Object != nullptr) {
+					if (UObject* FoundObject = Export.Object) {
+						ObjectProperty->SetObjectPropertyValue(OutValue, FoundObject);
+					}
+				}
+			}
 		}
 	}
 	else if (const FStructProperty* StructProperty = CastField<const FStructProperty>(Property)) {
@@ -251,14 +268,59 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				
 				GameplayTagContainerStr->AddTag(GameplayTag);
 			}
-			
+
+			return;
+		}
+
+		if (StructProperty->Struct == FMovieSceneFrameRange::StaticStruct()) {
+			FMovieSceneFrameRange* MovieSceneFrameRange = static_cast<FMovieSceneFrameRange*>(OutValue);
+			TSharedPtr<FJsonObject> JsonObject = NewJsonValue->AsObject()->GetObjectField(TEXT("Value"));
+
+			FMovieSceneFrameRange Range;
+
+			if (JsonObject->HasField(TEXT("LowerBound"))) {
+				TSharedPtr<FJsonObject> Bound = JsonObject->GetObjectField(TEXT("LowerBound"));
+				TSharedPtr<FJsonObject> BoundValue = Bound->GetObjectField(TEXT("Value"));
+
+				int32 Type = Bound->GetIntegerField(TEXT("Type"));
+				int32 Value = BoundValue->GetIntegerField(TEXT("Value"));
+
+				FFrameNumber BoundFrame;
+				BoundFrame.Value = Value;
+
+				if (Type == 0) {
+					Range.Value.SetLowerBound(TRangeBound<FFrameNumber>::Exclusive(BoundFrame));
+				} else if (Type == 1) {
+					Range.Value.SetLowerBound(TRangeBound<FFrameNumber>::Inclusive(BoundFrame));
+				}
+			}
+
+			if (JsonObject->HasField(TEXT("UpperBound"))) {
+				TSharedPtr<FJsonObject> Bound = JsonObject->GetObjectField(TEXT("UpperBound"));
+				TSharedPtr<FJsonObject> BoundValue = Bound->GetObjectField(TEXT("Value"));
+
+				int32 Type = Bound->GetIntegerField(TEXT("Type"));
+				int32 Value = BoundValue->GetIntegerField(TEXT("Value"));
+
+				FFrameNumber BoundFrame;
+				BoundFrame.Value = Value;
+
+				if (Type == 0) {
+					Range.Value.SetUpperBound(TRangeBound<FFrameNumber>::Exclusive(BoundFrame));
+				} else if (Type == 1) {
+					Range.Value.SetUpperBound(TRangeBound<FFrameNumber>::Inclusive(BoundFrame));
+				}
+			}
+
+			*MovieSceneFrameRange = Range;
+
 			return;
 		}
 
 		if (StructProperty->Struct->GetFName() == "SoftObjectPath") {
 			TSharedPtr<FJsonObject> SoftJsonObjectProperty;
 			FString PathString = "";
-		
+
 			SoftJsonObjectProperty = NewJsonValue->AsObject();
 			PathString = SoftJsonObjectProperty->GetStringField(TEXT("AssetPathName"));
 			

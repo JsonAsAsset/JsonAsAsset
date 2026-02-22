@@ -127,10 +127,6 @@ struct FUObjectExport {
 	/* The json object of the expression, ^this is not Properties^ */
 	TSharedPtr<FJsonObject> JsonObject;
 
-	FName NameOverride;
-	FName TypeOverride;
-	FName OuterOverride;
-
 	TSharedPtr<void> ExtraData;
 	FName ExtraDataType;
 
@@ -163,8 +159,8 @@ struct FUObjectExport {
 		return JsonObject->GetObjectField(TEXT("Properties"));
 	}
 
-	const FUObjectJsonValueExport& GetPropertiesNew() const {
-		return JsonObject->GetObjectField(TEXT("Properties"));
+	FUObjectJsonValueExport GetPropertiesNew() const {
+		return FUObjectJsonValueExport(JsonObject->GetObjectField(TEXT("Properties")));
 	}
 	
 	UClass* GetClass() {
@@ -176,6 +172,8 @@ struct FUObjectExport {
 		Class = ClassRef;
 		return Class;
 	}
+	
+	FName NameOverride;
 
 	FName GetName() const {
 		if (!NameOverride.IsNone()) {
@@ -189,6 +187,8 @@ struct FUObjectExport {
 		return FName(*JsonObject->GetStringField(TEXT("Name")));
 	}
 
+	FName TypeOverride;
+
 	FName GetType() const {
 		if (!TypeOverride.IsNone()) {
 			return TypeOverride;
@@ -201,6 +201,8 @@ struct FUObjectExport {
 		return FName(*JsonObject->GetStringField(TEXT("Type")));
 	}
 
+	FName OuterOverride;
+
 	FName GetOuter() const {
 		if (!OuterOverride.IsNone()) {
 			return OuterOverride;
@@ -211,6 +213,45 @@ struct FUObjectExport {
 		}
 		
 		return FName(*JsonObject->GetStringField(TEXT("Outer")));
+	}
+
+	FName PathOverride;
+
+	FName GetPath() const {
+		if (!PathOverride.IsNone()) {
+			return PathOverride;
+		}
+
+		if (!JsonObject.IsValid() || !JsonObject->HasField(TEXT("Path"))) {
+			return "";
+		}
+		
+		return FName(*JsonObject->GetStringField(TEXT("Path")));
+	}
+
+	TArray<FName> GetPathSegments(const bool bRemoveLast = false) const {
+		TArray<FName> Result;
+		const FString FullPath = GetPath().ToString();
+
+		int32 ColonIndex = INDEX_NONE;
+		if (!FullPath.FindChar(TEXT(':'), ColonIndex)) {
+			return Result;
+		}
+
+		FString AfterColon = FullPath.Mid(ColonIndex + 1);
+
+		TArray<FString> Parts;
+		AfterColon.ParseIntoArray(Parts, TEXT("."), true);
+
+		for (const FString& Part : Parts) {
+			Result.Add(FName(*Part));
+		}
+
+		if (bRemoveLast && Result.Num() > 0) {
+			Result.Pop(false);
+		}
+
+		return Result;
 	}
 
 	bool IsValid() const {
@@ -304,6 +345,50 @@ public:
 		return Result;
 	}
 
+	FUObjectExport GetExport(const FUObjectJsonValueExport& PackageIndex) {
+		FString ObjectName = PackageIndex.GetString("ObjectName"); /* Class'Asset:ExportName' */
+		FString ObjectPath = PackageIndex.GetString("ObjectPath"); /* Path/Asset.Index */
+		FString Outer;
+	
+		/* Clean up ObjectName (Class'Asset:ExportName' --> Asset:ExportName --> ExportName) */
+		ObjectName.Split("'", nullptr, &ObjectName);
+		ObjectName.Split("'", &ObjectName, nullptr);
+
+		if (ObjectName.Contains(":")) {
+			ObjectName.Split(":", nullptr, &ObjectName); /* Asset:ExportName --> ExportName */
+		}
+
+		if (ObjectName.Contains(".")) {
+			ObjectName.Split(".", nullptr, &ObjectName);
+		}
+
+		if (ObjectName.Contains(".")) {
+			ObjectName.Split(".", &Outer, &ObjectName);
+		}
+
+		int Index = 0;
+
+		/* Search for the object in the JsonObjects array */
+		for (auto& Value : Exports) {
+			FString Name;
+			if (Value.JsonObject->TryGetStringField(TEXT("Name"), Name) && Name == ObjectName) {
+				if (Value.JsonObject->HasField(TEXT("Outer")) && !Outer.IsEmpty()) {
+					FString OuterName = Value.JsonObject->GetStringField(TEXT("Outer"));
+
+					if (OuterName == Outer) {
+						return Value;
+					}
+				} else {
+					return Value;
+				}
+			}
+
+			Index++;
+		}
+
+		return FUObjectExport::EmptyExport();
+	}
+
 	TSharedPtr<FJsonObject> GetExportJsonObjectByObjectPath(const TSharedPtr<FJsonObject>& Object) {
 		const TSharedPtr<FJsonObject> ValueObject = TSharedPtr(Object);
 
@@ -365,6 +450,16 @@ public:
 		return nullptr;
 	}
 
+	FUObjectExport FindByPosition(const int Position) {
+		for (const FUObjectExport& Export : Exports) {
+			if (Export.Position == Position) {
+				return Export;
+			}
+		}
+
+		return FUObjectExport::EmptyExport();
+	}
+
 	FUObjectExport& Find(const FString& Name) {
 		return Find(FName(*Name));
 	}
@@ -396,6 +491,16 @@ public:
 
 		return FUObjectExport::EmptyExport();
 	}
+
+	FUObjectExport& FindBySegment(const TArray<FName>& Segments) {
+    	for (FUObjectExport& Export : Exports) {
+    		if (Export.GetPathSegments() == Segments) {
+    			return Export;
+    		}
+    	}
+
+    	return FUObjectExport::EmptyExport();
+    }
 
 	FUObjectExport& FindByType(const FString& Type, const FString& Outer) {
 		return FindByType(FName(*Type), FName(*Outer));

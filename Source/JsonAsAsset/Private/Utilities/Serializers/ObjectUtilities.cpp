@@ -66,6 +66,28 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 		
 		/* Check if it's not supposed to be deserialized */
 		if (ExportsToNotDeserialize.Contains(Name)) continue;
+
+		if (!WhitelistedTypes.IsEmpty()) {
+			bool bMatchFound = false;
+
+			for (const FString& Whitelisted : WhitelistedTypes) {
+				if (Type.Contains(Whitelisted)) {
+					bMatchFound = true;
+					break;
+				}
+			}
+
+			if (!bMatchFound) {
+				continue;
+			}
+		}
+		
+		if (!BlacklistedTypes.IsEmpty()) {
+			if (BlacklistedTypes.Contains(Type)) {
+				continue;
+			}
+		}
+		
 		if (Type == "NavCollision") continue;
 
 		FString Outer = ExportObject->GetStringField(TEXT("Outer"));
@@ -137,11 +159,23 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 		ObjectOuter = FoundObject;
 	}
 
+	const TArray<FName> PathSegment = Export.GetPathSegments(true);
+	
+	if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer.FindBySegment(PathSegment); FoundExport.JsonObject.IsValid()) {
+		if (FoundExport.Object == nullptr) {
+			DeserializeExport(FoundExport, ExportsMap);
+		}
+		
+		UObject* FoundObject = FoundExport.Object;
+		ObjectOuter = FoundObject;
+	}
+
 	if (UObject** ConstructedObject = ConstructedObjects.Find(Outer)) {
 		ObjectOuter = *ConstructedObject;
 	}
 
-	if (PathsToNotDeserialize.Contains(Outer + "." + Name)) return;
+	if (Export.Object) return;
+	
 	if (ObjectOuter == nullptr) {
 		ObjectOuter = Parent;
 	}
@@ -158,9 +192,6 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 
 	/* Add it to the referenced objects */
 	Export.Object = NewUObject;
-
-	/* Already deserialized */
-	PathsToNotDeserialize.Add(Outer + "." + Name);
 }
 
 void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject>& Properties, UObject* Object) const {
@@ -175,7 +206,7 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 
 		void* PropertyValue = Property->ContainerPtrToValuePtr<void>(Object);
 		const bool HasHandledProperty = PassthroughPropertyHandler(Property, PropertyName, PropertyValue, Properties, PropertySerializer);
-
+		
 		/* Handler Specifically for Animation Blueprint Graph Nodes */
 		if (const FStructProperty* StructProperty = CastField<FStructProperty>(Property)) {
 			if (StructProperty->Struct->IsChildOf(FAnimNode_Base::StaticStruct())) {

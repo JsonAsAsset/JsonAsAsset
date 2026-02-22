@@ -30,7 +30,8 @@ public class JsonAsAsset : ModuleRules {
 			"ApplicationCore",
 			"AnimGraph",
 			"UMGEditor",
-			"ClothingSystemRuntimeCommon"
+			"ClothingSystemRuntimeCommon",
+			"MovieScene"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new[] {

@@ -40,5 +40,11 @@ public:
     UPROPERTY()
     TArray<FString> ExportsToNotDeserialize;
 
+    UPROPERTY()
+    TArray<FString> WhitelistedTypes;
+
+    UPROPERTY()
+    TArray<FString> BlacklistedTypes;
+
     TArray<FString> PathsToNotDeserialize;
 };

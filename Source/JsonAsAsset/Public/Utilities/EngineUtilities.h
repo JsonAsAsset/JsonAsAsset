@@ -1192,8 +1192,7 @@ static void CollectObjectPackagesRecursively(const TSharedPtr<FJsonValue>& Value
 
 	if (Value->Type == EJson::Object) {
 		const TSharedPtr<FJsonObject>& Object = Value->AsObject();
-		if (!Object.IsValid())
-		{
+		if (!Object.IsValid()) {
 			return;
 		}
 
@@ -1230,4 +1229,9 @@ inline TArray<FUObjectExport> CollectObjectPackages(FUObjectExport Export, FUObj
 	);
 
 	return Exports;
+}
+
+inline void MoveToTransientPackageAndRename(UObject* Object) {
+	Object->Rename(NULL, GetTransientPackage());
+	Object->SetFlags(RF_Transient);
 }

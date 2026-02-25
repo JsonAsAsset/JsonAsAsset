@@ -22,6 +22,7 @@ TMap<FString, TArray<FString>> ImportTypes::Templated = {
 			TEXT("LandscapeLayerInfoObject"),
 			TEXT("HLODProxy"),
 			TEXT("AnimBoneCompressionSettings"),
+			TEXT("AnimCurveCompressionSettings"),
 		}
 	},
 	{

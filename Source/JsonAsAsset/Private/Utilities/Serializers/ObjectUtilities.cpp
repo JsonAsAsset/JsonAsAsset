@@ -160,14 +160,16 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 	}
 
 	const TArray<FName> PathSegment = Export.GetPathSegments(true);
-	
-	if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer.FindBySegment(PathSegment); FoundExport.JsonObject.IsValid()) {
-		if (FoundExport.Object == nullptr) {
-			DeserializeExport(FoundExport, ExportsMap);
-		}
+
+	if (!PathSegment.IsEmpty()) {
+		if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer.FindBySegment(PathSegment); FoundExport.JsonObject.IsValid()) {
+			if (FoundExport.Object == nullptr) {
+				DeserializeExport(FoundExport, ExportsMap);
+			}
 		
-		UObject* FoundObject = FoundExport.Object;
-		ObjectOuter = FoundObject;
+			UObject* FoundObject = FoundExport.Object;
+			ObjectOuter = FoundObject;
+		}
 	}
 
 	if (UObject** ConstructedObject = ConstructedObjects.Find(Outer)) {

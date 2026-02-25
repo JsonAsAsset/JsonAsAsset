@@ -20,7 +20,8 @@ TMap<FString, TArray<FString>> ImportTypes::Templated = {
 			TEXT("SlateBrushAsset"),
 			TEXT("SlateWidgetStyleAsset"),
 			TEXT("LandscapeLayerInfoObject"),
-			TEXT("HLODProxy")
+			TEXT("HLODProxy"),
+			TEXT("AnimBoneCompressionSettings"),
 		}
 	},
 	{

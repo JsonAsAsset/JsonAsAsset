@@ -31,7 +31,11 @@ public class JsonAsAsset : ModuleRules {
 			"AnimGraph",
 			"UMGEditor",
 			"ClothingSystemRuntimeCommon",
-			"MovieScene"
+			"MovieScene",
+			
+#if UE_5_0_OR_LATER
+			"ContentBrowserData"
+#endif
 		});
 
 		PrivateDependencyModuleNames.AddRange(new[] {

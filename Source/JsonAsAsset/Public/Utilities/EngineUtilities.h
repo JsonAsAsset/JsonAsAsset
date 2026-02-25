@@ -141,17 +141,17 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 		UE_LOG(LogJsonAsAsset, Warning, TEXT("No folder selected in the Content Browser."));
 		return AssetDataList;
 	}
-
-	FString CurrentFolder = SelectedFolders[0];
-
+	
 #if ENGINE_UE5
-	if (CurrentFolder.StartsWith(TEXT("/All"))) {
-		CurrentFolder.RightChopInline(FCString::Strlen(TEXT("/All")));
-	}
+	/* Convert virtual paths to internal package paths */
+	const UContentBrowserDataSubsystem* ContentBrowserData = GEditor->GetEditorSubsystem<UContentBrowserDataSubsystem>();
 
-	if (CurrentFolder.StartsWith(TEXT("/Plugins"))) {
-		CurrentFolder.RightChopInline(FCString::Strlen(TEXT("/Plugins")));
+	if (!ContentBrowserData) {
+		return AssetDataList;
 	}
+	
+	TArray<FString> InternalPaths = ContentBrowserData->TryConvertVirtualPathsToInternal(SelectedFolders);
+	const FString CurrentFolder = InternalPaths[0];
 #endif
 
 	/* Check if the folder is the root folder, and show a prompt if */

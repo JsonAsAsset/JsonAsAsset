@@ -8,6 +8,7 @@
 #include "Utilities/EngineUtilities.h"
 
 #include "Modules/Tools/ClearImportData.h"
+#include "Modules/Tools/ResetAnimationCompressionData.h"
 
 void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	UJsonAsAssetSettings* Settings = GetSettings();
@@ -26,6 +27,20 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 					FUIAction(
 						FExecuteAction::CreateLambda([] {
 							TToolClearImportData* Tool = new TToolClearImportData();
+							Tool->Execute();
+						})
+					),
+					NAME_None
+				);
+
+				InnerMenuBuilder.AddMenuEntry(
+					FText::FromString("Reset Animation Compression"),
+					FText::FromString(""),
+					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
+
+					FUIAction(
+						FExecuteAction::CreateLambda([] {
+							TToolResetAnimationCompressionData* Tool = new TToolResetAnimationCompressionData();
 							Tool->Execute();
 						})
 					),

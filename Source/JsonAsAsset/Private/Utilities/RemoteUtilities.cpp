@@ -40,3 +40,40 @@ TSharedPtr<IHttpResponse, ESPMode::ThreadSafe>
 
 	return HttpRequest->GetResponse();
 }
+
+void FRemoteUtilities::ExecuteRequestAsync(
+#if ENGINE_UE5
+	TSharedRef<IHttpRequest> HttpRequest,
+#else
+	const TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& HttpRequest,
+#endif
+
+	TFunction<void(
+#if ENGINE_UE5
+		TSharedPtr<IHttpResponse>
+#else
+		TSharedPtr<IHttpResponse, ESPMode::ThreadSafe>
+#endif
+	)> OnComplete)
+{
+	HttpRequest->OnProcessRequestComplete().BindLambda(
+		[OnComplete](
+			FHttpRequestPtr Request,
+			const FHttpResponsePtr& Response,
+			const bool bSuccess) {
+			if (!bSuccess || !Response.IsValid()) {
+				UE_LOG(LogJsonAsAsset, Error, TEXT("HTTP Request failed."));
+				OnComplete(nullptr);
+				
+				return;
+			}
+
+			OnComplete(Response);
+		}
+	);
+
+	if (!HttpRequest->ProcessRequest()) {
+		UE_LOG(LogJsonAsAsset, Error, TEXT("Failed to start HTTP Request."));
+		OnComplete(nullptr);
+	}
+}

@@ -13,62 +13,44 @@ bool Cloud::Status::IsOpened() {
 	return IsProcessRunning("j0.dev.exe");
 }
 
-bool Cloud::Status::IsReady() {
-	return Get("/api/status").IsValid();
+void Cloud::Status::IsReady(TFunction<void(bool)> OnResponse) {
+	Get("/api/status", {}, {},
+		[OnResponse](const TSharedPtr<FJsonObject>& Json) {
+			OnResponse(Json.IsValid());
+		}
+	);
 }
 
-bool Cloud::Status::Check(const UJsonAsAssetSettings* Settings) {
+void Cloud::Status::Check(const UJsonAsAssetSettings* Settings,TFunction<void(bool)> OnResponse) {
 	RemoveNotification(CloudNotification);
 	
 	if (Settings->EnableCloudServer && !IsOpened()) {
-		FNotificationInfo Info(FText::FromString("No Cloud Servers are active"));
+		CloudNotification = AppendNotificationWithHandler(
+			FText::FromString("No Active Cloud Instance"),
+			FText::FromString("Read documentation on how to start one."),
+			0.5f,
+			FJsonAsAssetStyle::Get().GetBrush("Toolbar.Icon"),
+			SNotificationItem::CS_None,
+			false,
+			0.0f,
+			[](FNotificationInfo& Info) {
+				Info.HyperlinkText = FText::FromString("Learn how to setup");
+				Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
+					LaunchURL(GitHub::README::Cloud);
+				});
+			}
+		);
 		
-		SetNotificationSubText(Info, FText::FromString(
-			"Read documentation on how to start one."
-		));
-
-		Info.HyperlinkText = FText::FromString("Learn how to setup");
-		Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
-			LaunchURL(GitHub::README::Cloud);
-		});
-
-		Info.bFireAndForget = false;
-		Info.FadeOutDuration = 3.0f;
-		Info.ExpireDuration = 3.0f;
-		Info.bUseLargeFont = false;
-		Info.bUseThrobber = false;
-		Info.Image = FJsonAsAssetStyle::Get().GetBrush("Toolbar.Icon");
-
-		CloudNotification = FSlateNotificationManager::Get().AddNotification(Info);
-		CloudNotification.Pin()->SetCompletionState(SNotificationItem::CS_Pending);
-
-		return false;
+		OnResponse(false);
+		
+		return;
 	}
 
-	if (!IsReady()) {
-		FNotificationInfo Info(FText::FromString("No Cloud Server is initialized"));
-		
-		SetNotificationSubText(Info, FText::FromString(
-			"Read documentation on how to start a profile."
-		));
+	IsReady([OnResponse](const bool bReady) {
+		OnResponse(bReady);
+	});
+}
 
-		Info.HyperlinkText = FText::FromString("Learn how to setup");
-		Info.Hyperlink = FSimpleDelegate::CreateStatic([]() {
-			LaunchURL(GitHub::README::Cloud);
-		});
-
-		Info.bFireAndForget = false;
-		Info.FadeOutDuration = 3.0f;
-		Info.ExpireDuration = 3.0f;
-		Info.bUseLargeFont = false;
-		Info.bUseThrobber = false;
-		Info.Image = FJsonAsAssetStyle::Get().GetBrush("Toolbar.Icon");
-
-		CloudNotification = FSlateNotificationManager::Get().AddNotification(Info);
-		CloudNotification.Pin()->SetCompletionState(SNotificationItem::CS_Pending);
-
-		return false;
-	}
-
-	return true;
+bool Cloud::Status::ShouldWaitUntilInitialized(const UJsonAsAssetSettings* Settings) {
+	return Settings->EnableCloudServer && IsOpened();
 }

@@ -572,6 +572,37 @@ inline auto AppendNotification(const FText& Text, const FText& SubText, float Ex
 	NotificationPtr->SetCompletionState(CompletionState);
 }
 
+inline TSharedPtr<SNotificationItem> AppendNotificationWithHandler(const FText& Text, const FText& SubText, const float ExpireDuration,
+	const FSlateBrush* SlateBrush, const SNotificationItem::ECompletionState CompletionState, const bool UseSuccessFailIcons,
+	const float WidthOverride, const TFunction<void(FNotificationInfo&)>& PreAddHandler = nullptr)
+{
+	FNotificationInfo Info(Text);
+	Info.ExpireDuration = ExpireDuration;
+	Info.bUseLargeFont = true;
+	Info.bUseSuccessFailIcons = UseSuccessFailIcons;
+
+	if (WidthOverride != 0.0f) {
+		Info.WidthOverride = FOptionalSize(WidthOverride);
+	}
+	
+	Info.Image = SlateBrush;
+
+	SetNotificationSubText(Info, SubText);
+
+	/* Call handler before adding notification */
+	if (PreAddHandler) {
+		PreAddHandler(Info);
+	}
+
+	const TSharedPtr<SNotificationItem> NotificationPtr = FSlateNotificationManager::Get().AddNotification(Info);
+
+	if (NotificationPtr.IsValid()) {
+		NotificationPtr->SetCompletionState(CompletionState);
+	}
+
+	return NotificationPtr;
+}
+
 inline int32 ConvertVersionStringToInt(const FString& VersionStr) {
 	return FCString::Atoi(*VersionStr.Replace(TEXT("."), TEXT("")));
 }

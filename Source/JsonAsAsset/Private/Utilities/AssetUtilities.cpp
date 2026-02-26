@@ -136,23 +136,30 @@ UPackage* FAssetUtilities::CreateAssetPackage(const FString& Name, const FString
 }
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-template bool FAssetUtilities::ConstructAsset<UMaterialInterface>(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<UMaterialInterface>& OutObject, bool& bSuccess);
-template bool FAssetUtilities::ConstructAsset<USubsurfaceProfile>(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<USubsurfaceProfile>& OutObject, bool& bSuccess);
-template bool FAssetUtilities::ConstructAsset<UTexture>(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<UTexture>& OutObject, bool& bSuccess);
-template bool FAssetUtilities::ConstructAsset<UAnimSequence>(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<UAnimSequence>& OutObject, bool& bSuccess);
-template bool FAssetUtilities::ConstructAsset<UMaterialParameterCollection>(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<UMaterialParameterCollection>& OutObject, bool& bSuccess);
-template bool FAssetUtilities::ConstructAsset<USoundWave>(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<USoundWave>& OutObject, bool& bSuccess);
-template bool FAssetUtilities::ConstructAsset<UObject>(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<UObject>& OutObject, bool& bSuccess);
-template bool FAssetUtilities::ConstructAsset<UMaterialFunctionInterface>(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<UMaterialFunctionInterface>& OutObject, bool& bSuccess);
-template bool FAssetUtilities::ConstructAsset<USoundNode>(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<USoundNode>& OutObject, bool& bSuccess);
-template bool FAssetUtilities::ConstructAsset<UCurveLinearColor>(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<UCurveLinearColor>& OutObject, bool& bSuccess);
-template bool FAssetUtilities::ConstructAsset<UTextureLightProfile>(const FString&, const FString&, const FString&, TObjectPtr<UTextureLightProfile>&, bool&);
+template void FAssetUtilities::ConstructAssetAsync<UMaterialInterface>(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<UMaterialInterface>, bool)> OnComplete);
+template void FAssetUtilities::ConstructAssetAsync<USubsurfaceProfile>(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<USubsurfaceProfile>, bool)> OnComplete);
+template void FAssetUtilities::ConstructAssetAsync<UTexture>(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<UTexture>, bool)> OnComplete);
+template void FAssetUtilities::ConstructAssetAsync<UAnimSequence>(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<UAnimSequence>, bool)> OnComplete);
+template void FAssetUtilities::ConstructAssetAsync<UMaterialParameterCollection>(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<UMaterialParameterCollection>, bool)> OnComplete);
+template void FAssetUtilities::ConstructAssetAsync<USoundWave>(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<USoundWave>, bool)> OnComplete);
+template void FAssetUtilities::ConstructAssetAsync<UObject>(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<UObject>, bool)> OnComplete);
+template void FAssetUtilities::ConstructAssetAsync<UMaterialFunctionInterface>(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<UMaterialFunctionInterface>, bool)> OnComplete);
+template void FAssetUtilities::ConstructAssetAsync<USoundNode>(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<USoundNode>, bool)> OnComplete);
+template void FAssetUtilities::ConstructAssetAsync<UCurveLinearColor>(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<UCurveLinearColor>, bool)> OnComplete);
+template void FAssetUtilities::ConstructAssetAsync<UTextureLightProfile>(const FString&, const FString&, const FString&, TFunction<void(TObjectPtr<UTextureLightProfile>, bool)> OnComplete);
 
 /* Importing assets from Cloud */
 template <typename T>
-bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<T>& OutObject, bool& bSuccess) {
+void FAssetUtilities::ConstructAssetAsync(
+	const FString& Path,
+	const FString& RealPath,
+	const FString& Type,
+	TFunction<void(TObjectPtr<T>, bool)> OnComplete)
+{
 	if (Type.IsEmpty()) {
-		return false;
+		OnComplete(nullptr, false);
+
+		return;
 	}
 
 	/* Supported Texture Classes */
@@ -162,37 +169,39 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 		Type == "TextureCube" ||
 		Type == "VolumeTexture" ||
 		Type == "TextureLightProfile";
+	
+	if (!CanImport(Type, true) && !IsTexture) {
+		OnComplete(nullptr, false);
+		return;
+	}
+
+	if (IsTexture) {
+		UTexture* Texture;
+		const FString NewPath = RealPath;
+
+		FString RootName; {
+			NewPath.Split("/", nullptr, &RootName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+			RootName.Split("/", &RootName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+		}
+
+		/* Missing Plugin: Create it */
+		if (RootName != "Game" && RootName != "Engine" && GetPlugin(RootName) == nullptr) {
+			CreatePlugin(RootName);
+		}
+
+		const bool bSuccess = CreateTexture(NewPath, Path, Texture);
+		TObjectPtr<T> Result = bSuccess ? Cast<T>(Texture) : nullptr;
+
+		OnComplete(Result, Result != nullptr);
+		return;
+	}
 
 	FString GamePath = Path;
 
-	/* Supported Assets */
-	if (CanImport(Type, true) || IsTexture) {
-		if (IsTexture) {
-			UTexture* Texture;
-			const FString NewPath = RealPath;
-
-			FString RootName; {
-				NewPath.Split("/", nullptr, &RootName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
-				RootName.Split("/", &RootName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
-			}
-
-			/* Missing Plugin: Create it */
-			if (RootName != "Game" && RootName != "Engine" && GetPlugin(RootName) == nullptr) {
-				CreatePlugin(RootName);
-			}
-
-			bSuccess = Construct_TypeTexture(NewPath, Path, Texture);
-			if (bSuccess) OutObject = Cast<T>(Texture);
-
-			return true;
-		}
-		
-		const TSharedPtr<FJsonObject> Response = Cloud::Export::GetRaw(Path);
-		if (Response == nullptr || Path.IsEmpty()) return true;
-
-		if (Response->HasField(TEXT("errored"))) {
-			UE_LOG(LogJsonAsAsset, Log, TEXT("Error from response \"%s\""), *Path);
-			return true;
+	Cloud::Export::GetRaw(Path, {}, {}, [=](const TSharedPtr<FJsonObject>& Response) {
+		if (!Response.IsValid() || Response->HasField(TEXT("errored"))) {
+			OnComplete(nullptr, false);
+			return;
 		}
 
 		const TSharedPtr<FJsonObject> JsonObject = Response->GetArrayField(TEXT("exports"))[0]->AsObject();
@@ -213,22 +222,27 @@ bool FAssetUtilities::ConstructAsset(const FString& Path, const FString& RealPat
 			}
 
 			IImporter* OutImporter;
-			bSuccess = IImportReader::ReadExportsAndImport(Response->GetArrayField(TEXT("exports")), PackagePath, OutImporter, true);
+			bool bImportSuccess = IImportReader::ReadExportsAndImport(Response->GetArrayField(TEXT("exports")), PackagePath, OutImporter, true);
 
+			if (!bImportSuccess) {
+				OnComplete(nullptr, false);
+				return;
+			}
+			
 			/* Define found object */
 			FString RedirectedPath = RealPath;
-			
 			FJRedirects::Redirect(RedirectedPath);
-			OutObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *RedirectedPath));
 
-			return OutObject != nullptr;
+			UObject* Loaded = StaticLoadObject(T::StaticClass(), nullptr, *RedirectedPath);
+
+			TObjectPtr<T> Result = Cast<T>(Loaded);
+			
+			OnComplete(Result, Result != nullptr);
 		}
-	}
-
-	return false;
+	});
 }
 
-bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& FetchPath, UTexture*& OutTexture) {
+bool FAssetUtilities::CreateTexture(const FString& Path, const FString& FetchPath, UTexture*& OutTexture) {
 	if (Path.IsEmpty()) {
 		return false;
 	}
@@ -294,10 +308,10 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 		}
 	}
 
-	return Fast_Construct_TypeTexture(JsonExport, Path, Type, Data, OutTexture);
+	return Fast_CreateTexture(JsonExport, Path, Type, Data, OutTexture);
 }
 
-bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& JsonExport, const FString& Path, const FString& Type, TArray<uint8> Data, UTexture*& OutTexture) {
+bool FAssetUtilities::Fast_CreateTexture(const TSharedPtr<FJsonObject>& JsonExport, const FString& Path, const FString& Type, TArray<uint8> Data, UTexture*& OutTexture) {
 	const UJsonAsAssetSettings* Settings = GetSettings();
 	UTexture* Texture = nullptr;
 	

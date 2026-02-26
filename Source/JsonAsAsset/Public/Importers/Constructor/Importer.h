@@ -43,7 +43,7 @@ public:
 public:
     /* Loads a single <T> object ptr */
     template<class T = UObject>
-    void LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectPtr<T>& Object);
+    void LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TFunction<void(TObjectPtr<T>)> OnComplete);
 
     /* Loads an array of <T> object ptrs */
     template<class T = UObject>
@@ -61,7 +61,7 @@ public:
 public:
     /* Function to check if an asset needs to be imported. Once imported, the asset will be set and returned. */
     template <class T = UObject>
-    FORCEINLINE static TObjectPtr<T> DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path);
+    FORCEINLINE static void DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path, TFunction<void(TObjectPtr<T>)> OnComplete);
 
 protected:
     FORCEINLINE FUObjectExportContainer GetExportContainer() const;
@@ -69,55 +69,66 @@ protected:
 };
 
 template <class T>
-TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path) {
+void IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path, TFunction<void(TObjectPtr<T>)> OnComplete) {
     const UJsonAsAssetSettings* Settings = GetSettings();
 
     if (Type == "Texture") Type = "Texture2D";
-    
-    if (Settings->EnableCloudServer && (
-        InObject == nullptr ||
-            Settings->AssetSettings.Texture.UpdateExisingTextures &&
-            Type == "Texture2D"
-        )
-        && !Path.StartsWith("Engine/") && !Path.StartsWith("/Engine/")
-    ) {
-        const UObject* DefaultObject = GetClassDefaultObject(T::StaticClass());
 
-        if (DefaultObject != nullptr && !Name.IsEmpty() && !Path.IsEmpty()) {
-            bool DownloadStatus = false;
-
-            FString NewPath = Path;
-            FJRedirects::Reverse(NewPath);
-            
-            /* Try importing the asset */
-            if (FAssetUtilities::ConstructAsset(FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), FSoftObjectPath(Type + "'" + NewPath + "." + Name + "'").ToString(), Type, InObject, DownloadStatus)) {
-                const FText AssetNameText = FText::FromString(Name);
-                const FSlateBrush* IconBrush = FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail"));
-
-                if (DownloadStatus) {
-                    AppendNotification(
-                        FText::FromString("Locally Downloaded: " + Type),
-                        AssetNameText,
-                        2.0f,
-                        IconBrush,
-                        SNotificationItem::CS_Success,
-                        false,
-                        310.0f
-                    );
-                } else {
-                    AppendNotification(
-                        FText::FromString("Download Failed: " + Type),
-                        AssetNameText,
-                        5.0f,
-                        IconBrush,
-                        SNotificationItem::CS_Fail,
-                        false,
-                        310.0f
-                    );
-                }
-            }
-        }
+    if (!Settings->EnableCloudServer || (Path.StartsWith(TEXT("Engine/")) || Path.StartsWith(TEXT("/Engine/")))) {
+        OnComplete(InObject);
+        return;
     }
+
+    const bool bShouldDownload = InObject == nullptr ||  Settings->AssetSettings.Texture.UpdateExisingTextures && Type == TEXT("Texture2D");
+
+    if (!bShouldDownload) {
+        OnComplete(InObject);
+        return;
+    }
+    
+    const UObject* DefaultObject = GetClassDefaultObject(T::StaticClass());
+    if (!DefaultObject || Name.IsEmpty() || Path.IsEmpty()) {
+        OnComplete(InObject);
+        return;
+    }
+    
+    FString NewPath = Path;
+    FJRedirects::Reverse(NewPath);
+    
+    const FString FullSoftPath = FSoftObjectPath(Type + TEXT("'") + NewPath + TEXT(".") + Name + TEXT("'")).ToString();
+    
+    FAssetUtilities::ConstructAssetAsync<T>( FullSoftPath, FullSoftPath, Type, [this, Name, Type, InObject, OnComplete](TObjectPtr<T> DownloadedObject, bool bSuccess) {
+        TObjectPtr<T> FinalObject = DownloadedObject ? DownloadedObject : InObject;
+
+        const FText AssetNameText = FText::FromString(Name);
+
+        const FSlateBrush* IconBrush =
+            FSlateIconFinder::FindCustomIconBrushForClass(
+                FindObject<UClass>(nullptr, *("/Script/Engine." + Type)),
+                TEXT("ClassThumbnail"));
+
+        if (bSuccess) {
+            AppendNotification(
+                FText::FromString(TEXT("Locally Downloaded: ") + Type),
+                AssetNameText,
+                2.0f,
+                IconBrush,
+                SNotificationItem::CS_Success,
+                false,
+                310.0f);
+        } else {
+            AppendNotification(
+                FText::FromString(TEXT("Download Failed: ") + Type),
+                AssetNameText,
+                5.0f,
+                IconBrush,
+                SNotificationItem::CS_Fail,
+                false,
+                310.0f);
+        }
+
+        OnComplete(FinalObject);
+    });
 
     return InObject;
 }

@@ -19,4 +19,21 @@ public:
 		/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 		
 		float LoopDelay = 0.02);
+
+	static void ExecuteRequestAsync(
+
+#if ENGINE_UE5
+		TSharedRef<IHttpRequest> HttpRequest,
+#else
+		const TSharedRef<IHttpRequest, ESPMode::ThreadSafe>& HttpRequest,
+#endif
+
+		TFunction<void(
+#if ENGINE_UE5
+			TSharedPtr<IHttpResponse>
+#else
+			TSharedPtr<IHttpResponse, ESPMode::ThreadSafe>
+#endif
+		)> OnComplete
+	);
 };

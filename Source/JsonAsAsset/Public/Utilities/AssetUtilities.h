@@ -12,8 +12,8 @@ public:
 public:
 	/* Importing assets from Cloud */
 	template <class T = UObject>
-	static bool ConstructAsset(const FString& Path, const FString& RealPath, const FString& Type, TObjectPtr<T>& OutObject, bool& bSuccess);
+	void ConstructAssetAsync(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<T>, bool)> OnComplete);
 	
-	static bool Construct_TypeTexture(const FString& Path, const FString& FetchPath, UTexture*& OutTexture);
-	static bool Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& JsonExport, const FString& Path, const FString& Type, TArray<uint8> Data, UTexture*& OutTexture);
+	static bool CreateTexture(const FString& Path, const FString& FetchPath, UTexture*& OutTexture);
+	static bool Fast_CreateTexture(const TSharedPtr<FJsonObject>& JsonExport, const FString& Path, const FString& Type, TArray<uint8> Data, UTexture*& OutTexture);
 };

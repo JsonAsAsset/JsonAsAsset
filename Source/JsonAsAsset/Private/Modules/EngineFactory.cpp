@@ -17,7 +17,8 @@ bool UJEngineImplementation::FactoryCanImport(const FString& Filename) {
 }
 
 UObject* UJEngineImplementation::Import(const FString& Filename) {
-	if (!FJsonAsAssetToolbar::IsFitToFunction()) return nullptr;
+	/* For now. */
+	return nullptr;
 
 	IImporter* Importer = IImportReader::ImportReference(Filename);
 	return Importer->GetAsset();

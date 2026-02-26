@@ -25,18 +25,18 @@ UObject* IImporter::CreateAsset(UObject* CreatedAsset) {
 	return nullptr;
 }
 
-template void IImporter::LoadExport<UMaterialInterface>(const TSharedPtr<FJsonObject>*, TObjectPtr<UMaterialInterface>&);
-template void IImporter::LoadExport<USubsurfaceProfile>(const TSharedPtr<FJsonObject>*, TObjectPtr<USubsurfaceProfile>&);
-template void IImporter::LoadExport<UTexture>(const TSharedPtr<FJsonObject>*, TObjectPtr<UTexture>&);
-template void IImporter::LoadExport<UMaterialParameterCollection>(const TSharedPtr<FJsonObject>*, TObjectPtr<UMaterialParameterCollection>&);
-template void IImporter::LoadExport<UAnimSequence>(const TSharedPtr<FJsonObject>*, TObjectPtr<UAnimSequence>&);
-template void IImporter::LoadExport<USoundWave>(const TSharedPtr<FJsonObject>*, TObjectPtr<USoundWave>&);
-template void IImporter::LoadExport<UObject>(const TSharedPtr<FJsonObject>*, TObjectPtr<UObject>&);
-template void IImporter::LoadExport<UMaterialFunctionInterface>(const TSharedPtr<FJsonObject>*, TObjectPtr<UMaterialFunctionInterface>&);
-template void IImporter::LoadExport<USoundNode>(const TSharedPtr<FJsonObject>*, TObjectPtr<USoundNode>&);
+template void IImporter::LoadExport<UMaterialInterface>(const TSharedPtr<FJsonObject>*, TFunction<void(TObjectPtr<UMaterialInterface>)> OnComplete);
+template void IImporter::LoadExport<USubsurfaceProfile>(const TSharedPtr<FJsonObject>*, TFunction<void(TObjectPtr<USubsurfaceProfile>)> OnComplete);
+template void IImporter::LoadExport<UTexture>(const TSharedPtr<FJsonObject>*, TFunction<void(TObjectPtr<UTexture>)> OnComplete);
+template void IImporter::LoadExport<UMaterialParameterCollection>(const TSharedPtr<FJsonObject>*, TFunction<void(TObjectPtr<UMaterialParameterCollection>)> OnComplete);
+template void IImporter::LoadExport<UAnimSequence>(const TSharedPtr<FJsonObject>*, TFunction<void(TObjectPtr<UAnimSequence>)> OnComplete);
+template void IImporter::LoadExport<USoundWave>(const TSharedPtr<FJsonObject>*, TFunction<void(TObjectPtr<USoundWave>)> OnComplete);
+template void IImporter::LoadExport<UObject>(const TSharedPtr<FJsonObject>*, TFunction<void(TObjectPtr<UObject>)> OnComplete);
+template void IImporter::LoadExport<UMaterialFunctionInterface>(const TSharedPtr<FJsonObject>*, TFunction<void(TObjectPtr<UMaterialFunctionInterface>)> OnComplete);
+template void IImporter::LoadExport<USoundNode>(const TSharedPtr<FJsonObject>*, TFunction<void(TObjectPtr<USoundNode>)> OnComplete);
 
 template <typename T>
-void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectPtr<T>& Object) {
+void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TFunction<void(TObjectPtr<T>)> OnComplete) {
 	FString ObjectType, ObjectName, ObjectPath, Outer;
 	PackageIndex->Get()->GetStringField(TEXT("ObjectName")).Split("'", &ObjectType, &ObjectName);
 
@@ -103,21 +103,27 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 		ObjectPath.Split("/", nullptr, &SplitObjectName, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
 		LoadedObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *(ObjectPath + "." + SplitObjectName + ":" + ObjectName)));
 	}
-
-	Object = LoadedObject;
-
-	if (!Object && GetObjectSerializer() != nullptr && GetPropertySerializer() != nullptr) {
+	
+	if (!LoadedObject && GetObjectSerializer() != nullptr && GetPropertySerializer() != nullptr) {
 		const FUObjectExport Export = GetPropertySerializer()->ExportsContainer.Find(ObjectName);
 		
 		if (Export.IsValid() && Export.Object != nullptr && Export.Object->IsA(T::StaticClass())) {
-			Object = TObjectPtr<T>(Cast<T>(Export.Object));
+			LoadedObject = TObjectPtr<T>(Cast<T>(Export.Object));
 		}
 	}
 
-	/* If object is still null, send off to Cloud to download */
-	if (!Object) {
-		Object = DownloadWrapper(LoadedObject, ObjectType, ObjectName, ObjectPath);
+	/* If we found something locally, finish */
+	if (LoadedObject)
+	{
+		OnComplete(LoadedObject);
+		return;
 	}
+
+	/* Otherwise download async */
+	DownloadWrapperAsync<T>(LoadedObject, ObjectType, ObjectName, ObjectPath, [OnComplete](TObjectPtr<T> Downloaded)
+	{
+		OnComplete(Downloaded);
+	});
 }
 
 template TArray<TObjectPtr<UCurveLinearColor>> IImporter::LoadExport<UCurveLinearColor>(const TArray<TSharedPtr<FJsonValue>>&, TArray<TObjectPtr<UCurveLinearColor>>);

@@ -4,8 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Utilities/Compatibility.h"
+#include "Toolbar.generated.h"
 
-struct JSONASASSET_API FJsonAsAssetToolbar {
+UCLASS()
+class JSONASASSET_API UJsonAsAssetToolbar : public UObject {
+	GENERATED_BODY()
+public:
 	void Register();
 	void AddCloudButtons(FToolMenuSection& Section);
 	
@@ -14,14 +18,27 @@ struct JSONASASSET_API FJsonAsAssetToolbar {
 #endif
 
 	/* Checks if JsonAsAsset is fit to function */
-	static bool IsFitToFunction();
+	void IsFitToFunction(TFunction<void(bool)> OnResponse);
 	
-	/* Checks if JsonAsAsset is fit to function, and opens a JSON file dialog */
-	static void ImportAction();
+	/* Checks if JsonAsAsset is fit to function, then called Import */
+	void ImportAction();
 
+	/* Opens a JSON file dialog */
+	void Import();
+	
 	/* UI Display ~~~~~~~~~~~~~~ */
 	static TSharedRef<SWidget> CreateMenuDropdown();
 	static TSharedRef<SWidget> CreateCloudMenuDropdown();
 	
 	static bool IsToolBarVisible();
+
+protected:
+	/* Wait for Cloud to Initialize */
+	void HandleCloudWaiting();
+
+	FTimerHandle WaitForCloudTimer;
+	int32 CloudDotCount = 0;
+
+	void WaitForCloudTimerCallback();
+	void CancelWaitForCloudTimer();
 };

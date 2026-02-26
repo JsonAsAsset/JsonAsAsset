@@ -45,7 +45,7 @@ void UJsonAsAssetToolbar::Register() {
 		
 		FToolUIActionChoice(
 			FUIAction(
-			FExecuteAction::CreateUObject(this, &UJsonAsAssetToolbar::ImportAction),
+				FExecuteAction::CreateUObject(this, &UJsonAsAssetToolbar::ImportAction),
 				FCanExecuteAction(),
 				FGetActionCheckState(),
 				FIsActionButtonVisible::CreateStatic(&IsToolBarVisible)
@@ -243,6 +243,8 @@ void UJsonAsAssetToolbar::IsFitToFunction(TFunction<void(bool)> OnResponse) {
 }
 
 void UJsonAsAssetToolbar::ImportAction() {
+	if (WaitingForCloud.IsValid()) return;
+	
 	IsFitToFunction([this](const bool bAllowed) {
 		if (!bAllowed) {
 			HandleCloudWaiting();

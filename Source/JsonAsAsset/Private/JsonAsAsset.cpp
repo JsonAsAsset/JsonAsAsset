@@ -34,7 +34,8 @@ void FJsonAsAssetModule::StartupModule() {
 
     /* Register Toolbar */
 #if ENGINE_UE5
-	UJsonAsAssetToolbar* Toolbar = NewObject<UJsonAsAssetToolbar>();
+	Toolbar = NewObject<UJsonAsAssetToolbar>();
+	Toolbar->AddToRoot();
 	
 	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateUObject(Toolbar, &UJsonAsAssetToolbar::Register));
 #else
@@ -68,6 +69,11 @@ void FJsonAsAssetModule::ShutdownModule() {
 
 	/* Shutdown the plugin style */
 	FJsonAsAssetStyle::Shutdown();
+
+	if (Toolbar) {
+		Toolbar->RemoveFromRoot();
+		Toolbar = nullptr;
+	}
 }
 
 IMPLEMENT_MODULE(FJsonAsAssetModule, JsonAsAsset)

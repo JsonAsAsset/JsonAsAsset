@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Modules/Toolbar/Toolbar.h"
 #include "Utilities/Compatibility.h"
 
 #if ENGINE_UE4
@@ -27,4 +28,7 @@ class FJsonAsAssetModule : public IModuleInterface {
 public:
     virtual void StartupModule() override;
     virtual void ShutdownModule() override;
+
+private:
+    UJsonAsAssetToolbar* Toolbar = nullptr;
 };

@@ -132,7 +132,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 
 				FString PropertyClassName = SoftObjectProperty->PropertyClass->GetName();
 				
-				IImporter::DownloadWrapper(T, PropertyClassName, AssetName, PackagePath);
+				/*IImporter::DownloadWrapper(T, PropertyClassName, AssetName, PackagePath);*/
 			}
 		}
 	}
@@ -154,7 +154,9 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				}
 				
 				Importer->SetParent(ObjectSerializer->Parent);
-				Importer->LoadExport(&JsonValueAsObject, Object);
+				Importer->LoadExport<UObject>(&JsonValueAsObject, [ObjectProperty, OutValue](const TObjectPtr<UObject> ObjectPtr) {
+					ObjectProperty->SetObjectPropertyValue(OutValue, ObjectPtr);
+				});
 
 				if (Object != nullptr && !Object.Get()->IsA(UActorComponent::StaticClass())) {
 					ObjectProperty->SetObjectPropertyValue(OutValue, Object);
@@ -337,7 +339,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 
 					FString PropertyClassName = "DataAsset";
 				
-					IImporter::DownloadWrapper(T, PropertyClassName, AssetName, PackagePath);
+					/*IImporter::DownloadWrapper(T, PropertyClassName, AssetName, PackagePath);*/
 				}
 			}
 		}
@@ -371,7 +373,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				TObjectPtr<UFontFace> FontFacePtr;
 				
 				Importer->SetParent(ObjectSerializer->Parent);
-				Importer->LoadExport(&LocalFontFaceExport, FontFacePtr);
+				/*Importer->LoadExport(&LocalFontFaceExport, FontFacePtr);*/
 
 				if (UFontFace* FontFace = FontFacePtr.Get()) {
 					*FontData = FFontData(FontFace, 0);

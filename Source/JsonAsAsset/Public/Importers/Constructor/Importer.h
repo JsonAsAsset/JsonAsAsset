@@ -61,7 +61,7 @@ public:
 public:
     /* Function to check if an asset needs to be imported. Once imported, the asset will be set and returned. */
     template <class T = UObject>
-    FORCEINLINE static void DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path, TFunction<void(TObjectPtr<T>)> OnComplete);
+    FORCEINLINE void DownloadWrapperAsync(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path, TFunction<void(TObjectPtr<T>)> OnComplete);
 
 protected:
     FORCEINLINE FUObjectExportContainer GetExportContainer() const;
@@ -69,7 +69,7 @@ protected:
 };
 
 template <class T>
-void IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path, TFunction<void(TObjectPtr<T>)> OnComplete) {
+void IImporter::DownloadWrapperAsync(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path, TFunction<void(TObjectPtr<T>)> OnComplete) {
     const UJsonAsAssetSettings* Settings = GetSettings();
 
     if (Type == "Texture") Type = "Texture2D";
@@ -97,7 +97,7 @@ void IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FStr
     
     const FString FullSoftPath = FSoftObjectPath(Type + TEXT("'") + NewPath + TEXT(".") + Name + TEXT("'")).ToString();
     
-    FAssetUtilities::ConstructAssetAsync<T>( FullSoftPath, FullSoftPath, Type, [this, Name, Type, InObject, OnComplete](TObjectPtr<T> DownloadedObject, bool bSuccess) {
+    FAssetUtilities::ConstructAssetAsync<T>(FullSoftPath, FullSoftPath, Type, [this, Name, Type, InObject, OnComplete](TObjectPtr<T> DownloadedObject, bool bSuccess) {
         TObjectPtr<T> FinalObject = DownloadedObject ? DownloadedObject : InObject;
 
         const FText AssetNameText = FText::FromString(Name);
@@ -129,6 +129,4 @@ void IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FStr
 
         OnComplete(FinalObject);
     });
-
-    return InObject;
 }

@@ -8,11 +8,15 @@
 #include "LevelEditor.h"
 #endif
 
+#include "Http.h"
 #include "Modules/Versioning.h"
 
 #include "Modules/UI/StyleModule.h"
 #include "Modules/Toolbar/Toolbar.h"
 #include "Utilities/EngineUtilities.h"
+
+#include "Logging/LogVerbosity.h"
+#include "Logging/LogMacros.h"
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #ifdef _MSC_VER
@@ -20,6 +24,8 @@
 #endif
 
 void FJsonAsAssetModule::StartupModule() {
+	LogHttp.SetVerbosity(ELogVerbosity::Error);
+
 	FJMetadata::Initialize();
 	
     /* Initialize plugin style, reload textures */
@@ -28,9 +34,9 @@ void FJsonAsAssetModule::StartupModule() {
 
     /* Register Toolbar */
 #if ENGINE_UE5
-	FJsonAsAssetToolbar Toolbar;
+	UJsonAsAssetToolbar* Toolbar = NewObject<UJsonAsAssetToolbar>();
 	
-    UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(&Toolbar, &FJsonAsAssetToolbar::Register));
+	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateUObject(Toolbar, &UJsonAsAssetToolbar::Register));
 #else
 	{
     	const TSharedPtr<FUICommandList> PluginCommands = MakeShareable(new FUICommandList);
@@ -41,7 +47,7 @@ void FJsonAsAssetModule::StartupModule() {
 			"Settings",
 			EExtensionHook::After,
 			PluginCommands,
-			FToolBarExtensionDelegate::CreateStatic(&FJsonAsAssetToolbar::UE4Register)
+			FToolBarExtensionDelegate::CreateStatic(&UJsonAsAssetToolbar::UE4Register)
 		);
 
     	LevelEditorModule.GetToolBarExtensibilityManager()->AddExtender(ToolbarExtender);

@@ -16,7 +16,7 @@ void TToolFontData::Execute() {
 
 	for (const FAssetData& AssetData : AssetDataList) {
 		if (!AssetData.IsValid()) continue;
-		if (GetAssetDataClass(AssetData) != TargetType) continue;
+		if (GetAssetDataClass(AssetData) != FName(*TargetType)) continue;
 		
 		UObject* Asset = AssetData.GetAsset();
 		if (Asset == nullptr) continue;

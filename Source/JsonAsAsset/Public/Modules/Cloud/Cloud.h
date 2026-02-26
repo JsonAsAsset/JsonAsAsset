@@ -20,14 +20,17 @@ public:
 		static bool IsOpened();
 
 		/* If the Cloud is ready for requests */
-		static bool IsReady();
+		static void IsReady(TFunction<void(bool)> OnResponse);
 
 		/* If the app is not ready or not opened, show the user a notification */
-		static bool Check(const UJsonAsAssetSettings* Settings);
+		static void Check(const UJsonAsAssetSettings* Settings, TFunction<void(bool)> OnResponse);
+
+		/* Should we wait until the app is initialized? */
+		static bool ShouldWaitUntilInitialized(const UJsonAsAssetSettings* Settings);
 	};
 
 public:
-	static bool Update();
+	static void Update(TFunction<void(bool)> OnResponse);
 	
 	/* Export Endpoints ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 public:
@@ -45,11 +48,23 @@ public:
 		static TSharedPtr<FJsonObject> Get(const TMap<FString, FString>& Parameters = {}, const TMap<FString, FString>& Headers = {});
 		static TSharedPtr<FJsonObject> Get(const FString& Path, const bool Raw, TMap<FString, FString> Parameters = {}, const TMap<FString, FString>& Headers = {});
 		static TSharedPtr<FJsonObject> GetRaw(const FString& Path, const TMap<FString, FString>& Parameters = {}, const TMap<FString, FString>& Headers = {});
+
+		static void GetRaw(const FString& Path, const TMap<FString, FString>& Parameters, const TMap<FString, FString>& Headers, TFunction<void(TSharedPtr<FJsonObject>)> OnResponse);
+
+		static void GetAsync(const FString& Path, const bool Raw, TMap<FString, FString> Parameters, const TMap<FString, FString>& Headers, const TFunction<void(TSharedPtr<FJsonObject>)>& OnResponse);
 	};
 
 public:
 	static auto SendRequest(const FString& RequestURL, const TMap<FString, FString>& Parameters = {}, const TMap<FString, FString>& Headers = {});
 	static TSharedPtr<FJsonObject> Get(const FString& RequestURL, const TMap<FString, FString>& Parameters = {}, const TMap<FString, FString>& Headers = {});
+
+	static void Get(
+		const FString& RequestURL,
+		const TMap<FString, FString>& Parameters,
+		const TMap<FString, FString>& Headers,
+		TFunction<void(TSharedPtr<FJsonObject>)> OnComplete
+	);
+	
 	static TArray<uint8> GetRaw(const FString& RequestURL, const TMap<FString, FString>& Parameters = {}, const TMap<FString, FString>& Headers = {});
 	static TArray<TSharedPtr<FJsonValue>> GetExports(const FString& RequestURL, const TMap<FString, FString>& Parameters = {});
 };

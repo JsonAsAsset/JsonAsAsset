@@ -17,11 +17,7 @@ bool UJEngineImplementation::FactoryCanImport(const FString& Filename) {
 }
 
 UObject* UJEngineImplementation::Import(const FString& Filename) {
-	/* For now. */
 	return nullptr;
-
-	IImporter* Importer = IImportReader::ImportReference(Filename);
-	return Importer->GetAsset();
 }
 
 UObject* UJEngineImplementation::FactoryCreateFile(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, const FString& Filename, const TCHAR* Params, FFeedbackContext* Warn, bool& bOutOperationCanceled) {

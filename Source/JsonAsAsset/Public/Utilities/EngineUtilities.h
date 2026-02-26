@@ -141,6 +141,8 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 		UE_LOG(LogJsonAsAsset, Warning, TEXT("No folder selected in the Content Browser."));
 		return AssetDataList;
 	}
+
+	FString CurrentFolder = SelectedFolders[0];
 	
 #if ENGINE_UE5
 	/* Convert virtual paths to internal package paths */
@@ -151,7 +153,7 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 	}
 	
 	TArray<FString> InternalPaths = ContentBrowserData->TryConvertVirtualPathsToInternal(SelectedFolders);
-	const FString CurrentFolder = InternalPaths[0];
+	CurrentFolder = InternalPaths[0];
 #endif
 
 	/* Check if the folder is the root folder, and show a prompt if */

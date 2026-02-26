@@ -37,6 +37,17 @@ void Cloud::Export::GetRaw(const FString& Path, const TMap<FString, FString>& Pa
 	});
 }
 
+void Cloud::Export::GetAsyncOrSync(const FString& Path, const TMap<FString, FString>& Parameters, const TMap<FString, FString>& Headers, TFunction<void(TSharedPtr<FJsonObject>)> OnResponse, bool bIsAsync) {
+	if (bIsAsync) {
+		GetAsync(Path, true, Parameters, Headers,[OnResponse](const TSharedPtr<FJsonObject>& Json) {
+			OnResponse(Json);
+		});
+	}
+	else {
+		OnResponse(Get(Path, true, Parameters, Headers));
+	}
+}
+
 TArray<TSharedPtr<FJsonValue>> Cloud::Export::Array::Get(const TMap<FString, FString>& Parameters, const TMap<FString, FString>& Headers) {
 	const TSharedPtr<FJsonObject> JsonObject = Export::Get(Parameters, Headers);
 

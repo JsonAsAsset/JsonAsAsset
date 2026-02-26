@@ -14,6 +14,6 @@ public:
 	template <class T = UObject>
 	static void ConstructAssetAsync(const FString& Path, const FString& RealPath, const FString& Type, TFunction<void(TObjectPtr<T>, bool)> OnComplete);
 	
-	static bool CreateTexture(const FString& Path, const FString& FetchPath, UTexture*& OutTexture);
-	static bool Fast_CreateTexture(const TSharedPtr<FJsonObject>& JsonExport, const FString& Path, const FString& Type, TArray<uint8> Data, UTexture*& OutTexture);
+	static void CreateTexture(const FString& Path, const FString& FetchPath, const TFunction<void(UTexture*, bool)>& OnComplete);
+	static void Fast_CreateTexture(const TSharedPtr<FJsonObject>& JsonExport, const FString& Path, const FString& Type, TArray<uint8> Data, TFunction<void(UTexture*, bool)> OnComplete);
 };

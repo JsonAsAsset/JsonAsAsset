@@ -215,10 +215,9 @@ inline void HandlePropertyBinding(FUObjectExport NodeExport, const TArray<TShare
 					if (PinCategory == "struct" && SourcePropertyObject.IsValid() && SourcePropertyObject->HasField(TEXT("Struct"))) {
 						TSharedPtr<FJsonObject> StructObject = SourcePropertyObject->GetObjectField(TEXT("Struct"));
 
-						TObjectPtr<UObject> LoadedObject;
-						/*Importer->LoadExport<UObject>(&StructObject, LoadedObject);*/
-
-						PropertyBinding.PinType.PinSubCategoryObject = LoadedObject.Get();
+						Importer->LoadExport<UObject>(&StructObject, [&PropertyBinding](const TObjectPtr<UObject> ObjectPtr) {
+							PropertyBinding.PinType.PinSubCategoryObject = ObjectPtr.Get();
+						});
 					} else {
 						FProperty* Prop = AnimClass->FindPropertyByName(*SourcePropertyName);
 						
@@ -238,9 +237,6 @@ inline void HandlePropertyBinding(FUObjectExport NodeExport, const TArray<TShare
 						if (CopyRecordAsObject->GetObjectField(TEXT("CachedSourceStructSubProperty"))) {
 							TSharedPtr<FJsonObject> StructObject = CopyRecordAsObject->GetObjectField(TEXT("CachedSourceStructSubProperty"));
 							
-							TObjectPtr<UObject> LoadedObject;
-							/*Importer->LoadExport<UObject>(&StructObject, LoadedObject);*/
-
 							auto StructProperty = LoadStructProperty(StructObject);
 
 							if (StructProperty) {

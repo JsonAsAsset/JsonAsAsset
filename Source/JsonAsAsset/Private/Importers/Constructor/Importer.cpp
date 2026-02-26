@@ -120,26 +120,9 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TFunctio
 	}
 
 	/* Otherwise download async */
-	DownloadWrapperAsync<T>(LoadedObject, ObjectType, ObjectName, ObjectPath, [OnComplete](TObjectPtr<T> Downloaded)
-	{
+	DownloadWrapperAsync<T>(LoadedObject, ObjectType, ObjectName, ObjectPath, [OnComplete](TObjectPtr<T> Downloaded) {
 		OnComplete(Downloaded);
 	});
-}
-
-template TArray<TObjectPtr<UCurveLinearColor>> IImporter::LoadExport<UCurveLinearColor>(const TArray<TSharedPtr<FJsonValue>>&, TArray<TObjectPtr<UCurveLinearColor>>);
-
-template <typename T>
-TArray<TObjectPtr<T>> IImporter::LoadExport(const TArray<TSharedPtr<FJsonValue>>& PackageArray, TArray<TObjectPtr<T>> Array) {
-	for (const TSharedPtr<FJsonValue>& ArrayElement : PackageArray) {
-		const TSharedPtr<FJsonObject> ObjectPtr = ArrayElement->AsObject();
-		TObjectPtr<T> Out;
-		
-		/*LoadExport<T>(&ObjectPtr, Out);*/
-
-		Array.Add(Out);
-	}
-
-	return Array;
 }
 
 void IImporter::Save() const {

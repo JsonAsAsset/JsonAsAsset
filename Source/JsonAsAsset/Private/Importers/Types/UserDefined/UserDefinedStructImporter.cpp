@@ -228,28 +228,28 @@ FEdGraphPinType IUserDefinedStructImporter::ResolvePropertyPinType(const TShared
     } else if (Type == "FloatProperty") {
         ResolvedType.PinSubCategory = TEXT("float");
     } else if (Type == "EnumProperty" || Type == "ByteProperty") {
-        ResolvedType.PinSubCategoryObject = LoadObjectFromJsonReference(PropertyJsonObject, TEXT("Enum"));
+        LoadObjectFromJsonReference(PropertyJsonObject, TEXT("Enum"), ResolvedType.PinSubCategoryObject);
     } else if (Type == "StructProperty") {
-        ResolvedType.PinSubCategoryObject = LoadObjectFromJsonReference(PropertyJsonObject, TEXT("Struct"));
+        LoadObjectFromJsonReference(PropertyJsonObject, TEXT("Struct"), ResolvedType.PinSubCategoryObject);
     } else if (Type == "ClassProperty" || Type == "SoftClassProperty") {
-        ResolvedType.PinSubCategoryObject = LoadObjectFromJsonReference(PropertyJsonObject, TEXT("MetaClass"));
+        LoadObjectFromJsonReference(PropertyJsonObject, TEXT("MetaClass"), ResolvedType.PinSubCategoryObject);
     } else if (Type == "ObjectProperty" || Type == "SoftObjectProperty") {
-        ResolvedType.PinSubCategoryObject = LoadObjectFromJsonReference(PropertyJsonObject, TEXT("PropertyClass"));
+        LoadObjectFromJsonReference(PropertyJsonObject, TEXT("PropertyClass"), ResolvedType.PinSubCategoryObject);
     }
 
     return ResolvedType;
 }
 
-UObject* IUserDefinedStructImporter::LoadObjectFromJsonReference(const TSharedPtr<FJsonObject> &ParentJsonObject, const FString &ReferenceKey) {
+void IUserDefinedStructImporter::LoadObjectFromJsonReference(const TSharedPtr<FJsonObject> &ParentJsonObject, const FString &ReferenceKey, TWeakObjectPtr<UObject>& Out) {
     const TSharedPtr<FJsonObject> ReferenceObject = ParentJsonObject->GetObjectField(ReferenceKey);
     
     if (!ReferenceObject) {
         UE_LOG(LogJsonAsAsset, Error, TEXT("Failed to load Object from property %s: property not found"), *ReferenceKey);
-        return nullptr;
+        
+        return;
     }
 
-    TObjectPtr<UObject> LoadedObject;
-    /*LoadExport<UObject>(&ReferenceObject, LoadedObject);*/
-    
-    return LoadedObject;
+    LoadExport<UObject>(&ReferenceObject, [&Out](const TObjectPtr<UObject> ObjectPtr) {
+        Out = ObjectPtr;
+    });
 }

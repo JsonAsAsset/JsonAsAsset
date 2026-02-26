@@ -78,28 +78,51 @@ bool ICurveLinearColorAtlasImporter::Import() {
 	FPropertyChangedEvent TextureSizePropertyPropertyChangedEvent(TextureSizeProperty, EPropertyChangeType::ValueSet);
 	Object->PostEditChangeProperty(TextureSizePropertyPropertyChangedEvent);
 
-	/* Add gradient curves */
-	FProperty* GradientCurvesProperty = FindFProperty<FProperty>(Object->GetClass(), "GradientCurves");
-	FPropertyChangedEvent PropertyChangedEvent(GradientCurvesProperty, EPropertyChangeType::ArrayAdd);
-
 	const TArray<TSharedPtr<FJsonValue>> GradientCurves = GetAssetData()->GetArrayField(TEXT("GradientCurves"));
-	TArray<TObjectPtr<UCurveLinearColor>> CurvesLocal;
 
-#if ENGINE_UE5
-	CurvesLocal = LoadExport(GradientCurves, CurvesLocal);
-	Object->GradientCurves = CurvesLocal;
-	Object->PostEditChangeProperty(PropertyChangedEvent);
-#else
-	CurvesLocal = LoadExport(GradientCurves, CurvesLocal);
+	TWeakObjectPtr<UCurveLinearColorAtlas> WeakObject = Object;
+	TSharedRef<TArray<UCurveLinearColor*>> CurvesToAdd = MakeShared<TArray<UCurveLinearColor*>, ESPMode::ThreadSafe>();
+	TSharedRef<FThreadSafeCounter> PendingLoads = MakeShared<FThreadSafeCounter, ESPMode::ThreadSafe>();
 
-	/* Convert TObjectPtr<UCurveLinearColor> to UCurveLinearColor* and assign to Object->GradientCurves */
-	TArray<UCurveLinearColor*> RawCurves;
-	for (const TObjectPtr<UCurveLinearColor>& Curve : CurvesLocal) {
-		RawCurves.Add(Curve.Get());
+	PendingLoads->Set(GradientCurves.Num());
+
+	for (const TSharedPtr<FJsonValue>& ArrayElement : GradientCurves) {
+		const TSharedPtr<FJsonObject> ObjectPtr = ArrayElement->AsObject();
+
+		LoadExport<UObject>(&ObjectPtr, [WeakObject, CurvesToAdd, PendingLoads] (const TObjectPtr<UObject> LoadedObject) {
+			if (!WeakObject.IsValid()) {
+				return;
+			}
+
+			if (UCurveLinearColor* Curve = Cast<UCurveLinearColor>(LoadedObject.Get())) {
+				CurvesToAdd->Add(Curve);
+			}
+
+			if (PendingLoads->Decrement() == 0) {
+				AsyncTask(ENamedThreads::GameThread,
+				[WeakObject, CurvesToAdd]() {
+					if (!WeakObject.IsValid()) {
+						return;
+					}
+
+					UCurveLinearColorAtlas* Object = WeakObject.Get();
+
+					Object->GradientCurves.Append(*CurvesToAdd);
+
+					FProperty* GradientCurvesProperty =
+						FindFProperty<FProperty>(
+							Object->GetClass(),
+							TEXT("GradientCurves"));
+
+					FPropertyChangedEvent PropertyChangedEvent(
+						GradientCurvesProperty,
+						EPropertyChangeType::ArrayAdd);
+
+					Object->PostEditChangeProperty(PropertyChangedEvent);
+				});
+			}
+		});
 	}
-
-	Object->GradientCurves = RawCurves;
-#endif
 
 	/* Handle edit changes, and add it to the content browser */
 	return OnAssetCreation(Object);

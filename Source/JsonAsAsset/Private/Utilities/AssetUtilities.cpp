@@ -176,7 +176,6 @@ void FAssetUtilities::ConstructAssetAsync(
 	}
 
 	if (IsTexture) {
-		UTexture* Texture;
 		const FString NewPath = RealPath;
 
 		FString RootName; {
@@ -189,16 +188,24 @@ void FAssetUtilities::ConstructAssetAsync(
 			CreatePlugin(RootName);
 		}
 
-		const bool bSuccess = CreateTexture(NewPath, Path, Texture);
-		TObjectPtr<T> Result = bSuccess ? Cast<T>(Texture) : nullptr;
+		CreateTexture(
+			NewPath,
+			Path,
+			[OnComplete](UTexture* Texture, bool bSuccess)
+			{
+				TObjectPtr<T> Result = bSuccess
+					? Cast<T>(Texture)
+					: nullptr;
 
-		OnComplete(Result, Result != nullptr);
+				OnComplete(Result, Result != nullptr);
+			});
+		
 		return;
 	}
 
 	FString GamePath = Path;
 
-	Cloud::Export::GetRaw(Path, {}, {}, [=](const TSharedPtr<FJsonObject>& Response) {
+	Cloud::Export::GetAsyncOrSync(Path, {}, {}, [=](const TSharedPtr<FJsonObject>& Response) {
 		if (!Response.IsValid() || Response->HasField(TEXT("errored"))) {
 			OnComplete(nullptr, false);
 			return;
@@ -239,79 +246,87 @@ void FAssetUtilities::ConstructAssetAsync(
 			
 			OnComplete(Result, Result != nullptr);
 		}
+	}, false);
+}
+
+void FAssetUtilities::CreateTexture(const FString& Path, const FString& FetchPath, const TFunction<void(UTexture*, bool)>& OnComplete) {
+	if (Path.IsEmpty()) {
+		OnComplete(nullptr, false);
+		return;
+	}
+
+	Cloud::Export::GetRaw(FetchPath, {}, {}, [=](const TSharedPtr<FJsonObject>& JsonObject) {
+		if (JsonObject == nullptr) {
+			OnComplete(nullptr, false);
+			return;
+		}
+
+		TArray<TSharedPtr<FJsonValue>> Response = JsonObject->GetArrayField(TEXT("exports"));
+		if (Response.Num() == 0) {
+			OnComplete(nullptr, false);
+			return;
+		}
+
+		const TSharedPtr<FJsonObject> JsonExport = Response[0]->AsObject();
+		const FString Type = JsonExport->GetStringField(TEXT("Type"));
+
+		bool IsVectorDisplacementMap = false;
+
+		if (JsonExport->HasField(TEXT("Properties"))) {
+			if (JsonExport->GetObjectField(TEXT("Properties"))->HasField(TEXT("CompressionSettings"))) {
+				IsVectorDisplacementMap =
+					JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_VectorDisplacementmap")
+					|| JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_HDR");
+			}
+		}
+		
+		TArray<uint8> Data = TArray<uint8>();
+		bool UseOctetStream = Type == "TextureLightProfile"
+		                       || Type == "TextureCube"
+		                       || Type == "VolumeTexture"
+		                       || Type == "TextureRenderTarget2D" || IsVectorDisplacementMap;
+
+	#if UE4_26_BELOW
+		UseOctetStream = true;
+	#endif
+
+	#if UE5_5_BEYOND
+		UseOctetStream = true;
+	#endif
+
+		/* ~~~~~~~~~~~~~~~ Download Texture Data ~~~~~~~~~~~~ */
+		if (Type != "TextureRenderTarget2D") {
+			FHttpModule* HttpModule = &FHttpModule::Get();
+			const auto HttpRequest = HttpModule->CreateRequest();
+
+			HttpRequest->SetURL(Cloud::URL + "/api/export?path=" + FetchPath);
+			HttpRequest->SetHeader("content-type", UseOctetStream ? "application/octet-stream" : "image/png");
+			HttpRequest->SetVerb(TEXT("GET"));
+			
+			const auto HttpResponse = FRemoteUtilities::ExecuteRequestSync(HttpRequest);
+
+			if (!HttpResponse.IsValid() || HttpResponse->GetResponseCode() != 200) {
+				OnComplete(nullptr, false);
+				return;	
+			}
+
+			if (HttpResponse->GetContentType().StartsWith("application/json; charset=utf-8")) {
+				OnComplete(nullptr, false);
+				return;	
+			}
+
+			Data = HttpResponse->GetContent();
+			if (Data.Num() == 0) {
+				OnComplete(nullptr, false);
+				return;	
+			}
+		}
+
+		Fast_CreateTexture(JsonExport, Path, Type, Data, OnComplete);
 	});
 }
 
-bool FAssetUtilities::CreateTexture(const FString& Path, const FString& FetchPath, UTexture*& OutTexture) {
-	if (Path.IsEmpty()) {
-		return false;
-	}
-
-	const TSharedPtr<FJsonObject> JsonObject = Cloud::Export::GetRaw(FetchPath);
-	if (JsonObject == nullptr) {
-		return false;
-	}
-
-	TArray<TSharedPtr<FJsonValue>> Response = JsonObject->GetArrayField(TEXT("exports"));
-	if (Response.Num() == 0) {
-		return false;
-	}
-
-	const TSharedPtr<FJsonObject> JsonExport = Response[0]->AsObject();
-	const FString Type = JsonExport->GetStringField(TEXT("Type"));
-
-	bool IsVectorDisplacementMap = false;
-
-	if (JsonExport->HasField(TEXT("Properties"))) {
-		if (JsonExport->GetObjectField(TEXT("Properties"))->HasField(TEXT("CompressionSettings"))) {
-			IsVectorDisplacementMap =
-				JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_VectorDisplacementmap")
-				|| JsonExport->GetObjectField(TEXT("Properties"))->GetStringField(TEXT("CompressionSettings")).Contains("TC_HDR");
-		}
-	}
-	
-	TArray<uint8> Data = TArray<uint8>();
-	bool UseOctetStream = Type == "TextureLightProfile"
-	                       || Type == "TextureCube"
-	                       || Type == "VolumeTexture"
-	                       || Type == "TextureRenderTarget2D" || IsVectorDisplacementMap;
-
-#if UE4_26_BELOW
-	UseOctetStream = true;
-#endif
-
-#if UE5_5_BEYOND
-	UseOctetStream = true;
-#endif
-
-	/* ~~~~~~~~~~~~~~~ Download Texture Data ~~~~~~~~~~~~ */
-	if (Type != "TextureRenderTarget2D") {
-		FHttpModule* HttpModule = &FHttpModule::Get();
-		const auto HttpRequest = HttpModule->CreateRequest();
-
-		HttpRequest->SetURL(Cloud::URL + "/api/export?path=" + FetchPath);
-		HttpRequest->SetHeader("content-type", UseOctetStream ? "application/octet-stream" : "image/png");
-		HttpRequest->SetVerb(TEXT("GET"));
-		
-		const auto HttpResponse = FRemoteUtilities::ExecuteRequestSync(HttpRequest);
-
-		if (!HttpResponse.IsValid() || HttpResponse->GetResponseCode() != 200)
-			return false;
-
-		if (HttpResponse->GetContentType().StartsWith("application/json; charset=utf-8")) {
-			return false;
-		}
-
-		Data = HttpResponse->GetContent();
-		if (Data.Num() == 0) {
-			return false;
-		}
-	}
-
-	return Fast_CreateTexture(JsonExport, Path, Type, Data, OutTexture);
-}
-
-bool FAssetUtilities::Fast_CreateTexture(const TSharedPtr<FJsonObject>& JsonExport, const FString& Path, const FString& Type, TArray<uint8> Data, UTexture*& OutTexture) {
+void FAssetUtilities::Fast_CreateTexture(const TSharedPtr<FJsonObject>& JsonExport, const FString& Path, const FString& Type, TArray<uint8> Data, TFunction<void(UTexture*, bool)> OnComplete) {
 	const UJsonAsAssetSettings* Settings = GetSettings();
 	UTexture* Texture = nullptr;
 	
@@ -376,12 +391,14 @@ bool FAssetUtilities::Fast_CreateTexture(const TSharedPtr<FJsonObject>& JsonExpo
 	}
 
 	if (Texture == nullptr) {
-		return false;
+		OnComplete(nullptr, false);
+		return;	
 	}
 
 	FAssetRegistryModule::AssetCreated(Texture);
 	if (!Texture->MarkPackageDirty()) {
-		return false;
+		OnComplete(nullptr, false);
+		return;	
 	}
 
 	Package->SetDirtyFlag(true);
@@ -394,7 +411,5 @@ bool FAssetUtilities::Fast_CreateTexture(const TSharedPtr<FJsonObject>& JsonExpo
 		SavePackage(Package);
 	}
 
-	OutTexture = Texture;
-
-	return true;
+	OnComplete(Texture, true);
 }

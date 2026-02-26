@@ -370,14 +370,10 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 					Importer = new IImporter();
 				}
 
-				TObjectPtr<UFontFace> FontFacePtr;
-				
 				Importer->SetParent(ObjectSerializer->Parent);
-				/*Importer->LoadExport(&LocalFontFaceExport, FontFacePtr);*/
-
-				if (UFontFace* FontFace = FontFacePtr.Get()) {
-					*FontData = FFontData(FontFace, 0);
-				}
+				Importer->LoadExport<UObject>(&LocalFontFaceExport, [&FontData](const TObjectPtr<UObject> ObjectPtr) {
+					*FontData = FFontData(ObjectPtr, 0);
+				});
 			}
 		}
 

@@ -45,10 +45,6 @@ public:
     template<class T = UObject>
     void LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TFunction<void(TObjectPtr<T>)> OnComplete);
 
-    /* Loads an array of <T> object ptrs */
-    template<class T = UObject>
-    TArray<TObjectPtr<T>> LoadExport(const TArray<TSharedPtr<FJsonValue>>& PackageArray, TArray<TObjectPtr<T>> Array);
-
 public:
     void Save() const;
 

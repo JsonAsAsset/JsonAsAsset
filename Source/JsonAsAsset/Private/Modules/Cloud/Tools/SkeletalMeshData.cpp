@@ -124,10 +124,9 @@ void TSkeletalMeshData::Execute() {
 
 						IImporter* Importer = new IImporter();
 						
-						TObjectPtr<UObject> LoadedObject;
-						/*Importer->LoadExport<UObject>(&SkeletalMaterial, LoadedObject);*/
-
-						if (IsObjectPtrValid(LoadedObject)) MaterialSlot.MaterialInterface = Cast<UMaterialInterface>(LoadedObject.Get());
+						Importer->LoadExport<UObject>(&SkeletalMaterial, [&MaterialSlot](const TObjectPtr<UObject> ObjectPtr) {
+							if (IsObjectPtrValid(ObjectPtr)) MaterialSlot.MaterialInterface = Cast<UMaterialInterface>(ObjectPtr.Get());
+						});
 					} else break;
 
 					SkeletalMaterialIndex++;

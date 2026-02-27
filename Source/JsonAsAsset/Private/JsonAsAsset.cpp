@@ -33,10 +33,10 @@ void FJsonAsAssetModule::StartupModule() {
     FJsonAsAssetStyle::ReloadTextures();
 
     /* Register Toolbar */
-#if ENGINE_UE5
 	Toolbar = NewObject<UJsonAsAssetToolbar>();
 	Toolbar->AddToRoot();
 	
+#if ENGINE_UE5
 	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateUObject(Toolbar, &UJsonAsAssetToolbar::Register));
 #else
 	{
@@ -48,7 +48,7 @@ void FJsonAsAssetModule::StartupModule() {
 			"Settings",
 			EExtensionHook::After,
 			PluginCommands,
-			FToolBarExtensionDelegate::CreateStatic(&UJsonAsAssetToolbar::UE4Register)
+			FToolBarExtensionDelegate::CreateUObject(Toolbar, &UJsonAsAssetToolbar::UE4Register)
 		);
 
     	LevelEditorModule.GetToolBarExtensibilityManager()->AddExtender(ToolbarExtender);

@@ -67,7 +67,7 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 		/* Check if it's not supposed to be deserialized */
 		if (ExportsToNotDeserialize.Contains(Name)) continue;
 
-		if (!WhitelistedTypes.IsEmpty()) {
+		if (WhitelistedTypes.Num() > 0) {
 			bool bMatchFound = false;
 
 			for (const FString& Whitelisted : WhitelistedTypes) {
@@ -82,7 +82,7 @@ void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExpo
 			}
 		}
 		
-		if (!BlacklistedTypes.IsEmpty()) {
+		if (BlacklistedTypes.Num() > 0) {
 			if (BlacklistedTypes.Contains(Type)) {
 				continue;
 			}
@@ -161,7 +161,7 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 
 	const TArray<FName> PathSegment = Export.GetPathSegments(true);
 
-	if (!PathSegment.IsEmpty()) {
+	if (PathSegment.Num() > 0) {
 		if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer.FindBySegment(PathSegment); FoundExport.JsonObject.IsValid()) {
 			if (FoundExport.Object == nullptr) {
 				DeserializeExport(FoundExport, ExportsMap);

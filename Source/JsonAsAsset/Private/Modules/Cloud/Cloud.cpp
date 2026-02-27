@@ -114,38 +114,35 @@ void Cloud::Get(const FString& RequestURL,
 	const TMap<FString, FString>& Headers,
 	TFunction<void(TSharedPtr<FJsonObject>)> OnComplete)
 {
-	const TSharedRef<IHttpRequest> Request = SendRequest(RequestURL, Parameters, Headers);
+	auto Request = SendRequest(RequestURL, Parameters, Headers);
 	Request->SetVerb(TEXT("GET"));
 
-	FRemoteUtilities::ExecuteRequestAsync(Request,
-		[OnComplete](const TSharedPtr<IHttpResponse>& Response)
-		{
-			if (!Response.IsValid()) {
-				OnComplete(nullptr);
-				return;
-			}
-
-			if (!Response->GetHeader("Content-Type").Contains(TEXT("json"))) {
-				OnComplete(nullptr);
-				return;
-			}
-
-			if (Response->GetResponseCode() != 200) {
-				OnComplete(nullptr);
-				return;
-			}
-
-			TSharedPtr<FJsonObject> JsonObject;
-			const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
-
-			if (!FJsonSerializer::Deserialize(JsonReader, JsonObject)) {
-				OnComplete(nullptr);
-				return;
-			}
-
-			OnComplete(JsonObject);
+	FRemoteUtilities::ExecuteRequestAsync(Request, [OnComplete](auto Response) {
+		if (!Response.IsValid()) {
+			OnComplete(nullptr);
+			return;
 		}
-	);
+
+		if (!Response->GetHeader("Content-Type").Contains(TEXT("json"))) {
+			OnComplete(nullptr);
+			return;
+		}
+
+		if (Response->GetResponseCode() != 200) {
+			OnComplete(nullptr);
+			return;
+		}
+
+		TSharedPtr<FJsonObject> JsonObject;
+		const TSharedRef<TJsonReader<>> JsonReader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+
+		if (!FJsonSerializer::Deserialize(JsonReader, JsonObject)) {
+			OnComplete(nullptr);
+			return;
+		}
+
+		OnComplete(JsonObject);
+	});
 }
 
 TArray<uint8> Cloud::GetRaw(const FString& RequestURL, const TMap<FString, FString>& Parameters,

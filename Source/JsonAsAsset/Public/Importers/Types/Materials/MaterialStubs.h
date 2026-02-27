@@ -7,6 +7,7 @@
 
 #pragma once
 
+#if ENGINE_UE5
 #include "MaterialDomain.h"
 #include "Importers/Types/Materials/MaterialImporter.h"
 #include "Materials/MaterialAttributeDefinitionMap.h"
@@ -321,3 +322,4 @@ inline void CreateStubs(IMaterialImporter* MaterialImporter) {
 		}
 	}
 }
+#endif

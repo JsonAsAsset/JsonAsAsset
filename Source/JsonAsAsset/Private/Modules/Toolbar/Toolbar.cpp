@@ -137,7 +137,7 @@ void UJsonAsAssetToolbar::AddCloudButtons(FToolMenuSection& Section) {
 void UJsonAsAssetToolbar::UE4Register(FToolBarBuilder& Builder) {
 	Builder.AddToolBarButton(
 		FUIAction(
-			FExecuteAction::CreateStatic(&ImportAction),
+			FExecuteAction::CreateUObject(this, &UJsonAsAssetToolbar::ImportAction),
 			FCanExecuteAction(),
 			FGetActionCheckState(),
 			FIsActionButtonVisible::CreateStatic(IsToolBarVisible)

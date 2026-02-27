@@ -42,15 +42,18 @@ bool IMaterialImporter::Import() {
 	
 	/* If Missing Material Data */
 	if (ExpressionContainer.Num() == 0) {
+#if ENGINE_UE5
 		if (GetSettings()->AssetSettings.Material.Stubs) {
 			CreateStubs(this);
 			CreatedStubsNotification();
 		}
 		else {
+#endif
 			SpawnMaterialDataMissingNotification();
-
+#if ENGINE_UE5
 			return false;
 		}
+#endif
 	}
 
 	/* Iterate through all the expressions, and set properties */

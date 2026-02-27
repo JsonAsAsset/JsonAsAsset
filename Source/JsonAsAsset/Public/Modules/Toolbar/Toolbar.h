@@ -14,7 +14,7 @@ public:
 	void AddCloudButtons(FToolMenuSection& Section);
 	
 #if ENGINE_UE4
-	static void UE4Register(FToolBarBuilder& Builder);
+	void UE4Register(FToolBarBuilder& Builder);
 #endif
 
 	/* Checks if JsonAsAsset is fit to function */

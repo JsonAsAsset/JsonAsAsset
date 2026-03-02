@@ -6,8 +6,6 @@
 #include "Utilities/EngineUtilities.h"
 
 void IGeneralDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
-	MenuBuilder.AddSeparator();
-	
 	MenuBuilder.AddMenuEntry(
 		FText::FromString("Open Plugin Settings"),
 		FText::FromString("Navigate to plugin settings"),

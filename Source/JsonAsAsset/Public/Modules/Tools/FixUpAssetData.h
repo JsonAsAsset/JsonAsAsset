@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "ToolBase.h"
 
-class TToolResetAnimationCompressionData : public TToolBase {
+class TToolFixUpAssetData : public TToolBase {
 public:
 	void Execute();
 };

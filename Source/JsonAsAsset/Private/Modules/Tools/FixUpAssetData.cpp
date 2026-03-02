@@ -1,0 +1,64 @@
+﻿/* Copyright JsonAsAsset Contributors 2024-2026 */
+
+#include "Modules/Tools/FixUpAssetData.h"
+
+#include "WidgetBlueprint.h"
+#include "Animation/WidgetAnimation.h"
+#include "PhysicsEngine/BodySetup.h"
+#include "Utilities/EngineUtilities.h"
+
+void TToolFixUpAssetData::Execute() {
+	TArray<FAssetData> AssetDataList = GetAssetsInSelectedFolder();
+
+	if (AssetDataList.Num() == 0) {
+		return;
+	}
+
+	static const TArray<FName> SupportedClasses = {
+		"AnimSequence",
+		"WidgetBlueprint",
+		"StaticMesh"
+	};
+
+	for (const FAssetData& AssetData : AssetDataList) {
+		if (!AssetData.IsValid() || !SupportedClasses.Contains(GetAssetDataClass(AssetData))) {
+			continue;
+		}
+		
+		UObject* Asset = AssetData.GetAsset();
+		if (Asset == nullptr) continue;
+
+		if (UAnimSequence* AnimSequence = Cast<UAnimSequence>(Asset)) {
+			AnimSequence->BoneCompressionSettings = nullptr;
+			AnimSequence->CurveCompressionSettings = nullptr;
+
+#if ENGINE_UE5
+			AnimSequence->BeginCacheDerivedDataForCurrentPlatform();
+#endif
+			AnimSequence->Modify();
+		}
+		
+		if (UStaticMesh* StaticMesh = Cast<UStaticMesh>(Asset)) {
+			StaticMesh->GetBodySetup()->CollisionTraceFlag = CTF_UseComplexAsSimple;
+			StaticMesh->Modify();
+			StaticMesh->GetBodySetup()->PostEditChange();
+
+			/* Update physics data */
+			StaticMesh->GetBodySetup()->InvalidatePhysicsData();
+			StaticMesh->GetBodySetup()->CreatePhysicsMeshes();
+
+			StaticMesh->MarkPackageDirty();
+			StaticMesh->Modify(true);
+		}
+
+		if (UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(Asset)) {
+			WidgetBlueprint->Animations.RemoveAll(
+				[](const UWidgetAnimation* Animation) {
+					return Animation == nullptr;
+				}
+			);
+		}
+
+		Asset->Modify();
+	}
+}

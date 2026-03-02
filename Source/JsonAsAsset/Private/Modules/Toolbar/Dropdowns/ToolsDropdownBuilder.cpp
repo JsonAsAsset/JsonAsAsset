@@ -8,7 +8,7 @@
 #include "Utilities/EngineUtilities.h"
 
 #include "Modules/Tools/ClearImportData.h"
-#include "Modules/Tools/ResetAnimationCompressionData.h"
+#include "Modules/Tools/FixUpAssetData.h"
 
 void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	UJsonAsAssetSettings* Settings = GetSettings();
@@ -34,13 +34,13 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 				);
 
 				InnerMenuBuilder.AddMenuEntry(
-					FText::FromString("Reset Animation Compression"),
+					FText::FromString("Fixup Asset Data"),
 					FText::FromString(""),
 					FSlateIcon(FAppStyle::GetAppStyleSetName(), "LevelEditor.BspMode"),
 
 					FUIAction(
 						FExecuteAction::CreateLambda([] {
-							TToolResetAnimationCompressionData* Tool = new TToolResetAnimationCompressionData();
+							TToolFixUpAssetData* Tool = new TToolFixUpAssetData();
 							Tool->Execute();
 						})
 					),

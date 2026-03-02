@@ -24,6 +24,9 @@ void TWidgetAnimations::Process(UObject* Object) {
 	FUObjectExportContainer Exports(SendToCloudForExports(GetAssetPath(Object)));
 	auto Export = Exports.FindByType(FString("WidgetBlueprintGeneratedClass"));
 
+	if (!Export.IsJsonValid()) return;
+	if (!Export.JsonObject.Get()->HasField(TEXT("Properties"))) return;
+
 	auto Animations = Export.GetPropertiesNew().GetArray("Animations");
 
 	GetObjectSerializer()->WhitelistedTypes.Add("MovieScene");

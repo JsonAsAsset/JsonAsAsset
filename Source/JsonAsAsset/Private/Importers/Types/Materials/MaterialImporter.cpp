@@ -10,8 +10,18 @@
 #include "MaterialDomain.h"
 #endif
 
+#include "MaterialCachedData.h"
 #include "Factories/MaterialFactoryNew.h"
 #include "Settings/JsonAsAssetSettings.h"
+
+#if ENGINE_UE5
+class UMaterialAccessor final : public UMaterial {
+public:
+	FMaterialCachedExpressionData* GetCachedExpressionDataRef() const {
+		return CachedExpressionData.Get();
+	}
+};
+#endif
 
 UObject* IMaterialImporter::CreateAsset(UObject* CreatedAsset) {
 	/* Create Material Factory (factory automatically creates the Material) */
@@ -139,6 +149,18 @@ bool IMaterialImporter::Import() {
 	/* Deserialize any properties */
 	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), Material);
 
+#if ENGINE_UE5
+	/* Update Cached Expression Data */
+	if (AssetExport.GetJsonObject().Has("CachedExpressionData")) {
+		FUObjectJsonValueExport CachedExpressionData = AssetExport.GetJsonObject().GetObject("CachedExpressionData");
+
+		UMaterialAccessor* Accessor = Cast<UMaterialAccessor>(Material);
+		FMaterialCachedExpressionData* CachedData = Accessor->GetCachedExpressionDataRef();
+
+		GetPropertySerializer()->DeserializeStruct(FMaterialCachedExpressionData::StaticStruct(), CachedExpressionData.JsonObject.ToSharedRef(), CachedData);
+	}
+#endif
+	
 	/* Move Material Result Node ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	UMaterialExpression* PositionalExpression = EditorOnlyData->BaseColor.Expression;
 	if (UMaterialExpression* MaterialAttributes = EditorOnlyData->MaterialAttributes.Expression) {

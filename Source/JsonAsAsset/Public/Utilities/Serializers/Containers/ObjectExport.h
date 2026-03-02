@@ -162,6 +162,10 @@ struct FUObjectExport {
 	FUObjectJsonValueExport GetPropertiesNew() const {
 		return FUObjectJsonValueExport(JsonObject->GetObjectField(TEXT("Properties")));
 	}
+
+	FUObjectJsonValueExport GetJsonObject() const {
+		return FUObjectJsonValueExport(JsonObject);
+	}
 	
 	UClass* GetClass() {
 		if (Class) return Class;

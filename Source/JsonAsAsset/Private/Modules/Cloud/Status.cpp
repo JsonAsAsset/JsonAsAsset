@@ -10,7 +10,7 @@ static TWeakPtr<SNotificationItem> CloudNotification;
 #endif
 
 bool Cloud::Status::IsOpened() {
-	return IsProcessRunning("j0.dev.exe");
+	return IsProcessRunning("Core.exe");
 }
 
 void Cloud::Status::IsReady(TFunction<void(bool)> OnResponse) {

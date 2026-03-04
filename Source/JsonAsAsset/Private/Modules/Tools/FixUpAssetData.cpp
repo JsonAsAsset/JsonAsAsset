@@ -39,6 +39,7 @@ void TToolFixUpAssetData::Execute() {
 		}
 		
 		if (UStaticMesh* StaticMesh = Cast<UStaticMesh>(Asset)) {
+#if ENGINE_UE5
 			StaticMesh->GetBodySetup()->CollisionTraceFlag = CTF_UseComplexAsSimple;
 			StaticMesh->Modify();
 			StaticMesh->GetBodySetup()->PostEditChange();
@@ -49,6 +50,7 @@ void TToolFixUpAssetData::Execute() {
 
 			StaticMesh->MarkPackageDirty();
 			StaticMesh->Modify(true);
+#endif
 		}
 
 		if (UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(Asset)) {

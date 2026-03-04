@@ -72,6 +72,7 @@ void TToolConvexCollision::Execute() {
 					}
 				}
 
+#if ENGINE_UE5
 				if (Properties->HasField(TEXT("StaticMaterials"))) {
 					const TArray<TSharedPtr<FJsonValue>> StaticMaterials = Properties->GetArrayField(TEXT("StaticMaterials"));
 					
@@ -88,6 +89,7 @@ void TToolConvexCollision::Execute() {
 						MaterialIndex++;
 					}	
 				}
+#endif
 				
 				GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(Properties, {
 					"StaticMaterials",

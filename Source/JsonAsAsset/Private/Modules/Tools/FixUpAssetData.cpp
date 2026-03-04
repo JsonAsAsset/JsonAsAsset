@@ -32,7 +32,7 @@ void TToolFixUpAssetData::Execute() {
 			AnimSequence->BoneCompressionSettings = nullptr;
 			AnimSequence->CurveCompressionSettings = nullptr;
 
-#if ENGINE_UE5
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 2
 			AnimSequence->BeginCacheDerivedDataForCurrentPlatform();
 #endif
 			AnimSequence->Modify();

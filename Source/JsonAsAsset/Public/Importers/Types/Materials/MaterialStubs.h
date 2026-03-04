@@ -8,9 +8,12 @@
 #pragma once
 
 #if ENGINE_UE5
+#if ENGINE_MINOR_VERSION >= 2
 #include "MaterialDomain.h"
-#include "Importers/Types/Materials/MaterialImporter.h"
 #include "Materials/MaterialAttributeDefinitionMap.h"
+#endif
+
+#include "Importers/Types/Materials/MaterialImporter.h"
 #include "Materials/MaterialExpressionAdd.h"
 #include "Materials/MaterialExpressionClamp.h"
 #include "Materials/MaterialExpressionConstant.h"

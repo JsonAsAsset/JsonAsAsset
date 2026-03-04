@@ -1193,12 +1193,14 @@ inline void SetAnimSequenceLength(UAnimSequenceBase* Sequence, const float NewLe
 	const FScopedTransaction Transaction(FText::FromString(FString::Printf(TEXT("Change Sequence Length %.3f to %.3f"), OldLength, NewLength)));
 
 	Sequence->Modify();
-#if ENGINE_UE5
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 2
 	Sequence->GetController().SetNumberOfFrames(Sequence->GetController().ConvertSecondsToFrameNumber(NewLength), true);
 #else
 	if (UAnimSequence* AnimSequence = Cast<UAnimSequence>(Sequence)) {
 		Sequence->SequenceLength = NewLength;
+#if ENGINE_UE4
 		AnimSequence->PostProcessSequence();
+#endif
 	}
 #endif
 

@@ -26,11 +26,12 @@ void ISoundGraph::ConstructNodes(USoundCue* SoundCue, TMap<FString, USoundNode*>
 USoundNode* ISoundGraph::CreateEmptyNode(FName Name, const FName Type, USoundCue* SoundCue) {
 	UClass* Class = FindClassByType(Type.ToString());
 
-	/* TODO: Construct the sound node manually to have the exact same object name */
-	return SoundCue->ConstructSoundNode<USoundNode>(
-		Class,
-		false
-	);
+	/* Set flag to be transactional so it registers with undo system */
+	USoundNode* SoundNode = NewObject<USoundNode>(SoundCue, Class, Name, RF_Transactional);
+	SoundCue->AllNodes.Add(SoundNode);
+	SoundCue->SetupSoundNode(SoundNode, false);
+	
+	return SoundNode;
 }
 
 void ISoundGraph::SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*> SoundCueNodes) const {
@@ -181,4 +182,17 @@ void ISoundGraph::OnDownloadSoundWave(FString SavePath, FString AssetPtr, USound
 
 	ImportedWave->AssetImportData = nullptr;
 	Node->SetSoundWave(ImportedWave);
+
+	const FString Type = "SoundWave";
+	const FSlateBrush* IconBrush = FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail"));
+
+	AppendNotification(
+		FText::FromString("Sound Downloaded: " + ImportedWave->GetName()),
+		FText::FromString(""),
+		2.0f,
+		IconBrush,
+		SNotificationItem::CS_Success,
+		false,
+		310.0f
+	);
 }

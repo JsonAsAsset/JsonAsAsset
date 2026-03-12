@@ -157,7 +157,7 @@ bool IMaterialImporter::Import() {
 		UMaterialAccessor* Accessor = Cast<UMaterialAccessor>(Material);
 		FMaterialCachedExpressionData* CachedData = Accessor->GetCachedExpressionDataRef();
 
-		GetPropertySerializer()->DeserializeStruct(FMaterialCachedExpressionData::StaticStruct(), CachedExpressionData.JsonObject.ToSharedRef(), CachedData);
+		/*GetPropertySerializer()->DeserializeStruct(FMaterialCachedExpressionData::StaticStruct(), CachedExpressionData.JsonObject.ToSharedRef(), CachedData);*/
 	}
 #endif
 	

@@ -252,7 +252,7 @@ inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext&
 		const float Time = LookupTable.TimeBias + i * TimeScale;
 		const int32 Base = i * LookupTable.EntryStride;
 
-		FInterpCurvePoint<FVector> Key(ForceInitToZero);
+		FInterpCurvePoint<FVector> Key;
 
 		Key.ArriveTangent = FVector::ZeroVector;
 		Key.LeaveTangent = FVector::ZeroVector;

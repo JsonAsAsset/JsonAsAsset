@@ -50,7 +50,7 @@ void IParticleSystemImporter::CreateDistributions() {
 		/* Create Distribution */
 		UObject* Distribution = NewObject<UDistribution>(GetAsset(), Class);
 
-		if (JsonObjectValue.JsonObject->HasField("Properties")) {
+		if (JsonObjectValue.JsonObject->HasField(TEXT("Properties"))) {
 			GetObjectSerializer()->DeserializeObjectProperties(JsonObjectValue.GetProperties(), Distribution);
 		}
 
@@ -161,7 +161,7 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const TSharedPtr<FJso
 		LODLevel->Level = Level;
 		if (LevelProperties->HasField(TEXT("bEnabled")))
 		{
-			LODLevel->bEnabled = LevelProperties->GetBoolField("bEnabled");
+			LODLevel->bEnabled = LevelProperties->GetBoolField(TEXT("bEnabled"));
 		}
 		else
 		{

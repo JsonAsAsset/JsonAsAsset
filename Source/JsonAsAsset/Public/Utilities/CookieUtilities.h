@@ -88,6 +88,8 @@ inline bool IsConstantDistribution(FDistributionDecookContext& Context) {
 inline UDistributionFloat* DecookFloatDistribution(FDistributionDecookContext& Context) {
 	const FDistributionLookupTable& LookupTable = Context.LookupTable;
 
+	if (LookupTable.Values.Num() == 0) return nullptr;
+
 	/* Constant */
 	if (IsConstantDistribution(Context)) {
 		UDistributionFloatConstant* Distribution = Context.CreateDistribution<UDistributionFloatConstant>();
@@ -154,6 +156,8 @@ inline UDistributionFloat* DecookFloatDistribution(FDistributionDecookContext& C
 
 inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext& Context) {
 	const FDistributionLookupTable& LookupTable = Context.LookupTable;
+
+	if (LookupTable.Values.Num() == 0) return nullptr;
 
 	/* Constant */
 	if (IsConstantDistribution(Context)) {

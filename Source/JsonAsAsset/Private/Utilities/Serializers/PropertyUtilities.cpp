@@ -420,22 +420,33 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 #endif
 
 		if (StructProperty->Struct == FRawDistributionFloat::StaticStruct()
-			|| StructProperty->Struct == FRawDistributionVector::StaticStruct())
+		 || StructProperty->Struct == FRawDistributionVector::StaticStruct())
 		{
 			bool IsFloat = StructProperty->Struct == FRawDistributionFloat::StaticStruct();
-			
-			FRawDistribution* RawDistribution = static_cast<FRawDistribution*>(OutValue);
-			UDistribution* Distribution = DecookDistribution(ObjectSerializer->Parent, *RawDistribution, IsFloat);
 
-			if (Distribution)
-			{
-				if (IsFloat) {
-					FRawDistributionFloat* RawDistributionFloat = reinterpret_cast<FRawDistributionFloat*>(&RawDistribution);
-					RawDistributionFloat->Distribution = Cast<UDistributionFloat>(Distribution);
-				}
-				else {
-					FRawDistributionVector* RawDistributionVector = reinterpret_cast<FRawDistributionVector*>(&RawDistribution);
-					RawDistributionVector->Distribution = Cast<UDistributionVector>(Distribution);
+			FRawDistribution* RawDistribution = static_cast<FRawDistribution*>(OutValue);
+
+			bool bShouldDecook = false;
+
+			if (IsFloat) {
+				FRawDistributionFloat* RawDistributionFloat = reinterpret_cast<FRawDistributionFloat*>(RawDistribution);
+				bShouldDecook = RawDistributionFloat->Distribution == nullptr;
+			} else {
+				FRawDistributionVector* RawDistributionVector = reinterpret_cast<FRawDistributionVector*>(RawDistribution);
+				bShouldDecook = RawDistributionVector->Distribution == nullptr;
+			}
+
+			if (bShouldDecook) {
+				UDistribution* Distribution = DecookDistribution(ObjectSerializer->Parent, *RawDistribution, IsFloat);
+
+				if (Distribution) {
+					if (IsFloat) {
+						FRawDistributionFloat* RawDistributionFloat = reinterpret_cast<FRawDistributionFloat*>(RawDistribution);
+						RawDistributionFloat->Distribution = Cast<UDistributionFloat>(Distribution);
+					} else {
+						FRawDistributionVector* RawDistributionVector = reinterpret_cast<FRawDistributionVector*>(RawDistribution);
+						RawDistributionVector->Distribution = Cast<UDistributionVector>(Distribution);
+					}
 				}
 			}
 		}

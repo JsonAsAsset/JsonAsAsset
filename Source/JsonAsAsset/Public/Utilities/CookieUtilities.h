@@ -77,6 +77,7 @@ inline FRawDistributionMemberAccessor& GetAccessor(FRawDistribution& RawDistribu
 inline bool IsConstantDistribution(FDistributionDecookContext& Context) {
 	if (Context.IsFloat) {
 		float Min, Max; Context.RawDistributionFloat.GetOutRange(Min, Max);
+
 		return Min == Max;
 	}
 
@@ -89,7 +90,7 @@ inline UDistributionFloat* DecookFloatDistribution(FDistributionDecookContext& C
 	const FDistributionLookupTable& LookupTable = Context.LookupTable;
 
 	if (LookupTable.Values.Num() == 0) return nullptr;
-
+	
 	/* Constant */
 	if (IsConstantDistribution(Context)) {
 		UDistributionFloatConstant* Distribution = Context.CreateDistribution<UDistributionFloatConstant>();
@@ -158,7 +159,7 @@ inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext&
 	const FDistributionLookupTable& LookupTable = Context.LookupTable;
 
 	if (LookupTable.Values.Num() == 0) return nullptr;
-
+	
 	/* Constant */
 	if (IsConstantDistribution(Context)) {
 		UDistributionVectorConstant* Distribution = Context.CreateDistribution<UDistributionVectorConstant>();
@@ -168,6 +169,8 @@ inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext&
 			LookupTable.Values[1],
 			LookupTable.Values[2]
 		);
+
+		Distribution->LockedAxes = static_cast<EDistributionVectorLockFlags>(LookupTable.LockFlag);
 		
 		return Distribution;
 	}
@@ -187,6 +190,8 @@ inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext&
 			LookupTable.Values[LookupTable.SubEntryStride + 1],
 			LookupTable.Values[LookupTable.SubEntryStride + 2]
 		);
+		
+		Distribution->LockedAxes = static_cast<EDistributionVectorLockFlags>(LookupTable.LockFlag);
 		
 		return Distribution;
 	}
@@ -220,7 +225,7 @@ inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext&
 			
 			Distribution->ConstantCurve.Points.Add(Key);
 		}
-		
+
 		return Distribution;
 	}
 

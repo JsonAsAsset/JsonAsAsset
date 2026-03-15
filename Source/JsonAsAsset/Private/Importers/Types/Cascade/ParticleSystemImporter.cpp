@@ -246,9 +246,6 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const TSharedPtr<FJso
 
 		UParticleModule* Module = NewObject<UParticleModule>(ParticleSystem, EmitterClass, FName(*EmitterName));
 		check(Module);
-
-		SetModuleData(EmitterLODLevelObject->GetObjectField(TEXT("Properties")), Module);
-
 		Module->ModuleEditorColor = FColor::MakeRandomColor();
 
 		Module->SetTransactionFlag();
@@ -257,6 +254,8 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const TSharedPtr<FJso
 
 		ParticleSystem->PostEditChange();
 		ParticleSystem->MarkPackageDirty();
+
+		SetModuleData(EmitterLODLevelObject->GetObjectField(TEXT("Properties")), Module);
 	}
 
 	Emitter->PostEditChange();

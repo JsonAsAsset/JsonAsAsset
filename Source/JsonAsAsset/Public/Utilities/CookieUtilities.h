@@ -226,8 +226,7 @@ inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext&
 	/* Constant Curve */
 	UDistributionVectorConstantCurve* Distribution = Context.CreateDistribution<UDistributionVectorConstantCurve>();
 
-	for (int32 i = 0; i < LookupTable.EntryCount; i++)
-	{
+	for (int32 i = 0; i < LookupTable.EntryCount; i++) {
 		const float Time = LookupTable.TimeBias + i * TimeScale;
 		const int32 Base = i * LookupTable.EntryStride;
 

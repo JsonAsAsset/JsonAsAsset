@@ -264,8 +264,8 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const TSharedPtr<FJso
 
 	/* Init epic detail mode to enabled if high is set */
 	if (!GJsonAsAssetRuntime.IsUE5()) {
-		if (Emitter->DetailModeBitmask & 1 << PDM_High) {
-			Emitter->DetailModeBitmask |= 1 << PDM_Epic;
+		if (Emitter->DetailModeBitmask & 1 << EParticleDetailMode::PDM_High) {
+			Emitter->DetailModeBitmask |= 1 << EParticleDetailMode::PDM_Epic;
 		}
 	}
 	

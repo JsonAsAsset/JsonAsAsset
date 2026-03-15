@@ -9,6 +9,7 @@
 #include "Particles/ParticleSystem.h"
 #include "Particles/Spawn/ParticleModuleSpawn.h"
 #include "Particles/TypeData/ParticleModuleTypeDataBase.h"
+#include "Settings/Runtime.h"
 
 UObject* IParticleSystemImporter::CreateAsset(UObject* CreatedAsset) {
 	return IImporter::CreateAsset(NewObject<UParticleSystem>(GetPackage(), UParticleSystem::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
@@ -260,6 +261,13 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const TSharedPtr<FJso
 
 	Emitter->PostEditChange();
 	Emitter->SetFlags(RF_Transactional);
+
+	/* Init epic detail mode to enabled if high is set */
+	if (!GJsonAsAssetRuntime.IsUE5()) {
+		if (Emitter->DetailModeBitmask & 1 << PDM_High) {
+			Emitter->DetailModeBitmask |= 1 << PDM_Epic;
+		}
+	}
 	
 	return nullptr;
 }

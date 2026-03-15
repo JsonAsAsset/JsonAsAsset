@@ -68,6 +68,8 @@ TMap<FString, TArray<FString>> ImportTypes::Templated = {
 			TEXT("SoundMix"),
 			TEXT("SoundModulationPatch"),
 			TEXT("SubmixEffectDynamicsProcessorPreset"),
+			TEXT("SoundSubmix"),
+			TEXT("AudioBus"),
 		}
 	},
 	{

@@ -77,7 +77,7 @@ inline FRawDistributionMemberAccessor& GetAccessor(FRawDistribution& RawDistribu
 }
 
 inline bool IsConstantDistribution(FDistributionDecookContext& Context) {
-	if (Context.LookupTable.Values.Num() == Context.LookupTable.EntryStride) {
+	if (!Context.IsFloat && Context.LookupTable.Values.Num() == Context.LookupTable.EntryStride) {
 		return true;
 	}
 	

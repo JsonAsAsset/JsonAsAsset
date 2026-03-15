@@ -20,6 +20,8 @@
  * Used for particle systems only at the moment.
 */
 
+/* Like most things, all of a sudden, what seemed impossible, is now possible. Yeah, give me the best philosopher award. */
+
 struct FRawDistributionMemberAccessor : FRawDistribution {
 	FDistributionLookupTable GetLookupTable() {
 		return LookupTable;

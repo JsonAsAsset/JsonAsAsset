@@ -77,6 +77,10 @@ inline FRawDistributionMemberAccessor& GetAccessor(FRawDistribution& RawDistribu
 }
 
 inline bool IsConstantDistribution(FDistributionDecookContext& Context) {
+	if (Context.LookupTable.Values.Num() == Context.LookupTable.EntryStride) {
+		return true;
+	}
+	
 	if (Context.IsFloat) {
 		float Min, Max; Context.RawDistributionFloat.GetOutRange(Min, Max);
 
@@ -126,7 +130,10 @@ inline UDistributionFloat* DecookFloatDistribution(FDistributionDecookContext& C
 				+ (LookupTable.SubEntryStride > 0 ? LookupTable.SubEntryStride : 1)
 			];
 
-			FInterpCurvePoint<FVector2D> Key(ForceInitToZero);
+			FInterpCurvePoint<FVector2D> Key;
+
+			Key.ArriveTangent = FVector2D::ZeroVector;
+			Key.LeaveTangent = FVector2D::ZeroVector;
 			
 			Key.InVal = Time;
 			Key.OutVal = FVector2D(MinVal, MaxVal);
@@ -145,7 +152,10 @@ inline UDistributionFloat* DecookFloatDistribution(FDistributionDecookContext& C
 		const float Time = LookupTable.TimeBias + i * TimeScale;
 		const float Value = LookupTable.Values[i * LookupTable.EntryStride];
 
-		FInterpCurvePoint<float> Key(ForceInitToZero);
+		FInterpCurvePoint<float> Key;
+
+		Key.ArriveTangent = 0.0f;
+		Key.LeaveTangent = 0.0f;
 		
 		Key.InVal = Time;
 		Key.OutVal = Value;
@@ -163,7 +173,7 @@ inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext&
 	if (LookupTable.Values.Num() == 0) return nullptr;
 	
 	/* Constant */
-	if (IsConstantDistribution(Context) || Context.LookupTable.Values.Num() == Context.LookupTable.EntryStride) {
+	if (IsConstantDistribution(Context)) {
 		UDistributionVectorConstant* Distribution = Context.CreateDistribution<UDistributionVectorConstant>();
 		
 		Distribution->Constant = FVector(
@@ -208,7 +218,11 @@ inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext&
 			const float Time = LookupTable.TimeBias + i * TimeScale;
 			const int32 Base = i * LookupTable.EntryStride;
 
-			FInterpCurvePoint<FTwoVectors> Key(ForceInitToZero);
+			FInterpCurvePoint<FTwoVectors> Key;
+
+			Key.ArriveTangent = FTwoVectors(FVector::ZeroVector, FVector::ZeroVector);
+			Key.LeaveTangent = FTwoVectors(FVector::ZeroVector, FVector::ZeroVector);
+			
 			Key.InVal = Time;
 			
 			Key.OutVal.v1 = FVector(
@@ -239,7 +253,10 @@ inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext&
 		const int32 Base = i * LookupTable.EntryStride;
 
 		FInterpCurvePoint<FVector> Key(ForceInitToZero);
-		
+
+		Key.ArriveTangent = FVector::ZeroVector;
+		Key.LeaveTangent = FVector::ZeroVector;
+
 		Key.InVal = Time;
 		
 		Key.OutVal = FVector(

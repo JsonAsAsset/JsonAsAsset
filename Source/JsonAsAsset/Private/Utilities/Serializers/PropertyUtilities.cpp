@@ -383,27 +383,6 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			}
 		}
 
-		if (StructProperty->Struct == FRawDistributionFloat::StaticStruct()
-			|| StructProperty->Struct == FRawDistributionVector::StaticStruct())
-		{
-			bool IsFloat = StructProperty->Struct == FRawDistributionFloat::StaticStruct();
-			
-			FRawDistribution* RawDistribution = static_cast<FRawDistribution*>(OutValue);
-			UDistribution* Distribution = DecookDistribution(ObjectSerializer->Parent, *RawDistribution, IsFloat);
-
-			if (Distribution)
-			{
-				if (IsFloat) {
-					FRawDistributionFloat* RawDistributionFloat = reinterpret_cast<FRawDistributionFloat*>(&RawDistribution);
-					RawDistributionFloat->Distribution = Cast<UDistributionFloat>(Distribution);
-				}
-				else {
-					FRawDistributionVector* RawDistributionVector = reinterpret_cast<FRawDistributionVector*>(&RawDistribution);
-					RawDistributionVector->Distribution = Cast<UDistributionVector>(Distribution);
-				}
-			}
-		}
-
 		/* To serialize struct, we need its type and value pointer, because struct value doesn't contain type information */
 		DeserializeStruct(StructProperty->Struct, NewJsonValue->AsObject().ToSharedRef(), OutValue);
 
@@ -439,6 +418,27 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			}
 		}
 #endif
+
+		if (StructProperty->Struct == FRawDistributionFloat::StaticStruct()
+			|| StructProperty->Struct == FRawDistributionVector::StaticStruct())
+		{
+			bool IsFloat = StructProperty->Struct == FRawDistributionFloat::StaticStruct();
+			
+			FRawDistribution* RawDistribution = static_cast<FRawDistribution*>(OutValue);
+			UDistribution* Distribution = DecookDistribution(ObjectSerializer->Parent, *RawDistribution, IsFloat);
+
+			if (Distribution)
+			{
+				if (IsFloat) {
+					FRawDistributionFloat* RawDistributionFloat = reinterpret_cast<FRawDistributionFloat*>(&RawDistribution);
+					RawDistributionFloat->Distribution = Cast<UDistributionFloat>(Distribution);
+				}
+				else {
+					FRawDistributionVector* RawDistributionVector = reinterpret_cast<FRawDistributionVector*>(&RawDistribution);
+					RawDistributionVector->Distribution = Cast<UDistributionVector>(Distribution);
+				}
+			}
+		}
 	}
 	else if (const FByteProperty* ByteProperty = CastField<const FByteProperty>(Property)) {
 		/* If we have a string provided, make sure Enum is not null */

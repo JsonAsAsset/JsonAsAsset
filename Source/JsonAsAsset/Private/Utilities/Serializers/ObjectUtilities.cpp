@@ -39,7 +39,7 @@ UPackage* FindOrLoadPackage(const FString& PackageName) {
 void UObjectSerializer::SetPropertySerializer(UPropertySerializer* NewPropertySerializer) {
 	check(NewPropertySerializer);
 
-	this->PropertySerializer = NewPropertySerializer;
+	PropertySerializer = NewPropertySerializer;
 	NewPropertySerializer->ObjectSerializer = this;
 }
 

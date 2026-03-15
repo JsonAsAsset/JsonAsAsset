@@ -31,15 +31,12 @@ struct FDistributionDecookContext {
 
 	UObject* Outer;
 
-	/* Object Name */
-	FName Name;
-	
 	FDistributionLookupTable LookupTable;
 
 	FRawDistributionFloat RawDistributionFloat;
 	FRawDistributionVector RawDistributionVector;
 
-	FDistributionDecookContext(UObject* Outer, const FName& InName, FRawDistribution& RawDistribution, bool bIsFloat) : IsFloat(bIsFloat), Outer(Outer), Name(InName) {
+	FDistributionDecookContext(UObject* Outer, FRawDistribution& RawDistribution, bool bIsFloat) : IsFloat(bIsFloat), Outer(Outer) {
 		FRawDistributionMemberAccessor Accessor;
 
 		if (IsFloat) {
@@ -55,7 +52,7 @@ struct FDistributionDecookContext {
 	
 	template<typename T>
 	T* CreateDistribution() const {
-		return NewObject<T>(Outer, Name);
+		return NewObject<T>(Outer);
 	}
 };
 
@@ -249,8 +246,8 @@ inline UDistributionVector* DecookVectorDistribution(FDistributionDecookContext&
 }
 
 /************** Handlers */
-inline UDistribution* DecookDistribution(UObject* Outer, const FName Name, FRawDistribution& RawDistribution, const bool IsFloat) {
-	FDistributionDecookContext Context(Outer, Name, RawDistribution, IsFloat);
+inline UDistribution* DecookDistribution(UObject* Outer, FRawDistribution& RawDistribution, const bool IsFloat) {
+	FDistributionDecookContext Context(Outer, RawDistribution, IsFloat);
 
 	if (IsFloat) {
 		return DecookFloatDistribution(Context);

@@ -1,5 +1,6 @@
 /* Copyright JsonAsAsset Contributors 2024-2026 */
 
+using System;
 using UnrealBuildTool;
 
 /* NOTE: Please make sure to put UE5 only modules in the #if statement below, we want UE4 and UE5 compatibility */
@@ -68,5 +69,12 @@ public class JsonAsAsset : ModuleRules {
 			"ToolWidgets"
 #endif
 		});
+
+		if (!OperatingSystem.IsLinux()) {
+			PrivateDependencyModuleNames.AddRange(new[] {
+				"Detex",
+				"NVTT"
+			});
+		}
 	}
 }

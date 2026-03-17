@@ -21,7 +21,7 @@ template <typename T>
 bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) {
 	UTexture2D* Texture2D;
 
-	if (UseOctetStream) {
+	if (IsOctetStreamEnabled()) {
 		Texture2D = NewObject<T>(Package, T::StaticClass(), *AssetName, RF_Standalone | RF_Public);
 	} else {
 		UTextureFactory* TextureFactory = NewObject<UTextureFactory>();
@@ -37,7 +37,7 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 
 	DeserializeTexture2D(Texture2D, Properties->GetObjectField(TEXT("Properties")));
 
-	if (!UseOctetStream
+	if (!IsOctetStreamEnabled()
 		&& GJsonAsAssetRuntime.IsOlderUE4Target()
 		&&
 		(
@@ -84,13 +84,21 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 		}
 	}
 	
-	if (UseOctetStream) {
+	if (IsOctetStreamEnabled()) {
 		DeserializeTexturePlatformData(Texture2D, Data, *PlatformData, Properties);
 	}
 
 	OutTexture = Texture2D;
 
 	return false;
+}
+
+bool FTextureCreatorUtilities::IsOctetStreamEnabled() const {
+#if PLATFORM_LINUX
+	return false;
+#else
+	return UseOctetStream;
+#endif
 }
 
 bool FTextureCreatorUtilities::CreateTextureCube(UTexture*& OutTextureCube, const TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const {
@@ -291,7 +299,7 @@ bool FTextureCreatorUtilities::DeserializeTexturePlatformData(UTexture* Texture,
 	if (TexturePlatformData.PixelFormat == PF_B8G8R8A8 || TexturePlatformData.PixelFormat == PF_FloatRGBA || TexturePlatformData.PixelFormat == PF_G16) Size = Data.Num();
 	uint8* DecompressedData = static_cast<uint8*>(FMemory::Malloc(Size));
 
-	if (UseOctetStream) {
+	if (IsOctetStreamEnabled()) {
 		GetDecompressedTextureData(Data.GetData(), DecompressedData, SizeX, SizeY, SizeZ, Size, TexturePlatformData.PixelFormat);
 	} else {
 		DecompressedData = Data.GetData();
@@ -319,6 +327,7 @@ bool FTextureCreatorUtilities::DeserializeTexturePlatformData(UTexture* Texture,
 }
 
 void FTextureCreatorUtilities::GetDecompressedTextureData(uint8* Data, uint8*& OutData, const int SizeX, const int SizeY, const int SizeZ, const int TotalSize, const EPixelFormat Format) {
+#if PLATFORM_WINDOWS
 	/* NOTE: Not all formats are supported, feel free to add if needed. Formats may need other dependencies. */
 	switch (Format) {
 		case PF_BC7: {
@@ -420,4 +429,5 @@ void FTextureCreatorUtilities::GetDecompressedTextureData(uint8* Data, uint8*& O
 		}
 		break;
 	}
+#endif
 }

@@ -18,6 +18,8 @@ public:
 
 	bool UseOctetStream = true;
 
+	bool IsOctetStreamEnabled() const;
+
     template <class T = UObject>
 	bool CreateTexture(UTexture*& OutTexture, TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties);
 	bool CreateTextureCube(UTexture*& OutTextureCube, const TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const;

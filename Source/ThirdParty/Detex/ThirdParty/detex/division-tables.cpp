@@ -16,6 +16,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
+#ifndef __linux__
+
 #include "detex.h"
 
 // Integer division using look-up tables, used by BC1/2/3 and RGTC (BC4/5)
@@ -509,3 +511,5 @@ const uint8_t detex_division_by_5_table[1280] = {
 	252, 253, 253, 253, 253, 253, 254, 254,
 	254, 254, 254, 255, 255, 255, 255, 255,
 };
+
+#endif // __linux__

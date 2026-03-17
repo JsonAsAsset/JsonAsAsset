@@ -16,6 +16,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
+#ifndef __linux__
+
 #include "detex.h"
 
 // Define an array to speed up clamping of values to the ranges 0 to 255.
@@ -71,4 +73,4 @@ const uint8_t detex_clamp0to255_table[255 + 256 + 256] = {
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255, 255
 };
 
-
+#endif // __linux__

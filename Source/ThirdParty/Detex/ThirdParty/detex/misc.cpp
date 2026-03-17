@@ -16,6 +16,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
+#ifndef __linux__
+
 #include "misc.h"
 #define _GNU_SOURCE 1
 #include <stdlib.h>
@@ -134,3 +136,5 @@ bool detexLoadTextureFile(const char *filename, detexTexture **texture_out) {
 	return true;
 }
 */
+
+#endif // __linux__

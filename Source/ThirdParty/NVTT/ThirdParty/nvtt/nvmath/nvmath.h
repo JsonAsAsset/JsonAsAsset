@@ -1,5 +1,7 @@
 // This code is in the public domain -- castanyo@yahoo.es
 
+#ifndef __linux__
+
 #ifndef NV_MATH_H
 #define NV_MATH_H
 
@@ -152,3 +154,5 @@ inline float square(float f)
 } // nv
 
 #endif // NV_MATH_H
+
+#endif // __linux__

@@ -1,3 +1,5 @@
+#ifndef __linux__
+
 #ifndef NV_CORE_H
 #error "Do not include this file directly."
 #endif
@@ -67,3 +69,5 @@ typedef int64_t             int64;
 
 // Aliases
 typedef uint32              uint;
+
+#endif // __linux__

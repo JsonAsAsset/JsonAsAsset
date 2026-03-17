@@ -18,6 +18,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #pragma once
 
+#ifndef __linux__
+
 #ifndef __DETEX_H__
 #define __DETEX_H__
 
@@ -1171,3 +1173,5 @@ static DETEX_INLINE_ONLY uint32_t detexPixel32GetG16(uint32_t pixel) {
 __END_DECLS
 
 #endif
+
+#endif // __linux__

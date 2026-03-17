@@ -1,5 +1,7 @@
 // This code is in the public domain -- castanyo@yahoo.es
 
+#ifndef __linux__
+
 #ifndef NV_IMAGE_COLORBLOCK_H
 #define NV_IMAGE_COLORBLOCK_H
 
@@ -93,3 +95,5 @@ namespace nv
 } // nv namespace
 
 #endif // NV_IMAGE_COLORBLOCK_H
+
+#endif // __linux__

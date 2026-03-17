@@ -1,8 +1,12 @@
 #pragma once
 
+#ifndef __linux__
+
 #include "nvimage/Image.h"
 #include "nvimage/DirectDrawSurface.h"
 
 #undef __FUNC__						// conflicted with our guard macros
 
 NVTT_API void DecodeDDS(const unsigned char* Data, int SizeX, int SizeY, int SizeZ, nv::DDSHeader& Header, nv::Image& Image);
+
+#endif // __linux__

@@ -16,6 +16,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
+#ifndef __linux__
+
 #include "detex.h"
 
 static const int complement3bitshifted_table[8] = {
@@ -750,3 +752,4 @@ uint32_t *colors) {
 	SetModeETC2THP(bitstring, flags);
 }
 
+#endif // __linux__

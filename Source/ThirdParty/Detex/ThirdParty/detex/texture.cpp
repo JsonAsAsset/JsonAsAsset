@@ -16,6 +16,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
+#ifndef __linux__
+
 #include <string.h>
 
 #include "detex.h"
@@ -143,3 +145,5 @@ uint8_t * DETEX_RESTRICT pixel_buffer, uint32_t pixel_format) {
 	}
 	return result;
 }
+
+#endif // __linux__

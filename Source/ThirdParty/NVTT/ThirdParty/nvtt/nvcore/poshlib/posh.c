@@ -39,6 +39,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  @date    2002
  @brief   Portable Open Source Harness primary source file
 */
+
+#ifndef __linux__
+
 #include "posh.h"
 
 #if !defined FORCE_DOXYGEN
@@ -1004,3 +1007,5 @@ POSH_FloatFromBigBits( posh_u32_t bits )
 }
 
 #endif /* !defined POSH_NO_FLOAT */
+
+#endif // __linux__

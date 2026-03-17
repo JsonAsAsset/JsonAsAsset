@@ -1,3 +1,5 @@
+#ifndef __linux__
+
 #ifndef NV_STDSTREAM_H
 #define NV_STDSTREAM_H
 
@@ -367,3 +369,5 @@ private:
 
 
 #endif // NV_STDSTREAM_H
+
+#endif // __linux__

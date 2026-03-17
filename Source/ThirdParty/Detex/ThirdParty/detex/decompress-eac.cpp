@@ -16,6 +16,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
+#ifndef __linux__
+
 #include "detex.h"
 
 static const int8_t eac_modifier_table[16][8] = {
@@ -230,3 +232,4 @@ uint32_t mode_mask, uint32_t flags, uint8_t * DETEX_RESTRICT pixel_buffer) {
 	return DecodeBlockEACSigned11Bit(green_qword, 1, 1, pixel_buffer);
 }
 
+#endif // __linux__

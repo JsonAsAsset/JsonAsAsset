@@ -1,5 +1,7 @@
 // This code is in the public domain -- castanyo@yahoo.es
 
+#ifndef __linux__
+
 #ifndef NV_CORE_MEMORY_H
 #define NV_CORE_MEMORY_H
 
@@ -192,3 +194,5 @@ int main()
 }
 #endif // 0
 #endif
+
+#endif // __linux__

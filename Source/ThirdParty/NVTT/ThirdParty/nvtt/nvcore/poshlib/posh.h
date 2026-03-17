@@ -205,6 +205,8 @@ Metrowerks:
 
 */
 
+#ifndef __linux__
+
 /*
 ** ----------------------------------------------------------------------------
 ** Include <limits.h> optionally
@@ -1003,3 +1005,6 @@ extern posh_i64_t  POSH_ReadI64FromBig( const void *src );
 #ifdef __cplusplus
 }
 #endif
+
+
+#endif // __linux__

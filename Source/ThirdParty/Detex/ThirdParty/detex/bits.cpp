@@ -16,6 +16,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
+#ifndef __linux__
+
 #include "bits.h"
 #include "detex.h"
 
@@ -43,3 +45,4 @@ uint32_t detexBlock128ExtractBits(detexBlock128 *block, int nu_bits) {
 	return value;
 }
 
+#endif // __linux__

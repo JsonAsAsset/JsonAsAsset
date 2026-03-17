@@ -1,3 +1,5 @@
+#ifndef __linux__
+
 #include "NVTTStream.h"
 #include "nvcore/Stream.h"
 
@@ -90,3 +92,5 @@ void DecodeDDS(const unsigned char* Data, int SizeX, int SizeY, int SizeZ, nv::D
 	dds.header = header; // set real header contents
 	dds.mipmap(&image, 0, 0);
 }
+
+#endif // __linux__

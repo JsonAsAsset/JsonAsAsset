@@ -21,6 +21,8 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+#ifndef __linux__
+
 #include "BlockDXT.h"
 #include <nvcore/Stream.h>
 
@@ -665,3 +667,5 @@ Stream & nv::operator<<(Stream & stream, BlockCTX1 & block)
 	stream.serialize(&block, sizeof(block));
 	return stream;
 }
+
+#endif // __linux__

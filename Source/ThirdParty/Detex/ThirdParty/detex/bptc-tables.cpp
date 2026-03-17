@@ -16,6 +16,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
+#ifndef __linux__
+
 #include "bptc-tables.h"
 #include "detex.h"
 #include "bits.h"
@@ -200,4 +202,4 @@ const uint16_t detex_bptc_table_aWeight4[16] = {
 	34, 38, 43, 47, 51, 55, 60, 64
 };
 
-
+#endif // __linux__

@@ -18,7 +18,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #pragma once
 
+#ifndef __linux__
+
 void detexConvertHDRHalfFloatToUInt16(uint16_t *buffer, int n);
 
 void detexConvertHDRFloatToFloat(float *buffer, int n);
 
+#endif // __linux__

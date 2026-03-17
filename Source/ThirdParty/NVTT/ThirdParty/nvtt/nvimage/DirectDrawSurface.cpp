@@ -21,6 +21,8 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
+#ifndef __linux__
+
 #include <nvimage/DirectDrawSurface.h>
 #include <nvcore/Debug.h>
 #include <nvcore/Containers.h> // max
@@ -1234,3 +1236,5 @@ void DirectDrawSurface::printInfo() const
 		printf("\tNVIDIA Texture Tools %d.%d.%d\n", major, minor, revision);
 	}
 }
+
+#endif // __linux__

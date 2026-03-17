@@ -16,6 +16,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
+#ifndef __linux__
+
 #include <detex.h>
 #include <bits.h>
 #include <bptc-tables.h>
@@ -674,3 +676,4 @@ uint32_t *colors) {
 	bitstring[0] = byte0;
 }
 
+#endif // __linux__

@@ -1,3 +1,5 @@
+#ifndef __linux__
+
 #ifndef NV_CONFIG
 #define NV_CONFIG
 
@@ -25,3 +27,5 @@
 #define NV_NO_ASSERT	1
 
 #endif // NV_CONFIG
+
+#endif // __linux__

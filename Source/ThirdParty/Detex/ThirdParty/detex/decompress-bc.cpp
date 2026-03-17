@@ -16,6 +16,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
 
+#ifndef __linux__
+
 #include "detex.h"
 
 /* Decompress a 64-bit 4x4 pixel texture block compressed using the BC1 */
@@ -238,3 +240,5 @@ uint32_t flags, uint8_t * DETEX_RESTRICT pixel_buffer) {
 	}
 	return true;
 }
+
+#endif // __linux__

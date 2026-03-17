@@ -18,5 +18,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #pragma once
 
+#ifndef __linux__
+
 void detexSetErrorMessage(const char *format, ...);
 
+#endif // __linux__

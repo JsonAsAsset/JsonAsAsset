@@ -15,6 +15,8 @@ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 */
+#ifndef __linux__
+
 #include "file-info.h"
 
 #include <stdlib.h>
@@ -332,3 +334,5 @@ bool detexGetDX10Parameters(uint32_t texture_format, uint32_t *dx10_format) {
 	*dx10_format = info->dx10_format;
 	return true;
 }
+
+#endif // __linux__

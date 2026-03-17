@@ -20,6 +20,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #pragma once
 
+#ifndef __linux__
+
 #include <detex.h>
 
 typedef struct {
@@ -64,3 +66,4 @@ static DETEX_INLINE_ONLY uint64_t detexSetBits64(uint64_t data, int bit0, int bi
 	return d;
 }
 
+#endif // __linux__

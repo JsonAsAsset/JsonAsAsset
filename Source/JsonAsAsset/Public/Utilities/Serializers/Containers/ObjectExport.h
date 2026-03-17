@@ -569,7 +569,7 @@ public:
 	template<typename FuncType>
 	void ExportsLoop(const TArray<FUObjectJsonValueExport>& Exports, FuncType&& Func) {
 		for (const FUObjectJsonValueExport& Export : Exports) {
-			FUObjectExport& DirectExport = GetExportFromValueObjectPath(Export);
+			FUObjectExport DirectExport = GetExportFromValueObjectPath(Export);
 
 			/* Skip invalid or empty exports */
 			if (!DirectExport.IsJsonValid() || &DirectExport == &FUObjectExport::EmptyExport()) {

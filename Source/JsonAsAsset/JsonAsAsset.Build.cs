@@ -8,6 +8,8 @@ public class JsonAsAsset : ModuleRules {
 	public JsonAsAsset(ReadOnlyTargetRules Target) : base(Target)  {
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 		
+		var bIsLinux = Target.Platform == UnrealTargetPlatform.Linux;
+
 #if UE_5_0_OR_LATER
 	    /* Unreal Engine 5 and later */
 	    CppStandard = CppStandardVersion.Cpp20;
@@ -69,8 +71,8 @@ public class JsonAsAsset : ModuleRules {
 			"ToolWidgets"
 #endif
 		});
-
-		if (OperatingSystem.IsWindows()) {
+		
+		if (bIsLinux) {
 			PrivateDependencyModuleNames.AddRange(new[] {
 				"Detex",
 				"NVTT"

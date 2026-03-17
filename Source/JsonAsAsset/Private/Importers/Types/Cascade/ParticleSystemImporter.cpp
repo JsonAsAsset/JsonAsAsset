@@ -1,4 +1,4 @@
-﻿/* Copyright JAA Contributors 2024-2026 */
+﻿/* Copyright JsonAsAsset Contributors 2024-2026 */
 
 #include "Importers/Types/Cascade/ParticleSystemImporter.h"
 
@@ -18,22 +18,26 @@ UObject* IParticleSystemImporter::CreateAsset(UObject* CreatedAsset) {
 bool IParticleSystemImporter::Import() {
 	const auto ParticleSystem = Create<UParticleSystem>();
 
+	/* Create already existing distributions */
 	CreateDistributions();
 	
 	/* Ensure any default emitters are cleared */
-	EmptyParticleSystem();
+	WipeEmitters();
 
 	/* Emitters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	CreateEmitters(GetAssetData()->GetArrayField(TEXT("Emitters")));
 
-	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(),
-	{
-		"RequiredModule",
-		"Modules",
-		"TypeDataModule",
-		"SpawnModule",
-		"Emitters"
-	}), ParticleSystem);
+	GetObjectSerializer()->DeserializeObjectProperties(
+		RemovePropertiesShared(
+			GetAssetData(),
+			{
+				"RequiredModule",
+				"Modules",
+				"TypeDataModule",
+				"SpawnModule",
+				"Emitters"
+			}
+	), ParticleSystem);
 
 	/* Handle edit changes, and add it to the content browser */
 	return OnAssetCreation(ParticleSystem);
@@ -42,24 +46,24 @@ bool IParticleSystemImporter::Import() {
 void IParticleSystemImporter::CreateDistributions() {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
 	
-	TArray<FUObjectExport> DistributionObjects = AssetContainer.GetExportsWithPropertyNameStartingWith("Type", "Distribution");
-
-	for (FUObjectExport JsonObjectValue : DistributionObjects) {
-		/* Find Class */
-		const UClass* Class = FindObject<UClass>(ANY_PACKAGE, *JsonObjectValue.GetType().ToString());
-
+	for (FUObjectExport Export : AssetContainer.GetExportsWithPropertyNameStartingWith("Type", "Distribution")) {
 		/* Create Distribution */
-		UObject* Distribution = NewObject<UDistribution>(GetAsset(), Class);
+		UObject* Distribution = NewObject<UDistribution>(GetAsset(), Export.GetClass());
+		if (!Distribution) break;
 
-		if (JsonObjectValue.JsonObject->HasField(TEXT("Properties"))) {
-			GetObjectSerializer()->DeserializeObjectProperties(JsonObjectValue.GetProperties(), Distribution);
+		if (Export.Has("Properties")) {
+			GetObjectSerializer()->DeserializeObjectProperties(Export.GetProperties(), Distribution);
 		}
 
-		GetPropertySerializer()->ExportsContainer.Exports.Add(FUObjectExport(FName(JsonObjectValue.GetName()), FName("Distribution"), FName(JsonObjectValue.GetOuter()), JsonObjectValue.JsonObject, Distribution, ParticleSystem, -1));
+		Export.SetPosition(-1);
+		Export.SetParent(ParticleSystem);
+		Export.SetObject(Distribution);
+
+		GetPropertySerializer()->ExportsContainer.Exports.Add(Export);
 	}
 }
 
-void IParticleSystemImporter::EmptyParticleSystem() const {
+void IParticleSystemImporter::WipeEmitters() const {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
 	
 	if (ParticleSystem->Emitters.Num() > 0) {

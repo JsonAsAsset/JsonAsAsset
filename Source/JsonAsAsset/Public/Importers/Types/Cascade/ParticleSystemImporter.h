@@ -12,7 +12,7 @@ public:
 
 private:
 	void CreateDistributions();
-	void EmptyParticleSystem() const;
+	void WipeEmitters() const;
 
 	void CreateEmitters(TArray<TSharedPtr<FJsonValue>> Emitters);
 	UParticleEmitter* CreateEmitter(const UClass* Class, FName Name, const TSharedPtr<FJsonObject>& EmitterProperties);

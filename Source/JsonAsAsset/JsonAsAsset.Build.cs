@@ -70,7 +70,7 @@ public class JsonAsAsset : ModuleRules {
 #endif
 		});
 
-		if (!OperatingSystem.IsLinux()) {
+		if (OperatingSystem.IsWindows()) {
 			PrivateDependencyModuleNames.AddRange(new[] {
 				"Detex",
 				"NVTT"

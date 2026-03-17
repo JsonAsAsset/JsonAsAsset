@@ -48,7 +48,7 @@ void IParticleSystemImporter::CreateDistributions() {
 	
 	for (FUObjectExport Export : AssetContainer.GetExportsWithPropertyNameStartingWith("Type", "Distribution")) {
 		/* Create Distribution */
-		UObject* Distribution = NewObject<UDistribution>(GetAsset(), Export.GetClass());
+		UObject* Distribution = NewObject<UDistribution>(GetAsset(), Export.GetClass(), Export.GetName());
 		if (!Distribution) break;
 
 		if (Export.Has("Properties")) {
@@ -136,7 +136,7 @@ UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, co
 	return Emitter;
 }
 
-UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport& Export, UParticleEmitter* Emitter) {
+void IParticleSystemImporter::CreateLODLevel(const FUObjectExport& Export, UParticleEmitter* Emitter) {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
 
 	const FUObjectJsonValueExport JsonValue = Export.GetPropertiesAsValue();
@@ -167,7 +167,7 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 		const FUObjectExport ModulePath = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("RequiredModule"));
 
 		/* Create the module */
-		UParticleModuleRequired* RequiredModule = NewObject<UParticleModuleRequired>(ParticleSystem, UParticleModuleRequired::StaticClass(), ModulePath.GetName(), RF_Transient);
+		UParticleModuleRequired* RequiredModule = NewObject<UParticleModuleRequired>(ParticleSystem, UParticleModuleRequired::StaticClass(), ModulePath.GetName(), RF_Transactional);
 		LODLevel->RequiredModule = RequiredModule;
 		RequiredModule->ModuleEditorColor = FColor::MakeRandomColor();
 		
@@ -179,7 +179,7 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 		const FUObjectExport ModulePath = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("SpawnModule"));
 
 		/* Create the module */
-		UParticleModuleSpawn* SpawnModule = NewObject<UParticleModuleSpawn>(ParticleSystem, UParticleModuleSpawn::StaticClass(), ModulePath.GetName(), RF_Transient);
+		UParticleModuleSpawn* SpawnModule = NewObject<UParticleModuleSpawn>(ParticleSystem, UParticleModuleSpawn::StaticClass(), ModulePath.GetName(), RF_Transactional);
 		LODLevel->SpawnModule = SpawnModule;
 		SpawnModule->BurstList.Empty();
 		
@@ -190,7 +190,7 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 	if (JsonValue.Has("TypeDataModule")) {
 		FUObjectExport ModulePath = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("TypeDataModule"));
 
-		UParticleModuleTypeDataBase* TypeDataModule = NewObject<UParticleModuleTypeDataBase>(ParticleSystem, ModulePath.GetClass(), ModulePath.GetName(), RF_Transient);
+		UParticleModuleTypeDataBase* TypeDataModule = NewObject<UParticleModuleTypeDataBase>(ParticleSystem, ModulePath.GetClass(), ModulePath.GetName(), RF_Transactional);
 		check(TypeDataModule);
 		
 		LODLevel->TypeDataModule = TypeDataModule;
@@ -200,7 +200,7 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 	for (const FUObjectJsonValueExport& ModulePath : JsonValue.GetArray("Modules")) {
 		FUObjectExport ModuleExport = AssetContainer.GetExportByObjectPath(ModulePath);
 		
-		UParticleModule* Module = NewObject<UParticleModule>(ParticleSystem, ModuleExport.GetClass(), ModuleExport.GetName(), RF_Transient);
+		UParticleModule* Module = NewObject<UParticleModule>(ParticleSystem, ModuleExport.GetClass(), ModuleExport.GetName(), RF_Transactional);
 		check(Module);
 		
 		Module->ModuleEditorColor = FColor::MakeRandomColor();
@@ -215,8 +215,6 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 	}
 
 	Emitter->PostEditChange();
-
-	return nullptr;
 }
 
 void IParticleSystemImporter::DeserializeModule(const TSharedPtr<FJsonObject>& ModuleProperties, UParticleModule* Module) const {

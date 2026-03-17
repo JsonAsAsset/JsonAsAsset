@@ -12,13 +12,13 @@ public:
 
 private:
 	void CreateDistributions();
-	void WipeEmitters() const;
+	void EmptyParticleSystem() const;
 
-	void CreateEmitters(const TArray<FUObjectJsonValueExport>& Exports);
-	UParticleEmitter* CreateEmitter(const UClass* Class, const FName Name, const FUObjectExport& Export);
+	void CreateEmitters(TArray<TSharedPtr<FJsonValue>> Emitters);
+	UParticleEmitter* CreateEmitter(const UClass* Class, FName Name, const TSharedPtr<FJsonObject>& EmitterProperties);
 
-	UParticleLODLevel* CreateLODLevel(const FUObjectExport& Export, UParticleEmitter* Emitter);
-	void DeserializeModule(const TSharedPtr<FJsonObject>& ModuleProperties, UParticleModule* Module) const;
+	UParticleLODLevel* CreateLODLevel(const TSharedPtr<FJsonObject>& LevelProperties, UParticleEmitter* Emitter);
+	void SetModuleData(const TSharedPtr<FJsonObject>& ModuleProperties, UParticleModule* Module) const;
 };
 
 REGISTER_IMPORTER(IParticleSystemImporter, {

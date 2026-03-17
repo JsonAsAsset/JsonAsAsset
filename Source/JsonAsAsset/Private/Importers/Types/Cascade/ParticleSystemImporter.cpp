@@ -1,17 +1,15 @@
-﻿/* Copyright JsonAsAsset Contributors 2024-2026 */
+﻿/* Copyright JAA Contributors 2024-2026 */
 
 #include "Importers/Types/Cascade/ParticleSystemImporter.h"
-
-#include "Settings/Runtime.h"
 
 /* Particle System Includes */
 #include "Particles/ParticleEmitter.h"
 #include "Particles/ParticleLODLevel.h"
 #include "Particles/ParticleModuleRequired.h"
 #include "Particles/ParticleSystem.h"
-
 #include "Particles/Spawn/ParticleModuleSpawn.h"
 #include "Particles/TypeData/ParticleModuleTypeDataBase.h"
+#include "Settings/Runtime.h"
 
 UObject* IParticleSystemImporter::CreateAsset(UObject* CreatedAsset) {
 	return IImporter::CreateAsset(NewObject<UParticleSystem>(GetPackage(), UParticleSystem::StaticClass(), *GetAssetName(), RF_Public | RF_Standalone));
@@ -20,14 +18,13 @@ UObject* IParticleSystemImporter::CreateAsset(UObject* CreatedAsset) {
 bool IParticleSystemImporter::Import() {
 	const auto ParticleSystem = Create<UParticleSystem>();
 
-	/* Create already existing distributions */
 	CreateDistributions();
 	
 	/* Ensure any default emitters are cleared */
-	WipeEmitters();
+	EmptyParticleSystem();
 
 	/* Emitters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	CreateEmitters(GetAssetDataAsValue().GetArray("Emitters"));
+	CreateEmitters(GetAssetData()->GetArrayField(TEXT("Emitters")));
 
 	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(),
 	{
@@ -45,28 +42,28 @@ bool IParticleSystemImporter::Import() {
 void IParticleSystemImporter::CreateDistributions() {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
 	
-	for (FUObjectExport Export : AssetContainer.GetExportsWithPropertyNameStartingWith("Type", "Distribution")) {
-		/* Create Distribution */
-		UObject* Distribution = NewObject<UDistribution>(GetAsset(), Export.GetClass());
-		if (!Distribution) break;
+	TArray<FUObjectExport> DistributionObjects = AssetContainer.GetExportsWithPropertyNameStartingWith("Type", "Distribution");
 
-		if (Export.Has("Properties")) {
-			GetObjectSerializer()->DeserializeObjectProperties(Export.GetProperties(), Distribution);
+	for (FUObjectExport JsonObjectValue : DistributionObjects) {
+		/* Find Class */
+		const UClass* Class = FindObject<UClass>(ANY_PACKAGE, *JsonObjectValue.GetType().ToString());
+
+		/* Create Distribution */
+		UObject* Distribution = NewObject<UDistribution>(GetAsset(), Class);
+
+		if (JsonObjectValue.JsonObject->HasField(TEXT("Properties"))) {
+			GetObjectSerializer()->DeserializeObjectProperties(JsonObjectValue.GetProperties(), Distribution);
 		}
 
-		Export.SetPosition(-1);
-		Export.SetParent(ParticleSystem);
-		Export.SetObject(Distribution);
-
-		GetPropertySerializer()->ExportsContainer.Exports.Add(Export);
+		GetPropertySerializer()->ExportsContainer.Exports.Add(FUObjectExport(FName(JsonObjectValue.GetName()), FName("Distribution"), FName(JsonObjectValue.GetOuter()), JsonObjectValue.JsonObject, Distribution, ParticleSystem, -1));
 	}
 }
 
-void IParticleSystemImporter::WipeEmitters() const {
+void IParticleSystemImporter::EmptyParticleSystem() const {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
 	
 	if (ParticleSystem->Emitters.Num() > 0) {
-		/* Destroy any existing emitters */
+		/* Destroy any existing emitters (optional, based on context) */
 		for (UParticleEmitter* Emitter : ParticleSystem->Emitters) {
 			if (Emitter) {
 				Emitter->ConditionalBeginDestroy();
@@ -78,17 +75,27 @@ void IParticleSystemImporter::WipeEmitters() const {
 	}
 }
 
-void IParticleSystemImporter::CreateEmitters(const TArray<FUObjectJsonValueExport>& Exports) {
+void IParticleSystemImporter::CreateEmitters(TArray<TSharedPtr<FJsonValue>> Emitters) {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
-
-	AssetContainer.ExportsLoop(Exports, [this, ParticleSystem](FUObjectExport& DirectExport) {
+	
+	for (const TSharedPtr<FJsonValue>& EmitterReferenceValue : Emitters) {
 		ParticleSystem->PreEditChange(nullptr);
+		
+		/* Properties & Information */
+		auto EmitterReference = EmitterReferenceValue->AsObject();
+		const auto Emitter_Object = AssetContainer.GetExportJsonObjectByObjectPath(EmitterReferenceValue->AsObject());
 
-		CreateEmitter(DirectExport.GetClass(), DirectExport.GetName(), DirectExport);
-	});
+		auto Name = Emitter_Object->GetStringField(TEXT("Name"));
+		auto EmitterProperties = Emitter_Object->GetObjectField(TEXT("Properties"));
+		auto EmitterType = Emitter_Object->GetStringField(TEXT("Type"));
+
+		const UClass* Class = FindObject<UClass>(ANY_PACKAGE, *EmitterType);
+
+		CreateEmitter(Class, FName(*Name), EmitterProperties);
+	}
 }
 
-UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, const FName Name, const FUObjectExport& Export) {
+UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, const FName Name, const TSharedPtr<FJsonObject>& EmitterProperties) {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
 	
 	UParticleEmitter* Emitter = NewObject<UParticleEmitter>(ParticleSystem, Class, Name, RF_Transactional);
@@ -96,106 +103,152 @@ UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, co
 	/* Add to particle system */
 	ParticleSystem->Emitters.Add(Emitter);
 
-	/* Create LODLevels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	AssetContainer.ExportsLoop(
-		Export.GetPropertiesAsValue().GetArray("LODLevels"),
-		
-		[this, Emitter](const FUObjectExport& DirectExport) {
-			CreateLODLevel(DirectExport, Emitter);
-		}
-	);
+	/* Setup LODLevels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	for (const TSharedPtr<FJsonValue>& EmitterLODReferenceLevel : EmitterProperties->GetArrayField(TEXT("LODLevels"))) {
+		/* Properties & Information */
+		auto EmitterLODReference = EmitterLODReferenceLevel->AsObject();
+		const auto EmitterLODLevelObject = AssetContainer.GetExportJsonObjectByObjectPath(EmitterLODReference);
+
+		/* Create and handle LODLevel */
+		CreateLODLevel(EmitterLODLevelObject->GetObjectField(TEXT("Properties")), Emitter);
+	}
 	
 	Emitter->EmitterEditorColor = FColor::MakeRandomColor();
 	Emitter->EmitterEditorColor.A = 255;
 
 	Emitter->UpdateModuleLists();
 	Emitter->PostEditChange();
+	Emitter->SetFlags(RF_Transactional);
 
 	ParticleSystem->PostEditChange();
 	ParticleSystem->SetupSoloing();
 
-	GetObjectSerializer()->DeserializeObjectProperties(
-		RemovePropertiesShared(Export.GetProperties(),
+	Emitter->UpdateModuleLists();
+	Emitter->PostEditChange();
+	Emitter->SetFlags(RF_Transactional);
 
-		{
-			"RequiredModule",
-			"Modules",
-			"TypeDataModule",
-			"SpawnModule",
-			"Emitters",
-			"LODLevels"
-		}
-	), Emitter);
+	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(EmitterProperties,
+	{
+		"RequiredModule",
+		"Modules",
+		"TypeDataModule",
+		"SpawnModule",
+		"Emitters",
+		"LODLevels"
+	}), Emitter);
 	
 	return Emitter;
 }
 
-UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport& Export, UParticleEmitter* Emitter) {
+UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const TSharedPtr<FJsonObject>& LevelProperties, UParticleEmitter* Emitter) {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
-
-	const FUObjectJsonValueExport JsonValue = Export.GetPropertiesAsValue();
 	
+	/* LOD Level by default is zero */
+	int Level = 0;
+
+	if (LevelProperties->HasField(TEXT("Level"))) {
+		Level = LevelProperties->GetIntegerField(TEXT("Level"));
+	}
+
 	/* Find the LOD Level if it already exists */
-	UParticleLODLevel* LODLevel = Emitter->GetLODLevel(JsonValue.GetInteger("Level", 0));
+	UParticleLODLevel* LODLevel = Emitter->GetLODLevel(Level);
 
 	/* Create a LOD Level if it doesn't exist */
 	if (LODLevel == nullptr) {
-		LODLevel = NewObject<UParticleLODLevel>(Emitter, UParticleLODLevel::StaticClass(), Export.GetName());
+		LODLevel = NewObject<UParticleLODLevel>(Emitter);
+
 		check(LODLevel);
 
+		LODLevel->Level = Level;
+		if (LevelProperties->HasField(TEXT("bEnabled")))
+		{
+			LODLevel->bEnabled = LevelProperties->GetBoolField(TEXT("bEnabled"));
+		}
+		else
+		{
+			LODLevel->bEnabled = true;
+		}
+		
 		LODLevel->ConvertedModules = true;
+		LODLevel->PeakActiveParticles = 0;
+
+		/* Create the RequiredModule */
+		UParticleModuleRequired* RequiredModule = NewObject<UParticleModuleRequired>(ParticleSystem);
+		check(RequiredModule);
+		LODLevel->RequiredModule = RequiredModule;
+		
+		RequiredModule->ModuleEditorColor = FColor::MakeRandomColor();
+
+		UParticleModuleSpawn* SpawnModule = NewObject<UParticleModuleSpawn>(ParticleSystem);
+		check(SpawnModule);
+		
+		LODLevel->SpawnModule = SpawnModule;
+		SpawnModule->BurstList.Empty();
+		
+		LODLevel->TypeDataModule = nullptr;
 		Emitter->LODLevels.Add(LODLevel);
 	}
 
-	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(JsonValue.JsonObject, {
+	LODLevel->Modules.Empty();
+
+	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(LevelProperties, {
 		"RequiredModule",
 		"Modules",
 		"TypeDataModule",
 		"SpawnModule"
 	}), LODLevel);
 
-	/* Required Module */
-	if (JsonValue.Has("RequiredModule")) {
-		const FUObjectExport ModulePath = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("RequiredModule"));
+	/* RequiredModule */
+	if (LevelProperties->HasField(TEXT("RequiredModule"))) {
+		auto& RequiredModule = LevelProperties->GetObjectField(TEXT("RequiredModule"));
+		const auto RequiredModuleObject = AssetContainer.GetExportJsonObjectByObjectPath(RequiredModule);
+		const auto LOD_RequiredModule = LODLevel->RequiredModule;
 
-		/* Create the module */
-		UParticleModuleRequired* RequiredModule = NewObject<UParticleModuleRequired>(ParticleSystem, UParticleModuleRequired::StaticClass(), ModulePath.GetName(), RF_Transient);
-		LODLevel->RequiredModule = RequiredModule;
-		RequiredModule->ModuleEditorColor = FColor::MakeRandomColor();
-		
-		DeserializeModule(ModulePath.GetProperties(), LODLevel->RequiredModule);
+		SetModuleData(RequiredModuleObject->GetObjectField(TEXT("Properties")), LOD_RequiredModule);
 	}
 
-	/* Spawn Module */
-	if (JsonValue.Has("SpawnModule")) {
-		const FUObjectExport ModulePath = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("SpawnModule"));
+	/* SpawnModule */
+	if (LevelProperties->HasField(TEXT("SpawnModule"))) {
+		auto& SpawnModule = LevelProperties->GetObjectField(TEXT("SpawnModule"));
+		const auto SpawnModuleObject = AssetContainer.GetExportJsonObjectByObjectPath(SpawnModule);
 
-		/* Create the module */
-		UParticleModuleSpawn* SpawnModule = NewObject<UParticleModuleSpawn>(ParticleSystem, UParticleModuleSpawn::StaticClass(), ModulePath.GetName(), RF_Transient);
-		LODLevel->SpawnModule = SpawnModule;
-		SpawnModule->BurstList.Empty();
-		
-		DeserializeModule(ModulePath.GetProperties(), LODLevel->SpawnModule);
+		SetModuleData(SpawnModuleObject->GetObjectField(TEXT("Properties")), LODLevel->SpawnModule);
 	}
 
-	/* Type Data Module */
-	if (JsonValue.Has("TypeDataModule")) {
-		FUObjectExport ModulePath = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("TypeDataModule"));
+	/* TypeDataModule */
+	if (LevelProperties->HasField(TEXT("TypeDataModule"))) {
+		const TSharedPtr<FJsonObject> TypeDataModulePath = LevelProperties->GetObjectField(TEXT("TypeDataModule"));
+		const TSharedPtr<FJsonObject> TypeDataModuleObject = AssetContainer.GetExportJsonObjectByObjectPath(TypeDataModulePath);
 
-		UParticleModuleTypeDataBase* TypeDataModule = NewObject<UParticleModuleTypeDataBase>(ParticleSystem, ModulePath.GetClass(), ModulePath.GetName(), RF_Transient);
+		const FString EmitterType = TypeDataModuleObject->GetStringField(TEXT("Type"));
+
+		/* Find Emitter Class */
+		const UClass* EmitterClass = FindObject<UClass>(ANY_PACKAGE, *EmitterType);
+
+		UParticleModuleTypeDataBase* TypeDataModule = NewObject<UParticleModuleTypeDataBase>(ParticleSystem, EmitterClass);
 		check(TypeDataModule);
-		
 		LODLevel->TypeDataModule = TypeDataModule;
-		DeserializeModule(ModulePath.GetProperties(), TypeDataModule);
+
+		SetModuleData(TypeDataModuleObject->GetObjectField(TEXT("Properties")), TypeDataModule);
 	}
 
-	for (const FUObjectJsonValueExport& ModulePath : JsonValue.GetArray("Modules")) {
-		FUObjectExport ModuleExport = AssetContainer.GetExportByObjectPath(ModulePath);
-		
-		UParticleModule* Module = NewObject<UParticleModule>(ParticleSystem, ModuleExport.GetClass(), ModuleExport.GetName(), RF_Transient);
+	auto Modules = LevelProperties->GetArrayField(TEXT("Modules"));
+
+	for (const TSharedPtr<FJsonValue>& ModulesReference : Modules) {
+		/* Properties & Information */
+		auto EmitterLODReference = ModulesReference->AsObject();
+		const auto EmitterLODLevelObject = AssetContainer.GetExportJsonObjectByObjectPath(EmitterLODReference);
+
+		auto EmitterType = EmitterLODLevelObject->GetStringField(TEXT("Type"));
+		auto EmitterName = EmitterLODLevelObject->GetStringField(TEXT("Name"));
+
+		/* Find Emitter Class */
+		const UClass* EmitterClass = FindObject<UClass>(ANY_PACKAGE, *EmitterType);
+
+		UParticleModule* Module = NewObject<UParticleModule>(ParticleSystem, EmitterClass, FName(*EmitterName));
 		check(Module);
-		
 		Module->ModuleEditorColor = FColor::MakeRandomColor();
+
 		Module->SetTransactionFlag();
 		
 		LODLevel->Modules.Add(Module);
@@ -203,26 +256,33 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 		ParticleSystem->PostEditChange();
 		ParticleSystem->MarkPackageDirty();
 
-		DeserializeModule(ModuleExport.GetProperties(), Module);
+		SetModuleData(EmitterLODLevelObject->GetObjectField(TEXT("Properties")), Module);
 	}
 
 	Emitter->PostEditChange();
+	Emitter->SetFlags(RF_Transactional);
 
+	/* Init epic detail mode to enabled if high is set */
+	if (!GJsonAsAssetRuntime.IsUE5()) {
+		if (Emitter->DetailModeBitmask & 1 << EParticleDetailMode::PDM_High) {
+			Emitter->DetailModeBitmask |= 1 << EParticleDetailMode::PDM_Epic;
+		}
+	}
+	
 	return nullptr;
 }
 
-void IParticleSystemImporter::DeserializeModule(const TSharedPtr<FJsonObject>& ModuleProperties, UParticleModule* Module) const {
+void IParticleSystemImporter::SetModuleData(const TSharedPtr<FJsonObject>& ModuleProperties, UParticleModule* Module) const {
 	GetObjectSerializer()->Parent = Module;
 
-	GetObjectSerializer()->DeserializeObjectProperties(
-		RemovePropertiesShared(ModuleProperties, {
-			"RequiredModule",
-			"Modules",
-			"TypeDataModule",
-			"SpawnModule",
-			"Emitters"
-		}
-	), Module);
+	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(ModuleProperties,
+	{
+		"RequiredModule",
+		"Modules",
+		"TypeDataModule",
+		"SpawnModule",
+		"Emitters"
+	}), Module);
 
 	Module->PostLoad();
 }

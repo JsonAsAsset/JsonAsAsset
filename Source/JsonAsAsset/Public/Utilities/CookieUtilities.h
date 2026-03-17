@@ -305,20 +305,16 @@ inline UDistribution* DecookDistribution(UObject* Outer, FRawDistribution& RawDi
 	return DecookVectorDistribution(Context);
 }
 
-inline UDistribution* GetDistribution(FRawDistribution* RawDistribution, const FStructProperty* StructProperty) {
-	if (IsFloatDistribution(StructProperty)) {
-		return DistributionAsFloat(RawDistribution)->Distribution;
-	}
-
-	/* Vector: By default */
-	return DistributionAsVector(RawDistribution)->Distribution;
+inline UDistribution* GetDistribution(FRawDistribution* RawDistribution, const bool bIsFloat) {
+	return bIsFloat
+		? static_cast<UDistribution*>(DistributionAsFloat(RawDistribution)->Distribution.Get())
+		: static_cast<UDistribution*>(DistributionAsVector(RawDistribution)->Distribution.Get());
 }
 
-inline void SetDistribution(FRawDistribution* RawDistribution, UDistribution* Distribution, const FStructProperty* StructProperty) {
-	if (IsFloatDistribution(StructProperty)) {
+inline void SetDistribution(FRawDistribution* RawDistribution, UDistribution* Distribution, const bool bIsFloat) {
+	if (bIsFloat) {
 		DistributionAsFloat(RawDistribution)->Distribution = Cast<UDistributionFloat>(Distribution);
+	} else {
+		DistributionAsVector(RawDistribution)->Distribution = Cast<UDistributionVector>(Distribution);
 	}
-
-	/* Vector: By default */
-	DistributionAsVector(RawDistribution)->Distribution = Cast<UDistributionVector>(Distribution);
 }

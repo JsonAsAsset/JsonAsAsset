@@ -25,6 +25,7 @@
 #include "Modules/Log.h"
 #include "Modules/Metadata.h"
 #include "Modules/Cloud/Cloud.h"
+#include "VectorField/VectorFieldStatic.h"
 
 #if (ENGINE_MAJOR_VERSION != 4 || ENGINE_MINOR_VERSION < 27)
 #include "Engine/DeveloperSettings.h"
@@ -1129,12 +1130,22 @@ inline bool HandleAssetCreation(UObject* Asset, UPackage* Package) {
 	if (!Asset->MarkPackageDirty()) return false;
 	
 	Package->SetDirtyFlag(true);
+
+	if (UVectorFieldStatic* VectorFieldStatic = Cast<UVectorFieldStatic>(Asset)) {
+		VectorFieldStatic->InitResource();
+	}
+	
 	Asset->PostEditChange();
 	Asset->AddToRoot();
 	
 	Package->FullyLoad();
 
 	BrowseToAsset(Asset);
+
+	if (UVectorFieldStatic* VectorFieldStatic = Cast<UVectorFieldStatic>(Asset)) {
+		VectorFieldStatic->Resource = nullptr;
+	}
+	
 	Asset->PostLoad();
 	
 	return true;

@@ -15,9 +15,9 @@ private:
 	void WipeEmitters() const;
 
 	void CreateEmitters(const TArray<FUObjectJsonValueExport>& Exports);
-	UParticleEmitter* CreateEmitter(const UClass* Class, FName Name, const TSharedPtr<FJsonObject>& EmitterProperties);
+	UParticleEmitter* CreateEmitter(const UClass* Class, const FName Name, const FUObjectExport& Export);
 
-	UParticleLODLevel* CreateLODLevel(const TSharedPtr<FJsonObject>& LevelProperties, UParticleEmitter* Emitter);
+	UParticleLODLevel* CreateLODLevel(const FUObjectExport& Export, UParticleEmitter* Emitter);
 	void DeserializeModule(const TSharedPtr<FJsonObject>& ModuleProperties, UParticleModule* Module) const;
 };
 

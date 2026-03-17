@@ -475,8 +475,8 @@ public:
 		return FUObjectExport::EmptyExport();
 	}
 
-	FUObjectExport GetExportFromValueObjectPath(const FUObjectJsonValueExport& Object) {
-		return GetExportByObjectPath(Object.JsonObject);
+	FUObjectExport& GetExportByObjectPath(const FUObjectJsonValueExport& JsonExport) {
+		return GetExportByObjectPath(JsonExport.JsonObject);
 	}
 
 	FUObjectExport& Find(const int Position) {
@@ -569,9 +569,8 @@ public:
 	template<typename FuncType>
 	void ExportsLoop(const TArray<FUObjectJsonValueExport>& Exports, FuncType&& Func) {
 		for (const FUObjectJsonValueExport& Export : Exports) {
-			FUObjectExport DirectExport = GetExportFromValueObjectPath(Export);
+			FUObjectExport& DirectExport = GetExportByObjectPath(Export);
 
-			/* Skip invalid or empty exports */
 			if (!DirectExport.IsJsonValid() || &DirectExport == &FUObjectExport::EmptyExport()) {
 				continue;
 			}

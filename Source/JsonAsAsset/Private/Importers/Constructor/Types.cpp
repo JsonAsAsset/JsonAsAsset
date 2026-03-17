@@ -50,7 +50,6 @@ TMap<FString, TArray<FString>> ImportTypes::Templated = {
 		TEXT("Physics Assets"),
 		{
 			TEXT("PhysicalMaterial"),
-			TEXT("VectorFieldStatic"),
 		}
 	},
 {

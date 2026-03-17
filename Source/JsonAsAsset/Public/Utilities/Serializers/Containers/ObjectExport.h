@@ -197,7 +197,7 @@ struct FUObjectExport : FUObjectJsonValueExport {
 	}
 
 	FUObjectJsonValueExport GetPropertiesAsValue() const {
-		return FUObjectJsonValueExport(JsonObject->GetObjectField(TEXT("Properties")));
+		return FUObjectJsonValueExport(GetProperties());
 	}
 
 	FUObjectJsonValueExport AsValueExport() const {
@@ -475,7 +475,7 @@ public:
 		return FUObjectExport::EmptyExport();
 	}
 
-	FUObjectExport& GetExportByObjectPath(const FUObjectJsonValueExport& Object) {
+	FUObjectExport GetExportFromValueObjectPath(const FUObjectJsonValueExport& Object) {
 		return GetExportByObjectPath(Object.JsonObject);
 	}
 
@@ -569,8 +569,10 @@ public:
 	template<typename FuncType>
 	void ExportsLoop(const TArray<FUObjectJsonValueExport>& Exports, FuncType&& Func) {
 		for (const FUObjectJsonValueExport& Export : Exports) {
-			FUObjectExport DirectExport = GetExportByObjectPath(Export);
-			if (!DirectExport.IsJsonValid()) {
+			FUObjectExport& DirectExport = GetExportFromValueObjectPath(Export);
+
+			/* Skip invalid or empty exports */
+			if (!DirectExport.IsJsonValid() || &DirectExport == &FUObjectExport::EmptyExport()) {
 				continue;
 			}
 

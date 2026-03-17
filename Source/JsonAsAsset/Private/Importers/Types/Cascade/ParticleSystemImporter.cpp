@@ -96,7 +96,7 @@ UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, co
 	/* Add to particle system */
 	ParticleSystem->Emitters.Add(Emitter);
 
-	/* Setup LODLevels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+	/* Create LODLevels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	AssetContainer.ExportsLoop(
 		Export.GetPropertiesAsValue().GetArray("LODLevels"),
 		
@@ -110,24 +110,22 @@ UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, co
 
 	Emitter->UpdateModuleLists();
 	Emitter->PostEditChange();
-	Emitter->SetFlags(RF_Transactional);
 
 	ParticleSystem->PostEditChange();
 	ParticleSystem->SetupSoloing();
 
-	Emitter->UpdateModuleLists();
-	Emitter->PostEditChange();
-	Emitter->SetFlags(RF_Transactional);
+	GetObjectSerializer()->DeserializeObjectProperties(
+		RemovePropertiesShared(Export.GetProperties(),
 
-	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(Export.GetProperties(),
-	{
-		"RequiredModule",
-		"Modules",
-		"TypeDataModule",
-		"SpawnModule",
-		"Emitters",
-		"LODLevels"
-	}), Emitter);
+		{
+			"RequiredModule",
+			"Modules",
+			"TypeDataModule",
+			"SpawnModule",
+			"Emitters",
+			"LODLevels"
+		}
+	), Emitter);
 	
 	return Emitter;
 }
@@ -137,29 +135,17 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 
 	const FUObjectJsonValueExport JsonValue = Export.GetPropertiesAsValue();
 	
-	/* LOD Level by default is zero */
-	const int Level = JsonValue.GetInteger("Level", 0);
-
 	/* Find the LOD Level if it already exists */
-	UParticleLODLevel* LODLevel = Emitter->GetLODLevel(Level);
+	UParticleLODLevel* LODLevel = Emitter->GetLODLevel(JsonValue.GetInteger("Level", 0));
 
 	/* Create a LOD Level if it doesn't exist */
 	if (LODLevel == nullptr) {
-		LODLevel = NewObject<UParticleLODLevel>(Emitter);
-
+		LODLevel = NewObject<UParticleLODLevel>(Emitter, UParticleLODLevel::StaticClass(), Export.GetName());
 		check(LODLevel);
 
-		LODLevel->Level = Level;
-		LODLevel->bEnabled = JsonValue.GetBool("bEnabled", true);
-		
 		LODLevel->ConvertedModules = true;
-		LODLevel->PeakActiveParticles = 0;
-		
-		LODLevel->TypeDataModule = nullptr;
 		Emitter->LODLevels.Add(LODLevel);
 	}
-
-	LODLevel->Modules.Empty();
 
 	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(JsonValue.JsonObject, {
 		"RequiredModule",
@@ -170,46 +156,46 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 
 	/* Required Module */
 	if (JsonValue.Has("RequiredModule")) {
-		const FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("RequiredModule"));
+		const FUObjectExport ModulePath = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("RequiredModule"));
 
 		/* Create the module */
-		UParticleModuleRequired* RequiredModule = NewObject<UParticleModuleRequired>(ParticleSystem);
+		UParticleModuleRequired* RequiredModule = NewObject<UParticleModuleRequired>(ParticleSystem, UParticleModuleRequired::StaticClass(), ModulePath.GetName(), RF_Transient);
 		LODLevel->RequiredModule = RequiredModule;
 		RequiredModule->ModuleEditorColor = FColor::MakeRandomColor();
 		
-		DeserializeModule(DirectExport.GetProperties(), LODLevel->RequiredModule);
+		DeserializeModule(ModulePath.GetProperties(), LODLevel->RequiredModule);
 	}
 
 	/* Spawn Module */
 	if (JsonValue.Has("SpawnModule")) {
-		const FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("SpawnModule"));
+		const FUObjectExport ModulePath = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("SpawnModule"));
 
 		/* Create the module */
-		UParticleModuleSpawn* SpawnModule = NewObject<UParticleModuleSpawn>(ParticleSystem);
+		UParticleModuleSpawn* SpawnModule = NewObject<UParticleModuleSpawn>(ParticleSystem, UParticleModuleSpawn::StaticClass(), ModulePath.GetName(), RF_Transient);
 		LODLevel->SpawnModule = SpawnModule;
 		SpawnModule->BurstList.Empty();
 		
-		DeserializeModule(DirectExport.GetProperties(), LODLevel->SpawnModule);
+		DeserializeModule(ModulePath.GetProperties(), LODLevel->SpawnModule);
 	}
 
-	/* TypeDataModule */
+	/* Type Data Module */
 	if (JsonValue.Has("TypeDataModule")) {
-		FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("TypeDataModule"));
+		FUObjectExport ModulePath = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("TypeDataModule"));
 
-		UParticleModuleTypeDataBase* TypeDataModule = NewObject<UParticleModuleTypeDataBase>(ParticleSystem, DirectExport.GetClass());
+		UParticleModuleTypeDataBase* TypeDataModule = NewObject<UParticleModuleTypeDataBase>(ParticleSystem, ModulePath.GetClass(), ModulePath.GetName(), RF_Transient);
 		check(TypeDataModule);
 		
 		LODLevel->TypeDataModule = TypeDataModule;
-		DeserializeModule(DirectExport.GetProperties(), TypeDataModule);
+		DeserializeModule(ModulePath.GetProperties(), TypeDataModule);
 	}
 
-	for (const FUObjectJsonValueExport& ModulesReference : JsonValue.GetArray("Modules")) {
-		FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(ModulesReference);
-		UParticleModule* Module = NewObject<UParticleModule>(ParticleSystem, DirectExport.GetClass(), FName(DirectExport.GetName()));
+	for (const FUObjectJsonValueExport& ModulePath : JsonValue.GetArray("Modules")) {
+		FUObjectExport ModuleExport = AssetContainer.GetExportByObjectPath(ModulePath);
 		
+		UParticleModule* Module = NewObject<UParticleModule>(ParticleSystem, ModuleExport.GetClass(), ModuleExport.GetName(), RF_Transient);
 		check(Module);
+		
 		Module->ModuleEditorColor = FColor::MakeRandomColor();
-
 		Module->SetTransactionFlag();
 		
 		LODLevel->Modules.Add(Module);
@@ -217,11 +203,10 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 		ParticleSystem->PostEditChange();
 		ParticleSystem->MarkPackageDirty();
 
-		DeserializeModule(DirectExport.GetProperties(), Module);
+		DeserializeModule(ModuleExport.GetProperties(), Module);
 	}
 
 	Emitter->PostEditChange();
-	Emitter->SetFlags(RF_Transactional);
 
 	return nullptr;
 }

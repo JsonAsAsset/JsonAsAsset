@@ -74,6 +74,10 @@ TSharedPtr<FJsonObject> USerializerContainer::GetAssetData() const {
 	return AssetExport.GetProperties();
 }
 
+FUObjectJsonValueExport USerializerContainer::GetAssetDataAsValue() const {
+	return AssetExport.GetPropertiesAsValue();
+}
+
 TSharedPtr<FJsonObject>& USerializerContainer::GetAssetExport() {
 	return AssetExport.JsonObject;
 }

@@ -27,7 +27,7 @@ bool IParticleSystemImporter::Import() {
 	WipeEmitters();
 
 	/* Emitters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	CreateEmitters(AssetExport.GetPropertiesAsValue().GetArray("Emitters"));
+	CreateEmitters(GetAssetDataAsValue().GetArray("Emitters"));
 
 	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(GetAssetData(),
 	{
@@ -46,18 +46,15 @@ void IParticleSystemImporter::CreateDistributions() {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
 	
 	for (FUObjectExport Export : AssetContainer.GetExportsWithPropertyNameStartingWith("Type", "Distribution")) {
-		/* Find Class */
-		const UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Export.GetType().ToString());
-		if (!Class) break;
-
 		/* Create Distribution */
-		UObject* Distribution = NewObject<UDistribution>(GetAsset(), Class);
+		UObject* Distribution = NewObject<UDistribution>(GetAsset(), Export.GetClass());
 		if (!Distribution) break;
 
-		if (Export.AsValueExport().Has("Properties")) {
+		if (Export.Has("Properties")) {
 			GetObjectSerializer()->DeserializeObjectProperties(Export.GetProperties(), Distribution);
 		}
-		
+
+		Export.SetPosition(-1);
 		Export.SetParent(ParticleSystem);
 		Export.SetObject(Distribution);
 
@@ -81,18 +78,14 @@ void IParticleSystemImporter::WipeEmitters() const {
 	}
 }
 
-void IParticleSystemImporter::CreateEmitters(TArray<FUObjectJsonValueExport> Exports) {
+void IParticleSystemImporter::CreateEmitters(const TArray<FUObjectJsonValueExport>& Exports) {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
-	
-	for (FUObjectJsonValueExport& Export : Exports) {
-		ParticleSystem->PreEditChange(nullptr);
-		
-		/* Properties & Information */
-		FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(Export.JsonObject);
-		const UClass* Class = FindObject<UClass>(ANY_PACKAGE, *DirectExport.GetType().ToString());
 
-		CreateEmitter(Class, DirectExport.GetName(), DirectExport);
-	}
+	AssetContainer.ExportsLoop(Exports, [this, ParticleSystem](FUObjectExport& DirectExport) {
+		ParticleSystem->PreEditChange(nullptr);
+
+		CreateEmitter(DirectExport.GetClass(), DirectExport.GetName(), DirectExport);
+	});
 }
 
 UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, const FName Name, const FUObjectExport& Export) {
@@ -104,13 +97,13 @@ UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, co
 	ParticleSystem->Emitters.Add(Emitter);
 
 	/* Setup LODLevels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	for (const FUObjectJsonValueExport& LODExport : Export.AsValueExport().GetArray("LODLevels")) {
-		/* Properties & Information */
-		FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(LODExport.JsonObject);
-
-		/* Create and handle LODLevel */
-		CreateLODLevel(DirectExport, Emitter);
-	}
+	AssetContainer.ExportsLoop(
+		Export.GetPropertiesAsValue().GetArray("LODLevels"),
+		
+		[this, Emitter](const FUObjectExport& DirectExport) {
+			CreateLODLevel(DirectExport, Emitter);
+		}
+	);
 	
 	Emitter->EmitterEditorColor = FColor::MakeRandomColor();
 	Emitter->EmitterEditorColor.A = 255;
@@ -180,7 +173,7 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 		const FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("RequiredModule"));
 
 		/* Create the module */
-		UParticleModuleRequired* RequiredModule = NewObject<UParticleModuleRequired>(ParticleSystem, DirectExport.GetName());
+		UParticleModuleRequired* RequiredModule = NewObject<UParticleModuleRequired>(ParticleSystem);
 		LODLevel->RequiredModule = RequiredModule;
 		RequiredModule->ModuleEditorColor = FColor::MakeRandomColor();
 		
@@ -192,7 +185,7 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 		const FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("SpawnModule"));
 
 		/* Create the module */
-		UParticleModuleSpawn* SpawnModule = NewObject<UParticleModuleSpawn>(ParticleSystem, DirectExport.GetName());
+		UParticleModuleSpawn* SpawnModule = NewObject<UParticleModuleSpawn>(ParticleSystem);
 		LODLevel->SpawnModule = SpawnModule;
 		SpawnModule->BurstList.Empty();
 		
@@ -201,12 +194,9 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 
 	/* TypeDataModule */
 	if (JsonValue.Has("TypeDataModule")) {
-		const FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("TypeDataModule"));
+		FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(JsonValue.GetObject("TypeDataModule"));
 
-		/* Find Emitter Class */
-		const UClass* EmitterClass = FindObject<UClass>(ANY_PACKAGE, *DirectExport.GetType().ToString());
-
-		UParticleModuleTypeDataBase* TypeDataModule = NewObject<UParticleModuleTypeDataBase>(ParticleSystem, EmitterClass, DirectExport.GetName());
+		UParticleModuleTypeDataBase* TypeDataModule = NewObject<UParticleModuleTypeDataBase>(ParticleSystem, DirectExport.GetClass());
 		check(TypeDataModule);
 		
 		LODLevel->TypeDataModule = TypeDataModule;
@@ -214,12 +204,9 @@ UParticleLODLevel* IParticleSystemImporter::CreateLODLevel(const FUObjectExport&
 	}
 
 	for (const FUObjectJsonValueExport& ModulesReference : JsonValue.GetArray("Modules")) {
-		const FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(ModulesReference);
-
-		/* Find Emitter Class */
-		const UClass* EmitterClass = FindObject<UClass>(ANY_PACKAGE, *DirectExport.GetType().ToString());
-
-		UParticleModule* Module = NewObject<UParticleModule>(ParticleSystem, EmitterClass, FName(DirectExport.GetName()));
+		FUObjectExport DirectExport = AssetContainer.GetExportByObjectPath(ModulesReference);
+		UParticleModule* Module = NewObject<UParticleModule>(ParticleSystem, DirectExport.GetClass(), FName(DirectExport.GetName()));
+		
 		check(Module);
 		Module->ModuleEditorColor = FColor::MakeRandomColor();
 

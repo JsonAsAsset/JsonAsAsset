@@ -12,14 +12,19 @@ struct FUObjectJsonValueExport {
 		Value = MakeShared<FJsonValueObject>(JsonObject);
 	}
 	
-	FUObjectJsonValueExport(const TSharedPtr<FJsonValue>& Value): Value(Value) {
+	FUObjectJsonValueExport(const TSharedPtr<FJsonValue>& Value) : Value(Value) {
 		if (Value.IsValid() && Value->Type == EJson::Object) {
 			JsonObject = Value->AsObject();
 		}
 	}
 
-	FUObjectJsonValueExport(const TSharedPtr<FJsonObject>& JsonObject): JsonObject(JsonObject) {
-		Value = MakeShared<FJsonValueObject>(JsonObject);
+	FUObjectJsonValueExport(const TSharedPtr<FJsonObject>& InJsonObject) {
+		JsonObject = InJsonObject;
+
+		/* Only create Value if needed */
+		if (JsonObject.IsValid()) {
+			Value = MakeShared<FJsonValueObject>(JsonObject);
+		}
 	}
 	
 	TSharedPtr<FJsonValue> Value;
@@ -137,12 +142,9 @@ struct FUObjectJsonValueExport {
 };
 
 /* A structure to hold data for a UObject export. */
-struct FUObjectExport {
-	FUObjectExport(): Object(nullptr), Parent(nullptr), Position(-1) { };
-
-	/* The json object of the expression, ^this is not Properties^ */
-	TSharedPtr<FJsonObject> JsonObject;
-
+struct FUObjectExport : FUObjectJsonValueExport {
+	FUObjectExport(): Object(nullptr), Parent(nullptr), Package(nullptr), Position(-1) { };
+	
 	TSharedPtr<void> ExtraData;
 	FName ExtraDataType;
 
@@ -167,18 +169,29 @@ struct FUObjectExport {
 		Object = NewObject;
 	}
 
-	explicit FUObjectExport(const TSharedPtr<FJsonObject>& JsonObject)
-		: JsonObject(JsonObject), Object(nullptr), Parent(nullptr), Position(-1) { }
+	void SetPosition(const int NewPosition) {
+		Position = NewPosition;
+	}
+
+	explicit FUObjectExport(const TSharedPtr<FJsonObject>& InJsonObject)
+		: FUObjectJsonValueExport(InJsonObject), Object(nullptr), Parent(nullptr), Position(-1) { }
 	
-	FUObjectExport(const TSharedPtr<FJsonObject>& JsonObject, UObject* Object, UObject* Parent, const int Position = -1)
-		: JsonObject(JsonObject), Object(Object), Parent(Parent), Position(Position) { }
+	FUObjectExport(const TSharedPtr<FJsonObject>& InJsonObject, UObject* Object, UObject* Parent, const int Position = -1)
+		: FUObjectJsonValueExport(InJsonObject), Object(Object), Parent(Parent), Position(Position) { }
 
-	FUObjectExport(const FName OuterOverride, const TSharedPtr<FJsonObject>& JsonObject, UObject* Object, UObject* Parent, const int Position = -1)
-		: JsonObject(JsonObject), OuterOverride(OuterOverride), Object(Object), Parent(Parent), Position(Position) { }
+	FUObjectExport(const FName OuterOverride, const TSharedPtr<FJsonObject>& InJsonObject, UObject* Object, UObject* Parent, const int Position = -1)
+		: FUObjectJsonValueExport(InJsonObject), OuterOverride(OuterOverride), Object(Object), Parent(Parent), Position(Position) { }
 
-	FUObjectExport(const FName NameOverride, const FName TypeOverride, const FName OuterOverride, const TSharedPtr<FJsonObject>& JsonObject, UObject* Object, UObject* Parent, int Position = -1)
-		: JsonObject(JsonObject), NameOverride(NameOverride), TypeOverride(TypeOverride), OuterOverride(OuterOverride), Object(Object), Parent(Parent), Position(Position) { }
-
+	FUObjectExport(const FName NameOverride, const FName TypeOverride, const FName OuterOverride,
+		const TSharedPtr<FJsonObject>& InJsonObject, UObject* Object, UObject* Parent, const int Position = -1)
+		: FUObjectJsonValueExport(InJsonObject),
+		  Object(Object),
+		  Parent(Parent),
+		  Position(Position),
+		  NameOverride(NameOverride),
+		  TypeOverride(TypeOverride),
+		  OuterOverride(OuterOverride) { }
+	
 	const TSharedPtr<FJsonObject>& GetProperties() const {
 		return JsonObject->GetObjectField(TEXT("Properties"));
 	}
@@ -550,6 +563,19 @@ public:
 		}
 
 		return false;
+	}
+
+	/* Iterate exports, then execute lambda */
+	template<typename FuncType>
+	void ExportsLoop(const TArray<FUObjectJsonValueExport>& Exports, FuncType&& Func) {
+		for (const FUObjectJsonValueExport& Export : Exports) {
+			FUObjectExport DirectExport = GetExportByObjectPath(Export);
+			if (!DirectExport.IsJsonValid()) {
+				continue;
+			}
+
+			Func(DirectExport);
+		}
 	}
 
 	void Empty() {

@@ -14,7 +14,7 @@ private:
 	void CreateDistributions();
 	void WipeEmitters() const;
 
-	void CreateEmitters(TArray<FUObjectJsonValueExport> Exports);
+	void CreateEmitters(const TArray<FUObjectJsonValueExport>& Exports);
 	UParticleEmitter* CreateEmitter(const UClass* Class, FName Name, const FUObjectExport& Export);
 
 	UParticleLODLevel* CreateLODLevel(const FUObjectExport& Export, UParticleEmitter* Emitter);

@@ -16,6 +16,10 @@ bool FJRuntime::IsUE5() const {
 	return MajorVersion == 5;
 }
 
+bool FJRuntime::IsUE4() const {
+	return MajorVersion == 4;
+}
+
 void FJRuntime::Update() {
 	FString AppDataPath = FPlatformMisc::GetEnvironmentVariable(TEXT("APPDATA"));
 	AppDataPath = FPaths::Combine(AppDataPath, TEXT("FModel/AppSettings.json"));

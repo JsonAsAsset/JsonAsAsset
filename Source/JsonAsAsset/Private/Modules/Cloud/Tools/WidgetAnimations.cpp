@@ -27,7 +27,7 @@ void TWidgetAnimations::Process(UObject* Object) {
 	if (!Export.IsJsonValid()) return;
 	if (!Export.JsonObject.Get()->HasField(TEXT("Properties"))) return;
 
-	auto Animations = Export.GetPropertiesNew().GetArray("Animations");
+	auto Animations = Export.GetPropertiesAsValue().GetArray("Animations");
 
 	GetObjectSerializer()->WhitelistedTypes.Add("MovieScene");
 	GetObjectSerializer()->WhitelistedTypes.Add("WidgetAnimation");

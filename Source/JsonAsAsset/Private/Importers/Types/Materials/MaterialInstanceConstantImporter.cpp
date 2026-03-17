@@ -40,7 +40,7 @@ bool IMaterialInstanceConstantImporter::Import() {
 	FUObjectExport EditorOnlyData = AssetContainer.FindByType(FString("MaterialInstanceEditorOnlyData"));
 
 	if (EditorOnlyData.IsValid()) {
-		if (EditorOnlyData.GetPropertiesNew().Has("StaticParameters")) {
+		if (EditorOnlyData.GetPropertiesAsValue().Has("StaticParameters")) {
 			ReadStaticParameters(EditorOnlyData.GetProperties()->GetObjectField(TEXT("StaticParameters")), StaticSwitchParametersObjects, StaticComponentMaskParametersObjects);
 		}
 	}

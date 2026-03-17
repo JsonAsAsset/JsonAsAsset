@@ -91,6 +91,26 @@ inline bool IsConstantDistribution(FDistributionDecookContext& Context) {
 	return Min == Max;
 }
 
+inline FRawDistributionFloat* DistributionAsFloat(FRawDistribution* RawDistribution) {
+	return reinterpret_cast<FRawDistributionFloat*>(RawDistribution);
+}
+
+inline FRawDistributionVector* DistributionAsVector(FRawDistribution* RawDistribution) {
+	return reinterpret_cast<FRawDistributionVector*>(RawDistribution);
+}
+
+inline bool IsFloatDistribution(const FStructProperty* StructProperty) {
+	return StructProperty->Struct == FRawDistributionFloat::StaticStruct();
+}
+
+inline bool IsVectorDistribution(const FStructProperty* StructProperty) {
+	return StructProperty->Struct == FRawDistributionVector::StaticStruct();
+}
+
+inline bool IsStructPropertyADistribution(const FStructProperty* StructProperty) {
+	return IsFloatDistribution(StructProperty) || IsVectorDistribution(StructProperty);
+}
+
 /************** */
 inline UDistributionFloat* DecookFloatDistribution(FDistributionDecookContext& Context) {
 	const FDistributionLookupTable& LookupTable = Context.LookupTable;
@@ -283,4 +303,22 @@ inline UDistribution* DecookDistribution(UObject* Outer, FRawDistribution& RawDi
 
 	/* Vector: By default */
 	return DecookVectorDistribution(Context);
+}
+
+inline UDistribution* GetDistribution(FRawDistribution* RawDistribution, const FStructProperty* StructProperty) {
+	if (IsFloatDistribution(StructProperty)) {
+		return DistributionAsFloat(RawDistribution)->Distribution;
+	}
+
+	/* Vector: By default */
+	return DistributionAsVector(RawDistribution)->Distribution;
+}
+
+inline void SetDistribution(FRawDistribution* RawDistribution, UDistribution* Distribution, const FStructProperty* StructProperty) {
+	if (IsFloatDistribution(StructProperty)) {
+		DistributionAsFloat(RawDistribution)->Distribution = Cast<UDistributionFloat>(Distribution);
+	}
+
+	/* Vector: By default */
+	DistributionAsVector(RawDistribution)->Distribution = Cast<UDistributionVector>(Distribution);
 }

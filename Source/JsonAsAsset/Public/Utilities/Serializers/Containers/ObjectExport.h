@@ -37,6 +37,14 @@ struct FUObjectJsonValueExport {
 	int32 GetInteger(const FString& FieldName) const {
 		return JsonObject->GetIntegerField(FieldName);
 	}
+
+	int32 GetInteger(const FString& FieldName, const int Default) const {
+		if (Has(FieldName)) {
+			return JsonObject->GetIntegerField(FieldName);
+		}
+		
+		return Default;
+	}
 	
 	void SetInteger(const FString& FieldName, const int32& NewValue) const {
 		JsonObject->SetNumberField(FieldName, NewValue);
@@ -44,6 +52,14 @@ struct FUObjectJsonValueExport {
 
 	bool GetBool(const FString& FieldName) const {
 		return JsonObject->GetBoolField(FieldName);
+	}
+
+	bool GetBool(const FString& FieldName, const bool Default) const {
+		if (Has(FieldName)) {
+			return JsonObject->GetBoolField(FieldName);
+		}
+		
+		return Default;
 	}
 
 	void SetBool(const FString& FieldName, const bool& NewValue) const {
@@ -143,6 +159,14 @@ struct FUObjectExport {
 	UPackage* Package;
 	int Position;
 
+	void SetParent(UObject* NewParent) {
+		Parent = NewParent;
+	}
+
+	void SetObject(UObject* NewObject) {
+		Object = NewObject;
+	}
+
 	explicit FUObjectExport(const TSharedPtr<FJsonObject>& JsonObject)
 		: JsonObject(JsonObject), Object(nullptr), Parent(nullptr), Position(-1) { }
 	
@@ -159,8 +183,12 @@ struct FUObjectExport {
 		return JsonObject->GetObjectField(TEXT("Properties"));
 	}
 
-	FUObjectJsonValueExport GetPropertiesNew() const {
+	FUObjectJsonValueExport GetPropertiesAsValue() const {
 		return FUObjectJsonValueExport(JsonObject->GetObjectField(TEXT("Properties")));
+	}
+
+	FUObjectJsonValueExport AsValueExport() const {
+		return FUObjectJsonValueExport(JsonObject);
 	}
 
 	FUObjectJsonValueExport GetJsonObject() const {
@@ -432,6 +460,10 @@ public:
 		}
 
 		return FUObjectExport::EmptyExport();
+	}
+
+	FUObjectExport& GetExportByObjectPath(const FUObjectJsonValueExport& Object) {
+		return GetExportByObjectPath(Object.JsonObject);
 	}
 
 	FUObjectExport& Find(const int Position) {

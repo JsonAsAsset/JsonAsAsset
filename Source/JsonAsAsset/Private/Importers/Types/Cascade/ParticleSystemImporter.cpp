@@ -46,7 +46,7 @@ bool IParticleSystemImporter::Import() {
 void IParticleSystemImporter::CreateDistributions() {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
 	
-	for (FUObjectExport Export : AssetContainer.GetExportsWithPropertyNameStartingWith("Type", "Distribution")) {
+	for (FUObjectExport& Export : AssetContainer.GetExportsWithPropertyNameStartingWith("Type", "Distribution")) {
 		/* Create Distribution */
 		UObject* Distribution = NewObject<UDistribution>(GetAsset(), Export.GetClass(), Export.GetName());
 		if (!Distribution) break;
@@ -211,7 +211,7 @@ void IParticleSystemImporter::CreateLODLevel(const FUObjectExport& Export, UPart
 		LODLevel->Modules.Add(Module);
 
 		ParticleSystem->PostEditChange();
-		ParticleSystem->MarkPackageDirty();
+		if (!ParticleSystem->MarkPackageDirty()) return;
 
 		DeserializeModule(ModuleExport.GetProperties(), Module);
 	}

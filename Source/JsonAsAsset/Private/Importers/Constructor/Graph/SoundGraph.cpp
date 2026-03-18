@@ -10,7 +10,7 @@
 #include "Utilities/EngineUtilities.h"
 
 void ISoundGraph::ConstructNodes(USoundCue* SoundCue, TMap<FString, USoundNode*>& OutNodes) {
-	for (FUObjectExport Export : AssetContainer) {
+	for (FUObjectExport& Export : AssetContainer) {
 		FString Name = Export.GetName().ToString();
 		FString Type = Export.GetType().ToString();
 
@@ -54,7 +54,7 @@ void ISoundGraph::SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*
 	}
 
 	/* Connections done here */
-	for (FUObjectExport Export : AssetContainer) {
+	for (FUObjectExport& Export : AssetContainer) {
 		FString Name = Export.GetName().ToString();
 		FString Type = Export.GetType().ToString();
 

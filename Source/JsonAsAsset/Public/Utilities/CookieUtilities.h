@@ -306,9 +306,15 @@ inline UDistribution* DecookDistribution(UObject* Outer, FRawDistribution& RawDi
 }
 
 inline UDistribution* GetDistribution(FRawDistribution* RawDistribution, const bool bIsFloat) {
+#if ENGINE_UE5
 	return bIsFloat
 		? static_cast<UDistribution*>(DistributionAsFloat(RawDistribution)->Distribution.Get())
 		: static_cast<UDistribution*>(DistributionAsVector(RawDistribution)->Distribution.Get());
+#else
+	return bIsFloat
+		? static_cast<UDistribution*>(DistributionAsFloat(RawDistribution)->Distribution)
+		: static_cast<UDistribution*>(DistributionAsVector(RawDistribution)->Distribution);
+#endif
 }
 
 inline void SetDistribution(FRawDistribution* RawDistribution, UDistribution* Distribution, const bool bIsFloat) {

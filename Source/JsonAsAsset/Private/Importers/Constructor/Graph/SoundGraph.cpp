@@ -34,7 +34,7 @@ USoundNode* ISoundGraph::CreateEmptyNode(FName Name, const FName Type, USoundCue
 	return SoundNode;
 }
 
-void ISoundGraph::SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*> SoundCueNodes) const {
+void ISoundGraph::SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*> SoundCueNodes) {
 	/* If Node is connected to Root Node */
 	if (AssetExport.GetProperties()->HasField(TEXT("FirstNode"))) {
 		auto FirstNodeProp = AssetExport.GetProperties()->TryGetField(TEXT("FirstNode"))->AsObject();

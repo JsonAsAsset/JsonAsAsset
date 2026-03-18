@@ -304,7 +304,11 @@ struct FUObjectExport : FUObjectJsonValueExport {
 	}
 
 	bool IsJsonValid() const {
-		return JsonObject != nullptr;
+		return JsonObject != nullptr && this != &EmptyExport();
+	}
+
+	bool IsJsonInvalid() const {
+		return !IsJsonValid();
 	}
 
 	static FUObjectExport& EmptyExport() {
@@ -468,6 +472,16 @@ public:
 
 		for (FUObjectExport& Export : Exports) {
 			if (Export.Position == Index) {
+				return Export;
+			}
+		}
+
+		return FUObjectExport::EmptyExport();
+	}
+
+	FUObjectExport& GetExportStartingWith(const FString& PropertyName, const FString& Name) {
+		for (FUObjectExport& Export : Exports) {
+			if (Export.GetString(PropertyName).StartsWith(Name)) {
 				return Export;
 			}
 		}

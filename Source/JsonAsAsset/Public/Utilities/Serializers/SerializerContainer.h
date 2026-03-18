@@ -25,6 +25,7 @@ public:
     
     virtual TSharedPtr<FJsonObject> GetAssetData() const;
     virtual FUObjectJsonValueExport GetAssetDataAsValue() const;
+    virtual FUObjectJsonValueExport GetAssetAsValue() const;
     virtual TSharedPtr<FJsonObject>& GetAssetExport();
 
     virtual UPackage* GetPackage() const;

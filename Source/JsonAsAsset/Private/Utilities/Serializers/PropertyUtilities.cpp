@@ -161,22 +161,25 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				Importer->SetParent(ObjectSerializer->Parent);
 				Importer->LoadExport(&JsonValueAsObject, Object);
 
-				if (Object != nullptr && !Object.Get()->IsA(UActorComponent::StaticClass())) {
-					ObjectProperty->SetObjectPropertyValue(OutValue, Object);
-				}
-
 				if (Object != nullptr) {
-					/* Get the export */
-					if (TSharedPtr<FJsonObject> Export = GetExport(JsonValueAsObject.Get(), ObjectSerializer->Exports)) {
-						if (Export->HasField(TEXT("Properties")) && ObjectSerializer->Parent != nullptr && Export->GetStringField(TEXT("Outer")) == ObjectSerializer->Parent->GetName()) {
-							TSharedPtr<FJsonObject> Properties = Export->GetObjectField(TEXT("Properties"));
+					if (!Object.Get()->IsA(UActorComponent::StaticClass())) {
+						ObjectProperty->SetObjectPropertyValue(OutValue, Object);
+					}
 
-							if (Export->HasField(TEXT("LODData"))) {
-								Properties->SetArrayField(TEXT("LODData"), Export->GetArrayField(TEXT("LODData")));
-							}
-							
-							ObjectSerializer->DeserializeObjectProperties(Properties, Object);
+					FUObjectExport TargetExport = ExportsContainer.GetExportByObjectPath(JsonValueAsObject);
+						
+					if (TargetExport.IsJsonValid()) {
+						FUObjectJsonValueExport Properties = TargetExport.GetObject(TEXT("Properties"));
+
+						if (TargetExport.Has(TEXT("LODData"))) {
+							Properties.SetArray(TEXT("LODData"), TargetExport.GetArray(TEXT("LODData")));
 						}
+							
+						ObjectSerializer->DeserializeObjectProperties(Properties.JsonObject, Object);
+					}
+
+					if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object)) {
+						StaticMeshComponent->PostEditImport();
 					}
 				}
 			}

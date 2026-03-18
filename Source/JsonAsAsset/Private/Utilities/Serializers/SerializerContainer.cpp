@@ -38,6 +38,8 @@ void USerializerContainer::Initialize(FUObjectExport& Export, FUObjectExportCont
 			AssetExport.NameOverride = FName(*NewName);
 		}
 	}
+
+	GetPropertySerializer()->ExportsContainer = AssetContainer;
 }
 
 UObjectSerializer* USerializerContainer::GetObjectSerializer() const {
@@ -76,6 +78,10 @@ TSharedPtr<FJsonObject> USerializerContainer::GetAssetData() const {
 
 FUObjectJsonValueExport USerializerContainer::GetAssetDataAsValue() const {
 	return AssetExport.GetPropertiesAsValue();
+}
+
+FUObjectJsonValueExport USerializerContainer::GetAssetAsValue() const {
+	return AssetExport.AsValueExport();
 }
 
 TSharedPtr<FJsonObject>& USerializerContainer::GetAssetExport() {

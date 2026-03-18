@@ -148,21 +148,9 @@ bool IAnimationBlueprintImporter::Import() {
 }
 
 UAnimBlueprint* IAnimationBlueprintImporter::CreateAnimBlueprint(UClass* ParentClass) {
-	EBlueprintType BlueprintType = BPTYPE_Normal;
+	const EBlueprintType BlueprintType = GetBlueprintType(ParentClass);
 
-	if (ParentClass->HasAnyClassFlags(CLASS_Const)) {
-		BlueprintType = BPTYPE_Const;
-	}
-	if (ParentClass == UBlueprintFunctionLibrary::StaticClass()) {
-		BlueprintType = BPTYPE_FunctionLibrary;
-	}
-	if (ParentClass == UInterface::StaticClass()) {
-		BlueprintType = BPTYPE_Interface;
-	}
-
-	UBlueprint* Blueprint = FKismetEditorUtilities::CreateBlueprint(ParentClass, GetPackage(), FName(*GetAssetName()), BlueprintType, UAnimBlueprint::StaticClass(), UAnimBlueprintGeneratedClass::StaticClass());
-
-	if (Blueprint != nullptr) {
+	if (UBlueprint* Blueprint = FKismetEditorUtilities::CreateBlueprint(ParentClass, GetPackage(), FName(*GetAssetName()), BlueprintType, UAnimBlueprint::StaticClass(), UAnimBlueprintGeneratedClass::StaticClass())) {
 		return Cast<UAnimBlueprint>(CreateAsset(Blueprint));
 	}
 

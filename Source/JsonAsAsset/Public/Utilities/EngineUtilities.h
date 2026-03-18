@@ -724,27 +724,6 @@ inline UObjectSerializer* CreateObjectSerializer() {
 	return ObjectSerializer;
 }
 
-inline TArray<TSharedPtr<FJsonValue>> GetExportsStartingWith(const FString& Start, const FString& Property, TArray<TSharedPtr<FJsonValue>> JsonObjects) {
-	TArray<TSharedPtr<FJsonValue>> FilteredObjects;
-
-	for (const TSharedPtr<FJsonValue>& JsonObjectValue : JsonObjects) {
-		if (JsonObjectValue->Type == EJson::Object) {
-			TSharedPtr<FJsonObject> JsonObject = JsonObjectValue->AsObject();
-
-			if (JsonObject.IsValid() && JsonObject->HasField(Property)) {
-				const FString StringValue = JsonObject->GetStringField(Property);
-
-				/* Check if the "Type" field starts with the specified string */
-				if (StringValue.StartsWith(Start)) {
-					FilteredObjects.Add(JsonObjectValue);
-				}
-			}
-		}
-	}
-
-	return FilteredObjects;
-}
-
 inline TSharedPtr<FJsonObject> GetExportStartingWith(const FString& Start, const FString& Property, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool ExportProperties = false) {
 	for (const TSharedPtr<FJsonValue>& JsonObjectValue : JsonObjects) {
 		if (JsonObjectValue->Type == EJson::Object) {
@@ -1038,6 +1017,14 @@ inline UClass* LoadClass(const TSharedPtr<FJsonObject>& SuperStruct) {
 	return LoadBlueprintClass(ObjectPath);
 }
 
+inline TSharedPtr<FJsonObject> GetSuperStructJsonObject(const TSharedPtr<FJsonObject>& JsonObject) {
+	if (JsonObject->HasField(TEXT("Next"))) {
+		return JsonObject->GetObjectField(TEXT("Next"));
+	}
+	
+	return JsonObject->GetObjectField(TEXT("SuperStruct"));
+}
+
 inline void RemoveNotification(TWeakPtr<SNotificationItem> Notification) {
 	const TSharedPtr<SNotificationItem> Item = Notification.Pin();
 
@@ -1117,9 +1104,8 @@ inline bool HandleAssetCreation(UObject* Asset, UPackage* Package) {
 		const FString PackageName = AssetOutermostPackage->GetName();
 
 		const FString Path = FPackageName::GetLongPackagePath(PackageName);
-		if (!Path.StartsWith(TEXT("/")) || Path.Len() < 2)
-		{
-			SpawnPrompt("User Failsafe", "To keep crashes from happening due to user setup issues, which would be assumed as the plugin's mishaps.\n\nHere's some reasons why this failsafe happened:\n\n- You didn't export it from FModel\n- Imported it from a random path, not in Exports/.../\n\nPlease reimport next time at the proper location.");
+		if (!Path.StartsWith(TEXT("/")) || Path.Len() < 2) {
+			SpawnPrompt("Failsafe", "Here's some reasons why:\n\n- You didn't export it from FModel\n- Imported it from a random path, not in Exports/.../\n\nPlease reimport next time at the proper location.");
 			
 			return false;
 		}
@@ -1280,4 +1266,20 @@ inline TArray<FUObjectExport> CollectObjectPackages(FUObjectExport Export, FUObj
 inline void MoveToTransientPackageAndRename(UObject* Object) {
 	Object->Rename(NULL, GetTransientPackage());
 	Object->SetFlags(RF_Transient);
+}
+
+inline EBlueprintType GetBlueprintType(const UClass* Class) {
+	EBlueprintType BlueprintType = BPTYPE_Normal;
+
+	if (Class->HasAnyClassFlags(CLASS_Const)) {
+		BlueprintType = BPTYPE_Const;
+	}
+	if (Class == UBlueprintFunctionLibrary::StaticClass()) {
+		BlueprintType = BPTYPE_FunctionLibrary;
+	}
+	if (Class == UInterface::StaticClass()) {
+		BlueprintType = BPTYPE_Interface;
+	}
+	
+	return BlueprintType;
 }

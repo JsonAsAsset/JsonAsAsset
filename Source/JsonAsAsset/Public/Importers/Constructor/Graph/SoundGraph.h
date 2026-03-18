@@ -16,7 +16,7 @@ protected:
 	static USoundNode* CreateEmptyNode(FName Name, FName Type, USoundCue* SoundCue);
 
 	void ConstructNodes(USoundCue* SoundCue, TMap<FString, USoundNode*>& OutNodes);
-	void SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*> SoundCueNodes) const;
+	void SetupNodes(USoundCue* SoundCueAsset, TMap<FString, USoundNode*> SoundCueNodes);
 
 	/* Sound Wave Import */
 	static void OnDownloadSoundWave(FString SavePath, FString AssetPtr, USoundNodeWavePlayer* Node);

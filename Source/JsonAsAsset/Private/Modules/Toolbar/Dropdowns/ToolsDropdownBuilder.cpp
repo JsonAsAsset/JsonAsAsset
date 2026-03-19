@@ -13,6 +13,7 @@
 
 #include "Modules/Toolbar/Tools/ClearImportData.h"
 #include "Modules/Toolbar/Tools/FixUpAssetData.h"
+#include "Utilities/DialogUtilities.h"
 
 void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	UJsonAsAssetSettings* Settings = GetSettings();

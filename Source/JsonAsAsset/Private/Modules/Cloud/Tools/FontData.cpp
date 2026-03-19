@@ -3,7 +3,9 @@
 #include "Modules/Cloud/Tools/FontData.h"
 
 #include "Engine/FontFace.h"
+#include "Modules/Cloud/Cloud.h"
 #include "Utilities/EngineUtilities.h"
+#include "Utilities/JsonUtilities.h"
 
 void TToolFontData::Execute() {
 	const FString TargetType = "FontFace";

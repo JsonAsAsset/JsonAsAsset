@@ -2,6 +2,7 @@
 
 #include "Modules/Toolbar/Dropdowns/CloudToolsDropdownBuilder.h"
 
+#include "Modules/Cloud/Cloud.h"
 #include "Utilities/EngineUtilities.h"
 
 #include "Modules/Cloud/Tools/AnimationData.h"

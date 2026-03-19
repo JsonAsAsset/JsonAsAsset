@@ -2,6 +2,7 @@
 
 #include "Importers/Types/Animation/PoseAssetImporter.h"
 #include "Animation/PoseAsset.h"
+#include "Utilities/JsonUtilities.h"
 
 UObject* IPoseAssetImporter::CreateAsset(UObject* CreatedAsset) {
 	return IImporter::CreateAsset(NewObject<UPoseAsset>(GetPackage(), UPoseAsset::StaticClass(), *GetAssetName(), RF_Standalone | RF_Public));
@@ -10,7 +11,7 @@ UObject* IPoseAssetImporter::CreateAsset(UObject* CreatedAsset) {
 bool IPoseAssetImporter::Import() {
 	PoseAsset = Create<UPoseAsset>();
 
-	/* Set Skeleton, so we can use it in the uncooking process */
+	/* Set Skeleton, so we can use it in the decooking process */
 	GetObjectSerializer()->DeserializeObjectProperties(KeepPropertiesShared(GetAssetData(),
 	{
 		"Skeleton",

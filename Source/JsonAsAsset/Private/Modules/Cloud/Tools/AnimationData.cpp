@@ -5,6 +5,7 @@
 
 #include "Dom/JsonObject.h"
 #include "Animation/AnimSequence.h"
+#include "Modules/Cloud/Cloud.h"
 
 void TToolAnimationData::Execute() {
 	TArray<FAssetData> AssetDataList = GetAssetsInSelectedFolder();

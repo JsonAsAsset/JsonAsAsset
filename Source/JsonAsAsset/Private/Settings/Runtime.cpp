@@ -4,6 +4,7 @@
 
 #include "Misc/FileHelper.h"
 #include "Utilities/EngineUtilities.h"
+#include "Utilities/JsonUtilities.h"
 
 /* Define Global Struct */
 FJRuntime GJsonAsAssetRuntime;

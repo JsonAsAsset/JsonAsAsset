@@ -8,16 +8,17 @@
 #include "UObject/TextProperty.h"
 
 /* Struct Serializers */
-#include "Constraint.h"
 #include "Distributions.h"
 #include "MovieSceneSection.h"
-#include "Distributions/DistributionFloat.h"
-#include "Distributions/DistributionVector.h"
 #include "Engine/FontFace.h"
-#include "Utilities/CookieUtilities.h"
+#include "Decooking/ParticleSystemDecooking.h"
 #include "Serializers/Structs/DateTimeSerializer.h"
 #include "Serializers/Structs/FallbackStructSerializer.h"
 #include "Serializers/Structs/TimeSpanSerializer.h"
+
+#if ENGINE_UE4
+#include "Settings/Runtime.h"
+#endif
 
 DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAssetPropertySerializer, Error, Log);
 PRAGMA_DISABLE_OPTIMIZATION

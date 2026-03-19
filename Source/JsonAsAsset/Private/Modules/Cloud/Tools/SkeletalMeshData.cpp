@@ -23,6 +23,8 @@
 
 #include "EditorFramework/AssetImportData.h"
 #include "Importers/Constructor/Importer.h"
+#include "Modules/Cloud/Cloud.h"
+#include "Utilities/JsonUtilities.h"
 
 #if ENGINE_UE5
 #include "Animation/AnimData/IAnimationDataController.h"

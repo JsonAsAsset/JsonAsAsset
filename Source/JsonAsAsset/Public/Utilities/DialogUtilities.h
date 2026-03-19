@@ -1,0 +1,85 @@
+﻿/* Copyright JsonAsAsset Contributors 2024-2026 */
+
+#pragma once
+
+#include "Windows/WindowsPlatformApplicationMisc.h"
+#include "Interfaces/IMainFrameModule.h"
+#include "Windows/WindowsHWrapper.h"
+#include "DesktopPlatformModule.h"
+#include "IDesktopPlatform.h"
+
+inline TArray<FString> OpenFileDialog(const FString& Title, const FString& Type) {
+	TArray<FString> ReturnValue;
+
+	/* Window Handler for Windows */
+	const void* ParentWindowHandle = nullptr;
+	const IMainFrameModule& MainFrameModule = IMainFrameModule::Get();
+	const TSharedPtr<SWindow> MainWindow = MainFrameModule.GetParentWindow();
+
+	if (MainWindow.IsValid() && MainWindow->GetNativeWindow().IsValid()) {
+		ParentWindowHandle = MainWindow->GetNativeWindow()->GetOSWindowHandle();
+	}
+
+	FString ClipboardContent;
+	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
+	FString DefaultPath = FString("");
+
+	if (!ClipboardContent.IsEmpty()) {
+		if (FPaths::FileExists(ClipboardContent)) {
+			DefaultPath = FPaths::GetPath(ClipboardContent);
+		}
+		else if (FPaths::DirectoryExists(ClipboardContent)) {
+			DefaultPath = ClipboardContent;
+		}
+	}
+
+	if (IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get()) {
+		constexpr uint32 SelectionFlag = 1;
+		
+		DesktopPlatform->OpenFileDialog(ParentWindowHandle, Title, DefaultPath, FString(""), Type, SelectionFlag, ReturnValue);
+	}
+
+	return ReturnValue;
+}
+
+inline FString OpenFolderDialog(const FString& Title, const FString& DefaultPath) {
+	FString OutFolder;
+	const void* ParentWindowHandle = nullptr;
+
+	const IMainFrameModule& MainFrameModule = IMainFrameModule::Get();
+	const TSharedPtr<SWindow> MainWindow = MainFrameModule.GetParentWindow();
+	if (MainWindow.IsValid() && MainWindow->GetNativeWindow().IsValid()) {
+		ParentWindowHandle = MainWindow->GetNativeWindow()->GetOSWindowHandle();
+	}
+
+	if (IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get()) {
+		DesktopPlatform->OpenDirectoryDialog(ParentWindowHandle, Title, DefaultPath, OutFolder);
+	}
+
+	return OutFolder;
+}
+
+inline TArray<FString> OpenFolderDialog(const FString& Title) {
+	TArray<FString> ReturnValue;
+
+	/* Window Handler for Windows */
+	const void* ParentWindowHandle = nullptr;
+
+	const IMainFrameModule& MainFrameModule = IMainFrameModule::Get();
+	const TSharedPtr<SWindow> MainWindow = MainFrameModule.GetParentWindow();
+
+	if (MainWindow.IsValid() && MainWindow->GetNativeWindow().IsValid()) {
+		ParentWindowHandle = MainWindow->GetNativeWindow()->GetOSWindowHandle();
+	}
+
+	if (IDesktopPlatform* DesktopPlatform = FDesktopPlatformModule::Get()) {
+		FString SelectedFolder;
+
+		/* Open Folder Dialog */
+		if (DesktopPlatform->OpenDirectoryDialog(ParentWindowHandle, Title, FString(""), SelectedFolder)) {
+			ReturnValue.Add(SelectedFolder);
+		}
+	}
+
+	return ReturnValue;
+}

@@ -10,6 +10,7 @@
 #include "Styling/SlateIconFinder.h"
 #include "Utilities/AssetUtilities.h"
 #include "Utilities/EngineUtilities.h"
+#include "Utilities/JsonUtilities.h"
 
 bool IImportReader::ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const FString& File, IImporter*& OutImporter, const bool HideNotifications) {
 	FUObjectExportContainer Container = Exports;

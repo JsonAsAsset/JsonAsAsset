@@ -2,8 +2,6 @@
 
 #include "Importers/Constructor/TypesHelper.h"
 
-#include "AssetToolsModule.h"
-#include "IAssetTools.h"
 #include "Importers/Constructor/Types.h"
 #include "Importers/Constructor/Registry/RegistrationInfo.h"
 #include "Engine/Compatibility.h"
@@ -29,21 +27,29 @@ bool CanImport(const FString& Type, const bool IsCloud, const UClass* Class) {
 		Class = FindClassByType(Type);
 	}
 
-	if (Class == nullptr) return false;
-
-	/* ?? */
-	if (Type == "MaterialInterface") return true;
+	if (Class == nullptr)
+	{
+		return false;
+	}
 
 	if (ImportTypes::Cloud::Extra.Contains(Type)) {
 		return true;
 	}
 
 	if (!ImportTypes::Allowed(Type)) return false;
-	if (Class->IsChildOf(UDataAsset::StaticClass())) return true;
+	
+	if (Class->IsChildOf(UDataAsset::StaticClass())) {
+		return true;
+	}
+	
+	if (Class->IsChildOf(UTexture::StaticClass()))
+	{
+		return false;
+	}
 
-	if (Class->IsChildOf(UTexture::StaticClass())) return false;
-
-	/*/* If the Class has an asset type action, it's importable #1#
+	/* Lots of issues happened */
+#if 0
+	/* If the Class has an asset type action, it's importable */
 	const FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
 	const IAssetTools& AssetTools = AssetToolsModule.Get();
 	
@@ -56,7 +62,8 @@ bool CanImport(const FString& Type, const bool IsCloud, const UClass* Class) {
 
 			if (SupportedClass == Class) return true;
 		}
-	}*/
+	}
+#endif
 
 	return false;
 }

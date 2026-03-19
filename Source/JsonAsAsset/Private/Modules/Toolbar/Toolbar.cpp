@@ -16,6 +16,7 @@
 #include "Modules/Toolbar/Dropdowns/ParentDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/ToolsDropdownBuilder.h"
 #include "Modules/Toolbar/Dropdowns/VersioningDropdownBuilder.h"
+#include "Utilities/DialogUtilities.h"
 
 #if PLATFORM_WINDOWS
 static TWeakPtr<SNotificationItem> WaitingForCloud;

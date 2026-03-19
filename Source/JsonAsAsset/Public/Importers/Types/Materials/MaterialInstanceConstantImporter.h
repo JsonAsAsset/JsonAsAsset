@@ -10,8 +10,8 @@ public:
 	virtual bool Import() override;
 	
 protected:
-	static void ReadStaticParameters(const TSharedPtr<FJsonObject>& StaticParameters, TArray<TSharedPtr<FJsonValue>>& StaticSwitchParameters, TArray<TSharedPtr<FJsonValue>>& StaticComponentMaskParameters);
-	static void ConvertParameterNamesToInfos(TArray<TSharedPtr<FJsonValue>>& Input);
+	static void ReadStaticParameters(const FUObjectJsonValueExport& StaticParameters, TArray<FUObjectJsonValueExport>& StaticSwitchParameters, TArray<FUObjectJsonValueExport>& StaticComponentMaskParameters);
+	static void ConvertParameterNamesToInfos(TArray<FUObjectJsonValueExport>& Input);
 };
 
 REGISTER_IMPORTER(IMaterialInstanceConstantImporter, {

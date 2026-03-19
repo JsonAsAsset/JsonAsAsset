@@ -12,6 +12,7 @@
 #include "Serializers/PropertySerializer.h"
 #include "UObject/Package.h"
 #include "Utilities/EngineUtilities.h"
+#include "Utilities/JsonUtilities.h"
 
 /* ReSharper disable once CppDeclaratorNeverUsed */
 DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAssetObjectSerializer, All, All);

@@ -15,7 +15,6 @@
 #include "EdGraphUtilities.h"
 #include "Animation/AnimNode_TransitionResult.h"
 #include "Serializers/ObjectSerializer.h"
-#include "Serializers/PropertySerializer.h"
 
 inline void AutoLayoutStateMachineGraph(UAnimationStateMachineGraph* StateMachineGraph)  {
     if (!StateMachineGraph) { 

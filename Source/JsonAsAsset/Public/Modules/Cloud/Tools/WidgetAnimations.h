@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Modules/Tools/SelectedAssetsBase.h"
+#include "Modules/Toolbar/Tools/SelectedAssetsBase.h"
 
 class JSONASASSET_API TWidgetAnimations : public TSelectedAssetsBase {
 public:

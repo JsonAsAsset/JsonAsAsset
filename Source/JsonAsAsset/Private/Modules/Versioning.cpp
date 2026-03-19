@@ -8,6 +8,7 @@
 #include "Modules/Metadata.h"
 #include "Modules/UI/StyleModule.h"
 #include "Utilities/EngineUtilities.h"
+#include "Utilities/JsonUtilities.h"
 
 FJsonAsAssetVersioning GJsonAsAssetVersioning;
 
@@ -23,6 +24,10 @@ void FJsonAsAssetVersioning::Reset(const int InVersion, const int InLatestVersio
 	HTMLUrl = InHTMLUrl;
 	
 	SetValid(true);
+}
+
+inline int32 ConvertVersionStringToInt(const FString& VersionStr) {
+	return FCString::Atoi(*VersionStr.Replace(TEXT("."), TEXT("")));
 }
 
 void FJsonAsAssetVersioning::Update() {

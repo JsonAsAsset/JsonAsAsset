@@ -106,6 +106,26 @@ inline bool IsStructPropertyADistribution(const FStructProperty* StructProperty)
 	return IsFloatDistribution(StructProperty) || IsVectorDistribution(StructProperty);
 }
 
+inline UDistribution* GetDistribution(FRawDistribution* RawDistribution, const bool bIsFloat) {
+#if ENGINE_UE5
+	return bIsFloat
+		? static_cast<UDistribution*>(DistributionAsFloat(RawDistribution)->Distribution.Get())
+		: static_cast<UDistribution*>(DistributionAsVector(RawDistribution)->Distribution.Get());
+#else
+	return bIsFloat
+		? static_cast<UDistribution*>(DistributionAsFloat(RawDistribution)->Distribution)
+		: static_cast<UDistribution*>(DistributionAsVector(RawDistribution)->Distribution);
+#endif
+}
+
+inline void SetDistribution(FRawDistribution* RawDistribution, UDistribution* Distribution, const bool bIsFloat) {
+	if (bIsFloat) {
+		DistributionAsFloat(RawDistribution)->Distribution = Cast<UDistributionFloat>(Distribution);
+	} else {
+		DistributionAsVector(RawDistribution)->Distribution = Cast<UDistributionVector>(Distribution);
+	}
+}
+
 /************** */
 inline UDistributionFloat* DecookFloatDistribution(FDistributionDecookContext& Context) {
 	const FDistributionLookupTable& LookupTable = Context.LookupTable;
@@ -298,24 +318,4 @@ inline UDistribution* DecookDistribution(UObject* Outer, FRawDistribution& RawDi
 
 	/* Vector: By default */
 	return DecookVectorDistribution(Context);
-}
-
-inline UDistribution* GetDistribution(FRawDistribution* RawDistribution, const bool bIsFloat) {
-#if ENGINE_UE5
-	return bIsFloat
-		? static_cast<UDistribution*>(DistributionAsFloat(RawDistribution)->Distribution.Get())
-		: static_cast<UDistribution*>(DistributionAsVector(RawDistribution)->Distribution.Get());
-#else
-	return bIsFloat
-		? static_cast<UDistribution*>(DistributionAsFloat(RawDistribution)->Distribution)
-		: static_cast<UDistribution*>(DistributionAsVector(RawDistribution)->Distribution);
-#endif
-}
-
-inline void SetDistribution(FRawDistribution* RawDistribution, UDistribution* Distribution, const bool bIsFloat) {
-	if (bIsFloat) {
-		DistributionAsFloat(RawDistribution)->Distribution = Cast<UDistributionFloat>(Distribution);
-	} else {
-		DistributionAsVector(RawDistribution)->Distribution = Cast<UDistributionVector>(Distribution);
-	}
 }

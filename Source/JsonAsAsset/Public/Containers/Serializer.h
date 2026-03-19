@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PropertyUtilities.h"
+
+#include "Serializers/PropertySerializer.h"
+#include "Serializers/ObjectSerializer.h"
 
 class JSONASASSET_API USerializerContainer {
 public:
@@ -18,6 +20,9 @@ public:
 public:
     FUObjectExport AssetExport;
     FUObjectExportContainer AssetContainer;
+
+    /* Helper Functions ~~~~~~~~~~~~~~~> */
+public:
 
     virtual FString GetAssetName() const;
     virtual FString GetAssetType() const;

@@ -3,8 +3,8 @@
 #pragma once
 
 #include "UObject/Object.h"
-#include "Containers/ObjectExport.h"
-#include "ObjectUtilities.generated.h"
+#include "Containers/Export.h"
+#include "ObjectSerializer.generated.h"
 
 class UPropertySerializer;
 

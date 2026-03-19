@@ -5,7 +5,7 @@
 #include "AnimGraphNode_Base.h"
 #include "AnimGraphNode_SaveCachedPose.h"
 #include "AnimGraphNode_BlendListByEnum.h"
-#include "Utilities/Serializers/PropertyUtilities.h"
+#include "Serializers/PropertySerializer.h"
 #include "Math/UnrealMathUtility.h"
 
 inline void AutoLayoutAnimGraphRecursive(

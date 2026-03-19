@@ -5,9 +5,9 @@
 /* Holds helper functions for JsonAsAsset. */
 #include "Framework/Notifications/NotificationManager.h"
 #include "Widgets/Notifications/SNotificationList.h"
-#include "Utilities/Serializers/PropertyUtilities.h"
+#include "Serializers/PropertySerializer.h"
 #include "Windows/WindowsPlatformApplicationMisc.h"
-#include "Utilities/Serializers/ObjectUtilities.h"
+#include "Serializers/ObjectSerializer.h"
 #include "Settings/JsonAsAssetSettings.h"
 #include "Interfaces/IMainFrameModule.h"
 #include "IContentBrowserSingleton.h"
@@ -183,22 +183,6 @@ inline TArray<FAssetData> GetAssetsInSelectedFolder() {
 	AssetRegistryModule.Get().GetAssetsByPath(FName(*CurrentFolder), AssetDataList, true);
 
 	return AssetDataList;
-}
-
-inline TArray<TSharedPtr<FJsonValue>> RequestExports(const FString& Path) {
-	TArray<TSharedPtr<FJsonValue>> Exports = {};
-
-	const TSharedPtr<FJsonObject> Response = Cloud::Export::GetRaw(Path);
-	if (Response == nullptr || Path.IsEmpty()) return Exports;
-
-	if (Response->HasField(TEXT("errored"))) {
-		UE_LOG(LogJsonAsAsset, Log, TEXT("Error from response \"%s\""), *Path);
-		return Exports;
-	}
-
-	Exports = Response->GetArrayField(TEXT("exports"));
-	
-	return Exports;
 }
 
 inline bool IsProcessRunning(const FString& ProcessName) {
@@ -1282,4 +1266,13 @@ inline EBlueprintType GetBlueprintType(const UClass* Class) {
 	}
 	
 	return BlueprintType;
+}
+
+inline FUObjectExport& GetClassDefaultObject(FUObjectExportContainer AssetContainer, FUObjectJsonValueExport JsonObject) {
+	FUObjectExport& Export = AssetContainer.GetExportByObjectPath(JsonObject.GetObject("ClassDefaultObject"));
+	if (!Export.IsJsonValid()) {
+		Export = AssetContainer.GetExportStartingWith("Name", "Default__");
+	}
+
+	return Export;
 }

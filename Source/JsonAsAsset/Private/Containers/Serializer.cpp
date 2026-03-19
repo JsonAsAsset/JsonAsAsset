@@ -1,6 +1,6 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2026 */
 
-#include "Utilities/Serializers/SerializerContainer.h"
+#include "Containers/Serializer.h"
 
 USerializerContainer::USerializerContainer() {
 	CreateSerializer();

@@ -15,11 +15,6 @@
 #include "Distributions/DistributionVectorUniform.h"
 #include "Distributions/DistributionVectorUniformCurve.h"
 
-/*
- * This file is used to de-cook data back into editor data.
- * Used for particle systems only at the moment.
-*/
-
 /* Like most things, all of a sudden, what seemed impossible, is now possible. Yeah, give me the best philosopher award. */
 
 struct FRawDistributionMemberAccessor : FRawDistribution {

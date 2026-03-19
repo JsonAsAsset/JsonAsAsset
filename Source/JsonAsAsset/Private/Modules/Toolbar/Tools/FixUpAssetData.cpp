@@ -1,6 +1,6 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2026 */
 
-#include "Modules/Tools/FixUpAssetData.h"
+#include "Modules/Toolbar/Tools/FixUpAssetData.h"
 
 #include "WidgetBlueprint.h"
 #include "Animation/WidgetAnimation.h"

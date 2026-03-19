@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Importers/Constructor/Importer.h"
-#include "Modules/Tools/ToolBase.h"
+#include "Modules/Toolbar/Tools/ToolBase.h"
 #include "Utilities/JsonUtilities.h"
 
 #if ENGINE_UE5

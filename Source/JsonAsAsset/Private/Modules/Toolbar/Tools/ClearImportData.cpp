@@ -1,6 +1,6 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2026 */
 
-#include "Modules/Tools/ClearImportData.h"
+#include "Modules/Toolbar/Tools/ClearImportData.h"
 #include "EditorFramework/AssetImportData.h"
 #include "Engine/FontFace.h"
 #include "Factories/FbxAnimSequenceImportData.h"

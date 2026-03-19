@@ -6,7 +6,7 @@
 #include "IAssetTools.h"
 #include "Importers/Constructor/Types.h"
 #include "Importers/Constructor/Registry/RegistrationInfo.h"
-#include "Utilities/Compatibility.h"
+#include "Engine/Compatibility.h"
 
 bool CanImport(const FString& Type, const bool IsCloud, const UClass* Class) {
 	if (IsCloud) {

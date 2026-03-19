@@ -4,11 +4,15 @@
 
 #include "Importers/Constructor/Importer.h"
 #include "Importers/Constructor/ImportReader.h"
+
+#if ENGINE_UE4
 #include "Modules/Toolbar/Dropdowns/CloudToolsDropdownBuilder.h"
+#endif
+
 #include "Utilities/EngineUtilities.h"
 
-#include "Modules/Tools/ClearImportData.h"
-#include "Modules/Tools/FixUpAssetData.h"
+#include "Modules/Toolbar/Tools/ClearImportData.h"
+#include "Modules/Toolbar/Tools/FixUpAssetData.h"
 
 void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	UJsonAsAssetSettings* Settings = GetSettings();

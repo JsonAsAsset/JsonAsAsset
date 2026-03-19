@@ -2,14 +2,14 @@
 
 #pragma once
 
-#include "ObjectUtilities.h"
-#include "Containers/ObjectExport.h"
+#include "ObjectSerializer.h"
+#include "Containers/Export.h"
 #include "Dom/JsonObject.h"
 #include "Structs/StructSerializer.h"
 #include "UObject/Object.h"
 #include "UObject/UnrealType.h"
-#include "Utilities/Compatibility.h"
-#include "PropertyUtilities.generated.h"
+#include "Engine/Compatibility.h"
+#include "PropertySerializer.generated.h"
 
 class IImporter;
 

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Modules/Toolbar/Toolbar.h"
-#include "Utilities/Compatibility.h"
+#include "Engine/Compatibility.h"
 
 #if ENGINE_UE4
 #include "Modules/ModuleInterface.h"

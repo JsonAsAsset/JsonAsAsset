@@ -1,10 +1,10 @@
 /* Copyright JsonAsAsset Contributors 2024-2026 */
 
-#include "Utilities/Serializers/PropertyUtilities.h"
+#include "Serializers/PropertySerializer.h"
 
 #include "GameplayTagContainer.h"
 #include "Importers/Constructor/Importer.h"
-#include "Utilities/Serializers/ObjectUtilities.h"
+#include "Serializers/ObjectSerializer.h"
 #include "UObject/TextProperty.h"
 
 /* Struct Serializers */
@@ -15,9 +15,9 @@
 #include "Distributions/DistributionVector.h"
 #include "Engine/FontFace.h"
 #include "Utilities/CookieUtilities.h"
-#include "Utilities/Serializers/Structs/DateTimeSerializer.h"
-#include "Utilities/Serializers/Structs/FallbackStructSerializer.h"
-#include "Utilities/Serializers/Structs/TimeSpanSerializer.h"
+#include "Serializers/Structs/DateTimeSerializer.h"
+#include "Serializers/Structs/FallbackStructSerializer.h"
+#include "Serializers/Structs/TimeSpanSerializer.h"
 
 DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAssetPropertySerializer, Error, Log);
 PRAGMA_DISABLE_OPTIMIZATION

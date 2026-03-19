@@ -4,7 +4,7 @@
 
 #include "Importer.h"
 #include "Dom/JsonValue.h"
-#include "Utilities/Serializers/Containers/ObjectExport.h"
+#include "Containers/Export.h"
 
 class JSONASASSET_API IImportReader {
 public:

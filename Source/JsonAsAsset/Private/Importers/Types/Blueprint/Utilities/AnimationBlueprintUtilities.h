@@ -6,7 +6,7 @@
 #include "AnimGraphNode_BlendListByEnum.h"
 #include "Dom/JsonObject.h"
 #include "Dom/JsonValue.h"
-#include "Utilities/Serializers/ObjectUtilities.h"
+#include "Serializers/ObjectSerializer.h"
 
 inline FStructProperty* GetNodeStructProperty(const UAnimGraphNode_Base* Node) {
 	if (!Node) return nullptr;

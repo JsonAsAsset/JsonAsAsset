@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include "Utilities/Compatibility.h"
+#include "Engine/Compatibility.h"
 #include "Dom/JsonObject.h"
 #include "CoreMinimal.h"
-#include "Utilities/Serializers/SerializerContainer.h"
+#include "Containers/Serializer.h"
 
 /* ReSharper disable once CppUnusedIncludeDirective */
 #include "Macros.h"

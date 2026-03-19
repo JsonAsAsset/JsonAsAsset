@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Modules/Tools/ToolBase.h"
+#include "Modules/Toolbar/Tools/ToolBase.h"
 
 class JSONASASSET_API TSelectedAssetsBase : public TToolBase {
 public:

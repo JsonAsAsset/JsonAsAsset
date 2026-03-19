@@ -12,7 +12,7 @@ struct FJTextureSettings
 {
 	GENERATED_BODY()
 public:
-	/* Re-downloads textures *that already exist*. Significantly worser for import time.
+	/* Re-downloads textures *that already exist*. Significantly worse for import time.
 	 * Do not use this unless you are intentionally reimporting textures that were updated since last updated. */
 	UPROPERTY(EditAnywhere, Config, AdvancedDisplay, Category = TextureSettings)
 	bool UpdateExisingTextures = false;

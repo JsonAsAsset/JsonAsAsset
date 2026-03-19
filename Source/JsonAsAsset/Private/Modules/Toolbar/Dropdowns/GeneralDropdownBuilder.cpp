@@ -2,7 +2,7 @@
 
 #include "Modules/Toolbar/Dropdowns/GeneralDropdownBuilder.h"
 
-#include "Utilities/Compatibility.h"
+#include "Engine/Compatibility.h"
 #include "Utilities/EngineUtilities.h"
 
 void IGeneralDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {

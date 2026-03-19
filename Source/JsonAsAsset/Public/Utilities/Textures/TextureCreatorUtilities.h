@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Utilities/Serializers/PropertyUtilities.h"
+#include "Serializers/PropertySerializer.h"
 #include "Dom/JsonObject.h"
 
 struct FTextureCreatorUtilities {

@@ -13,6 +13,7 @@
 #include "Settings/Runtime.h"
 #include "ThirdParty/NVTT/ThirdParty/NVTTStream.h"
 #include "Utilities/EngineUtilities.h"
+#include "Utilities/JsonUtilities.h"
 
 template bool FTextureCreatorUtilities::CreateTexture<UTexture2D>(UTexture*&, TArray<uint8>&, const TSharedPtr<FJsonObject>&);
 template bool FTextureCreatorUtilities::CreateTexture<UTextureLightProfile>(UTexture*&, TArray<uint8>&, const TSharedPtr<FJsonObject>&);
@@ -274,8 +275,7 @@ bool FTextureCreatorUtilities::DeserializeTexture2D(UTexture2D* InTexture2D, con
 bool FTextureCreatorUtilities::DeserializeTexture(UTexture* Texture, const TSharedPtr<FJsonObject>& Properties) const {
 	if (Texture == nullptr) return false;
 
-	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(Properties,
-	{
+	GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(Properties, {
 		"ImportedSize",
 		"LODBias"
 	}), Texture);

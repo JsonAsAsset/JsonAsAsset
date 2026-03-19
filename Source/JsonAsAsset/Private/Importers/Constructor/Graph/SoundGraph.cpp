@@ -108,7 +108,7 @@ void ISoundGraph::SetupNodes(const USoundCue* SoundCueAsset, TMap<FString, USoun
 
 		/* Import Sound Wave */
 		if (Cast<USoundNodeWavePlayer>(Node) != nullptr) {
-			auto WavePlayerNode = Cast<USoundNodeWavePlayer>(Node);
+			const auto WavePlayerNode = Cast<USoundNodeWavePlayer>(Node);
 
 			if (NodeProperties->HasField(TEXT("SoundWaveAssetPtr"))) {
 				FString AssetPtr = NodeProperties->TryGetField(TEXT("SoundWaveAssetPtr"))->AsObject()->GetStringField(TEXT("AssetPathName"));

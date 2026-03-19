@@ -172,7 +172,7 @@ void Cloud::Update(TFunction<void(bool)> OnResponse) {
 		return;
 	}
 
-	Get("/api/metadata", {}, {}, [MutableSettings, OnResponse](TSharedPtr<FJsonObject> MetadataResponse) {
+	Get("/api/metadata", {}, {}, [MutableSettings, OnResponse](const TSharedPtr<FJsonObject>& MetadataResponse) {
 		if (!MetadataResponse.IsValid()) {
 			OnResponse(false);
 			

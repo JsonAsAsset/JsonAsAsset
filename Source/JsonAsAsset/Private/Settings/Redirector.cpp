@@ -6,8 +6,7 @@
 #include "Settings/Runtime.h"
 #include "Utilities/EngineUtilities.h"
 
-/************************************
- **** Redirect History ************ */
+/********* Redirect History ************ */
 TMap<FString, TArray<FJRedirectorPoint>> FJRedirects::History;
 
 bool FJRedirector::IsEnabled() const {

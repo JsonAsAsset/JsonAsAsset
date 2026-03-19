@@ -7,6 +7,7 @@
 #include "Utilities/EngineUtilities.h"
 
 #include "PhysicsEngine/BodySetup.h"
+#include "Utilities/JsonUtilities.h"
 
 void TToolConvexCollision::Execute() {
 	TArray<FAssetData> AssetDataList = GetAssetsInSelectedFolder();

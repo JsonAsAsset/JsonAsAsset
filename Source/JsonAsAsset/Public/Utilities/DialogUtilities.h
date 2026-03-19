@@ -4,7 +4,6 @@
 
 #include "Windows/WindowsPlatformApplicationMisc.h"
 #include "Interfaces/IMainFrameModule.h"
-#include "Windows/WindowsHWrapper.h"
 #include "DesktopPlatformModule.h"
 #include "IDesktopPlatform.h"
 

@@ -520,7 +520,7 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 
 					/* Specifically use RootAnimNodeContainer, because cached poses won't move with state machines */
 					FUObjectExport SaveCachedPoseExport = RootAnimNodeContainer.Find(LinkID);
-					if (!SaveCachedPoseExport.IsValid()) continue;
+					if (!SaveCachedPoseExport.IsJsonAndObjectValid()) continue;
 
 					UAnimGraphNode_SaveCachedPose* SaveCachedPose = Cast<UAnimGraphNode_SaveCachedPose>(SaveCachedPoseExport.Object);
 					if (!SaveCachedPose) continue;

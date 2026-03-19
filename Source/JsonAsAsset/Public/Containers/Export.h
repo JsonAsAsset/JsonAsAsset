@@ -165,7 +165,7 @@ struct FUObjectExport : FUObjectJsonValueExport {
 		return Result;
 	}
 
-	bool IsValid() const {
+	bool IsJsonAndObjectValid() const {
 		return JsonObject != nullptr && Object != nullptr;
 	}
 
@@ -180,6 +180,10 @@ struct FUObjectExport : FUObjectJsonValueExport {
 	static FUObjectExport& EmptyExport() {
 		static FUObjectExport Empty;
 		return Empty;
+	}
+
+	explicit operator bool() const {
+		return IsJsonValid();
 	}
 
 protected:

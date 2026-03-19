@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Json.h"
+
 /* Conversion Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 #if ENGINE_UE5
 inline FVector3f ObjectToVector3F(const FJsonObject* Object) {

@@ -179,7 +179,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 						ObjectSerializer->DeserializeObjectProperties(Properties.JsonObject, Object);
 					}
 
-					if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object)) {
+					if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object.Get())) {
 						StaticMeshComponent->PostEditImport();
 					}
 				}

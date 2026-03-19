@@ -81,18 +81,6 @@ void IToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 
 				InnerMenuBuilder.EndSection();
 			}
-
-#if ENGINE_UE4
-		if (Settings->EnableCloudServer) {
-			TArray<TSharedRef<IParentDropdownBuilder>> Dropdowns = {
-				MakeShared<ICloudToolsDropdownBuilder>()
-			};
-
-			for (const TSharedRef<IParentDropdownBuilder>& Dropdown : Dropdowns) {
-				Dropdown->Build(InnerMenuBuilder);
-			}
-		}
-#endif
 		}),
 		false,
 		FSlateIcon(FAppStyle::GetAppStyleSetName(), "DeveloperTools.MenuIcon")

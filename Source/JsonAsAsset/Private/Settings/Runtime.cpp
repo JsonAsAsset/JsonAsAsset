@@ -30,4 +30,6 @@ void FJRuntime::Update() {
 			ExportDirectory.Path = JsonObject->GetStringField(TEXT("PropertiesDirectory")).Replace(TEXT("\\"), TEXT("/"));
 		}
 	}
+
+	GJsonAsAssetRuntime.bEnableToolbarToggling = GetPlugin(GJsonAsAssetInternalName.ToString()) != nullptr;
 }

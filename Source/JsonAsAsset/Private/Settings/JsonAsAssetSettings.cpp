@@ -6,6 +6,7 @@
 #include "Widgets/SBoxPanel.h"
 
 FName GJsonAsAssetSettingsCategoryName = FName("General");
+FName GJsonAsAssetInternalName = FName("AmbientAudio");
 
 UJsonAsAssetSettings::UJsonAsAssetSettings() {
 	CategoryName = GJsonAsAssetSettingsCategoryName;

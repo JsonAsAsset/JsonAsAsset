@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interfaces/IPluginManager.h"
 
 extern FName GJsonAsAssetName;
 

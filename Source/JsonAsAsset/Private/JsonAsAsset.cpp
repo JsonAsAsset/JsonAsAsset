@@ -16,7 +16,7 @@
 #include "Utilities/EngineUtilities.h"
 
 #include "Logging/LogVerbosity.h"
-#include "Logging/LogMacros.h"
+#include "Settings/Runtime.h"
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 #ifdef _MSC_VER
@@ -60,6 +60,8 @@ void FJsonAsAssetModule::StartupModule() {
 	if (!Settings->Versioning.Disable) {
 		GJsonAsAssetVersioning.Update();
 	}
+
+	GJsonAsAssetRuntime.Update();
 }
 
 void FJsonAsAssetModule::ShutdownModule() {

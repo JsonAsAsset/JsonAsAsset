@@ -19,6 +19,8 @@ struct FJRuntime {
 	FJCloudProfile Profile;
 	FDirectoryPath ExportDirectory;
 
+	bool bEnableToolbarToggling;
+
 	/* Helper Functions ~~~~~~~~~~~ */
 	bool IsOlderUE4Target() const;
 	bool IsUE5() const;

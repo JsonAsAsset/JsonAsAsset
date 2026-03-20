@@ -22,8 +22,7 @@ struct FJSettings
 	GENERATED_BODY()
 public:
 	/* Constructor to initialize default values */
-	FJSettings()
-	{
+	FJSettings() {
 		Material = FJMaterialSettings();
 		Texture = FJTextureSettings();
 		AnimationBlueprint = FJAnimationBlueprintSettings();

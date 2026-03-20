@@ -8,8 +8,7 @@
 
 /* Settings for textures */
 USTRUCT()
-struct FJTextureSettings
-{
+struct FJTextureSettings {
 	GENERATED_BODY()
 public:
 	/* Re-downloads textures *that already exist*. Significantly worse for import time.

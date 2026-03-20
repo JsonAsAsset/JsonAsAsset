@@ -8,8 +8,7 @@
 
 /* Settings for materials */
 USTRUCT()
-struct FJMaterialSettings
-{
+struct FJMaterialSettings {
 	GENERATED_BODY()
 public:
 	/**

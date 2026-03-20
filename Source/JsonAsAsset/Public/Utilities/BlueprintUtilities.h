@@ -2,9 +2,9 @@
 
 #pragma once
 
-#include "Serializers/PropertySerializer.h"
 #include "Settings/JsonAsAssetSettings.h"
 #include "EngineUtilities.h"
+#include "Containers/ExportContainer.h"
 
 inline TSubclassOf<UObject> LoadClassFromPath(const FString& ObjectName, const FString& ObjectPath) {
 	const FString FullPath = ObjectPath + TEXT(".") + ObjectName;

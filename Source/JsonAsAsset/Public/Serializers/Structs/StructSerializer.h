@@ -3,7 +3,6 @@
 #pragma once
 
 #include "UObject/Object.h"
-#include "Json.h"
 
 /** Handles struct serialization */
 class JSONASASSET_API FStructSerializer {

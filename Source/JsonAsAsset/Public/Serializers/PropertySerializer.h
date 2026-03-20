@@ -3,7 +3,7 @@
 #pragma once
 
 #include "ObjectSerializer.h"
-#include "Containers/Export.h"
+#include "Containers/ExportContainer.h"
 #include "Dom/JsonObject.h"
 #include "Structs/StructSerializer.h"
 #include "UObject/Object.h"

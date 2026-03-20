@@ -152,9 +152,9 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 
 		if (NewJsonValue->Type == EJson::Object) {
 			auto JsonValueAsObject = NewJsonValue->AsObject();
-			bool UseDefaultLoadObject = !JsonValueAsObject->GetStringField(TEXT("ObjectName")).Contains(":ParticleModule");
+			bool IsParticleModule = JsonValueAsObject->GetStringField(TEXT("ObjectName")).Contains(":ParticleModule");
 
-			if (UseDefaultLoadObject) {
+			if (!IsParticleModule) {
 				if (Importer == nullptr) {
 					Importer = new IImporter();
 				}
@@ -163,24 +163,24 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				Importer->LoadExport(&JsonValueAsObject, Object);
 
 				if (Object != nullptr) {
-					if (!Object.Get()->IsA(UActorComponent::StaticClass())) {
+					bool bIsActorComponent = Object.Get()->IsA(UActorComponent::StaticClass());
+					
+					if (!bIsActorComponent) {
 						ObjectProperty->SetObjectPropertyValue(OutValue, Object);
-					}
+					} else {
+						if (FUObjectExport TargetExport = ExportsContainer.GetExportByObjectPath(JsonValueAsObject)) {
+							FUObjectJsonValueExport Properties = TargetExport.GetObject(TEXT("Properties"));
 
-					FUObjectExport TargetExport = ExportsContainer.GetExportByObjectPath(JsonValueAsObject);
-						
-					if (TargetExport.IsJsonValid()) {
-						FUObjectJsonValueExport Properties = TargetExport.GetObject(TEXT("Properties"));
-
-						if (TargetExport.Has(TEXT("LODData"))) {
-							Properties.SetArray(TEXT("LODData"), TargetExport.GetArray(TEXT("LODData")));
-						}
+							if (TargetExport.Has(TEXT("LODData"))) {
+								Properties.SetArray(TEXT("LODData"), TargetExport.GetArray(TEXT("LODData")));
+							}
 							
-						ObjectSerializer->DeserializeObjectProperties(Properties.JsonObject, Object);
-					}
+							ObjectSerializer->DeserializeObjectProperties(Properties.JsonObject, Object);
+						}
 
-					if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object.Get())) {
-						StaticMeshComponent->PostEditImport();
+						if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object.Get())) {
+							StaticMeshComponent->PostEditImport();
+						}	
 					}
 				}
 			}

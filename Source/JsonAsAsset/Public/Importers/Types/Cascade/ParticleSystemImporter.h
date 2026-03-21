@@ -11,14 +11,13 @@ public:
 	virtual bool Import() override;
 
 private:
-	void CreateDistributions();
 	void WipeEmitters() const;
 
 	void CreateEmitters(const TArray<FUObjectJsonValueExport>& Exports);
-	UParticleEmitter* CreateEmitter(const UClass* Class, FName Name, const FUObjectExport& Export);
+	UParticleEmitter* CreateEmitter(const UClass* Class, FName Name, FUObjectExport& Export);
 
 	void CreateLODLevel(const FUObjectExport& Export, UParticleEmitter* Emitter);
-	void DeserializeModule(const TSharedPtr<FJsonObject>& ModuleProperties, UParticleModule* Module) const;
+	void DeserializeModule(FUObjectExport& Export, UParticleModule* Module);
 };
 
 REGISTER_IMPORTER(IParticleSystemImporter, {

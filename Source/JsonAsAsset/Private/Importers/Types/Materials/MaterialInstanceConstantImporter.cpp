@@ -39,7 +39,7 @@ bool IMaterialInstanceConstantImporter::Import() {
 	TArray<FUObjectJsonValueExport> StaticComponentMaskParametersObjects;
 	
 	/* Optional Editor Data [contains static switch parameters] ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	if (FUObjectExport EditorOnlyData = AssetContainer.FindByType(FString("MaterialInstanceEditorOnlyData"))) {
+	if (FUObjectExport& EditorOnlyData = AssetContainer.FindByType(FString("MaterialInstanceEditorOnlyData"))) {
 		if (EditorOnlyData.GetPropertiesAsValue().Has("StaticParameters")) {
 			ReadStaticParameters(EditorOnlyData.GetPropertiesAsValue().GetObject("StaticParameters"), StaticSwitchParametersObjects, StaticComponentMaskParametersObjects);
 		}

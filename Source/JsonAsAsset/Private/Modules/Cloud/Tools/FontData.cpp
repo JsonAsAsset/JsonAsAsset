@@ -58,8 +58,9 @@ void TToolFontData::Execute() {
 				GetObjectSerializer()->ExportsToNotDeserialize.Empty();
 				GetObjectSerializer()->SetExportForDeserialization(JsonObject, FontFace);
 				GetObjectSerializer()->Parent = FontFace;
-				
-				GetObjectSerializer()->DeserializeExports(Exports);
+
+				FUObjectExportContainer Container(Exports);
+				GetObjectSerializer()->DeserializeExports(Container);
 
 				GetObjectSerializer()->DeserializeObjectProperties(Properties, FontFace);
 				

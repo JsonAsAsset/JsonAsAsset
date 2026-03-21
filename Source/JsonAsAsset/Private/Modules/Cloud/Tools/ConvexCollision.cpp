@@ -66,9 +66,10 @@ void TToolConvexCollision::Execute() {
 				GetObjectSerializer()->SetExportForDeserialization(JsonObject, StaticMesh);
 				GetObjectSerializer()->Parent = StaticMesh;
 
-				GetObjectSerializer()->DeserializeExports(Exports);
+				FUObjectExportContainer Container(Exports);
+				GetObjectSerializer()->DeserializeExports(Container);
 
-				for (const FUObjectExport UObjectExport : GetObjectSerializer()->GetPropertySerializer()->ExportsContainer) {
+				for (const FUObjectExport& UObjectExport : *GetObjectSerializer()->GetPropertySerializer()->ExportsContainer) {
 					if (UStaticMeshSocket* Socket = Cast<UStaticMeshSocket>(UObjectExport.Object)) {
 						StaticMesh->AddSocket(Socket);
 					}

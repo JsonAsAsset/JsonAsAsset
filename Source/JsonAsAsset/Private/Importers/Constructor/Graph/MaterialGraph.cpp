@@ -66,7 +66,7 @@ void IMaterialGraph::ConstructExpressions(FUObjectExportContainer& Container) {
 }
 
 void IMaterialGraph::PropagateExpressions(FUObjectExportContainer& Container) {
-	for (FUObjectExport Export : Container) {
+	for (FUObjectExport& Export : Container) {
 		/* Get variables from the export data */
 		UObject* Parent = Export.Parent;
 

@@ -460,7 +460,7 @@ void IAnimationBlueprintImporter::AddNodesToGraph(UEdGraph* AnimGraph, FUObjectE
 void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContainer& Container) {
 	GetObjectSerializer()->GetPropertySerializer()->BlacklistedPropertyNames.Add(TEXT("LinkID"));
 
-	for (FUObjectExport NodeExport : Container) {
+	for (FUObjectExport& NodeExport : Container) {
 		if (NodeExport.Object == nullptr) continue;
 
 		UAnimGraphNode_Base* Node = Cast<UAnimGraphNode_Base>(NodeExport.Object);

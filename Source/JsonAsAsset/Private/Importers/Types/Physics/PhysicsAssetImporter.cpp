@@ -22,14 +22,14 @@ bool IPhysicsAssetImporter::Import() {
 	UPhysicsAsset* PhysicsAsset = Create<UPhysicsAsset>();
 
 	DeserializeExports(PhysicsAsset, false);
-	FUObjectExportContainer ExportContainer = GetExportContainer();
+	FUObjectExportContainer* ExportContainer = GetExportContainer();
 
 	/* SkeletalBodySetups ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	const FString SkeletalBodySetupsName = !GJsonAsAssetRuntime.IsOlderUE4Target() ? "SkeletalBodySetups" : "BodySetup";
 
 	ProcessJsonArrayField(GetAssetData(), SkeletalBodySetupsName, [&](const TSharedPtr<FJsonObject>& ObjectField) {
 		const FName ExportName = GetExportNameOfSubobject(ObjectField->GetStringField(TEXT("ObjectName")));
-		const TSharedPtr<FJsonObject> ExportJson = ExportContainer.Find(ExportName).JsonObject;
+		const TSharedPtr<FJsonObject> ExportJson = ExportContainer->Find(ExportName).JsonObject;
 
 		const TSharedPtr<FJsonObject> ExportProperties = ExportJson->GetObjectField(TEXT("Properties"));
 		const FName BoneName = FName(*ExportProperties->GetStringField(TEXT("BoneName")));
@@ -62,7 +62,7 @@ bool IPhysicsAssetImporter::Import() {
 	/* ConstraintSetup ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	ProcessJsonArrayField(GetAssetData(), TEXT("ConstraintSetup"), [&](const TSharedPtr<FJsonObject>& ObjectField) {
 		const FName ExportName = GetExportNameOfSubobject(ObjectField->GetStringField(TEXT("ObjectName")));
-		const TSharedPtr<FJsonObject> ExportJson = ExportContainer.Find(ExportName).JsonObject;
+		const TSharedPtr<FJsonObject> ExportJson = ExportContainer->Find(ExportName).JsonObject;
 
 		const TSharedPtr<FJsonObject> ExportProperties = ExportJson->GetObjectField(TEXT("Properties"));
 		UPhysicsConstraintTemplate* PhysicsConstraintTemplate = CreateNewConstraint(PhysicsAsset, ExportName);

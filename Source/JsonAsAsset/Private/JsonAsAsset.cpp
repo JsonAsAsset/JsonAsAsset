@@ -1,6 +1,7 @@
 /* Copyright JsonAsAsset Contributors 2024-2026 */
 
 #include "JsonAsAsset.h"
+#include "Utilities/JsonUtilities.h"
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 #if ENGINE_UE4
@@ -54,7 +55,7 @@ void FJsonAsAssetModule::StartupModule() {
     	LevelEditorModule.GetToolBarExtensibilityManager()->AddExtender(ToolbarExtender);
 	}
 #endif
-
+	
     const UJsonAsAssetSettings* Settings = GetSettings();
 	
 	if (!Settings->Versioning.Disable) {

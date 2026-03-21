@@ -35,7 +35,7 @@ void TWidgetAnimations::Process(UObject* Object) {
 	Initialize(Export, Exports);
 	DeserializeExports(WidgetBlueprint, true);
 
-	for (FUObjectExport AnimationExport : GetPropertySerializer()->ExportsContainer) {
+	for (FUObjectExport& AnimationExport : *GetPropertySerializer()->ExportsContainer) {
 		if (AnimationExport.Object) {
 			UWidgetAnimation* WidgetAnimation = AnimationExport.Get<UWidgetAnimation>();
 			if (!WidgetAnimation) continue;

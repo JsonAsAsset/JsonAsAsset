@@ -48,58 +48,62 @@ void UObjectSerializer::SetExportForDeserialization(const TSharedPtr<FJsonObject
 	ConstructedObjects.Add(JsonObject->GetStringField(TEXT("Name")), Object);
 }
 
-void UObjectSerializer::DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExports, const bool CreateObjects) {
-	PropertySerializer->ExportsContainer.Empty();
-
-	int Index = -1;
-	
-	for (const TSharedPtr<FJsonValue> Object : InExports) {
-		Index++;
-
-		TSharedPtr<FJsonObject> ExportObject = Object->AsObject();
-
-		/* No name = no export!! */
-		if (!ExportObject->HasField(TEXT("Name"))) continue;
-
-		FString Name = ExportObject->GetStringField(TEXT("Name"));
-		FString Type = ExportObject->GetStringField(TEXT("Type"));
-		
-		/* Check if it's not supposed to be deserialized */
-		if (ExportsToNotDeserialize.Contains(Name)) continue;
-
-		if (WhitelistedTypes.Num() > 0) {
-			bool bMatchFound = false;
-
-			for (const FString& Whitelisted : WhitelistedTypes) {
-				if (Type.Contains(Whitelisted)) {
-					bMatchFound = true;
-					break;
-				}
-			}
-
-			if (!bMatchFound) {
-				continue;
-			}
-		}
-		
-		if (BlacklistedTypes.Num() > 0) {
-			if (BlacklistedTypes.Contains(Type)) {
-				continue;
-			}
-		}
-		
-		if (Type == "NavCollision") continue;
-
-		FString Outer = ExportObject->GetStringField(TEXT("Outer"));
-		
-		/* Add it to the referenced objects */
-		PropertySerializer->ExportsContainer.Exports.Add(FUObjectExport(ExportObject, nullptr, Parent, Index));
-	}
-
+void UObjectSerializer::DeserializeExports(FUObjectExportContainer& Container, const bool CreateObjects) {
 	if (CreateObjects) {
 		TMap<TSharedPtr<FJsonObject>, UObject*> ExportsMap;
 		
-		for (FUObjectExport& Export : PropertySerializer->ExportsContainer) {
+		for (FUObjectExport& Export : Container) {
+			FString Type = Export.GetType().ToString();
+		
+			/* Check if it's not supposed to be deserialized */
+			if (ExportsToNotDeserialize.Contains(Export.GetName())) continue;
+
+			if (WhitelistedTypes.Num() > 0) {
+				bool bMatchFound = false;
+
+				for (const FString& Whitelisted : WhitelistedTypes) {
+					if (Type.Contains(Whitelisted)) {
+						bMatchFound = true;
+						break;
+					}
+				}
+
+				if (!bMatchFound) {
+					continue;
+				}
+			}
+
+			if (WhitelistedTypesStartingWith.Num() > 0) {
+				bool bMatchFound = false;
+
+				for (const FString& Whitelisted : WhitelistedTypesStartingWith) {
+					if (Type.StartsWith(Whitelisted)) {
+						bMatchFound = true;
+						break;
+					}
+				}
+
+				if (!bMatchFound) {
+					continue;
+				}
+			}
+
+			if (WhitelistedTreeSegments.Num() > 0) {
+				auto TreeSegments = Export.GetOuterTreeSegments(true);
+			
+				if (TreeSegments.Num() > 0 && WhitelistedTreeSegments != TreeSegments) {
+					continue;
+				}
+			}
+			
+			if (BlacklistedTypes.Num() > 0) {
+				if (BlacklistedTypes.Contains(Type)) {
+					continue;
+				}
+			}
+		
+			if (Type == "NavCollision") continue;
+			
 			DeserializeExport(Export, ExportsMap);
 		}
 
@@ -147,10 +151,10 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 
 	if (!Class) return;
 
-	const FString Outer = ExportObject->GetStringField(TEXT("Outer"));
+	const FString Outer = GetOuterFromObjectOuter(ExportObject->TryGetField(TEXT("Outer")));
 	UObject* ObjectOuter = nullptr;
 
-	if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer.Find(Outer); FoundExport.JsonObject.IsValid()) {
+	if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer->Find(Outer); FoundExport.JsonObject.IsValid()) {
 		if (FoundExport.Object == nullptr) {
 			DeserializeExport(FoundExport, ExportsMap);
 		}
@@ -159,10 +163,10 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 		ObjectOuter = FoundObject;
 	}
 
-	const TArray<FName> PathSegment = Export.GetPathSegments(true);
+	const TArray<FName> TreeSegments = Export.GetOuterTreeSegments(true);
 
-	if (PathSegment.Num() > 0) {
-		if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer.FindBySegment(PathSegment); FoundExport.JsonObject.IsValid()) {
+	if (TreeSegments.Num() > 0) {
+		if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer->FindByTreeSegment(TreeSegments); !FoundExport.JsonObject->Values.IsEmpty()) {
 			if (FoundExport.Object == nullptr) {
 				DeserializeExport(FoundExport, ExportsMap);
 			}

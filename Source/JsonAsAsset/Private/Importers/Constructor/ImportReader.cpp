@@ -17,7 +17,7 @@ bool IImportReader::ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& E
 
 	const bool IsBlueprint = Container.FindByType(FString("BlueprintGeneratedClass")).IsJsonValid();
 	
-	for (FUObjectExport Export : Container) {
+	for (FUObjectExport& Export : Container) {
 		if (IsBlueprint) {
 			if (Export.GetType() != "BlueprintGeneratedClass") continue;
 		}

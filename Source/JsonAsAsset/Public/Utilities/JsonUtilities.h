@@ -53,8 +53,7 @@ inline TSharedPtr<FJsonObject> KeepPropertiesShared(const TSharedPtr<FJsonObject
 }
 
 /* Simple handler for JsonArray */
-inline auto ProcessJsonArrayField(const TSharedPtr<FJsonObject>& ObjectField, const FString& ArrayFieldName, const TFunction<void(const TSharedPtr<FJsonObject>&)>& ProcessObjectFunction) -> void
-{
+inline auto ProcessJsonArrayField(const TSharedPtr<FJsonObject>& ObjectField, const FString& ArrayFieldName, const TFunction<void(const TSharedPtr<FJsonObject>&)>& ProcessObjectFunction) -> void {
 	const TArray<TSharedPtr<FJsonValue>>* JsonArray;
 	
 	if (ObjectField->TryGetArrayField(ArrayFieldName, JsonArray)) {
@@ -66,8 +65,7 @@ inline auto ProcessJsonArrayField(const TSharedPtr<FJsonObject>& ObjectField, co
 	}
 }
 
-inline void ProcessObjects(const TSharedPtr<FJsonObject>& Parent, const TFunction<void(const FString& Name, const TSharedPtr<FJsonObject>& Object)>& ProcessObjectFunction)
-{
+inline void ProcessObjects(const TSharedPtr<FJsonObject>& Parent, const TFunction<void(const FString& Name, const TSharedPtr<FJsonObject>& Object)>& ProcessObjectFunction) {
 	for (const auto& Pair : Parent->Values) {
 		if (!Pair.Value.IsValid()) continue;
 
@@ -217,68 +215,6 @@ inline TArray<FUObjectExport> CollectObjectPackages(FUObjectExport Export, FUObj
 	);
 
 	return Exports;
-}
-
-inline TSharedPtr<FJsonObject> GetExport(const FString& Type, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool GetProperties = false) {
-	for (const TSharedPtr<FJsonValue> Value : JsonObjects) {
-		const TSharedPtr<FJsonObject> ValueObject = Value->AsObject();
-
-		if (ValueObject->GetStringField(TEXT("Type")) == Type) {
-			if (GetProperties) {
-				return ValueObject->GetObjectField(TEXT("Properties"));
-			}
-			
-			return ValueObject;
-		}
-	}
-	
-	return nullptr;
-}
-
-inline TSharedPtr<FJsonObject> GetExport(const FJsonObject* PackageIndex, TArray<TSharedPtr<FJsonValue>> JsonObjects) {
-	FString ObjectName = PackageIndex->GetStringField(TEXT("ObjectName")); /* Class'Asset:ExportName' */
-	FString ObjectPath = PackageIndex->GetStringField(TEXT("ObjectPath")); /* Path/Asset.Index */
-	FString Outer;
-	
-	/* Clean up ObjectName (Class'Asset:ExportName' --> Asset:ExportName --> ExportName) */
-	ObjectName.Split("'", nullptr, &ObjectName);
-	ObjectName.Split("'", &ObjectName, nullptr);
-
-	if (ObjectName.Contains(":")) {
-		ObjectName.Split(":", nullptr, &ObjectName); /* Asset:ExportName --> ExportName */
-	}
-
-	if (ObjectName.Contains(".")) {
-		ObjectName.Split(".", nullptr, &ObjectName);
-	}
-
-	if (ObjectName.Contains(".")) {
-		ObjectName.Split(".", &Outer, &ObjectName);
-	}
-
-	int Index = 0;
-
-	/* Search for the object in the JsonObjects array */
-	for (const TSharedPtr<FJsonValue>& Value : JsonObjects) {
-		const TSharedPtr<FJsonObject> ValueObject = Value->AsObject();
-
-		FString Name;
-		if (ValueObject->TryGetStringField(TEXT("Name"), Name) && Name == ObjectName) {
-			if (ValueObject->HasField(TEXT("Outer")) && !Outer.IsEmpty()) {
-				FString OuterName = ValueObject->GetStringField(TEXT("Outer"));
-
-				if (OuterName == Outer) {
-					return JsonObjects[Index]->AsObject();
-				}
-			} else {
-				return ValueObject;
-			}
-		}
-
-		Index++;
-	}
-
-	return nullptr;
 }
 
 inline bool IsProperExportData(const TSharedPtr<FJsonObject>& JsonObject) {

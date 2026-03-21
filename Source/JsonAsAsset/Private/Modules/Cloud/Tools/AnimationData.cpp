@@ -54,7 +54,7 @@ void TToolAnimationData::Execute() {
 			if (Type == "AnimSequence") {
 				FUObjectExportContainer Container = Exports;
 
-				for (FUObjectExport ExportInContainer : Container) {
+				for (FUObjectExport& ExportInContainer : Container) {
 					if (ExportInContainer.GetClass() == UAnimSequence::StaticClass()) {
 						ExportInContainer.Object = AnimSequence;
 						Initialize(ExportInContainer, Container);

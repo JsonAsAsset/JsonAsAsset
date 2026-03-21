@@ -161,9 +161,10 @@ void TSkeletalMeshData::Execute() {
 				
 				SkeletalMesh->GetMeshOnlySocketList().Empty();
 
-				GetObjectSerializer()->DeserializeExports(Exports);
+				FUObjectExportContainer Container(Exports);
+				GetObjectSerializer()->DeserializeExports(Container);
 
-				for (const FUObjectExport UObjectExport : GetObjectSerializer()->GetPropertySerializer()->ExportsContainer) {
+				for (const FUObjectExport& UObjectExport : *GetObjectSerializer()->GetPropertySerializer()->ExportsContainer) {
 					if (USkeletalMeshSocket* Socket = Cast<USkeletalMeshSocket>(UObjectExport.Object)) {
 						SkeletalMesh->GetMeshOnlySocketList().Add(Socket);
 					}

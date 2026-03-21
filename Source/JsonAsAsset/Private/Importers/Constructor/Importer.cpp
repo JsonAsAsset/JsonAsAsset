@@ -107,7 +107,7 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 	Object = LoadedObject;
 
 	if (!Object && GetObjectSerializer() != nullptr && GetPropertySerializer() != nullptr) {
-		const FUObjectExport Export = GetPropertySerializer()->ExportsContainer.Find(ObjectName);
+		const FUObjectExport& Export = GetPropertySerializer()->ExportsContainer->Find(ObjectName);
 		
 		if (Export.IsJsonAndObjectValid() && Export.Object != nullptr && Export.Object->IsA(T::StaticClass())) {
 			Object = TObjectPtr<T>(Cast<T>(Export.Object));
@@ -160,6 +160,6 @@ bool IImporter::OnAssetCreation(UObject* Asset) const {
 	return Synced;
 }
 
-FUObjectExportContainer IImporter::GetExportContainer() const {
+FUObjectExportContainer* IImporter::GetExportContainer() const {
 	return GetObjectSerializer()->GetPropertySerializer()->ExportsContainer;
 }

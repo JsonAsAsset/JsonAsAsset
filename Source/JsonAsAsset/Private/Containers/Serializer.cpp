@@ -38,8 +38,8 @@ void USerializerContainer::Initialize(FUObjectExport& Export, FUObjectExportCont
 			AssetExport.NameOverride = FName(*NewName);
 		}
 	}
-
-	GetPropertySerializer()->ExportsContainer = AssetContainer;
+	
+	GetPropertySerializer()->ExportsContainer = &AssetContainer;
 }
 
 UObjectSerializer* USerializerContainer::GetObjectSerializer() const {
@@ -54,7 +54,7 @@ void USerializerContainer::DeserializeExports(UObject* Parent, const bool Create
 	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), Parent);
 	GetObjectSerializer()->Parent = Parent;
     
-	GetObjectSerializer()->DeserializeExports(AssetContainer.JsonObjects, CreateObjects);
+	GetObjectSerializer()->DeserializeExports(AssetContainer, CreateObjects);
 	ApplyModifications();
 }
 

@@ -4,6 +4,7 @@
 
 #include "UObject/Object.h"
 #include "Containers/Export.h"
+#include "Containers/ExportContainer.h"
 #include "ObjectSerializer.generated.h"
 
 class UPropertySerializer;
@@ -22,7 +23,7 @@ public:
     void DeserializeObjectProperties(const TSharedPtr<FJsonObject>& Properties, UObject* Object) const;
 
     void SetExportForDeserialization(const TSharedPtr<FJsonObject>& JsonObject, UObject* Object);
-    void DeserializeExports(TArray<TSharedPtr<FJsonValue>> InExports, bool CreateObjects = true);
+    void DeserializeExports(FUObjectExportContainer& Container, bool CreateObjects = true);
     void DeserializeExport(FUObjectExport& Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap);
 
 public:
@@ -42,6 +43,12 @@ public:
 
     UPROPERTY()
     TArray<FString> WhitelistedTypes;
+    
+    UPROPERTY()
+    TArray<FString> WhitelistedTypesStartingWith;
+
+    UPROPERTY()
+    TArray<FName> WhitelistedTreeSegments;
 
     UPROPERTY()
     TArray<FString> BlacklistedTypes;

@@ -64,7 +64,7 @@ public:
     FORCEINLINE static TObjectPtr<T> DownloadWrapper(TObjectPtr<T> InObject, FString Type, const FString Name, const FString Path);
 
 protected:
-    FORCEINLINE FUObjectExportContainer GetExportContainer() const;
+    FORCEINLINE FUObjectExportContainer* GetExportContainer() const;
     /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Object Serializer and Property Serializer ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 };
 

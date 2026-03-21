@@ -7,6 +7,35 @@
 #include "UObject/Object.h"
 #include "Engine/Compatibility.h"
 
+inline FString StripObjectOuter(const FString& InObjectName) {
+	FString Result = InObjectName;
+
+	const int32 FirstQuote = Result.Find(TEXT("'"));
+	const int32 LastQuote = Result.Find(TEXT("'"), ESearchCase::IgnoreCase, ESearchDir::FromEnd);
+
+	if (FirstQuote != INDEX_NONE && LastQuote != INDEX_NONE && LastQuote > FirstQuote) {
+		Result = Result.Mid(FirstQuote + 1, LastQuote - FirstQuote - 1);
+	}
+
+	return Result;
+}
+
+inline FString GetObjectNameFromOuter(const FString& InObjectName) {
+	return FPackageName::ObjectPathToObjectName(StripObjectOuter(InObjectName));
+}
+
+inline FString GetOuterFromObjectOuter(const TSharedPtr<FJsonValue>& Outer) {
+	if (!Outer.IsValid()) {
+		return TEXT("");
+	}
+	
+	if (Outer->Type == EJson::Object) {
+		return GetObjectNameFromOuter(StripObjectOuter(Outer->AsObject()->GetStringField(TEXT("ObjectName"))));
+	}
+	
+	return Outer->AsString();
+}
+
 /* A structure to hold data for a UObject export. */
 struct FUObjectExport : FUObjectJsonValueExport {
 	FUObjectExport(): Object(nullptr), Parent(nullptr), Package(nullptr), Position(-1) { };
@@ -92,7 +121,7 @@ struct FUObjectExport : FUObjectJsonValueExport {
 		}
 		
 		if (!JsonObject.IsValid() || !JsonObject->HasField(TEXT("Name"))) {
-			return "";
+			return NAME_None;
 		}
 
 		return FName(*JsonObject->GetStringField(TEXT("Name")));
@@ -106,12 +135,12 @@ struct FUObjectExport : FUObjectJsonValueExport {
 		}
 		
 		if (!JsonObject.IsValid() || !JsonObject->HasField(TEXT("Type"))) {
-			return "";
+			return NAME_None;
 		}
 		
 		return FName(*JsonObject->GetStringField(TEXT("Type")));
 	}
-
+	
 	FName OuterOverride;
 
 	FName GetOuter() const {
@@ -120,42 +149,53 @@ struct FUObjectExport : FUObjectJsonValueExport {
 		}
 
 		if (!JsonObject.IsValid() || !JsonObject->HasField(TEXT("Outer"))) {
-			return "";
+			return NAME_None;
 		}
 		
-		return FName(*JsonObject->GetStringField(TEXT("Outer")));
+		return FName(*GetOuterFromObjectOuter(JsonObject->TryGetField(TEXT("Outer"))));
 	}
 
-	FName PathOverride;
-
-	FName GetPath() const {
-		if (!PathOverride.IsNone()) {
-			return PathOverride;
+	FName GetOuterTree() const {
+		bool bIsPath = JsonObject->HasField(TEXT("ObjectName"));
+		
+		if (!JsonObject.IsValid()) {
+			return NAME_None;
 		}
 
-		if (!JsonObject.IsValid() || !JsonObject->HasField(TEXT("Path"))) {
-			return "";
+		if (!bIsPath) {
+			if (!JsonObject->HasField(TEXT("Outer"))) {
+				return NAME_None;
+			}
+		}
+
+		const TSharedPtr<FJsonObject> OuterObject = bIsPath ? JsonObject : JsonObject->GetObjectField(TEXT("Outer"));
+		if (!OuterObject.IsValid() || !OuterObject->HasField(TEXT("ObjectName"))) {
+			return NAME_None;
 		}
 		
-		return FName(*JsonObject->GetStringField(TEXT("Path")));
+		return FName(*StripObjectOuter(OuterObject->GetStringField(TEXT("ObjectName"))));
 	}
 
-	TArray<FName> GetPathSegments(const bool bRemoveLast = false) const {
+	TArray<FName> GetOuterTreeSegments(const bool bRemoveLast = false) const {
 		TArray<FName> Result;
-		const FString FullPath = GetPath().ToString();
 
-		int32 ColonIndex = INDEX_NONE;
-		if (!FullPath.FindChar(TEXT(':'), ColonIndex)) {
+		FString OuterTree = GetOuterTree().ToString();
+		if (OuterTree.IsEmpty()) {
 			return Result;
 		}
 
-		FString AfterColon = FullPath.Mid(ColonIndex + 1);
+		/* Normalize delimiters: treat '.' like ':' */
+		OuterTree.ReplaceInline(TEXT("."), TEXT(":"));
 
 		TArray<FString> Parts;
-		AfterColon.ParseIntoArray(Parts, TEXT("."), true);
+		OuterTree.ParseIntoArray(Parts, TEXT(":"), true);
 
 		for (const FString& Part : Parts) {
 			Result.Add(FName(*Part));
+		}
+
+		if (!JsonObject->HasField(TEXT("ObjectName"))) {
+			Result.Add(GetName());
 		}
 
 		if (bRemoveLast && Result.Num() > 0) {

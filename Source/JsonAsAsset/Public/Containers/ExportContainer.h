@@ -109,7 +109,7 @@ public:
 			FString Name;
 			if (Value.JsonObject->TryGetStringField(TEXT("Name"), Name) && Name == ObjectName) {
 				if (Value.JsonObject->HasField(TEXT("Outer")) && !Outer.IsEmpty()) {
-					FString OuterName = Value.JsonObject->GetStringField(TEXT("Outer"));
+					FString OuterName = GetOuterFromObjectOuter(Value.JsonObject->TryGetField(TEXT("Outer")));
 
 					if (OuterName == Outer) {
 						return Value;
@@ -200,9 +200,19 @@ public:
 		return nullptr;
 	}
 
-	FUObjectExport FindByPosition(const int Position) {
-		for (const FUObjectExport& Export : Exports) {
+	FUObjectExport& FindByPosition(const int Position) {
+		for (FUObjectExport& Export : Exports) {
 			if (Export.Position == Position) {
+				return Export;
+			}
+		}
+
+		return FUObjectExport::EmptyExport();
+	}
+
+	FUObjectExport& FindByPositionAndName(const int Position, const FString& Name) {
+		for (FUObjectExport& Export : Exports) {
+			if (Export.Position == Position && Export.GetName() == Name) {
 				return Export;
 			}
 		}
@@ -242,9 +252,9 @@ public:
 		return FUObjectExport::EmptyExport();
 	}
 
-	FUObjectExport& FindBySegment(const TArray<FName>& Segments) {
+	FUObjectExport& FindByTreeSegment(const TArray<FName>& Segments, const bool bRemoveLast = false) {
     	for (FUObjectExport& Export : Exports) {
-    		if (Export.GetPathSegments() == Segments) {
+    		if (Export.GetOuterTreeSegments(bRemoveLast) == Segments) {
     			return Export;
     		}
     	}

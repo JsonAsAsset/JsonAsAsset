@@ -3,6 +3,9 @@
 #pragma once
 
 #include "Containers/ExportContainer.h"
+#include "Misc/FileHelper.h"
+#include "Serialization/JsonReader.h"
+#include "Serialization/JsonSerializer.h"
 
 /* Conversion Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 #if ENGINE_UE5
@@ -368,4 +371,10 @@ inline FName GetExportNameOfSubobject(const FString& PackageIndex) {
 	}
 	
 	return FName(Name);
+}
+
+template<typename K, typename V>
+FORCEINLINE bool IsEmpty(const TMap<K, V>& Map)
+{
+	return Map.Num() == 0;
 }

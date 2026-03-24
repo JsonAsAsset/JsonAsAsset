@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Animation/AnimMontage.h"
 #include "Importers/Constructor/Importer.h"
 #include "Modules/Toolbar/Tools/ToolBase.h"
 #include "Utilities/JsonUtilities.h"

@@ -56,7 +56,7 @@ void UObjectSerializer::DeserializeExports(FUObjectExportContainer& Container, c
 			FString Type = Export.GetType().ToString();
 		
 			/* Check if it's not supposed to be deserialized */
-			if (ExportsToNotDeserialize.Contains(Export.GetName())) continue;
+			if (ExportsToNotDeserialize.Contains(Export.GetName().ToString())) continue;
 
 			if (WhitelistedTypes.Num() > 0) {
 				bool bMatchFound = false;
@@ -166,7 +166,7 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 	const TArray<FName> TreeSegments = Export.GetOuterTreeSegments(true);
 
 	if (TreeSegments.Num() > 0) {
-		if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer->FindByTreeSegment(TreeSegments); !FoundExport.JsonObject->Values.IsEmpty()) {
+		if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer->FindByTreeSegment(TreeSegments); !IsEmpty(FoundExport.JsonObject->Values)) {
 			if (FoundExport.Object == nullptr) {
 				DeserializeExport(FoundExport, ExportsMap);
 			}

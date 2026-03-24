@@ -75,7 +75,7 @@ struct FUObjectExport : FUObjectJsonValueExport {
 		: FUObjectJsonValueExport(InJsonObject), Object(Object), Parent(Parent), Position(Position) { }
 
 	FUObjectExport(const FName OuterOverride, const TSharedPtr<FJsonObject>& InJsonObject, UObject* Object, UObject* Parent, const int Position = -1)
-		: FUObjectJsonValueExport(InJsonObject), OuterOverride(OuterOverride), Object(Object), Parent(Parent), Position(Position) { }
+		: FUObjectJsonValueExport(InJsonObject), Object(Object), Parent(Parent), Position(Position), OuterOverride(OuterOverride) { }
 
 	FUObjectExport(const FName NameOverride, const FName TypeOverride, const FName OuterOverride,
 		const TSharedPtr<FJsonObject>& InJsonObject, UObject* Object, UObject* Parent, const int Position = -1)

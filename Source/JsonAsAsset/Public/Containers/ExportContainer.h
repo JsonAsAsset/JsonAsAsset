@@ -212,7 +212,7 @@ public:
 
 	FUObjectExport& FindByPositionAndName(const int Position, const FString& Name) {
 		for (FUObjectExport& Export : Exports) {
-			if (Export.Position == Position && Export.GetName() == Name) {
+			if (Export.Position == Position && Export.GetName().ToString() == Name) {
 				return Export;
 			}
 		}

@@ -66,7 +66,6 @@ inline bool ReadAnimationData(USerializerContainer* Container, const bool UseSel
 		"NumFrames",
 		"TrackToSkeletonMapTable",
 		"SequenceLength",
-		"Skeleton",
 		"SkeletonGuid",
 		"CompressedTrackToSkeletonMapTable",
 		"CompressedDataStructure",

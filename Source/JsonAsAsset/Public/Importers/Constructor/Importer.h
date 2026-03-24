@@ -12,6 +12,7 @@
 
 /* ReSharper disable once CppUnusedIncludeDirective */
 #include "TypesHelper.h"
+#include "Modules/UI/StyleModule.h"
 
 #include "Registry/RegistrationInfo.h"
 #include "Styling/SlateIconFinder.h"
@@ -96,8 +97,8 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
 
                 if (DownloadStatus) {
                     AppendNotification(
-                        FText::FromString("Locally Downloaded: " + Type),
                         AssetNameText,
+                        FText::FromString(Type),
                         2.0f,
                         IconBrush,
                         SNotificationItem::CS_Success,
@@ -106,12 +107,12 @@ TObjectPtr<T> IImporter::DownloadWrapper(TObjectPtr<T> InObject, FString Type, c
                     );
                 } else {
                     AppendNotification(
-                        FText::FromString("Download Failed: " + Type),
                         AssetNameText,
+                        FText::FromString(Type),
                         5.0f,
                         IconBrush,
                         SNotificationItem::CS_Fail,
-                        false,
+                        true,
                         310.0f
                     );
                 }

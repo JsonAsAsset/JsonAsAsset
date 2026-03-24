@@ -205,6 +205,19 @@ struct FUObjectExport : FUObjectJsonValueExport {
 		return Result;
 	}
 
+	FName GetOuterPath() const {
+		if (!JsonObject->HasField(TEXT("Outer"))) {
+			return NAME_None;
+		}
+
+		FString ObjectPath = JsonObject->GetObjectField(TEXT("Outer"))->GetStringField(TEXT("ObjectPath"));
+		if (ObjectPath.Contains(".")) {
+			ObjectPath.Split(".", &ObjectPath, nullptr);
+		}
+
+		return FName(*ObjectPath);
+	}
+
 	bool IsJsonAndObjectValid() const {
 		return JsonObject != nullptr && Object != nullptr;
 	}

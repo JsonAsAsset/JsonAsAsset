@@ -110,7 +110,7 @@ inline bool ReadAnimationData(USerializerContainer* Container, const bool UseSel
 	}
 
 	/* Import the curves */
-	for (const TSharedPtr<FJsonValue> FloatCurveObject : FloatCurves) {
+	for (const TSharedPtr<FJsonValue>& FloatCurveObject : FloatCurves) {
 		/* Curve Display Name */
 		FString DisplayName = "";
 		if (FloatCurveObject->AsObject()->HasField(TEXT("Name"))) {
@@ -198,7 +198,7 @@ inline bool ReadAnimationData(USerializerContainer* Container, const bool UseSel
 		/* Keys of the track */
 		TArray<TSharedPtr<FJsonValue>> Keys = FloatCurveObject->AsObject()->GetObjectField(TEXT("FloatCurve"))->GetArrayField(TEXT("Keys"));
 
-		for (const TSharedPtr<FJsonValue> JsonKey : Keys) {
+		for (const TSharedPtr<FJsonValue>& JsonKey : Keys) {
 			TSharedPtr<FJsonObject> Key = JsonKey->AsObject();
 
 			FRichCurveKey RichKey = ObjectToRichCurveKey(Key);

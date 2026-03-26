@@ -65,13 +65,17 @@ void FJsonAsAssetVersioning::Update() {
 			return;
 		}
 		
-		const FString VersionName = JsonObject->GetStringField(TEXT("name"));
-		const FString CurrentVersionName = FJMetadata::Version;
+		const FString _VersionName = JsonObject->GetStringField(TEXT("name"));
+		VersionName = _VersionName;
 
-		const int LatestVersion = ConvertVersionStringToInt(VersionName);
+		const FString _CurrentVersionName = FJMetadata::Version;
+		CurrentVersionName = _CurrentVersionName;
+
+		const int _LatestVersion = ConvertVersionStringToInt(VersionName);
+		LatestVersion = _LatestVersion;
 		const int CurrentVersion = ConvertVersionStringToInt(FJMetadata::Version);
 
-		Reset(CurrentVersion, LatestVersion, JsonObject->GetStringField(TEXT("html_url")), VersionName, CurrentVersionName);
+		Reset(CurrentVersion, _LatestVersion, JsonObject->GetStringField(TEXT("html_url")), VersionName, CurrentVersionName);
 
 		static bool IsNotificationShown = false;
 

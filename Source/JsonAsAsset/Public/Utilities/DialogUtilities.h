@@ -20,7 +20,9 @@ inline TArray<FString> OpenFileDialog(const FString& Title, const FString& Type)
 	}
 
 	FString ClipboardContent;
+	#ifndef __linux
 	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
+	#endif // __linux__
 	FString DefaultPath = FString("");
 
 	if (!ClipboardContent.IsEmpty()) {

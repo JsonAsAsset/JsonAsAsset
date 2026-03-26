@@ -107,7 +107,7 @@ void UObjectSerializer::DeserializeExports(FUObjectExportContainer& Container, c
 			DeserializeExport(Export, ExportsMap);
 		}
 
-		for (const auto Pair : ExportsMap) {
+		for (const auto& Pair : ExportsMap) {
 			TSharedPtr<FJsonObject> Properties = Pair.Key;
 			UObject* Object = Pair.Value;
 
@@ -246,7 +246,7 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 		TArray<TSharedPtr<FJsonValue>> ObjectLODData = Properties->GetArrayField(TEXT("LODData"));
 		int CurrentLOD = -1;
 		
-		for (const TSharedPtr CurrentLODValue : ObjectLODData) {
+		for (const auto& CurrentLODValue : ObjectLODData) {
 			CurrentLOD++;
 
 			const TSharedPtr<FJsonObject> CurrentLODObject = CurrentLODValue->AsObject();

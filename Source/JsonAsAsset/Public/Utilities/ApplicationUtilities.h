@@ -2,8 +2,10 @@
 
 #pragma once
 
+#ifndef __linux__
 #include "Windows/WindowsHWrapper.h"
 #include "TlHelp32.h"
+#endif // __linux__
 
 inline void SpawnPrompt(const FString& Title, const FString& Text) {
 	FText DialogTitle = FText::FromString(Title);
@@ -25,6 +27,7 @@ inline auto SpawnYesNoPrompt = [](const FString& Title, const FString& Text, con
 	OnResponse(Response == EAppReturnType::Yes);
 };
 
+#ifndef __linux__
 inline void CloseApplicationByProcessName(const FString& ProcessName) {
 	DWORD ProcessID = 0;
 
@@ -81,6 +84,14 @@ inline bool IsProcessRunning(const FString& ProcessName) {
 
 	return IsRunning;
 }
+#endif // __linux__
+
+#ifdef __linux__
+// hacky, just assume cloud is running.
+inline bool IsProcessRunning(const FString& ProcessName) {
+	return true;
+}
+#endif // __linux__
 
 inline void LaunchURL(const FString& URL) {
 	FPlatformProcess::LaunchURL(*URL, nullptr, nullptr);

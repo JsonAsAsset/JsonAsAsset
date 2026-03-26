@@ -18,9 +18,7 @@
 #include "Modules/Toolbar/Dropdowns/VersioningDropdownBuilder.h"
 #include "Utilities/DialogUtilities.h"
 
-#if PLATFORM_WINDOWS
 static TWeakPtr<SNotificationItem> WaitingForCloud;
-#endif
 
 void UJsonAsAssetToolbar::Register() {
 #if ENGINE_UE5
@@ -214,7 +212,7 @@ bool UJsonAsAssetToolbar::IsToolBarVisible() {
 	
 	bool Visible = true;
 
-	if (static const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"))) {
+	if (const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"))) {
 		if (CVar->GetInt() == 1) {
 			Visible = false;
 		}

@@ -73,8 +73,8 @@ bool IUserDefinedStructImporter::Import() {
 
     const TArray<TSharedPtr<FJsonValue>> ChildProperties = GetAssetData()->GetArrayField(TEXT("ChildProperties"));
     
-    for (const TSharedPtr<FJsonValue> Property : ChildProperties) {
-        const TSharedPtr<FJsonObject> PropertyObject = Property->AsObject();
+    for (const TSharedPtr<FJsonValue>& Property : ChildProperties) {
+        const TSharedPtr<FJsonObject>& PropertyObject = Property->AsObject();
         
         ImportPropertyIntoStruct(UserDefinedStruct, PropertyObject);
     }

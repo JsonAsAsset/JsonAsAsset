@@ -97,7 +97,7 @@ bool IMaterialImporter::Import() {
 		
 		if (Props->TryGetArrayField(TEXT("CustomizedUVs"), InputsPtr)) {
 			int i = 0;
-			for (const TSharedPtr<FJsonValue> InputValue : *InputsPtr) {
+			for (const TSharedPtr<FJsonValue>& InputValue : *InputsPtr) {
 				FJsonObject* InputObject = InputValue->AsObject().Get();
 				FName InputExpressionName = GetExpressionName(InputObject);
 
@@ -114,7 +114,7 @@ bool IMaterialImporter::Import() {
 	if (Props->TryGetArrayField(TEXT("ParameterGroupData"), StringParameterGroupData)) {
 		TArray<FParameterGroupData> ParameterGroupData;
 
-		for (const TSharedPtr<FJsonValue> ParameterGroupDataObject : *StringParameterGroupData) {
+		for (const TSharedPtr<FJsonValue>& ParameterGroupDataObject : *StringParameterGroupData) {
 			if (ParameterGroupDataObject->IsNull()) continue;
 			FParameterGroupData GroupData;
 

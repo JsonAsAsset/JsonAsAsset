@@ -7,7 +7,11 @@
 #include "Serializers/PropertySerializer.h"
 #include "Serializers/ObjectSerializer.h"
 #include "Settings/JsonAsAssetSettings.h"
+
+#ifndef __linux__
 #include "Windows/WindowsHWrapper.h"
+#endif // __linux__
+
 #include "ContentBrowserUtilities.h"
 #include "PluginUtils.h"
 #include "ISettingsModule.h"

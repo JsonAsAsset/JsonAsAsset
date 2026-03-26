@@ -57,7 +57,7 @@ void FJRedirects::Reverse(FString& Path) {
 		return;
 	}
 
-	for (const FJRedirectorPoint Point : *Points) {
+	for (const FJRedirectorPoint& Point : *Points) {
 		Path = Path.Replace(*Point.To, *Point.From);
 	}
 }

@@ -116,7 +116,7 @@ void ISkeletonImporter::ApplySkeletalChanges(USkeleton* Skeleton) const {
 	int BoneIndex = 0;
 
 	/* Go through each bone reference */
-	for (const TSharedPtr<FJsonValue> FinalReferenceBoneInfoValue : FinalRefBoneInfo) {
+	for (const auto& FinalReferenceBoneInfoValue : FinalRefBoneInfo) {
 		const TSharedPtr<FJsonObject> FinalReferenceBoneInfo = FinalReferenceBoneInfoValue->AsObject();
 
 		FName Name(*FinalReferenceBoneInfo->GetStringField(TEXT("Name")));

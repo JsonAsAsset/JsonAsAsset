@@ -23,7 +23,7 @@ public:
 		
 		int Index = -1;
 	
-		for (const TSharedPtr Value : Array) {
+		for (const auto& Value : Array) {
 			Index++;
 
 			TSharedPtr<FJsonObject> Object = Value->AsObject();
@@ -278,8 +278,8 @@ public:
 
 	/* Iterate exports, then execute lambda */
 	template<typename FuncType>
-	void ExportsLoop(const TArray<FUObjectJsonValueExport>& Exports, FuncType&& Func) {
-		for (const FUObjectJsonValueExport& Export : Exports) {
+	void ExportsLoop(const TArray<FUObjectJsonValueExport>& InExports, FuncType&& Func) {
+		for (const FUObjectJsonValueExport& Export : InExports) {
 			FUObjectExport& DirectExport = GetExportByObjectPath(Export);
 
 			if (!DirectExport.IsJsonValid() || &DirectExport == &FUObjectExport::EmptyExport()) {

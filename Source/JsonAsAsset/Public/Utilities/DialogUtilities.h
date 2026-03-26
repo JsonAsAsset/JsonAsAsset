@@ -7,6 +7,16 @@
 #include "DesktopPlatformModule.h"
 #include "IDesktopPlatform.h"
 
+inline FString GetClipboard() {
+	FString ClipboardContent;
+#ifndef __linux
+	/* @LINUX.CLIPBOARD */
+	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
+#endif
+
+	return ClipboardContent;
+}
+
 inline TArray<FString> OpenFileDialog(const FString& Title, const FString& Type) {
 	TArray<FString> ReturnValue;
 
@@ -19,8 +29,7 @@ inline TArray<FString> OpenFileDialog(const FString& Title, const FString& Type)
 		ParentWindowHandle = MainWindow->GetNativeWindow()->GetOSWindowHandle();
 	}
 
-	FString ClipboardContent;
-	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
+	FString ClipboardContent = GetClipboard();
 	FString DefaultPath = FString("");
 
 	if (!ClipboardContent.IsEmpty()) {

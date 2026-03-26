@@ -2,8 +2,10 @@
 
 #pragma once
 
+#ifndef __linux__
 #include "Windows/WindowsHWrapper.h"
 #include "TlHelp32.h"
+#endif
 
 inline void SpawnPrompt(const FString& Title, const FString& Text) {
 	FText DialogTitle = FText::FromString(Title);
@@ -26,6 +28,7 @@ inline auto SpawnYesNoPrompt = [](const FString& Title, const FString& Text, con
 };
 
 inline void CloseApplicationByProcessName(const FString& ProcessName) {
+#ifndef __linux__
 	DWORD ProcessID = 0;
 
 	const HANDLE Snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -54,9 +57,13 @@ inline void CloseApplicationByProcessName(const FString& ProcessName) {
 			CloseHandle(Process);
 		}
 	}
+#else
+	/* @LINUX.PROCESSES */
+#endif
 }
 
 inline bool IsProcessRunning(const FString& ProcessName) {
+#ifndef __linux__
 	bool IsRunning = false;
 
 	/* Convert FString to WCHAR */
@@ -80,6 +87,10 @@ inline bool IsProcessRunning(const FString& ProcessName) {
 	}
 
 	return IsRunning;
+#else
+	/* @LINUX.PROCESSES */
+	return true;
+#endif
 }
 
 inline void LaunchURL(const FString& URL) {

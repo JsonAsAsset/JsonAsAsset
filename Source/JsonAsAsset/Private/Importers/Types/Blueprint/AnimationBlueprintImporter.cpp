@@ -23,7 +23,7 @@
 #include "UObject/UnrealTypePrivate.h"
 #endif
 
-extern bool GShowAnimationBlueprintImporterWarning = true;
+bool GShowAnimationBlueprintImporterWarning = true;
 
 bool IAnimationBlueprintImporter::Import() {
 	if (GShowAnimationBlueprintImporterWarning) {
@@ -70,7 +70,7 @@ bool IAnimationBlueprintImporter::Import() {
 
 	/* Array of sync group names cached to use at later points of importing */
 	if (GetAssetData()->HasField(TEXT("SyncGroupNames"))) {
-		for (const TSharedPtr<FJsonValue> SyncGroupNameValue : GetAssetData()->GetArrayField(TEXT("SyncGroupNames"))) {
+		for (const auto& SyncGroupNameValue : GetAssetData()->GetArrayField(TEXT("SyncGroupNames"))) {
 			SyncGroupNames.Add(SyncGroupNameValue->AsString());
 		}
 	}
@@ -179,7 +179,7 @@ void IAnimationBlueprintImporter::CreateGraph(const TSharedPtr<FJsonObject>& Ani
 	ConnectAnimGraphNodes(Container, AnimGraph);
 	AutoLayoutAnimGraphNodes(Container.Exports);
 
-	for (const FUObjectExport ExportNode : Container) {
+	for (const FUObjectExport& ExportNode : Container) {
 		const TSharedPtr<FJsonObject> ExportJsonObject = ExportNode.JsonObject;
 		
 		if (UAnimGraphNode_StateMachine* StateMachine = Cast<UAnimGraphNode_StateMachine>(ExportNode.Object)) {
@@ -546,7 +546,7 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 }
 
 void IAnimationBlueprintImporter::ConnectAnimGraphNodes(FUObjectExportContainer& Container, UEdGraph* AnimGraph) {
-    for (const FUObjectExport Export : Container) {
+    for (const FUObjectExport& Export : Container) {
         UAnimGraphNode_Base* Node = Cast<UAnimGraphNode_Base>(Export.Object);
         const TSharedPtr<FJsonObject> Json = Export.JsonObject;
 
@@ -641,7 +641,7 @@ void IAnimationBlueprintImporter::ProcessEvaluateGraphExposedInputs(const TShare
 	if (!GetAssetData()->HasField(TEXT("EvaluateGraphExposedInputs"))) return;
 	TArray<TSharedPtr<FJsonValue>> EvaluateInputs = GetAssetData()->GetArrayField(TEXT("EvaluateGraphExposedInputs"));
 	
-	for (const TSharedPtr<FJsonValue> Value : EvaluateInputs) {
+	for (const auto Value : EvaluateInputs) {
 		TSharedPtr<FJsonObject> InputObj = Value->AsObject();
 		
 		FString NodeName = InputObj->GetObjectField(TEXT("ValueHandlerNodeProperty"))->GetStringField(TEXT("ObjectName")); {

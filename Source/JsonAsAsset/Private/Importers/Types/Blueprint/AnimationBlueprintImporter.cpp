@@ -641,7 +641,7 @@ void IAnimationBlueprintImporter::ProcessEvaluateGraphExposedInputs(const TShare
 	if (!GetAssetData()->HasField(TEXT("EvaluateGraphExposedInputs"))) return;
 	TArray<TSharedPtr<FJsonValue>> EvaluateInputs = GetAssetData()->GetArrayField(TEXT("EvaluateGraphExposedInputs"));
 	
-	for (const auto Value : EvaluateInputs) {
+	for (const auto& Value : EvaluateInputs) {
 		TSharedPtr<FJsonObject> InputObj = Value->AsObject();
 		
 		FString NodeName = InputObj->GetObjectField(TEXT("ValueHandlerNodeProperty"))->GetStringField(TEXT("ObjectName")); {

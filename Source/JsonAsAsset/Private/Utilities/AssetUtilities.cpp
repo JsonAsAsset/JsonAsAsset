@@ -271,6 +271,10 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 	UseOctetStream = true;
 #endif
 
+#if PLATFORM_LINUX
+	UseOctetStream = false;
+#endif
+	
 	/* ~~~~~~~~~~~~~~~ Download Texture Data ~~~~~~~~~~~~ */
 	if (Type != "TextureRenderTarget2D") {
 		FHttpModule* HttpModule = &FHttpModule::Get();

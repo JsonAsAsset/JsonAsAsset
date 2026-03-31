@@ -7,7 +7,7 @@
 #include "Misc/MessageDialog.h"
 #include "Modules/Cloud/Cloud.h"
 #include "Sound/SoundCue.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 #include "Utilities/JsonUtilities.h"
 
 void ISoundGraph::ConstructNodes(USoundCue* SoundCue, TMap<FString, USoundNode*>& OutNodes) {

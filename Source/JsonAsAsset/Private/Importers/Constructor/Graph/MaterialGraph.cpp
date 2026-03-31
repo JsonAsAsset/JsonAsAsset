@@ -9,7 +9,7 @@
 #include "Materials/MaterialExpressionFunctionOutput.h"
 #include "Materials/MaterialExpressionReroute.h"
 #include "Utilities/AssetUtilities.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 #include "Utilities/JsonUtilities.h"
 
 #if ENGINE_UE5

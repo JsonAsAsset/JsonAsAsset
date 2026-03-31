@@ -3,7 +3,7 @@
 #include "Modules/Toolbar/Toolbar.h"
 
 #include "Engine/Compatibility.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 #include "Modules/UI/StyleModule.h"
 #include "Importers/Constructor/ImportReader.h"

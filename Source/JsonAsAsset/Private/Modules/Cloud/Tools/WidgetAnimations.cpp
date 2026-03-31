@@ -3,7 +3,7 @@
 #include "Modules/Cloud/Tools/WidgetAnimations.h"
 #include "WidgetBlueprint.h"
 #include "Animation/WidgetAnimation.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 void TWidgetAnimations::Process(UObject* Object) {
 	UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(Object);

@@ -10,8 +10,18 @@
 /* Compiles an experimental version of JsonAsAsset */
 #ifndef JSONASASSET_EXPERIMENTAL
 #define JSONASASSET_EXPERIMENTAL 0
+
 #include "Engine/TextureCube.h"
 #include "Engine/VolumeTexture.h"
+
+#if ENGINE_UE5
+#include "Animation/AnimData/IAnimationDataController.h"
+#if ENGINE_MINOR_VERSION >= 4
+#include "Animation/AnimData/IAnimationDataModel.h"
+#endif
+#include "AnimDataController.h"
+#endif
+
 #endif
 
 #if ENGINE_MAJOR_VERSION == 5
@@ -267,4 +277,26 @@ inline void SetPlatformData(UTexture* Texture, FTexturePlatformData* PlatformDat
 		VolumeTexture->PlatformData = PlatformData;
 #endif
 	}
+}
+
+inline void UpdateAnimationCaching(UAnimSequenceBase* AnimationSequenceBase) {
+	if (UAnimSequence* AnimationSequence = Cast<UAnimSequence>(AnimationSequenceBase)) {
+#if UE5_2_BEYOND
+		if (ITargetPlatform* RunningPlatform = GetTargetPlatformManagerRef().GetRunningTargetPlatform()) {
+#if UE5_6_BEYOND
+			AnimationSequence->CacheDerivedDataForPlatform(RunningPlatform);
+#else
+			AnimationSequence->CacheDerivedData(RunningPlatform);
+#endif
+		}
+#else
+		if (AnimationSequence) {
+			AnimationSequence->RequestSyncAnimRecompression();
+		}
+#endif
+	}
+	
+#if ENGINE_UE4
+    AnimationSequenceBase->MarkRawDataAsModified();
+#endif
 }

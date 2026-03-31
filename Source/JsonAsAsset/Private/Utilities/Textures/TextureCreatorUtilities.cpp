@@ -12,7 +12,7 @@
 #include "nvimage/Image.h"
 #include "Settings/Runtime.h"
 #include "ThirdParty/NVTT/ThirdParty/NVTTStream.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 #include "Utilities/JsonUtilities.h"
 
 template bool FTextureCreatorUtilities::CreateTexture<UTexture2D>(UTexture*&, TArray<uint8>&, const TSharedPtr<FJsonObject>&);

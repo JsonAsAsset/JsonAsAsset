@@ -3,7 +3,7 @@
 #include "JsonAsAsset.h"
 #include "Modules/Cloud/Cloud.h"
 #include "Modules/UI/StyleModule.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 static TWeakPtr<SNotificationItem> CloudNotification;
 

@@ -7,7 +7,7 @@
 #include "Modules/Log.h"
 #include "Modules/Metadata.h"
 #include "Modules/UI/StyleModule.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 #include "Utilities/JsonUtilities.h"
 
 FJsonAsAssetVersioning GJsonAsAssetVersioning;

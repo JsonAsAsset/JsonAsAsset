@@ -4,7 +4,7 @@
 #include "EditorFramework/AssetImportData.h"
 #include "Engine/FontFace.h"
 #include "Factories/FbxAnimSequenceImportData.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 void TToolClearImportData::Execute() {
 	TArray<FAssetData> AssetDataList = GetAssetsInSelectedFolder();

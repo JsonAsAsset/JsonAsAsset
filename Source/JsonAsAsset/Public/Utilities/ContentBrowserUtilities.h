@@ -6,6 +6,7 @@
 #include "IContentBrowserSingleton.h"
 #include "ContentBrowserModule.h"
 #include "RemoteUtilities.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Modules/Log.h"
 
 inline void BrowseToAsset(UObject* Asset) {

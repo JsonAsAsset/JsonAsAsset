@@ -3,7 +3,7 @@
 #include "Importers/Constructor/Types.h"
 
 #include "Settings/JsonAsAssetSettings.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 /* Define supported template asset class here */
 TMap<FString, TArray<FString>> ImportTypes::Templated = {

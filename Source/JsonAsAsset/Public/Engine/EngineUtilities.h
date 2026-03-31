@@ -12,9 +12,10 @@
 #include "Windows/WindowsHWrapper.h"
 #endif
 
-#include "ContentBrowserUtilities.h"
+#include "Utilities/ContentBrowserUtilities.h"
 #include "PluginUtils.h"
 #include "ISettingsModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Interfaces/IPluginManager.h"
 #include "Modules/Metadata.h"
 #include "VectorField/VectorFieldStatic.h"

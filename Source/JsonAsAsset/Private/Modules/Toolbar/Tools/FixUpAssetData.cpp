@@ -5,7 +5,7 @@
 #include "WidgetBlueprint.h"
 #include "Animation/WidgetAnimation.h"
 #include "PhysicsEngine/BodySetup.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 void TToolFixUpAssetData::Execute() {
 	TArray<FAssetData> AssetDataList = GetAssetsInSelectedFolder();

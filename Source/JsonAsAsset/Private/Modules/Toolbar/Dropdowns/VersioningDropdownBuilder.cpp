@@ -4,7 +4,7 @@
 
 #include "Modules/Versioning.h"
 #include "Engine/Compatibility.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 void IVersioningDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	if (!GJsonAsAssetVersioning.IsValid) {

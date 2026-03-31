@@ -14,14 +14,6 @@
 #include "Engine/TextureCube.h"
 #include "Engine/VolumeTexture.h"
 
-#if ENGINE_UE5
-#include "Animation/AnimData/IAnimationDataController.h"
-#if ENGINE_MINOR_VERSION >= 4
-#include "Animation/AnimData/IAnimationDataModel.h"
-#endif
-#include "AnimDataController.h"
-#endif
-
 #endif
 
 #if ENGINE_MAJOR_VERSION == 5
@@ -126,6 +118,14 @@
 
 #if (ENGINE_UE5 && ENGINE_MINOR_VERSION < 4) || ((ENGINE_UE4 && ENGINE_MINOR_VERSION >= 26) && !(ENGINE_MINOR_VERSION == 26 && ENGINE_PATCH_VERSION == 0))
 #include "AssetRegistry/AssetRegistryModule.h"
+#endif
+
+#if ENGINE_UE5
+#include "Animation/AnimData/IAnimationDataController.h"
+#if ENGINE_MINOR_VERSION >= 4
+#include "Animation/AnimData/IAnimationDataModel.h"
+#endif
+#include "AnimDataController.h"
 #endif
 
 #if ENGINE_UE5

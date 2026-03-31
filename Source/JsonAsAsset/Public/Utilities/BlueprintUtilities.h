@@ -3,7 +3,7 @@
 #pragma once
 
 #include "Settings/JsonAsAssetSettings.h"
-#include "EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 #include "Containers/ExportContainer.h"
 
 inline TSubclassOf<UObject> LoadClassFromPath(const FString& ObjectName, const FString& ObjectPath) {

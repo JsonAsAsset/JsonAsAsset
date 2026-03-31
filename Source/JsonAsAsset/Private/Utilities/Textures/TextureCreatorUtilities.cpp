@@ -64,18 +64,10 @@ bool FTextureCreatorUtilities::CreateTexture(UTexture*& OutTexture, TArray<uint8
 	}
 
 	else {
-#if ENGINE_UE5
-		Texture2D->SetPlatformData(new FTexturePlatformData());
-#else
-		Texture2D->PlatformData = new FTexturePlatformData();
-#endif
+		SetPlatformData(Texture2D, new FTexturePlatformData());
 	}
 
-#if ENGINE_UE5
-	FTexturePlatformData* PlatformData = Texture2D->GetPlatformData();
-#else
-	FTexturePlatformData* PlatformData = Texture2D->PlatformData;
-#endif
+	FTexturePlatformData* PlatformData = GetPlatformData(Texture2D);
 
 	if (const TArray<TSharedPtr<FJsonValue>>* TextureMipsPtr; Properties->TryGetArrayField(TEXT("Mips"), TextureMipsPtr)) {
 		const auto TextureMips = *TextureMipsPtr;
@@ -105,19 +97,11 @@ bool FTextureCreatorUtilities::IsOctetStreamEnabled() const {
 bool FTextureCreatorUtilities::CreateTextureCube(UTexture*& OutTextureCube, const TArray<uint8>& Data, const TSharedPtr<FJsonObject>& Properties) const {
 	UTextureCube* TextureCube = NewObject<UTextureCube>(Package, UTextureCube::StaticClass(), *AssetName, RF_Public | RF_Standalone);
 
-#if ENGINE_UE5
-	TextureCube->SetPlatformData(new FTexturePlatformData());
-#else
-	TextureCube->PlatformData = new FTexturePlatformData();
-#endif
-
+	SetPlatformData(TextureCube, new FTexturePlatformData());
+	
 	DeserializeTexture(TextureCube, Properties);
 
-#if ENGINE_UE5
-	FTexturePlatformData* PlatformData = TextureCube->GetPlatformData();
-#else
-	FTexturePlatformData* PlatformData = TextureCube->PlatformData;
-#endif
+	FTexturePlatformData* PlatformData = GetPlatformData(TextureCube);
 
 	const int SizeX = Properties->GetNumberField(TEXT("SizeX"));
 	const int SizeY = Properties->GetNumberField(TEXT("SizeY")) / 6;
@@ -153,16 +137,10 @@ bool FTextureCreatorUtilities::CreateVolumeTexture(UTexture*& OutVolumeTexture, 
 
 	DeserializeTexture(VolumeTexture, Properties);
 
-#if ENGINE_UE5
-	VolumeTexture->SetPlatformData(new FTexturePlatformData());
-#endif
+	SetPlatformData(VolumeTexture, new FTexturePlatformData());
 	FString PixelFormat;
 
-#if ENGINE_UE5
-	FTexturePlatformData* PlatformData = VolumeTexture->GetPlatformData();
-#else
-	FTexturePlatformData* PlatformData = VolumeTexture->PlatformData;
-#endif
+	FTexturePlatformData* PlatformData = GetPlatformData(VolumeTexture);
 
 	if (PlatformData != nullptr) {
 		if (Properties->TryGetStringField(TEXT("PixelFormat"), PixelFormat)) {
@@ -248,11 +226,8 @@ bool FTextureCreatorUtilities::DeserializeTexture2D(UTexture2D* InTexture2D, con
 	if (Properties->TryGetBoolField(TEXT("bHasBeenPaintedInEditor"), bHasBeenPaintedInEditor)) InTexture2D->bHasBeenPaintedInEditor = bHasBeenPaintedInEditor;
 
 	/* ~~~~~~~~~~~~~ Platform Data ~~~~~~~~~~~~~ */
-#if ENGINE_UE5
-	FTexturePlatformData* PlatformData = InTexture2D->GetPlatformData();
-#else
-	FTexturePlatformData* PlatformData = InTexture2D->PlatformData;
-#endif
+	FTexturePlatformData* PlatformData = GetPlatformData(InTexture2D);
+	
 	int SizeX;
 	int SizeY;
 	uint32 PackedData;

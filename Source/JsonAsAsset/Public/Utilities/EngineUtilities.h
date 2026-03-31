@@ -15,6 +15,8 @@
 #include "ContentBrowserUtilities.h"
 #include "PluginUtils.h"
 #include "ISettingsModule.h"
+#include "Engine/TextureCube.h"
+#include "Engine/VolumeTexture.h"
 #include "Interfaces/IPluginManager.h"
 #include "Modules/Metadata.h"
 #include "VectorField/VectorFieldStatic.h"
@@ -395,4 +397,58 @@ inline FString GetAssetPath(const UObject* Object) {
 inline void MoveToTransientPackageAndRename(UObject* Object) {
 	Object->Rename(nullptr, GetTransientPackage());
 	Object->SetFlags(RF_Transient);
+}
+
+inline FTexturePlatformData* GetPlatformData(UTexture* Texture) {
+	if (UTexture2D* Texture2D = Cast<UTexture2D>(Texture)) {
+#if ENGINE_UE5
+		return Texture2D->GetPlatformData();
+#else
+		return Texture2D->PlatformData;
+#endif
+	}
+	
+	if (UTextureCube* TextureCube = Cast<UTextureCube>(Texture)) {
+#if ENGINE_UE5
+		return TextureCube->GetPlatformData();
+#else
+		return TextureCube->PlatformData;
+#endif
+	}
+
+	if (UVolumeTexture* VolumeTexture = Cast<UVolumeTexture>(Texture)) {
+#if ENGINE_UE5
+		return VolumeTexture->GetPlatformData();
+#else
+		return VolumeTexture->PlatformData;
+#endif
+	}
+	
+	return nullptr;
+}
+
+inline void SetPlatformData(UTexture* Texture, FTexturePlatformData* PlatformData) {
+	if (UTexture2D* Texture2D = Cast<UTexture2D>(Texture)) {
+#if ENGINE_UE5
+		Texture2D->SetPlatformData(PlatformData);
+#else
+		Texture2D->PlatformData = PlatformData;
+#endif
+	}
+	
+	if (UTextureCube* TextureCube = Cast<UTextureCube>(Texture)) {
+#if ENGINE_UE5
+		TextureCube->SetPlatformData(PlatformData);
+#else
+		TextureCube->PlatformData = PlatformData;
+#endif
+	}
+
+	if (UVolumeTexture* VolumeTexture = Cast<UVolumeTexture>(Texture)) {
+#if ENGINE_UE5
+		VolumeTexture->SetPlatformData(PlatformData);
+#else
+		VolumeTexture->PlatformData = PlatformData;
+#endif
+	}
 }

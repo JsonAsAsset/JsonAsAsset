@@ -258,18 +258,7 @@ bool FAssetUtilities::Construct_TypeTexture(const FString& Path, const FString& 
 	}
 	
 	TArray<uint8> Data = TArray<uint8>();
-	bool UseOctetStream = Type == "TextureLightProfile"
-	                       || Type == "TextureCube"
-	                       || Type == "VolumeTexture"
-	                       || Type == "TextureRenderTarget2D" || IsVectorDisplacementMap;
-
-#if UE4_26_BELOW
-	UseOctetStream = true;
-#endif
-
-#if UE5_5_BEYOND
-	UseOctetStream = true;
-#endif
+	bool UseOctetStream = ShouldUseOctetStream(Type, IsVectorDisplacementMap);
 
 	/* ~~~~~~~~~~~~~~~ Download Texture Data ~~~~~~~~~~~~ */
 	if (Type != "TextureRenderTarget2D") {
@@ -316,18 +305,7 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 		}
 	}
 	
-	bool UseOctetStream = Type == "TextureLightProfile"
-						   || Type == "TextureCube"
-						   || Type == "VolumeTexture"
-						   || Type == "TextureRenderTarget2D" || IsVectorDisplacementMap;
-
-#if UE4_26_BELOW
-	UseOctetStream = true;
-#endif
-
-#if UE5_5_BEYOND
-	UseOctetStream = true;
-#endif
+	bool UseOctetStream = ShouldUseOctetStream(Type, IsVectorDisplacementMap);
 	
 	FJRedirects::Redirect(PackagePath);
 

@@ -10,6 +10,8 @@
 /* Compiles an experimental version of JsonAsAsset */
 #ifndef JSONASASSET_EXPERIMENTAL
 #define JSONASASSET_EXPERIMENTAL 0
+#include "Engine/TextureCube.h"
+#include "Engine/VolumeTexture.h"
 #endif
 
 #if ENGINE_MAJOR_VERSION == 5
@@ -112,7 +114,7 @@
 #include "AssetRegistry/Public/AssetRegistryModule.h"
 #endif
 
-#if ENGINE_UE5 || ((ENGINE_UE4 && ENGINE_MINOR_VERSION >= 26) && !(ENGINE_MINOR_VERSION == 26 && ENGINE_PATCH_VERSION == 0))
+#if (ENGINE_UE5 && ENGINE_MINOR_VERSION < 4) || ((ENGINE_UE4 && ENGINE_MINOR_VERSION >= 26) && !(ENGINE_MINOR_VERSION == 26 && ENGINE_PATCH_VERSION == 0))
 #include "AssetRegistry/AssetRegistryModule.h"
 #endif
 
@@ -211,4 +213,58 @@ inline UClass* FindClassByType(const FString& Type) {
 #endif
 
 	return Class;
+}
+
+inline FTexturePlatformData* GetPlatformData(UTexture* Texture) {
+	if (UTexture2D* Texture2D = Cast<UTexture2D>(Texture)) {
+#if ENGINE_UE5
+		return Texture2D->GetPlatformData();
+#else
+		return Texture2D->PlatformData;
+#endif
+	}
+	
+	if (UTextureCube* TextureCube = Cast<UTextureCube>(Texture)) {
+#if ENGINE_UE5
+		return TextureCube->GetPlatformData();
+#else
+		return TextureCube->PlatformData;
+#endif
+	}
+
+	if (UVolumeTexture* VolumeTexture = Cast<UVolumeTexture>(Texture)) {
+#if ENGINE_UE5
+		return VolumeTexture->GetPlatformData();
+#else
+		return VolumeTexture->PlatformData;
+#endif
+	}
+	
+	return nullptr;
+}
+
+inline void SetPlatformData(UTexture* Texture, FTexturePlatformData* PlatformData) {
+	if (UTexture2D* Texture2D = Cast<UTexture2D>(Texture)) {
+#if ENGINE_UE5
+		Texture2D->SetPlatformData(PlatformData);
+#else
+		Texture2D->PlatformData = PlatformData;
+#endif
+	}
+	
+	if (UTextureCube* TextureCube = Cast<UTextureCube>(Texture)) {
+#if ENGINE_UE5
+		TextureCube->SetPlatformData(PlatformData);
+#else
+		TextureCube->PlatformData = PlatformData;
+#endif
+	}
+
+	if (UVolumeTexture* VolumeTexture = Cast<UVolumeTexture>(Texture)) {
+#if ENGINE_UE5
+		VolumeTexture->SetPlatformData(PlatformData);
+#else
+		VolumeTexture->PlatformData = PlatformData;
+#endif
+	}
 }

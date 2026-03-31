@@ -14,6 +14,7 @@
 #include "Dom/JsonObject.h"
 
 #include "HttpModule.h"
+#include "AssetRegistry/AssetRegistryModule.h"
 #include "Importers/Constructor/ImportReader.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Modules/Cloud/Cloud.h"

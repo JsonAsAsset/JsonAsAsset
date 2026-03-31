@@ -332,6 +332,10 @@ bool FAssetUtilities::Fast_Construct_TypeTexture(const TSharedPtr<FJsonObject>& 
 #if UE5_5_BEYOND
 	UseOctetStream = true;
 #endif
+
+#if PLATFORM_LINUX
+	UseOctetStream = false;
+#endif
 	
 	FJRedirects::Redirect(PackagePath);
 

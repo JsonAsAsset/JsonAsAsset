@@ -1,7 +1,7 @@
 /* Copyright JsonAsAsset Contributors 2024-2026 */
 
 #include "Importers/Types/Physics/PhysicsAssetImporter.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 #include "PhysicsEngine/PhysicsConstraintTemplate.h"
 #include "Settings/Runtime.h"

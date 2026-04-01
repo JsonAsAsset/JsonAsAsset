@@ -5,6 +5,29 @@
 #include "Serializers/PropertySerializer.h"
 #include "Dom/JsonObject.h"
 
+inline bool ShouldUseOctetStream(
+	const FString& Type,
+	const bool IsVectorDisplacementMap)
+{
+#if UE4_26_BELOW || UE5_5_BEYOND
+	return true;
+#endif
+
+#if PLATFORM_LINUX
+	return false;
+#endif
+	
+	if (Type == "TextureLightProfile"
+	 || Type == "TextureCube"
+	 || Type == "VolumeTexture"
+	 || Type == "TextureRenderTarget2D")
+	{
+		return true;
+	}
+	
+	return IsVectorDisplacementMap;
+}
+
 struct FTextureCreatorUtilities {
 public:
 	FTextureCreatorUtilities(const FString& AssetName, const FString& FilePath, UPackage* Package, const bool UseOctetStream)

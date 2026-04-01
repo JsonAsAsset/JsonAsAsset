@@ -3,7 +3,7 @@
 #include "Modules/Toolbar/Dropdowns/GeneralDropdownBuilder.h"
 
 #include "Engine/Compatibility.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 void IGeneralDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	MenuBuilder.AddMenuEntry(

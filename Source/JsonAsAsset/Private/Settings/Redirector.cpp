@@ -4,7 +4,7 @@
 
 #include "Settings/JsonAsAssetSettings.h"
 #include "Settings/Runtime.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 /********* Redirect History ************ */
 TMap<FString, TArray<FJRedirectorPoint>> FJRedirects::History;

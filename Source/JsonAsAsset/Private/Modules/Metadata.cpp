@@ -3,7 +3,7 @@
 #include "Modules/Metadata.h"
 
 #include "Interfaces/IPluginManager.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 FName GJsonAsAssetName = FName("JsonAsAsset");
 

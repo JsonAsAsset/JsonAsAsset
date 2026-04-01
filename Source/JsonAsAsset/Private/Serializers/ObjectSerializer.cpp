@@ -11,7 +11,7 @@
 
 #include "Serializers/PropertySerializer.h"
 #include "UObject/Package.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 #include "Utilities/JsonUtilities.h"
 
 /* ReSharper disable once CppDeclaratorNeverUsed */

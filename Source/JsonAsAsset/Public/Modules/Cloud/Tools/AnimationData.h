@@ -8,22 +8,13 @@
 #include "Modules/Toolbar/Tools/ToolBase.h"
 #include "Utilities/JsonUtilities.h"
 
-#if ENGINE_UE5
-#include "Animation/AnimData/IAnimationDataController.h"
-#if ENGINE_MINOR_VERSION >= 4
-#include "Animation/AnimData/IAnimationDataModel.h"
-#endif
-#include "AnimDataController.h"
-#endif
-
 inline bool ReadAnimationData(USerializerContainer* Container, const bool UseSelectedAsset, const IImporter* Importer = nullptr) {
 	/* Animation Sequence Base reference, either by using the selected asset in the browser, or through an importer */
 	UAnimSequenceBase* AnimSequenceBase = nullptr;
 
 	if (UseSelectedAsset) {
 		AnimSequenceBase = GetSelectedAsset<UAnimSequenceBase>(true, Container->GetAssetName());
-	}
-	else {
+	} else {
 		if (Container->GetAsset()) {
 			AnimSequenceBase = Cast<UAnimSequenceBase>(Container->GetAsset());
 		}
@@ -46,9 +37,7 @@ inline bool ReadAnimationData(USerializerContainer* Container, const bool UseSel
 	if (!AnimSequenceBase) return false;
 
 	/* Empty all Notifies */
-	UAnimSequence* CastedAnimSequence = Cast<UAnimSequence>(AnimSequenceBase);
-
-	if (CastedAnimSequence) {
+	if (UAnimSequence* CastedAnimSequence = Cast<UAnimSequence>(AnimSequenceBase)) {
 		CastedAnimSequence->AuthoredSyncMarkers.Empty();
 		CastedAnimSequence->Notifies.Empty();
 	}
@@ -236,23 +225,8 @@ inline bool ReadAnimationData(USerializerContainer* Container, const bool UseSel
 #endif
 	}
 
-#if UE5_2_BEYOND
-	if (ITargetPlatform* RunningPlatform = GetTargetPlatformManagerRef().GetRunningTargetPlatform()) {
-#if UE5_6_BEYOND
-		CastedAnimSequence->CacheDerivedDataForPlatform(RunningPlatform);
-#else
-		CastedAnimSequence->CacheDerivedData(RunningPlatform);
-#endif
-	}
-#else
-	if (CastedAnimSequence) {
-		CastedAnimSequence->RequestSyncAnimRecompression();
-	}
-#endif
-
-#if ENGINE_UE4
-	AnimSequenceBase->MarkRawDataAsModified();
-#endif
+	UpdateAnimationCaching(AnimSequenceBase);
+	
 	AnimSequenceBase->Modify();
 	AnimSequenceBase->PostEditChange();
 

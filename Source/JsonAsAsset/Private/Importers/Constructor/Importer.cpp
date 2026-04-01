@@ -12,7 +12,7 @@
 #include "Curves/CurveLinearColor.h"
 #include "Modules/Log.h"
 #include "Sound/SoundNode.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 UObject* IImporter::CreateAsset(UObject* CreatedAsset) {

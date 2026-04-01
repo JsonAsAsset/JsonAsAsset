@@ -69,24 +69,33 @@ struct FUObjectExport : FUObjectJsonValueExport {
 	}
 
 	explicit FUObjectExport(const TSharedPtr<FJsonObject>& InJsonObject)
-		: FUObjectJsonValueExport(InJsonObject), Object(nullptr), Parent(nullptr), Position(-1) { }
-	
+		: FUObjectJsonValueExport(InJsonObject), Object(nullptr), Parent(nullptr), Package(nullptr), Position(-1)
+	{
+	}
+
 	FUObjectExport(const TSharedPtr<FJsonObject>& InJsonObject, UObject* Object, UObject* Parent, const int Position = -1)
-		: FUObjectJsonValueExport(InJsonObject), Object(Object), Parent(Parent), Position(Position) { }
+		: FUObjectJsonValueExport(InJsonObject), Object(Object), Parent(Parent), Package(nullptr), Position(Position)
+	{
+	}
 
 	FUObjectExport(const FName OuterOverride, const TSharedPtr<FJsonObject>& InJsonObject, UObject* Object, UObject* Parent, const int Position = -1)
-		: FUObjectJsonValueExport(InJsonObject), Object(Object), Parent(Parent), Position(Position), OuterOverride(OuterOverride) { }
+		: FUObjectJsonValueExport(InJsonObject), Object(Object), Parent(Parent), Package(nullptr), Position(Position),
+		  OuterOverride(OuterOverride)
+	{
+	}
 
 	FUObjectExport(const FName NameOverride, const FName TypeOverride, const FName OuterOverride,
-		const TSharedPtr<FJsonObject>& InJsonObject, UObject* Object, UObject* Parent, const int Position = -1)
+	               const TSharedPtr<FJsonObject>& InJsonObject, UObject* Object, UObject* Parent, const int Position = -1)
 		: FUObjectJsonValueExport(InJsonObject),
 		  Object(Object),
-		  Parent(Parent),
+		  Parent(Parent), Package(nullptr),
 		  Position(Position),
 		  NameOverride(NameOverride),
 		  TypeOverride(TypeOverride),
-		  OuterOverride(OuterOverride) { }
-	
+		  OuterOverride(OuterOverride)
+	{
+	}
+
 	const TSharedPtr<FJsonObject>& GetProperties() const {
 		return JsonObject->GetObjectField(TEXT("Properties"));
 	}

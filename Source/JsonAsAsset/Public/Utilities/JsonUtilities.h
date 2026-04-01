@@ -374,7 +374,6 @@ inline FName GetExportNameOfSubobject(const FString& PackageIndex) {
 }
 
 template<typename K, typename V>
-FORCEINLINE bool IsEmpty(const TMap<K, V>& Map)
-{
+FORCEINLINE bool IsEmpty(const TMap<K, V>& Map) {
 	return Map.Num() == 0;
 }

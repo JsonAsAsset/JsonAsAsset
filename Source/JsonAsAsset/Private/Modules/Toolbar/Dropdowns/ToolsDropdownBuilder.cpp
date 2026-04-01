@@ -9,7 +9,7 @@
 #include "Modules/Toolbar/Dropdowns/CloudToolsDropdownBuilder.h"
 #endif
 
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 #include "Modules/Toolbar/Tools/ClearImportData.h"
 #include "Modules/Toolbar/Tools/FixUpAssetData.h"

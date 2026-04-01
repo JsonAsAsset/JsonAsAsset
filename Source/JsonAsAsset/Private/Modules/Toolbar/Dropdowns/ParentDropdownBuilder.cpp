@@ -5,7 +5,7 @@
 #include "JsonAsAsset.h"
 #include "Modules/Metadata.h"
 #include "Engine/Compatibility.h"
-#include "Utilities/EngineUtilities.h"
+#include "Engine/EngineUtilities.h"
 
 void IParentDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 	MenuBuilder.BeginSection(

@@ -542,10 +542,12 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 		
 		Node->AllocateDefaultPins();
 		Node->Modify();
+		Node->PostPlacedNewNode();
 	}
 }
 
 void IAnimationBlueprintImporter::ConnectAnimGraphNodes(FUObjectExportContainer& Container, UEdGraph* AnimGraph) {
+	
     for (const FUObjectExport& Export : Container) {
         UAnimGraphNode_Base* Node = Cast<UAnimGraphNode_Base>(Export.Object);
         const TSharedPtr<FJsonObject> Json = Export.JsonObject;

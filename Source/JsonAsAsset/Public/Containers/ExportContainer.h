@@ -36,7 +36,7 @@ public:
 
 	FUObjectExport& Find(const FName Name) {
 		for (FUObjectExport& Export : Exports) {
-			if (Export.GetName() == Name) {
+			if (Export.IsJsonValid() && Export.GetName() == Name) {
 				return Export;
 			}
 		}

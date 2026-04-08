@@ -205,12 +205,28 @@ void UJsonAsAssetToolbar::UE4CloudRegister(FToolBarBuilder& Builder) {
 }
 #endif
 
+IConsoleVariable* GJsonAsAssetButtonVisibility = nullptr;
+
 bool UJsonAsAssetToolbar::IsToolBarVisible() {
 	if (!GJsonAsAssetRuntime.bEnableToolbarToggling) {
 		return true;
 	}
 	
 	bool Visible = true;
+
+	static bool bHasCheckedConsoleVariable = false;
+
+	if (!bHasCheckedConsoleVariable) {
+		GJsonAsAssetButtonVisibility = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"));
+
+		bHasCheckedConsoleVariable = true;
+	}
+
+	if (GJsonAsAssetButtonVisibility) {
+		if (GJsonAsAssetButtonVisibility->GetInt() == 1) {
+			Visible = false;
+		}
+	}
 
 	if (GEditor) {
 		for (const FWorldContext& WorldContext : GEditor->GetWorldContexts()) {

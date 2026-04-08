@@ -5,6 +5,7 @@
 #ifndef __linux__
 #include "Windows/WindowsPlatformApplicationMisc.h"
 #endif // __linux__
+
 #include "Interfaces/IMainFrameModule.h"
 #include "DesktopPlatformModule.h"
 #include "IDesktopPlatform.h"

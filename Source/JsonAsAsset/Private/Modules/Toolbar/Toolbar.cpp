@@ -212,12 +212,6 @@ bool UJsonAsAssetToolbar::IsToolBarVisible() {
 	
 	bool Visible = true;
 
-	if (const auto CVar = IConsoleManager::Get().FindConsoleVariable(TEXT("Toolbar.Tools.FlippedVisibility"))) {
-		if (CVar->GetInt() == 1) {
-			Visible = false;
-		}
-	}
-
 	if (GEditor) {
 		for (const FWorldContext& WorldContext : GEditor->GetWorldContexts()) {
 			if (WorldContext.World() && WorldContext.World()->WorldType == EWorldType::PIE) {

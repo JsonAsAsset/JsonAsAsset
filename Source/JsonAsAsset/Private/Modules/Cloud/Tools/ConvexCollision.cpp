@@ -67,6 +67,7 @@ void TToolConvexCollision::Execute() {
 				GetObjectSerializer()->Parent = StaticMesh;
 
 				FUObjectExportContainer Container(Exports);
+				GetObjectSerializer()->PropertySerializer->ExportsContainer = &Container;
 				GetObjectSerializer()->DeserializeExports(Container);
 
 				if (GetObjectSerializer()->GetPropertySerializer()->ExportsContainer) {

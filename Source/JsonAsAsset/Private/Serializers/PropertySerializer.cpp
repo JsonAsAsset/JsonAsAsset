@@ -207,9 +207,11 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				ObjectIndex = FCString::Atoi(*ObjectIndexString);
 			}
 
-			if (FUObjectExport& Export = ExportsContainer->Find(ObjectName); Export.Object != nullptr) {
-				if (UObject* FoundObject = Export.Object) {
-					ObjectProperty->SetObjectPropertyValue(OutValue, FoundObject);
+			if (ExportsContainer) {
+				if (FUObjectExport& Export = ExportsContainer->Find(ObjectName); Export.Object != nullptr) {
+					if (UObject* FoundObject = Export.Object) {
+						ObjectProperty->SetObjectPropertyValue(OutValue, FoundObject);
+					}
 				}
 			}
 
@@ -248,7 +250,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 				}
 			}
 
-			if (ObjectIndex != -1) {
+			if (ObjectIndex != -1 && ExportsContainer) {
 				if (FUObjectExport& Export = ExportsContainer->FindByPositionAndName(ObjectIndex, ObjectName); Export.Object != nullptr) {
 					if (UObject* FoundObject = Export.Object) {
 						ObjectProperty->SetObjectPropertyValue(OutValue, FoundObject);

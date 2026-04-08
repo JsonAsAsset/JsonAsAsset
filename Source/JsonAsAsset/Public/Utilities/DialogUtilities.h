@@ -2,17 +2,14 @@
 
 #pragma once
 
-#ifndef __linux__
 #include "Windows/WindowsPlatformApplicationMisc.h"
-#endif // __linux__
-
 #include "Interfaces/IMainFrameModule.h"
 #include "DesktopPlatformModule.h"
 #include "IDesktopPlatform.h"
 
 inline FString GetClipboard() {
 	FString ClipboardContent;
-#ifndef __linux__
+#ifndef __linux
 	/* @LINUX.CLIPBOARD */
 	FPlatformApplicationMisc::ClipboardPaste(ClipboardContent);
 #endif

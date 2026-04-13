@@ -11,5 +11,6 @@ public:
 };
 
 REGISTER_IMPORTER(IBlueprintImporter, (TArray<FString>{ 
-	TEXT("BlueprintGeneratedClass")
+	TEXT("BlueprintGeneratedClass"),
+	TEXT("WidgetBlueprintGeneratedClass")
 }), TEXT("Blueprint Assets"));

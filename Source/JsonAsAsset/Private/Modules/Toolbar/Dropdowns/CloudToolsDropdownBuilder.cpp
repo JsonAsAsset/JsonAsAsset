@@ -3,10 +3,9 @@
 #include "Modules/Toolbar/Dropdowns/CloudToolsDropdownBuilder.h"
 
 #include "Modules/Cloud/Cloud.h"
-#include "Engine/EngineUtilities.h"
-
 #include "Modules/Cloud/Tools/AnimationData.h"
 #include "Modules/Cloud/Tools/ConvexCollision.h"
+#include "Modules/Cloud/Tools/CurveLinearColorData.h"
 #include "Modules/Cloud/Tools/FontData.h"
 #include "Modules/Cloud/Tools/SkeletalMeshData.h"
 #include "Modules/Cloud/Tools/WidgetAnimations.h"
@@ -97,6 +96,23 @@ void ICloudToolsDropdownBuilder::Build(FMenuBuilder& MenuBuilder) const {
 		FUIAction(
 			FExecuteAction::CreateLambda([] {
 				TWidgetAnimations* Tool = new TWidgetAnimations();
+				Tool->Execute();
+			}),
+			FCanExecuteAction::CreateLambda([this] {
+				return Cloud::Status::IsOpened();
+			})
+		),
+		NAME_None
+	);
+	
+	MenuBuilder.AddMenuEntry(
+		FText::FromString("Linear Colors"),
+		FText::FromString("Imports colors if any changes were made"),
+		FSlateIcon(FAppStyle::GetAppStyleSetName(), "ClassIcon.CurveBase"),
+
+		FUIAction(
+			FExecuteAction::CreateLambda([] {
+				TCurveLinearColorData* Tool = new TCurveLinearColorData();
 				Tool->Execute();
 			}),
 			FCanExecuteAction::CreateLambda([this] {

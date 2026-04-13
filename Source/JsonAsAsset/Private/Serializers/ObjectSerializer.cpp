@@ -3,12 +3,6 @@
 #include "Serializers/ObjectSerializer.h"
 #include "Engine/Compatibility.h"
 
-#if ENGINE_UE5
-#include "AnimGraphNode_Base.h"
-#else
-#include "AnimGraph/Classes/AnimGraphNode_Base.h"
-#endif
-
 #include "Serializers/PropertySerializer.h"
 #include "UObject/Package.h"
 #include "Engine/EngineUtilities.h"

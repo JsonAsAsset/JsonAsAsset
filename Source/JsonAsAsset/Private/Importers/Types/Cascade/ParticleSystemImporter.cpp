@@ -112,7 +112,7 @@ UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, co
 	
 	/* Initialize epic detail mode to enabled if it's an older version of the engine */
 	if (!GJsonAsAssetRuntime.IsUE5()) {
-#if ENGINE_UE5
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 2
 		if (Emitter->DetailModeBitmask & 1 << EParticleDetailMode::PDM_High) {
 			Emitter->DetailModeBitmask |= 1 << EParticleDetailMode::PDM_Epic;
 		}

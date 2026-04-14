@@ -4,6 +4,7 @@
 
 #include "UObject/Object.h"
 #include "Containers/Export.h"
+#include "Dom/JsonValue.h"
 #include "Containers/ExportContainer.h"
 #include "ObjectSerializer.generated.h"
 

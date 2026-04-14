@@ -7,6 +7,8 @@
 #include "UObject/Package.h"
 #include "Engine/EngineUtilities.h"
 #include "Utilities/JsonUtilities.h"
+#include "Components/ExponentialHeightFogComponent.h"
+#include "Components/PostProcessComponent.h"
 
 /* ReSharper disable once CppDeclaratorNeverUsed */
 DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAssetObjectSerializer, All, All);
@@ -200,7 +202,7 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 	const UClass* ObjectClass = Object->GetClass();
 
 	for (FProperty* Property = ObjectClass->PropertyLink; Property; Property = Property->PropertyLinkNext) {
-		const FString PropertyName = Property->GetName();
+		FString PropertyName = Property->GetName();
 
 		if (!PropertySerializer->ShouldDeserializeProperty(Property)) continue;
 
@@ -217,6 +219,19 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 				}
 			}
 		}
+
+#if ENGINE_UE5
+		/* ExponentialHeightFog: Migration to new API */
+		if (Object->IsA<UExponentialHeightFogComponent>()) {
+			if (Property->NamePrivate == "FogInscatteringLuminance" && !Properties->Values.Contains("FogInscatteringLuminance")) {
+				PropertyName = "FogInscatteringColor";
+			}
+
+			if (Property->NamePrivate == "DirectionalInscatteringLuminance" && !Properties->Values.Contains("DirectionalInscatteringLuminance")) {
+				PropertyName = "DirectionalInscatteringColor";
+			}
+		}
+#endif
 		
 		if (Properties->HasField(PropertyName) && !HasHandledProperty && PropertyName != "LODParentPrimitive" && PropertyName != "bIsCookedForEditor") {
 			const TSharedPtr<FJsonValue>& ValueObject = Properties->Values.FindChecked(PropertyName);
@@ -227,9 +242,15 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 		}
 	}
 
+	/* Volumes are not supported, yet. */
+	if (UPostProcessComponent* PostProcessComponent = Cast<UPostProcessComponent>(Object)) {
+		PostProcessComponent->bUnbound = true;
+	}
+
 	/* This is a use case for importing maps and parsing static mesh components
 	 * using the object and property serializer, this was initially wanted to be
 	 * done completely without any manual work. (using the de-serializers)
+	 * 
 	 * However I don't think it's possible to do so. as I haven't seen any native
 	 * property that can do this using the data provided in UEParse.
 	 */

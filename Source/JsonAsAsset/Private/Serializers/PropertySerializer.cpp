@@ -174,8 +174,13 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 							if (TargetExport.Has(TEXT("LODData"))) {
 								Properties.SetArray(TEXT("LODData"), TargetExport.GetArray(TEXT("LODData")));
 							}
-							
-							ObjectSerializer->DeserializeObjectProperties(Properties.JsonObject, Object);
+
+							if (ObjectProperty->NamePrivate != "AttachParent")
+							{
+								ObjectSerializer->DeserializeObjectProperties(Properties.JsonObject, Object);
+							} else {
+								ObjectProperty->SetObjectPropertyValue(OutValue, Object);
+							}
 						}
 
 						if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object.Get())) {

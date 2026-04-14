@@ -5,6 +5,8 @@
 #include "Containers/ExportContainer.h"
 #include "Misc/FileHelper.h"
 #include "Serialization/JsonReader.h"
+#include "Engine/EngineUtilities.h"
+#include "Settings/JsonAsAssetSettings.h"
 #include "Serialization/JsonSerializer.h"
 
 /* Conversion Functions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

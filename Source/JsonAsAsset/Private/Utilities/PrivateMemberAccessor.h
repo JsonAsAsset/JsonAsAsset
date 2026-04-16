@@ -16,6 +16,7 @@ namespace PrivateMemberAccessor
 			TMemberPointer<AccessorName> = MemberPointer;
 		}
 
+		static TPointerInitializer Instance;
 	};
 
 	/// Declaration of a TPointerInitializer instance.

@@ -19,7 +19,7 @@ bool Cloud::Status::IsOpened() {
 
 # Cloud ☁️
 
-Cloud Server's API is located at [Tectors/Core](https://github.com/TectorsCore/tree/main/Source/Core.Cloud)
+Cloud Server's API is located at [Tectors/Core](https://github.com/Tectors/Core/tree/main/Source/Core.Cloud)
 
 # Settings
 Link: [`Public/Settings/JsonAsAssetSettings.h`](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/JsonAsAsset/Public/Settings/JsonAsAssetSettings.h)

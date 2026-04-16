@@ -202,7 +202,7 @@ void IAnimationBlueprintImporter::CreateGraph(const TSharedPtr<FJsonObject>& Ani
 			}
 
 			StateMachine->EditorStateMachineGraph = EditorStateMachineGraph;
-			CreateStateMachineGraph(EditorStateMachineGraph, StateMachineObject, GetObjectSerializer(), *RootAnimNodeContainer, ReversedNodesKeys, this, AnimBlueprint);
+			CreateStateMachineGraph(EditorStateMachineGraph, StateMachineObject, GetObjectSerializer(), RootAnimNodeContainer, ReversedNodesKeys, this, AnimBlueprint);
 
 			/* Add nodes to graph */
 			if (!StateMachineObject->HasField(TEXT("States"))) continue;
@@ -532,7 +532,7 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 			}
 		}
 
-		HandlePropertyBinding(*NodeExport, AssetContainer->JsonObjects, Node, this, AnimBlueprint);
+		HandlePropertyBinding(NodeExport, AssetContainer->JsonObjects, Node, this, AnimBlueprint);
 
 		const UJsonAsAssetSettings* Settings = GetSettings();
 		if (Settings->AssetSettings.AnimationBlueprint.NodeIDComments) {

@@ -153,8 +153,8 @@ inline void HarvestAndTagConnectedStateMachineNodes(const FString& StartKey, con
 	}
 }
 
-inline void HandlePropertyBinding(FUObjectExport NodeExport, const TArray<TSharedPtr<FJsonValue>>& JsonObjects, UAnimGraphNode_Base* Node, IImporter* Importer, UAnimBlueprint* AnimBlueprint) {
-	const TSharedPtr<FJsonObject> NodeProperties = NodeExport.JsonObject;
+inline void HandlePropertyBinding(FUObjectExport* NodeExport, const TArray<TSharedPtr<FJsonValue>>& JsonObjects, UAnimGraphNode_Base* Node, IImporter* Importer, UAnimBlueprint* AnimBlueprint) {
+	const TSharedPtr<FJsonObject> NodeProperties = NodeExport->JsonObject;
 	
 	/* Let the user know that this node has nodes plugged into it */
 	if (NodeProperties->HasField(TEXT("EvaluateGraphExposedInputs"))) {
@@ -280,7 +280,7 @@ inline void HandlePropertyBinding(FUObjectExport NodeExport, const TArray<TShare
 				}
 			}
 
-			Node->NodeComment = NodeExport.GetName().ToString();
+			Node->NodeComment = NodeExport->GetName().ToString();
 			Node->bCommentBubbleVisible = bBoundFunction;
 		}
 	}

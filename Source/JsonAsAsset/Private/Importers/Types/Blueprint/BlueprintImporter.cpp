@@ -5,6 +5,7 @@
 #include "KismetCompilerModule.h"
 #include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
+#include "Utilities/PrivateMemberAccessor.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Utilities/BlueprintUtilities.h"
@@ -35,6 +36,7 @@ void IBlueprintImporter::SetupConstructionScript() {
 
 	if (GeneratedClass->SimpleConstructionScript != nullptr) {
 		MoveToTransientPackageAndRename(GeneratedClass->SimpleConstructionScript);
+		MoveToTransientPackageAndRename(Blueprint->SimpleConstructionScript);
 	}
 
 	GeneratedClass->SimpleConstructionScript = NewObject<USimpleConstructionScript>(GeneratedClass);
@@ -48,6 +50,8 @@ void IBlueprintImporter::SetupConstructionScript() {
 	SimpleConstructionScriptExport->Object = SimpleConstructionScript;
 	
 	GetObjectSerializer()->DeserializeObjectProperties(SimpleConstructionScriptExport->GetProperties(), SimpleConstructionScript);
+
+	Cast<USceneComponent>(SimpleConstructionScript->GetRootNodes()[0]->ComponentTemplate)->bVisualizeComponent = true;
 }
 
 UObject* IBlueprintImporter::CreateAsset(UObject* CreatedAsset) {

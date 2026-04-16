@@ -24,8 +24,10 @@ public:
     void DeserializeObjectProperties(const TSharedPtr<FJsonObject>& Properties, UObject* Object) const;
 
     void SetExportForDeserialization(const TSharedPtr<FJsonObject>& JsonObject, UObject* Object);
-    void DeserializeExports(FUObjectExportContainer& Container, bool CreateObjects = true);
-    void DeserializeExport(FUObjectExport& Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap);
+    void DeserializeExports(FUObjectExportContainer* Container, bool CreateObjects = true);
+    void DeserializeExport(FUObjectExport* Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap);
+
+    void SpawnExport(FUObjectExport* Export);
 
 public:
     UPROPERTY()
@@ -55,4 +57,6 @@ public:
     TArray<FString> BlacklistedTypes;
 
     TArray<FString> PathsToNotDeserialize;
+    
+    bool bUseExperimentalSpawning = false;
 };

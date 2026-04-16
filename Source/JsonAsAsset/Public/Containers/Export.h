@@ -232,15 +232,15 @@ struct FUObjectExport : FUObjectJsonValueExport {
 	}
 
 	bool IsJsonValid() const {
-		return JsonObject != nullptr && this != &EmptyExport();
+		return JsonObject != nullptr && this != EmptyExport();
 	}
 
 	bool IsJsonInvalid() const {
 		return !IsJsonValid();
 	}
 
-	static FUObjectExport& EmptyExport() {
-		static FUObjectExport Empty;
+	static FUObjectExport* EmptyExport() {
+		static FUObjectExport* Empty = new FUObjectExport();
 		return Empty;
 	}
 

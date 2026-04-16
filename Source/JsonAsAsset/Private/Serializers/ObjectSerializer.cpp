@@ -44,15 +44,15 @@ void UObjectSerializer::SetExportForDeserialization(const TSharedPtr<FJsonObject
 	ConstructedObjects.Add(JsonObject->GetStringField(TEXT("Name")), Object);
 }
 
-void UObjectSerializer::DeserializeExports(FUObjectExportContainer& Container, const bool CreateObjects) {
+void UObjectSerializer::DeserializeExports(FUObjectExportContainer* Container, const bool CreateObjects) {
 	if (CreateObjects) {
 		TMap<TSharedPtr<FJsonObject>, UObject*> ExportsMap;
 		
-		for (FUObjectExport& Export : Container) {
-			FString Type = Export.GetType().ToString();
+		for (FUObjectExport* Export : Container->Exports) {
+			FString Type = Export->GetType().ToString();
 		
 			/* Check if it's not supposed to be deserialized */
-			if (ExportsToNotDeserialize.Contains(Export.GetName().ToString())) continue;
+			if (ExportsToNotDeserialize.Contains(Export->GetName().ToString())) continue;
 
 			if (WhitelistedTypes.Num() > 0) {
 				bool bMatchFound = false;
@@ -85,7 +85,7 @@ void UObjectSerializer::DeserializeExports(FUObjectExportContainer& Container, c
 			}
 
 			if (WhitelistedTreeSegments.Num() > 0) {
-				auto TreeSegments = Export.GetOuterTreeSegments(true);
+				auto TreeSegments = Export->GetOuterTreeSegments(true);
 			
 				if (TreeSegments.Num() > 0 && WhitelistedTreeSegments != TreeSegments) {
 					continue;
@@ -112,10 +112,10 @@ void UObjectSerializer::DeserializeExports(FUObjectExportContainer& Container, c
 	}
 }
 
-void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap) {
-	if (Export.Object != nullptr) return;
+void UObjectSerializer::DeserializeExport(FUObjectExport* Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap) {
+	if (Export->Object != nullptr) return;
 
-	const TSharedPtr<FJsonObject> ExportObject = Export.JsonObject;
+	const TSharedPtr<FJsonObject> ExportObject = Export->JsonObject;
 
 	/* No name means no export */
 	if (!ExportObject->HasField(TEXT("Name"))) return;
@@ -150,24 +150,24 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 	const FString Outer = GetOuterFromObjectOuter(ExportObject->TryGetField(TEXT("Outer")));
 	UObject* ObjectOuter = nullptr;
 
-	if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer->Find(Outer); FoundExport.JsonObject.IsValid()) {
-		if (FoundExport.Object == nullptr) {
+	if (FUObjectExport* FoundExport = PropertySerializer->ExportsContainer->Find(Outer); FoundExport->JsonObject.IsValid()) {
+		if (FoundExport->Object == nullptr) {
 			DeserializeExport(FoundExport, ExportsMap);
 		}
 		
-		UObject* FoundObject = FoundExport.Object;
+		UObject* FoundObject = FoundExport->Object;
 		ObjectOuter = FoundObject;
 	}
 
-	const TArray<FName> TreeSegments = Export.GetOuterTreeSegments(true);
+	const TArray<FName> TreeSegments = Export->GetOuterTreeSegments(true);
 
 	if (TreeSegments.Num() > 0) {
-		if (FUObjectExport& FoundExport = PropertySerializer->ExportsContainer->FindByTreeSegment(TreeSegments); !IsEmpty(FoundExport.JsonObject->Values)) {
-			if (FoundExport.Object == nullptr) {
+		if (FUObjectExport* FoundExport = PropertySerializer->ExportsContainer->FindByTreeSegment(TreeSegments); !IsEmpty(FoundExport->JsonObject->Values)) {
+			if (FoundExport->Object == nullptr) {
 				DeserializeExport(FoundExport, ExportsMap);
 			}
 		
-			UObject* FoundObject = FoundExport.Object;
+			UObject* FoundObject = FoundExport->Object;
 			ObjectOuter = FoundObject;
 		}
 	}
@@ -176,7 +176,7 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 		ObjectOuter = *ConstructedObject;
 	}
 
-	if (Export.Object) return;
+	if (Export->Object) return;
 	
 	if (ObjectOuter == nullptr) {
 		ObjectOuter = Parent;
@@ -193,7 +193,87 @@ void UObjectSerializer::DeserializeExport(FUObjectExport& Export, TMap<TSharedPt
 	}
 
 	/* Add it to the referenced objects */
-	Export.Object = NewUObject;
+	Export->Object = NewUObject;
+}
+
+void UObjectSerializer::SpawnExport(FUObjectExport* Export) {
+	if (Export->Object != nullptr) return;
+	
+	const TSharedPtr<FJsonObject> ExportObject = Export->JsonObject;
+
+	FString ClassName = ExportObject->GetStringField(TEXT("Class"));
+
+	if (ExportObject->HasField(TEXT("Template"))) {
+		const TSharedPtr<FJsonObject> TemplateObject = ExportObject->GetObjectField(TEXT("Template"));
+		ClassName = ReadPathFromObject(&TemplateObject).Replace(TEXT("Default__"), TEXT(""));
+	}
+	
+	if (ClassName.Contains("'")) {
+		ClassName.Split("'", nullptr, &ClassName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+		ClassName.Split("'", &ClassName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+	}
+	
+	const UClass* Class = FindClassByType(ClassName);
+	
+	if (!Class) {
+		Class = FindClassByType(Export->GetType().ToString());
+	}
+
+	if (!Class) return;
+
+	const FString Outer = GetOuterFromObjectOuter(ExportObject->TryGetField(TEXT("Outer")));
+	UObject* ObjectOuter = nullptr;
+
+	if (FUObjectExport* FoundExport = PropertySerializer->ExportsContainer->Find(Outer); FoundExport->JsonObject.IsValid()) {
+		if (FoundExport->Object == nullptr) {
+			SpawnExport(FoundExport);
+		}
+		
+		UObject* FoundObject = FoundExport->Object;
+		ObjectOuter = FoundObject;
+	}
+
+	if (!Outer.IsEmpty()) {
+		FString PotentialBPName;
+		Outer.Split("_C", &PotentialBPName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+		
+		if (FUObjectExport* FoundExport = PropertySerializer->ExportsContainer->Find(PotentialBPName); FoundExport->JsonObject.IsValid()) {
+			if (FoundExport->Object == nullptr) {
+				SpawnExport(FoundExport);
+			}
+		
+			UObject* FoundObject = FoundExport->Object;
+			ObjectOuter = FoundObject;
+		}
+	}
+
+	const TArray<FName> TreeSegments = Export->GetOuterTreeSegments(true);
+
+	if (TreeSegments.Num() > 0) {
+		if (FUObjectExport* FoundExport = PropertySerializer->ExportsContainer->FindByTreeSegment(TreeSegments); !IsEmpty(FoundExport->JsonObject->Values)) {
+			if (FoundExport->Object == nullptr) {
+				SpawnExport(FoundExport);
+			}
+		
+			UObject* FoundObject = FoundExport->Object;
+			ObjectOuter = FoundObject;
+		}
+	}
+
+	if (UObject** ConstructedObject = ConstructedObjects.Find(Outer)) {
+		ObjectOuter = *ConstructedObject;
+	}
+
+	if (Export->Object) return;
+	
+	if (ObjectOuter == nullptr) {
+		ObjectOuter = Parent;
+	}
+
+	UObject* NewUObject = NewObject<UObject>(ObjectOuter, Class, Export->GetName(), RF_Public | RF_Transactional);
+	Export->Object = NewUObject;
+
+	DeserializeObjectProperties(Export->GetProperties(), Export->Object);
 }
 
 void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject>& Properties, UObject* Object) const {

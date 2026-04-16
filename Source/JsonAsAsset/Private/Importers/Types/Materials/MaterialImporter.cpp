@@ -42,7 +42,7 @@ bool IMaterialImporter::Import() {
 #endif
 
 	/* Define material data from the JSON */
-	FUObjectExportContainer ExpressionContainer;
+	FUObjectExportContainer* ExpressionContainer = new FUObjectExportContainer();
 	TSharedPtr<FJsonObject> Props = FindMaterialData(GetAssetType(), ExpressionContainer);
 
 	/* Map out each expression for easier access */
@@ -51,7 +51,7 @@ bool IMaterialImporter::Import() {
 	const UJsonAsAssetSettings* Settings = GetSettings();
 	
 	/* If Missing Material Data */
-	if (ExpressionContainer.Num() == 0) {
+	if (ExpressionContainer->Num() == 0) {
 #if ENGINE_UE5
 		if (GetSettings()->AssetSettings.Material.Stubs) {
 			CreateStubs(this);
@@ -101,8 +101,8 @@ bool IMaterialImporter::Import() {
 				FJsonObject* InputObject = InputValue->AsObject().Get();
 				FName InputExpressionName = GetExpressionName(InputObject);
 
-				if (ExpressionContainer.Contains(InputExpressionName)) {
-					FExpressionInput Input = PopulateExpressionInput(InputObject, ExpressionContainer.Find<UMaterialExpression>(InputExpressionName));
+				if (ExpressionContainer->Contains(InputExpressionName)) {
+					FExpressionInput Input = PopulateExpressionInput(InputObject, ExpressionContainer->Find<UMaterialExpression>(InputExpressionName));
 					EditorOnlyData->CustomizedUVs[i] = *reinterpret_cast<FVector2MaterialInput*>(&Input);
 				}
 				i++;
@@ -151,8 +151,8 @@ bool IMaterialImporter::Import() {
 
 #if ENGINE_UE5
 	/* Update Cached Expression Data */
-	if (AssetExport.GetJsonObject().Has("CachedExpressionData")) {
-		FUObjectJsonValueExport CachedExpressionData = AssetExport.GetJsonObject().GetObject("CachedExpressionData");
+	if (AssetExport->GetJsonObject().Has("CachedExpressionData")) {
+		FUObjectJsonValueExport CachedExpressionData = AssetExport->GetJsonObject().GetObject("CachedExpressionData");
 
 		UMaterialAccessor* Accessor = Cast<UMaterialAccessor>(Material);
 		FMaterialCachedExpressionData* CachedData = Accessor->GetCachedExpressionDataRef();

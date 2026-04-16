@@ -6,17 +6,17 @@ USerializerContainer::USerializerContainer() {
 	CreateSerializer();
 }
 
-void USerializerContainer::Initialize(FUObjectExport& Export, FUObjectExportContainer& Container) {
+void USerializerContainer::Initialize(FUObjectExport* Export, FUObjectExportContainer* Container) {
 	AssetContainer = Container;
 	AssetExport = Export;
 	
 	/* Create Properties field if it doesn't exist */
-	if (!AssetExport.JsonObject->HasField(TEXT("Properties"))) {
-		AssetExport.JsonObject->SetObjectField(TEXT("Properties"), TSharedPtr<FJsonObject>());
+	if (!AssetExport->JsonObject->HasField(TEXT("Properties"))) {
+		AssetExport->JsonObject->SetObjectField(TEXT("Properties"), TSharedPtr<FJsonObject>());
 	}
 
 	/* Move asset properties defined outside "Properties" and move it inside */
-	for (const auto& Pair : AssetExport.JsonObject->Values) {
+	for (const auto& Pair : AssetExport->JsonObject->Values) {
 		const FString& PropertyName = Pair.Key;
     
 		if (!PropertyName.Equals(TEXT("Type")) &&
@@ -25,21 +25,21 @@ void USerializerContainer::Initialize(FUObjectExport& Export, FUObjectExportCont
 			!PropertyName.Equals(TEXT("Flags")) &&
 			!PropertyName.Equals(TEXT("Properties"))
 		) {
-			AssetExport.GetProperties()->SetField(PropertyName, Pair.Value);
+			AssetExport->GetProperties()->SetField(PropertyName, Pair.Value);
 		}
 	}
 
-	AssetExport.NameOverride = AssetExport.GetName();
+	AssetExport->NameOverride = AssetExport->GetName();
 	
 	/* BlueprintGeneratedClass is post-fixed with _C */
-	if (AssetExport.GetType().ToString().Contains("BlueprintGeneratedClass")) {
+	if (AssetExport->GetType().ToString().Contains("BlueprintGeneratedClass")) {
 		FString NewName; {
-			AssetExport.NameOverride.ToString().Split("_C", &NewName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
-			AssetExport.NameOverride = FName(*NewName);
+			AssetExport->NameOverride.ToString().Split("_C", &NewName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+			AssetExport->NameOverride = FName(*NewName);
 		}
 	}
 	
-	GetPropertySerializer()->ExportsContainer = &AssetContainer;
+	GetPropertySerializer()->ExportsContainer = AssetContainer;
 }
 
 UObjectSerializer* USerializerContainer::GetObjectSerializer() const {
@@ -65,55 +65,59 @@ void USerializerContainer::CreateSerializer() {
 
 /* AssetExport ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~> */
 FString USerializerContainer::GetAssetName() const {
-	return AssetExport.GetName().ToString();
+	return AssetExport->GetName().ToString();
 }
 
 FString USerializerContainer::GetAssetType() const {
-	return AssetExport.GetType().ToString();
+	return AssetExport->GetType().ToString();
 }
 
 TSharedPtr<FJsonObject> USerializerContainer::GetAssetData() const {
-	return AssetExport.GetProperties();
+	return AssetExport->GetProperties();
 }
 
 FUObjectJsonValueExport USerializerContainer::GetAssetDataAsValue() const {
-	return AssetExport.GetPropertiesAsValue();
+	return AssetExport->GetPropertiesAsValue();
 }
 
 FUObjectJsonValueExport USerializerContainer::GetAssetAsValue() const {
-	return AssetExport.AsValueExport();
+	return AssetExport->AsValueExport();
 }
 
 TSharedPtr<FJsonObject>& USerializerContainer::GetAssetExport() {
-	return AssetExport.JsonObject;
+	return AssetExport->JsonObject;
 }
 
 UClass* USerializerContainer::GetAssetClass() {
-	return AssetExport.GetClass();
+	return AssetExport->GetClass();
 }
 
 void USerializerContainer::SetParent(UObject* Parent) {
-	AssetExport.Parent = Parent;
+	AssetExport->Parent = Parent;
 }
 
 UObject* USerializerContainer::GetAsset() {
-	return AssetExport.Object;
+	return AssetExport->Object;
+}
+
+void USerializerContainer::SetAsset(UObject* InAsset) {
+	AssetExport->Object = InAsset;
 }
 
 template<typename T>
 T* USerializerContainer::GetTypedAsset() const {
-	return AssetExport.Object ? Cast<T>(AssetExport.Object) : nullptr;
+	return AssetExport->Object ? Cast<T>(AssetExport->Object) : nullptr;
 }
 
 UObject* USerializerContainer::GetParent() const {
-	return AssetExport.Parent;
+	return AssetExport->Parent;
 }
 
 UPackage* USerializerContainer::GetPackage() const {
-	return AssetExport.Package;
+	return AssetExport->Package;
 }
 
 void USerializerContainer::SetPackage(UPackage* NewPackage) {
-	AssetExport.Package = NewPackage;
+	AssetExport->Package = NewPackage;
 }
 /* AssetExport <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

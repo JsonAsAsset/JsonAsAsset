@@ -13,13 +13,13 @@
 #include "Utilities/JsonUtilities.h"
 
 bool IImportReader::ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& Exports, const FString& File, IImporter*& OutImporter, const bool HideNotifications) {
-	FUObjectExportContainer Container = Exports;
+	FUObjectExportContainer* Container = new FUObjectExportContainer(Exports);
 
-	const bool IsBlueprint = Container.FindByType(FString("BlueprintGeneratedClass")).IsJsonValid();
+	const bool IsBlueprint = Container->FindByType(FString("BlueprintGeneratedClass"))->IsJsonValid();
 	
-	for (FUObjectExport& Export : Container) {
+	for (FUObjectExport* Export : Container->Exports) {
 		if (IsBlueprint) {
-			if (Export.GetType() != "BlueprintGeneratedClass") continue;
+			if (Export->GetType() != "BlueprintGeneratedClass") continue;
 		}
 		
 		if (IImporter* Importer = ReadExportAndImport(Container, Export, File, HideNotifications)) OutImporter = Importer;
@@ -28,9 +28,9 @@ bool IImportReader::ReadExportsAndImport(const TArray<TSharedPtr<FJsonValue>>& E
 	return true;
 }
 
-IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer& Container, FUObjectExport& Export, FString File, const bool HideNotifications) {
-	const FString Type = Export.GetType().ToString();
-	FString Name = Export.GetName().ToString();
+IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer* Container, FUObjectExport* Export, FString File, const bool HideNotifications) {
+	const FString Type = Export->GetType().ToString();
+	FString Name = Export->GetName().ToString();
 
 	const bool IsBlueprint = Type.Contains("BlueprintGeneratedClass");
 
@@ -119,7 +119,7 @@ IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer& Container
 		Importer = new ITextureImporter<UTextureLightProfile>();
 	}
 
-	Export.Package = LocalPackage;
+	Export->Package = LocalPackage;
 	Importer->Initialize(Export, Container);
 
 	/* Import the asset ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */

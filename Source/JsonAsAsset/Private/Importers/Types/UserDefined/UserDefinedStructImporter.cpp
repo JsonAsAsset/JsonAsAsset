@@ -50,10 +50,10 @@ bool IUserDefinedStructImporter::Import() {
     }), UserDefinedStruct);
 
     /* Struct Metadata [Editor Only Data] */
-    CookedStructMetaData = AssetContainer.FindByType(FString("StructCookedMetaData"));
+    CookedStructMetaData = AssetContainer->FindByType(FString("StructCookedMetaData"));
     
-    if (CookedStructMetaData && CookedStructMetaData.Has("StructMetaData")) {
-        TArray<FUObjectJsonValueExport> ObjectMetaData = CookedStructMetaData.GetObject("StructMetaData").GetArray("ObjectMetaData");
+    if (CookedStructMetaData && CookedStructMetaData->Has("StructMetaData")) {
+        TArray<FUObjectJsonValueExport> ObjectMetaData = CookedStructMetaData->GetObject("StructMetaData").GetArray("ObjectMetaData");
 
         for (FUObjectJsonValueExport& ObjectMetadataValue : ObjectMetaData) {
             FString MetadataKey = ObjectMetadataValue.GetString("Key");
@@ -140,8 +140,8 @@ void IUserDefinedStructImporter::ImportPropertyIntoStruct(UUserDefinedStruct* Us
     FStructureEditorUtils::ChangeVariableDefaultValue(UserDefinedStruct, Variable.VarGuid, DefaultValue);
 
     /* Editor Only Data */
-    if (CookedStructMetaData && CookedStructMetaData.Has("StructMetaData")) {
-        TArray<FUObjectJsonValueExport> PropertiesMetaData = CookedStructMetaData.GetObject("StructMetaData").GetArray("PropertiesMetaData");
+    if (CookedStructMetaData && CookedStructMetaData->Has("StructMetaData")) {
+        TArray<FUObjectJsonValueExport> PropertiesMetaData = CookedStructMetaData->GetObject("StructMetaData").GetArray("PropertiesMetaData");
 
         for (const FUObjectJsonValueExport& Value : PropertiesMetaData) {
             /* Find a matching key */

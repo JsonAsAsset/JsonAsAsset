@@ -21,13 +21,13 @@ void TWidgetAnimations::Process(UObject* Object) {
 		MoveToTransientPackageAndRename(AnimationObject);
 	}
 
-	FUObjectExportContainer Exports(SendToCloudForExports(GetAssetPath(Object)));
-	auto Export = Exports.FindByType(FString("WidgetBlueprintGeneratedClass"));
+	FUObjectExportContainer* Exports = new FUObjectExportContainer(SendToCloudForExports(GetAssetPath(Object)));
+	auto Export = Exports->FindByType(FString("WidgetBlueprintGeneratedClass"));
 
-	if (!Export.IsJsonValid()) return;
-	if (!Export.JsonObject.Get()->HasField(TEXT("Properties"))) return;
+	if (!Export->IsJsonValid()) return;
+	if (!Export->JsonObject.Get()->HasField(TEXT("Properties"))) return;
 
-	auto Animations = Export.GetPropertiesAsValue().GetArray("Animations");
+	auto Animations = Export->GetPropertiesAsValue().GetArray("Animations");
 
 	GetObjectSerializer()->WhitelistedTypes.Add("MovieScene");
 	GetObjectSerializer()->WhitelistedTypes.Add("WidgetAnimation");
@@ -35,9 +35,9 @@ void TWidgetAnimations::Process(UObject* Object) {
 	Initialize(Export, Exports);
 	DeserializeExports(WidgetBlueprint, true);
 
-	for (FUObjectExport& AnimationExport : *GetPropertySerializer()->ExportsContainer) {
-		if (AnimationExport.Object) {
-			UWidgetAnimation* WidgetAnimation = AnimationExport.Get<UWidgetAnimation>();
+	for (FUObjectExport* AnimationExport : GetPropertySerializer()->ExportsContainer->Exports) {
+		if (AnimationExport->Object) {
+			UWidgetAnimation* WidgetAnimation = AnimationExport->Get<UWidgetAnimation>();
 			if (!WidgetAnimation) continue;
 			
 			const FString AnimationName = WidgetAnimation->GetName();

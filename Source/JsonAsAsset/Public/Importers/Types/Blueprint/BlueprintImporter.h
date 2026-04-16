@@ -7,7 +7,13 @@
 class IBlueprintImporter final : public IImporter {
 public:
 	virtual UObject* CreateAsset(UObject* CreatedAsset = nullptr) override;
+	
 	virtual bool Import() override;
+
+	void SetupConstructionScript();
+
+protected:
+	UBlueprint* Blueprint = nullptr;
 };
 
 REGISTER_IMPORTER(IBlueprintImporter, (TArray<FString>{ 

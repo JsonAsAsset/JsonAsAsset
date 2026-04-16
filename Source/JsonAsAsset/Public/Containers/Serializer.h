@@ -14,12 +14,12 @@ public:
     
     virtual ~USerializerContainer() {}
     
-    virtual void Initialize(FUObjectExport& Export, FUObjectExportContainer& Container);
+    virtual void Initialize(FUObjectExport* Export, FUObjectExportContainer* Container);
     
     /* AssetExport ~~~~~~~~~~~~~~~> */
 public:
-    FUObjectExport AssetExport;
-    FUObjectExportContainer AssetContainer;
+    FUObjectExport* AssetExport = new FUObjectExport();
+    FUObjectExportContainer* AssetContainer = new FUObjectExportContainer();
 
     /* Helper Functions ~~~~~~~~~~~~~~~> */
 public:
@@ -40,6 +40,7 @@ public:
     virtual void SetParent(UObject* Parent);
 
     virtual UObject* GetAsset();
+    virtual void SetAsset(UObject* InAsset);
     
     template <class T>
     T* GetTypedAsset() const;

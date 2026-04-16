@@ -9,7 +9,7 @@
 
 struct FUObjectExportContainer {
 	/* Array of Expression Exports */
-	TArray<FUObjectExport> Exports;
+	TArray<FUObjectExport*> Exports;
 	TArray<TSharedPtr<FJsonValue>> JsonObjects = { };
 	
 public:
@@ -30,13 +30,13 @@ public:
 			if (!Object->HasField(TEXT("Name")) || !Object->HasField(TEXT("Type"))) continue;
 
 			/* Add it to the referenced objects */
-			Exports.Add(FUObjectExport(Object, nullptr, nullptr, Index));
+			Exports.Add(new FUObjectExport(Object, nullptr, nullptr, Index));
 		}
 	}
 
-	FUObjectExport& Find(const FName Name) {
-		for (FUObjectExport& Export : Exports) {
-			if (Export.IsJsonValid() && Export.GetName() == Name) {
+	FUObjectExport* Find(const FName Name) {
+		for (FUObjectExport* Export : Exports) {
+			if (Export->IsJsonValid() && Export->GetName() == Name) {
 				return Export;
 			}
 		}
@@ -46,18 +46,18 @@ public:
 
 	template<typename T>
 	T* Find(const FName Name) {
-		for (FUObjectExport& Export : Exports) {
-			if (Export.GetName() == Name) {
-				return Export.Get<T>();
+		for (const FUObjectExport* Export : Exports) {
+			if (Export->GetName() == Name) {
+				return Export->Get<T>();
 			}
 		}
 
 		return nullptr;
 	}
 
-	FUObjectExport& Find(const FName Name, const FName Outer) {
-		for (FUObjectExport& Export : Exports) {
-			if (Export.GetName() == Name && Export.GetOuter() == Outer) {
+	FUObjectExport* Find(const FName Name, const FName Outer) {
+		for (FUObjectExport* Export : Exports) {
+			if (Export->GetName() == Name && Export->GetOuter() == Outer) {
 				return Export;
 			}
 		}
@@ -65,12 +65,12 @@ public:
 		return FUObjectExport::EmptyExport();
 	}
 
-	TArray<FUObjectExport> GetExportsWithPropertyNameStartingWith(const FString& PropertyName, const FString& StartingWith) {
-		TArray<FUObjectExport> Result;
+	TArray<FUObjectExport*> GetExportsWithPropertyNameStartingWith(const FString& PropertyName, const FString& StartingWith) {
+		TArray<FUObjectExport*> Result;
 		
-		for (FUObjectExport& Export : Exports) {
-			if (Export.IsJsonValid() && Export.JsonObject->HasField(PropertyName)) {
-				const FString TypeValue = Export.JsonObject->GetStringField(PropertyName);
+		for (FUObjectExport* Export : Exports) {
+			if (Export->IsJsonValid() && Export->JsonObject->HasField(PropertyName)) {
+				const FString TypeValue = Export->JsonObject->GetStringField(PropertyName);
 
 				if (TypeValue.StartsWith(StartingWith)) {
 					Result.Add(Export);
@@ -81,7 +81,7 @@ public:
 		return Result;
 	}
 
-	FUObjectExport GetExport(const FUObjectJsonValueExport& PackageIndex) {
+	FUObjectExport* GetExport(const FUObjectJsonValueExport& PackageIndex) {
 		FString ObjectName = PackageIndex.GetString("ObjectName"); /* Class'Asset:ExportName' */
 		FString ObjectPath = PackageIndex.GetString("ObjectPath"); /* Path/Asset.Index */
 		FString Outer;
@@ -107,9 +107,9 @@ public:
 		/* Search for the object in the JsonObjects array */
 		for (auto& Value : Exports) {
 			FString Name;
-			if (Value.JsonObject->TryGetStringField(TEXT("Name"), Name) && Name == ObjectName) {
-				if (Value.JsonObject->HasField(TEXT("Outer")) && !Outer.IsEmpty()) {
-					FString OuterName = GetOuterFromObjectOuter(Value.JsonObject->TryGetField(TEXT("Outer")));
+			if (Value->JsonObject->TryGetStringField(TEXT("Name"), Name) && Name == ObjectName) {
+				if (Value->JsonObject->HasField(TEXT("Outer")) && !Outer.IsEmpty()) {
+					FString OuterName = GetOuterFromObjectOuter(Value->JsonObject->TryGetField(TEXT("Outer")));
 
 					if (OuterName == Outer) {
 						return Value;
@@ -132,10 +132,10 @@ public:
 			ValueObject->GetStringField(TEXT("ObjectPath")).Split(".", nullptr, &IndexAsString);
 		}
 
-		for (FUObjectExport& Export : Exports) {
+		for (FUObjectExport* Export : Exports) {
 			if (Export) {
-				if (Export.Position == FCString::Atod(*IndexAsString)) {
-					return Export.JsonObject;
+				if (Export->Position == FCString::Atod(*IndexAsString)) {
+					return Export->JsonObject;
 				}
 			}
 		}
@@ -143,7 +143,7 @@ public:
 		return nullptr;
 	}
 
-	FUObjectExport& GetExportByObjectPath(const TSharedPtr<FJsonObject>& Object) {
+	FUObjectExport* GetExportByObjectPath(const TSharedPtr<FJsonObject>& Object) {
 		if (!Object.IsValid() || !Object->HasField(TEXT("ObjectPath"))) {
 			return FUObjectExport::EmptyExport();
 		}
@@ -157,8 +157,8 @@ public:
 
 		const int32 Index = FCString::Atoi(*IndexString);
 
-		for (FUObjectExport& Export : Exports) {
-			if (Export.Position == Index) {
+		for (FUObjectExport* Export : Exports) {
+			if (Export->Position == Index) {
 				return Export;
 			}
 		}
@@ -166,9 +166,9 @@ public:
 		return FUObjectExport::EmptyExport();
 	}
 
-	FUObjectExport& GetExportStartingWith(const FString& PropertyName, const FString& Name) {
-		for (FUObjectExport& Export : Exports) {
-			if (Export.GetString(PropertyName).StartsWith(Name)) {
+	FUObjectExport* GetExportStartingWith(const FString& PropertyName, const FString& Name) {
+		for (FUObjectExport* Export : Exports) {
+			if (Export->GetString(PropertyName).StartsWith(Name)) {
 				return Export;
 			}
 		}
@@ -176,13 +176,13 @@ public:
 		return FUObjectExport::EmptyExport();
 	}
 
-	FUObjectExport& GetExportByObjectPath(const FUObjectJsonValueExport& JsonExport) {
+	FUObjectExport* GetExportByObjectPath(const FUObjectJsonValueExport& JsonExport) {
 		return GetExportByObjectPath(JsonExport.JsonObject);
 	}
 
-	FUObjectExport& Find(const int Position) {
-		for (FUObjectExport& Export : Exports) {
-			if (Export.Position == Position) {
+	FUObjectExport* Find(const int Position) {
+		for (FUObjectExport* Export : Exports) {
+			if (Export->Position == Position) {
 				return Export;
 			}
 		}
@@ -191,18 +191,18 @@ public:
 	}
 
 	UObject* FindRef(const int Position) {
-		for (const FUObjectExport& Export : Exports) {
-			if (Export.Position == Position) {
-				return Export.Object;
+		for (const FUObjectExport* Export : Exports) {
+			if (Export->Position == Position) {
+				return Export->Object;
 			}
 		}
 
 		return nullptr;
 	}
 
-	FUObjectExport& FindByPosition(const int Position) {
-		for (FUObjectExport& Export : Exports) {
-			if (Export.Position == Position) {
+	FUObjectExport* FindByPosition(const int Position) {
+		for (FUObjectExport* Export : Exports) {
+			if (Export->Position == Position) {
 				return Export;
 			}
 		}
@@ -210,9 +210,9 @@ public:
 		return FUObjectExport::EmptyExport();
 	}
 
-	FUObjectExport& FindByPositionAndName(const int Position, const FString& Name) {
-		for (FUObjectExport& Export : Exports) {
-			if (Export.Position == Position && Export.GetName().ToString() == Name) {
+	FUObjectExport* FindByPositionAndName(const int Position, const FString& Name) {
+		for (FUObjectExport* Export : Exports) {
+			if (Export->Position == Position && Export->GetName().ToString() == Name) {
 				return Export;
 			}
 		}
@@ -220,17 +220,17 @@ public:
 		return FUObjectExport::EmptyExport();
 	}
 
-	FUObjectExport& Find(const FString& Name) {
+	FUObjectExport* Find(const FString& Name) {
 		return Find(FName(*Name));
 	}
 
-	FUObjectExport& Find(const FString& Name, const FString& Outer) {
+	FUObjectExport* Find(const FString& Name, const FString& Outer) {
 		return Find(FName(*Name), FName(*Outer));
 	}
 
-	FUObjectExport& FindByType(const FName Type) {
-		for (FUObjectExport& Export : Exports) {
-			if (Export.GetType() == Type) {
+	FUObjectExport* FindByType(const FName Type) {
+		for (FUObjectExport* Export : Exports) {
+			if (Export->GetType() == Type) {
 				return Export;
 			}
 		}
@@ -238,13 +238,13 @@ public:
 		return FUObjectExport::EmptyExport();
 	}
 
-	FUObjectExport& FindByType(const FString& Type) {
+	FUObjectExport* FindByType(const FString& Type) {
 		return FindByType(FName(*Type));
 	}
 
-	FUObjectExport& FindByType(const FName Type, const FName Outer) {
-		for (FUObjectExport& Export : Exports) {
-			if (Export.GetType() == Type && Export.GetOuter() == Outer) {
+	FUObjectExport* FindByType(const FName Type, const FName Outer) {
+		for (FUObjectExport* Export : Exports) {
+			if (Export->GetType() == Type && Export->GetOuter() == Outer) {
 				return Export;
 			}
 		}
@@ -252,9 +252,9 @@ public:
 		return FUObjectExport::EmptyExport();
 	}
 
-	FUObjectExport& FindByTreeSegment(const TArray<FName>& Segments, const bool bRemoveLast = false) {
-    	for (FUObjectExport& Export : Exports) {
-    		if (Export.GetOuterTreeSegments(bRemoveLast) == Segments) {
+	FUObjectExport* FindByTreeSegment(const TArray<FName>& Segments, const bool bRemoveLast = false) {
+    	for (FUObjectExport* Export : Exports) {
+    		if (Export->GetOuterTreeSegments(bRemoveLast) == Segments) {
     			return Export;
     		}
     	}
@@ -262,13 +262,13 @@ public:
     	return FUObjectExport::EmptyExport();
     }
 
-	FUObjectExport& FindByType(const FString& Type, const FString& Outer) {
+	FUObjectExport* FindByType(const FString& Type, const FString& Outer) {
 		return FindByType(FName(*Type), FName(*Outer));
 	}
 	
 	bool Contains(const FName Name) {
-		for (FUObjectExport& Export : Exports) {
-			if (Export.GetName() == Name) {
+		for (FUObjectExport* Export : Exports) {
+			if (Export->GetName() == Name) {
 				return true;
 			}
 		}
@@ -280,9 +280,9 @@ public:
 	template<typename FuncType>
 	void ExportsLoop(const TArray<FUObjectJsonValueExport>& InExports, FuncType&& Func) {
 		for (const FUObjectJsonValueExport& Export : InExports) {
-			FUObjectExport& DirectExport = GetExportByObjectPath(Export);
+			FUObjectExport* DirectExport = GetExportByObjectPath(Export);
 
-			if (!DirectExport.IsJsonValid() || &DirectExport == &FUObjectExport::EmptyExport()) {
+			if (!DirectExport->IsJsonValid() || DirectExport == FUObjectExport::EmptyExport()) {
 				continue;
 			}
 
@@ -297,10 +297,4 @@ public:
 	int Num() const {
 		return Exports.Num();
 	}
-
-	auto begin() { return Exports.begin(); }
-	auto end() { return Exports.end(); }
-
-	auto begin() const { return Exports.begin(); }
-	auto end() const { return Exports.end(); }
 };

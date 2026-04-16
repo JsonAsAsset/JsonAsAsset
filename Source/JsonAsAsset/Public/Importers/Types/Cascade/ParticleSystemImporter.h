@@ -14,10 +14,10 @@ private:
 	void WipeEmitters() const;
 
 	void CreateEmitters(const TArray<FUObjectJsonValueExport>& Exports);
-	UParticleEmitter* CreateEmitter(const UClass* Class, FName Name, FUObjectExport& Export);
+	UParticleEmitter* CreateEmitter(const UClass* Class, FName Name, FUObjectExport* Export);
 
-	void CreateLODLevel(const FUObjectExport& Export, UParticleEmitter* Emitter);
-	void DeserializeModule(FUObjectExport& Export, UParticleModule* Module);
+	void CreateLODLevel(const FUObjectExport* Export, UParticleEmitter* Emitter);
+	void DeserializeModule(FUObjectExport* Export, UParticleModule* Module);
 };
 
 REGISTER_IMPORTER(IParticleSystemImporter, {

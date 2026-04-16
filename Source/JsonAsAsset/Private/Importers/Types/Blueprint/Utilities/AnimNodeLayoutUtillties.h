@@ -107,13 +107,13 @@ inline void AutoLayoutAnimGraphRecursive(
 	}
 }
 
-inline void AutoLayoutAnimGraphNodes(const TArray<FUObjectExport>& NodeExports) {
+inline void AutoLayoutAnimGraphNodes(const TArray<FUObjectExport*>& NodeExports) {
 	TMap<FName, UAnimGraphNode_Base*> NameToNode;
 	TSet<UAnimGraphNode_Base*> RootNodes;
 
-	for (const FUObjectExport& Export : NodeExports) {
-		if (UAnimGraphNode_Base* Node = Cast<UAnimGraphNode_Base>(Export.Object)) {
-			NameToNode.Add(Export.GetName(), Node);
+	for (const FUObjectExport* Export : NodeExports) {
+		if (UAnimGraphNode_Base* Node = Cast<UAnimGraphNode_Base>(Export->Object)) {
+			NameToNode.Add(Export->GetName(), Node);
 
 			/* Node with no outgoing links = root-level / sink node */
 			bool bHasOutputs = false;

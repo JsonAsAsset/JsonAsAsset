@@ -9,8 +9,8 @@ void TCurveLinearColorData::Process(UObject* Object) {
 	UCurveLinearColor* CurveLinearColor = Cast<UCurveLinearColor>(Object);
 	if (!CurveLinearColor) return;
 
-	FUObjectExportContainer Exports(SendToCloudForExports(GetAssetPath(Object)));
-	auto Export = Exports.FindByType(FString("CurveLinearColor"));
+	FUObjectExportContainer* Exports = new FUObjectExportContainer(SendToCloudForExports(GetAssetPath(Object)));
+	auto Export = Exports->FindByType(FString("CurveLinearColor"));
 
 	Initialize(Export, Exports);
 	

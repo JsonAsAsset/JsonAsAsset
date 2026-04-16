@@ -52,11 +52,11 @@ void TToolAnimationData::Execute() {
 			if (Name != Asset->GetName()) continue;
 
 			if (Type == "AnimSequence") {
-				FUObjectExportContainer Container = Exports;
+				FUObjectExportContainer* Container = new FUObjectExportContainer(Exports);
 
-				for (FUObjectExport& ExportInContainer : Container) {
-					if (ExportInContainer.GetClass() == UAnimSequence::StaticClass()) {
-						ExportInContainer.Object = AnimSequence;
+				for (FUObjectExport* ExportInContainer : Container->Exports) {
+					if (ExportInContainer->GetClass() == UAnimSequence::StaticClass()) {
+						ExportInContainer->Object = AnimSequence;
 						Initialize(ExportInContainer, Container);
 					}
 				}

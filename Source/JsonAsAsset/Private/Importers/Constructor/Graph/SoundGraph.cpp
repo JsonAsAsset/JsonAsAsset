@@ -11,9 +11,9 @@
 #include "Utilities/JsonUtilities.h"
 
 void ISoundGraph::ConstructNodes(USoundCue* SoundCue, TMap<FString, USoundNode*>& OutNodes) {
-	for (FUObjectExport& Export : AssetContainer) {
-		FString Name = Export.GetName().ToString();
-		FString Type = Export.GetType().ToString();
+	for (const FUObjectExport* Export : AssetContainer->Exports) {
+		FString Name = Export->GetName().ToString();
+		FString Type = Export->GetType().ToString();
 
 		/* Filter only exports with SoundNode at the start */
 		if (Type.StartsWith("SoundNode")) {
@@ -37,8 +37,8 @@ USoundNode* ISoundGraph::CreateEmptyNode(const FName Name, const FName Type, USo
 
 void ISoundGraph::SetupNodes(const USoundCue* SoundCueAsset, TMap<FString, USoundNode*> SoundCueNodes) {
 	/* If Node is connected to Root Node */
-	if (AssetExport.GetProperties()->HasField(TEXT("FirstNode"))) {
-		const auto FirstNodeProp = AssetExport.GetProperties()->TryGetField(TEXT("FirstNode"))->AsObject();
+	if (AssetExport->GetProperties()->HasField(TEXT("FirstNode"))) {
+		const auto FirstNodeProp = AssetExport->GetProperties()->TryGetField(TEXT("FirstNode"))->AsObject();
 		const auto FirstNodeName = FirstNodeProp->TryGetField(TEXT("ObjectName"))->AsString();
 
 		const int32 ColonIndex = FirstNodeName.Find(TEXT(":"));
@@ -55,15 +55,15 @@ void ISoundGraph::SetupNodes(const USoundCue* SoundCueAsset, TMap<FString, USoun
 	}
 
 	/* Connections done here */
-	for (FUObjectExport& Export : AssetContainer) {
+	for (FUObjectExport* Export : AssetContainer->Exports) {
 		/* Make sure it has Properties and it's a SoundNode */
-		if (!Export.JsonObject->HasField(TEXT("Properties")) || !Export.GetType().ToString().StartsWith("SoundNode")) {
+		if (!Export->JsonObject->HasField(TEXT("Properties")) || !Export->GetType().ToString().StartsWith("SoundNode")) {
 			continue;
 		}
 
-		TSharedPtr<FJsonObject> NodeProperties = Export.GetProperties();
+		TSharedPtr<FJsonObject> NodeProperties = Export->GetProperties();
 
-		USoundNode** CurrentNode = SoundCueNodes.Find(Export.GetName().ToString());
+		USoundNode** CurrentNode = SoundCueNodes.Find(Export->GetName().ToString());
 		USoundNode* Node = *CurrentNode;
 		
 		/* Filter only node with ChildNodes and handle the pins */

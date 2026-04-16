@@ -3,12 +3,8 @@
 #include "Importers/Constructor/Graph/MaterialGraph.h"
 
 /* Expressions */
-#include "Factories/MaterialFunctionFactoryNew.h"
 #include "Materials/MaterialExpressionComment.h"
-#include "Materials/MaterialExpressionFunctionInput.h"
-#include "Materials/MaterialExpressionFunctionOutput.h"
 #include "Materials/MaterialExpressionReroute.h"
-#include "Utilities/AssetUtilities.h"
 #include "Engine/EngineUtilities.h"
 #include "Utilities/JsonUtilities.h"
 
@@ -16,41 +12,41 @@
 #include "Materials/MaterialExpressionTextureBase.h"
 #endif
 
-TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(const FString& Type, FUObjectExportContainer& Container) {
+TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(const FString& Type, FUObjectExportContainer* Container) {
 	TSharedPtr<FJsonObject> EditorOnlyData;
 
-	for (FUObjectExport& Export : AssetContainer) {
-		FString ExportType = Export.GetType().ToString();
+	for (FUObjectExport* Export : AssetContainer->Exports) {
+		FString ExportType = Export->GetType().ToString();
 
 		/* If an editor only data object is found, just set it */
 		if (ExportType == Type + "EditorOnlyData") {
-			EditorOnlyData = Export.JsonObject;
+			EditorOnlyData = Export->JsonObject;
 			continue;
 		}
 
 		/* For older versions, the "editor" data is in the main UMaterial/UMaterialFunction export */
 		if (ExportType == Type) {
-			EditorOnlyData = Export.JsonObject;
+			EditorOnlyData = Export->JsonObject;
 			continue;
 		}
 
 		/* Add to the list of expressions */
-		Export.Parent = AssetExport.Object;
-		Container.Exports.Add(Export);
+		Export->Parent = AssetExport->Object;
+		Container->Exports.Add(Export);
 	}
 
 	return EditorOnlyData->GetObjectField(TEXT("Properties"));
 }
 
-void IMaterialGraph::ConstructExpressions(FUObjectExportContainer& Container) {
+void IMaterialGraph::ConstructExpressions(FUObjectExportContainer* Container) {
 	/* Go through each expression, and create the expression */
-	for (FUObjectExport& Export : Container) {
+	for (FUObjectExport* Export : Container->Exports) {
 		/* Invalid Json Object */
-		if (!Export.JsonObject.IsValid()) {
+		if (!Export->JsonObject.IsValid()) {
 			continue;
 		}
 
-		UObject* Expression = Export.Object;
+		UObject* Expression = Export->Object;
 
 		if (Expression == nullptr) {
 			Expression = CreateEmptyExpression(Export, Container);
@@ -61,21 +57,21 @@ void IMaterialGraph::ConstructExpressions(FUObjectExportContainer& Container) {
 			continue;
 		}
 
-		Export.Object = Expression;
+		Export->Object = Expression;
 	}
 }
 
-void IMaterialGraph::PropagateExpressions(FUObjectExportContainer& Container) {
-	for (FUObjectExport& Export : Container) {
+void IMaterialGraph::PropagateExpressions(FUObjectExportContainer* Container) {
+	for (FUObjectExport* Export : Container->Exports) {
 		/* Get variables from the export data */
-		UObject* Parent = Export.Parent;
+		UObject* Parent = Export->Parent;
 
 		/* Get Json Objects from Export */
-		TSharedPtr<FJsonObject> ExportJsonObject = Export.JsonObject;
-		TSharedPtr<FJsonObject> Properties = Export.GetProperties();
+		TSharedPtr<FJsonObject> ExportJsonObject = Export->JsonObject;
+		TSharedPtr<FJsonObject> Properties = Export->GetProperties();
 
 		/* Created Expression */
-		UMaterialExpression* Expression = Export.Get<UMaterialExpression>();
+		UMaterialExpression* Expression = Export->Get<UMaterialExpression>();
 
 		/* Skip null expressions */
 		if (Expression == nullptr) {
@@ -89,10 +85,10 @@ void IMaterialGraph::PropagateExpressions(FUObjectExportContainer& Container) {
 			TSharedPtr<FJsonObject> SubGraphExpressionObject = Properties->GetObjectField(TEXT("SubgraphExpression"));
 
 			FName SubGraphExpressionName = GetExportNameOfSubobject(SubGraphExpressionObject->GetStringField(TEXT("ObjectName")));
-			FUObjectExport SubGraphExport = Container.Find(SubGraphExpressionName);
+			FUObjectExport* SubGraphExport = Container->Find(SubGraphExpressionName);
 
 #if ENGINE_UE5
-			UMaterialExpression* SubGraphExpression = SubGraphExport.Get<UMaterialExpression>();
+			UMaterialExpression* SubGraphExpression = SubGraphExport->Get<UMaterialExpression>();
 
 			/* SubgraphExpression is only on Unreal Engine 5 */
 			Expression->SubgraphExpression = SubGraphExpression;
@@ -177,14 +173,14 @@ void IMaterialGraph::AddExpressionToParent(UObject* Parent, UMaterialExpression*
 	}
 }
 
-UMaterialExpression* IMaterialGraph::CreateEmptyExpression(FUObjectExport& Export, FUObjectExportContainer& Container) {
-	const FName Type = Export.GetType();
-	const FName Name = Export.GetName();
+UMaterialExpression* IMaterialGraph::CreateEmptyExpression(FUObjectExport* Export, FUObjectExportContainer* Container) {
+	const FName Type = Export->GetType();
+	const FName Name = Export->GetName();
 
 	UClass* Class = FindClassByType(Type.ToString());
 	
 	/* Material/MaterialFunction Parent */
-	UObject* Parent = Export.Parent;
+	UObject* Parent = Export->Parent;
 
 	if (!Class) {
 #if ENGINE_UE5
@@ -232,16 +228,16 @@ UMaterialExpression* IMaterialGraph::CreateEmptyExpression(FUObjectExport& Expor
 }
 
 /* ReSharper disable once CppMemberFunctionMayBeConst */
-UMaterialExpression* IMaterialGraph::OnMissingNodeClass(FUObjectExport& Export, FUObjectExportContainer& Container) {
+UMaterialExpression* IMaterialGraph::OnMissingNodeClass(FUObjectExport* Export, FUObjectExportContainer* Container) {
 	/* Get variables from the export data */
-	const FName Name = Export.GetName();
-	FName Type = Export.GetType();
+	const FName Name = Export->GetName();
+	FName Type = Export->GetType();
 
 	/* Material/MaterialFunction Parent */
-	UObject* Parent = Export.Parent;
+	UObject* Parent = Export->Parent;
 
 	/* Get Json Objects from Export */
-	const TSharedPtr<FJsonObject> Properties = Export.GetProperties();
+	const TSharedPtr<FJsonObject> Properties = Export->GetProperties();
 
 #if ENGINE_UE4
 	/* In Unreal Engine 4, to combat the absence of Sub-graphs, create a Material Function in place of it */

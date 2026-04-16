@@ -79,10 +79,10 @@ inline EBlueprintType GetBlueprintType(const UClass* Class) {
 	return BlueprintType;
 }
 
-inline FUObjectExport& GetClassDefaultObject(FUObjectExportContainer AssetContainer, const FUObjectJsonValueExport& JsonObject) {
-	FUObjectExport& Export = AssetContainer.GetExportByObjectPath(JsonObject.GetObject("ClassDefaultObject"));
-	if (!Export.IsJsonValid()) {
-		Export = AssetContainer.GetExportStartingWith("Name", "Default__");
+inline FUObjectExport* GetClassDefaultObject(FUObjectExportContainer* AssetContainer, const FUObjectJsonValueExport& JsonObject) {
+	FUObjectExport* Export = AssetContainer->GetExportByObjectPath(JsonObject.GetObject("ClassDefaultObject"));
+	if (!Export->IsJsonValid()) {
+		Export = AssetContainer->GetExportStartingWith("Name", "Default__");
 	}
 
 	return Export;

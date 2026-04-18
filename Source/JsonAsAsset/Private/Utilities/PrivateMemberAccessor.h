@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#if ENGINE_UE5
 /* [MIT] All credits in this file to https://www.fab.com/listings/ef9651a4-fb55-4866-a2d9-1b38b028f9c */
 namespace PrivateMemberAccessor
 {
@@ -66,3 +67,4 @@ namespace PrivateMemberAccessor
 	}; \
 	\
 	template struct PrivateMemberAccessor::TPointerInitializer<AccessorName, MemberPointer>;
+#endif

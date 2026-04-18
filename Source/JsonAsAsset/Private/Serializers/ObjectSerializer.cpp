@@ -270,7 +270,14 @@ void UObjectSerializer::SpawnExport(FUObjectExport* Export) {
 		ObjectOuter = Parent;
 	}
 
-	UObject* NewUObject = NewObject<UObject>(ObjectOuter, Class, Export->GetName(), RF_Public | RF_Transactional);
+	EObjectFlags Flags = RF_Public | RF_Transactional;
+
+	if (Export->Has("Flags")) {
+		Flags = ParseObjectFlags(Export->GetString("Flags"));
+	}
+	
+	UObject* NewUObject = NewObject<UObject>(ObjectOuter, Class, Export->GetName(), Flags);
+
 	Export->Object = NewUObject;
 
 	DeserializeObjectProperties(Export->GetProperties(), Export->Object);
@@ -322,6 +329,7 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 		}
 	}
 
+	Object->PostEditImport();
 	/* Volumes are not supported, yet. */
 	if (UPostProcessComponent* PostProcessComponent = Cast<UPostProcessComponent>(Object)) {
 		PostProcessComponent->bUnbound = true;

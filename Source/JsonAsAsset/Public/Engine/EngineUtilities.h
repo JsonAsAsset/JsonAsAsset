@@ -397,3 +397,55 @@ inline void MoveToTransientPackageAndRename(UObject* Object) {
 	Object->Rename(nullptr, GetTransientPackage());
 	Object->SetFlags(RF_Transient);
 }
+
+inline EObjectFlags ParseObjectFlags(const FString& FlagsString) {
+	static const TMap<FString, EObjectFlags> FlagMap = {
+		{ TEXT("RF_Public"), RF_Public },
+		{ TEXT("RF_Standalone"), RF_Standalone },
+		{ TEXT("RF_MarkAsNative"), RF_MarkAsNative },
+		{ TEXT("RF_Transactional"), RF_Transactional },
+		{ TEXT("RF_ClassDefaultObject"), RF_ClassDefaultObject },
+		{ TEXT("RF_ArchetypeObject"), RF_ArchetypeObject },
+		{ TEXT("RF_Transient"), RF_Transient },
+
+		{ TEXT("RF_MarkAsRootSet"), RF_MarkAsRootSet },
+		{ TEXT("RF_TagGarbageTemp"), RF_TagGarbageTemp },
+
+		{ TEXT("RF_NeedInitialization"), RF_NeedInitialization },
+		{ TEXT("RF_NeedLoad"), RF_NeedLoad },
+		{ TEXT("RF_KeepForCooker"), RF_KeepForCooker },
+		{ TEXT("RF_NeedPostLoad"), RF_NeedPostLoad },
+		{ TEXT("RF_NeedPostLoadSubobjects"), RF_NeedPostLoadSubobjects },
+		{ TEXT("RF_NewerVersionExists"), RF_NewerVersionExists },
+		{ TEXT("RF_BeginDestroyed"), RF_BeginDestroyed },
+		{ TEXT("RF_FinishDestroyed"), RF_FinishDestroyed },
+
+		{ TEXT("RF_BeingRegenerated"), RF_BeingRegenerated },
+		{ TEXT("RF_DefaultSubObject"), RF_DefaultSubObject },
+		{ TEXT("RF_TextExportTransient"), RF_TextExportTransient },
+		{ TEXT("RF_InheritableComponentTemplate"), RF_InheritableComponentTemplate },
+		{ TEXT("RF_DuplicateTransient"), RF_DuplicateTransient },
+		{ TEXT("RF_StrongRefOnFrame"), RF_StrongRefOnFrame },
+		{ TEXT("RF_NonPIEDuplicateTransient"), RF_NonPIEDuplicateTransient },
+		{ TEXT("RF_WillBeLoaded"), RF_WillBeLoaded },
+		{ TEXT("RF_HasExternalPackage"), RF_HasExternalPackage },
+		{ TEXT("RF_HasPlaceholderType"), RF_HasPlaceholderType },
+		{ TEXT("RF_MirroredGarbage"), RF_MirroredGarbage },
+		{ TEXT("RF_AllocatedInSharedPage"), RF_AllocatedInSharedPage }
+	};
+
+	EObjectFlags Result = RF_NoFlags;
+
+	TArray<FString> Parts;
+	FlagsString.ParseIntoArray(Parts, TEXT("|"), true);
+
+	for (FString& Part : Parts) {
+		Part.TrimStartAndEndInline();
+
+		if (const EObjectFlags* Found = FlagMap.Find(Part)) {
+			Result |= *Found;
+		}
+	}
+
+	return Result;
+}

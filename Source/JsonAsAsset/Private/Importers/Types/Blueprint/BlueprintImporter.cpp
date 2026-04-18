@@ -19,8 +19,9 @@ bool IBlueprintImporter::Import() {
 
 	FUObjectExport* Export = GetClassDefaultObject(AssetContainer, GetAssetDataAsValue());
 
-	const UBlueprintGeneratedClass* GeneratedClass = Cast<UBlueprintGeneratedClass>(Blueprint->GeneratedClass);
+	UBlueprintGeneratedClass* GeneratedClass = Cast<UBlueprintGeneratedClass>(Blueprint->GeneratedClass);
 	GetObjectSerializer()->DeserializeObjectProperties(Export->GetProperties(), GeneratedClass->GetDefaultObject());
+	Export->Object = GeneratedClass;
 
 	SetupConstructionScript();
 
@@ -51,7 +52,7 @@ void IBlueprintImporter::SetupConstructionScript() {
 	
 	GetObjectSerializer()->DeserializeObjectProperties(SimpleConstructionScriptExport->GetProperties(), SimpleConstructionScript);
 
-	Cast<USceneComponent>(SimpleConstructionScript->GetRootNodes()[0]->ComponentTemplate)->bVisualizeComponent = true;
+	SimpleConstructionScript->FixupRootNodeParentReferences();
 }
 
 UObject* IBlueprintImporter::CreateAsset(UObject* CreatedAsset) {

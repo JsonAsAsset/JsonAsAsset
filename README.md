@@ -111,7 +111,7 @@ See [Unreal Engine Modding Projects](https://github.com/Buckminsterfullerene02/U
 
 <a name="installation"></a>
 ## Installation
-[<img align="left" width="150" height="150" src="https://github.com/user-attachments/assets/d8e4f9c9-1268-4aee-ab1a-dabee31b3069?raw=true">](https://fmodel.app)
+[<img align="left" width="150" src="https://github.com/user-attachments/assets/d8e4f9c9-1268-4aee-ab1a-dabee31b3069?raw=true">](https://fmodel.app)
 
 > [!IMPORTANT]
 > If you haven't already, **install [FModel](https://fmodel.app) and set it up correctly, then proceed with the setup**.

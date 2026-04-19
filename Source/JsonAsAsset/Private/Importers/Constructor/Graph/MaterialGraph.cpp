@@ -100,7 +100,7 @@ void IMaterialGraph::PropagateExpressions(FUObjectExportContainer* Container) {
 			/* Add it to the subgraph function ~ UE4 ONLY */
 			UMaterialFunction* ParentSubgraphFunction = SubgraphFunctions[SubGraphExpressionName];
 
-			Export.Parent = ParentSubgraphFunction;
+			Export->Parent = ParentSubgraphFunction;
 			Expression = CreateEmptyExpression(Export, Container);
 
 			Expression->Function = ParentSubgraphFunction;
@@ -243,138 +243,6 @@ UMaterialExpression* IMaterialGraph::OnMissingNodeClass(FUObjectExport* Export, 
 	/* In Unreal Engine 4, to combat the absence of Sub-graphs, create a Material Function in place of it */
 	if (Type == "MaterialExpressionComposite") {
 		return nullptr;
-		const FString SubgraphFunctionName = GetAssetName() + "_" + Name.ToString().Replace(TEXT("MaterialExpression"), TEXT(""));
-
-		const UPackage* ParentPackage = Parent->GetOutermost();
-		FString SubgraphFunctionPath = ParentPackage->GetPathName();
-
-		SubgraphFunctionPath.Split("/", &SubgraphFunctionPath, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-		SubgraphFunctionPath = SubgraphFunctionPath + "/";
-		
-		FString FailureReason;
-		FAssetUtilities::CreateAssetPackage(SubgraphFunctionName, SubgraphFunctionPath, FailureReason);
-
-		UMaterialFunctionFactoryNew* SubgraphMaterialFunctionFactory = NewObject<UMaterialFunctionFactoryNew>();
-		UMaterialFunction* SubgraphMaterialFunction = Cast<UMaterialFunction>(SubgraphMaterialFunctionFactory->FactoryCreateNew(UMaterialFunction::StaticClass(), GetPackage(), *SubgraphFunctionName, RF_Standalone | RF_Public, nullptr, GWarn));
-
-		OnAssetCreation(SubgraphMaterialFunction);
-
-		SubgraphFunctions.Add(Name, SubgraphMaterialFunction);
-
-		FUObjectExport FunctionCall = FUObjectExport(
-			FName(*("MaterialExpressionMaterialFunctionCall_" + Name.ToString().Replace(TEXT("MaterialExpression"), TEXT("")))),
-			FName("MaterialExpressionMaterialFunctionCall"),
-			FName(""),
-			Export.JsonObject,
-			Parent,
-			nullptr
-		);
-
-		UMaterialExpressionMaterialFunctionCall* MaterialExpression = Cast<UMaterialExpressionMaterialFunctionCall>(CreateEmptyExpression(FunctionCall, Container));
-
-		MaterialExpression->MaterialFunction = SubgraphMaterialFunction;
-		SubgraphMaterialFunction->FunctionExpressions.Empty();
-
-		/* Handle InputExpressions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		if (Properties->HasField(TEXT("InputExpressions"))) {
-			const TSharedPtr<FJsonObject> InputExpressions = Properties->GetObjectField(TEXT("InputExpressions"));
-
-			const FName InputExpressionName = GetExpressionName(Properties.Get(), "InputExpressions");
-					
-			if (Container.Contains(InputExpressionName)) {
-				FUObjectExport PinBaseExport = Container.Find(InputExpressionName);
-
-				for (auto Value : PinBaseExport.GetProperties()->GetArrayField(TEXT("ReroutePins"))) {
-					auto ReroutePinObject = Value->AsObject();
-
-					FUObjectExport FunctionOutput = FUObjectExport(
-						FName(*("MaterialExpressionFunctionInput_" + InputExpressionName.ToString().Replace(TEXT("MaterialExpression"), TEXT(""))) + ReroutePinObject->GetStringField(TEXT("Name")).Replace(TEXT(" "), TEXT(""))),
-						FName("MaterialExpressionFunctionInput"),
-						FName(""),
-						Export.JsonObject,
-						SubgraphMaterialFunction,
-						nullptr
-					);
-				
-					UMaterialExpressionFunctionInput* FunctionInputExpression = Cast<UMaterialExpressionFunctionInput>(CreateEmptyExpression(FunctionOutput, Container));
-
-					FunctionInputExpression->InputName = FName(*ReroutePinObject->GetStringField(TEXT("Name")));
-
-					GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(ReroutePinObject,
-					{
-						"Material",
-						"MaterialFunction",
-					}), FunctionInputExpression);
-					
-					AddExpressionToParent(SubgraphMaterialFunction, FunctionInputExpression);
-					SetExpressionParent(SubgraphMaterialFunction, FunctionInputExpression, FunctionOutput.JsonObject);
-				}
-			}
-		}
-
-		/* Handle OutputExpressions ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-		if (Properties->HasField(TEXT("OutputExpressions"))) {
-			const TSharedPtr<FJsonObject> InputExpressions = Properties->GetObjectField(TEXT("OutputExpressions"));
-
-			const FName InputExpressionName = GetExpressionName(Properties.Get(), "OutputExpressions");
-					
-			if (Container.Contains(InputExpressionName)) {
-				FUObjectExport PinBaseExport = Container.Find(InputExpressionName);
-
-				for (auto Value : PinBaseExport.GetProperties()->GetArrayField(TEXT("ReroutePins"))) {
-					auto ReroutePinObject = Value->AsObject();
-
-					FUObjectExport FunctionOutput = FUObjectExport(
-						FName(*("MaterialExpressionFunctionOutput_" + InputExpressionName.ToString().Replace(TEXT("MaterialExpression"), TEXT(""))) + ReroutePinObject->GetStringField(TEXT("Name")).Replace(TEXT(" "), TEXT(""))),
-						FName("MaterialExpressionFunctionOutput"),
-						FName(""),
-						Export.JsonObject,
-						SubgraphMaterialFunction,
-						nullptr
-					);
-				
-					UMaterialExpressionFunctionOutput* FunctionOutputExpression = Cast<UMaterialExpressionFunctionOutput>(CreateEmptyExpression(FunctionOutput, Container));
-
-					FunctionOutputExpression->OutputName = FName(*ReroutePinObject->GetStringField(TEXT("Name")));
-
-					GetObjectSerializer()->DeserializeObjectProperties(RemovePropertiesShared(ReroutePinObject,
-					{
-						"Material",
-						"MaterialFunction",
-					}), FunctionOutputExpression);
-
-					FGuid ID = FunctionOutputExpression->GetMaterialExpressionId();
-
-					AddExpressionToParent(SubgraphMaterialFunction, FunctionOutputExpression);
-					SetExpressionParent(SubgraphMaterialFunction, FunctionOutputExpression, FunctionOutput.JsonObject);
-
-					FFunctionExpressionInput InputExpression = FFunctionExpressionInput();
-
-					InputExpression.ExpressionInputId = ID;
-
-					const FName RerouteExpressionName = GetExpressionName(ReroutePinObject.Get());
-					FUObjectExport RerouteInputExport = Container.Find(RerouteExpressionName);
-
-					TSharedPtr<FJsonObject> ExpressionReroute = RerouteInputExport.JsonObject->GetObjectField(TEXT("Properties"))->GetObjectField(TEXT("Input"));
-					const FName NewExpressionName = GetExpressionName(ExpressionReroute.Get());
-					FUObjectExport NewExpressionExport = Container.Find(NewExpressionName);
-
-					if (!NewExpressionExport.Object) {
-						NewExpressionExport.Object = CreateEmptyExpression(NewExpressionExport, Container);
-					}
-
-					InputExpression.ExpressionInputId = ID;
-					FExpressionInput Input = PopulateExpressionInput(ExpressionReroute.Get(), NewExpressionExport.Get<UMaterialExpression>());
-
-					InputExpression.Input = Input;
-					MaterialExpression->FunctionInputs.Add(InputExpression);
-				}
-			}
-		}
-
-		TSharedPtr<FJsonObject> OutputExpressions = Properties->GetObjectField(TEXT("OutputExpressions"));
-		
-		return MaterialExpression;
 	}
 #endif
 

@@ -77,10 +77,10 @@ void ISkeletonImporter::ApplyModifications() {
 
 #if ENGINE_UE4
 	/* If this export is found, this means the data is from UE5, and since we're on UE4, we need to move this into where it would be in UE4 */
-	const FUObjectExport AnimCurveMetaData = GetExportContainer()->FindByType(FString("AnimCurveMetaData"));
+	const FUObjectExport* AnimCurveMetaData = GetExportContainer()->FindByType(FString("AnimCurveMetaData"));
 
-	if (AnimCurveMetaData.IsJsonValid()) {
-		const TSharedPtr<FJsonObject> CurveMetaDataProperties = AnimCurveMetaData.GetProperties();
+	if (AnimCurveMetaData->IsJsonValid()) {
+		const TSharedPtr<FJsonObject> CurveMetaDataProperties = AnimCurveMetaData->GetProperties();
 
 		if (CurveMetaDataProperties->HasField(TEXT("CurveMetaData"))) {
 			const TArray<TSharedPtr<FJsonValue>> CurveMetaData = CurveMetaDataProperties->GetArrayField(TEXT("CurveMetaData"));

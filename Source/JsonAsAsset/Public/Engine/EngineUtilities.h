@@ -429,9 +429,11 @@ inline EObjectFlags ParseObjectFlags(const FString& FlagsString) {
 		{ TEXT("RF_NonPIEDuplicateTransient"), RF_NonPIEDuplicateTransient },
 		{ TEXT("RF_WillBeLoaded"), RF_WillBeLoaded },
 		{ TEXT("RF_HasExternalPackage"), RF_HasExternalPackage },
+#if ENGINE_UE5
 		{ TEXT("RF_HasPlaceholderType"), RF_HasPlaceholderType },
 		{ TEXT("RF_MirroredGarbage"), RF_MirroredGarbage },
 		{ TEXT("RF_AllocatedInSharedPage"), RF_AllocatedInSharedPage }
+#endif
 	};
 
 	EObjectFlags Result = RF_NoFlags;

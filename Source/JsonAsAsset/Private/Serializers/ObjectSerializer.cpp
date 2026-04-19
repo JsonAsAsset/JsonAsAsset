@@ -330,6 +330,7 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 	}
 
 	Object->PostEditImport();
+	
 	/* Volumes are not supported, yet. */
 	if (UPostProcessComponent* PostProcessComponent = Cast<UPostProcessComponent>(Object)) {
 		PostProcessComponent->bUnbound = true;

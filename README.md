@@ -5,7 +5,9 @@
   -->
   
   <a href="https://github.com/JsonAsAsset/JsonAsAsset">
-    <img src="https://github.com/user-attachments/assets/91b216ba-7bb3-4f48-bf96-69c645451d26" alt="Logo" width="200" height="200">
+    <p>
+      <img src="https://github.com/user-attachments/assets/91b216ba-7bb3-4f48-bf96-69c645451d26" alt="Logo" width="200">
+    </p>
   </a>
 
   <h3 align="center">JsonAsAsset</h3>

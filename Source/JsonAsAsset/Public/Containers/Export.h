@@ -36,6 +36,8 @@ inline FString GetOuterFromObjectOuter(const TSharedPtr<FJsonValue>& Outer) {
 	return Outer->AsString();
 }
 
+inline FString ReadPathFromObject(const FUObjectJsonValueExport& PackageIndex);
+
 /* A structure to hold data for a UObject export. */
 struct FUObjectExport : FUObjectJsonValueExport {
 	FUObjectExport(): Object(nullptr), Parent(nullptr), Package(nullptr), Position(-1) { };
@@ -115,10 +117,25 @@ struct FUObjectExport : FUObjectJsonValueExport {
 	UClass* GetClass() {
 		if (Class) return Class;
 		
-		UClass* ClassRef = FindClassByType(GetType().ToString());
-		if (ClassRef == nullptr) return nullptr;
-		
-		Class = ClassRef;
+		FString ClassName = GetString("Class");
+
+		if (Has("Template")) {
+			ClassName = ReadPathFromObject(GetObject("Template")).Replace(TEXT("Default__"), TEXT(""));
+		}
+	
+		if (ClassName.Contains("'")) {
+			ClassName.Split("'", nullptr, &ClassName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+			ClassName.Split("'", &ClassName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+		}
+	
+		UClass* OutClass = FindClassByType(ClassName);
+		if (!OutClass) {
+			OutClass = FindClassByType(GetType().ToString());
+		}
+
+		if (!OutClass) return nullptr;
+
+		Class = OutClass;
 		return Class;
 	}
 	

@@ -69,9 +69,11 @@ inline EBlueprintType GetBlueprintType(const UClass* Class) {
 	if (Class->HasAnyClassFlags(CLASS_Const)) {
 		BlueprintType = BPTYPE_Const;
 	}
+	
 	if (Class == UBlueprintFunctionLibrary::StaticClass()) {
 		BlueprintType = BPTYPE_FunctionLibrary;
 	}
+	
 	if (Class == UInterface::StaticClass()) {
 		BlueprintType = BPTYPE_Interface;
 	}

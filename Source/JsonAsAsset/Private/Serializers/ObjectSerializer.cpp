@@ -5,7 +5,6 @@
 
 #include "Serializers/PropertySerializer.h"
 #include "UObject/Package.h"
-#include "Engine/EngineUtilities.h"
 #include "Utilities/JsonUtilities.h"
 #include "Components/ExponentialHeightFogComponent.h"
 #include "Components/PostProcessComponent.h"
@@ -22,14 +21,64 @@ void UObjectSerializer::SetupExports(const TArray<TSharedPtr<FJsonValue>>& InObj
 	Exports = InObjects;
 }
 
-UPackage* FindOrLoadPackage(const FString& PackageName) {
-	UPackage* Package = FindPackage(nullptr, *PackageName);
-	
-	if (!Package) {
-		Package = LoadPackage(nullptr, *PackageName, LOAD_None);
+/* New Generation */
+void UObjectSerializer::SpawnExport(FUObjectExport* Export) {
+	if (Export->Object != nullptr) return;
+
+	const UClass* Class = Export->GetClass();
+	if (!Class) return;
+
+	const FString Outer = GetOuterFromObjectOuter(Export->JsonObject->TryGetField(TEXT("Outer")));
+	UObject* ObjectOuter = nullptr;
+
+	/* Find the outer */
+	if (FUObjectExport* OuterExport = PropertySerializer->ExportsContainer->Find(Outer); OuterExport->JsonObject.IsValid()) {
+		if (OuterExport->Object == nullptr) {
+			SpawnExport(OuterExport);
+		}
+		
+		ObjectOuter = OuterExport->Object;
 	}
 
-	return Package;
+	/* Find the blueprint outer */
+	if (!Outer.IsEmpty()) {
+		FString PotentialBPName;
+		Outer.Split("_C", &PotentialBPName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+		
+		if (FUObjectExport* OuterExport = PropertySerializer->ExportsContainer->Find(PotentialBPName); OuterExport->JsonObject.IsValid()) {
+			if (OuterExport->Object == nullptr) {
+				SpawnExport(OuterExport);
+			}
+		
+			ObjectOuter = OuterExport->Object;
+		}
+	}
+	
+	/* Find the outer using the tree segment */
+	const TArray<FName> TreeSegments = Export->GetOuterTreeSegments(true);
+
+	if (TreeSegments.Num() > 0) {
+		if (FUObjectExport* OuterExport = PropertySerializer->ExportsContainer->FindByTreeSegment(TreeSegments); !IsEmpty(OuterExport->JsonObject->Values)) {
+			if (OuterExport->Object == nullptr) {
+				SpawnExport(OuterExport);
+			}
+		
+			ObjectOuter = OuterExport->Object;
+		}
+	}
+
+	if (Export->Object || !ObjectOuter) return;
+
+	/* Default flags */
+	EObjectFlags Flags = RF_Public | RF_Transactional;
+
+	/* Parse the flags back into EObjectFlags, important for component archetypes */
+	if (Export->Has("Flags")) {
+		Flags = ParseObjectFlags(Export->GetString("Flags"));
+	}
+	
+	Export->Object = NewObject<UObject>(ObjectOuter, Class, Export->GetName(), Flags);
+	DeserializeObjectProperties(Export->GetProperties(), Export->Object);
 }
 
 void UObjectSerializer::SetPropertySerializer(UPropertySerializer* NewPropertySerializer) {
@@ -130,8 +179,8 @@ void UObjectSerializer::DeserializeExport(FUObjectExport* Export, TMap<TSharedPt
 	FString ClassName = ExportObject->GetStringField(TEXT("Class"));
 
 	if (ExportObject->HasField(TEXT("Template"))) {
-		const TSharedPtr<FJsonObject> TemplateObject = ExportObject->GetObjectField(TEXT("Template"));
-		ClassName = ReadPathFromObject(&TemplateObject).Replace(TEXT("Default__"), TEXT(""));
+		auto TemplateObject = Export->GetObject("Template");
+		ClassName = ReadPathFromObject(TemplateObject).Replace(TEXT("Default__"), TEXT(""));
 	}
 	
 	if (ClassName.Contains("'")) {
@@ -196,93 +245,6 @@ void UObjectSerializer::DeserializeExport(FUObjectExport* Export, TMap<TSharedPt
 	Export->Object = NewUObject;
 }
 
-void UObjectSerializer::SpawnExport(FUObjectExport* Export) {
-	if (Export->Object != nullptr) return;
-	
-	const TSharedPtr<FJsonObject> ExportObject = Export->JsonObject;
-
-	FString ClassName = ExportObject->GetStringField(TEXT("Class"));
-
-	if (ExportObject->HasField(TEXT("Template"))) {
-		const TSharedPtr<FJsonObject> TemplateObject = ExportObject->GetObjectField(TEXT("Template"));
-		ClassName = ReadPathFromObject(&TemplateObject).Replace(TEXT("Default__"), TEXT(""));
-	}
-	
-	if (ClassName.Contains("'")) {
-		ClassName.Split("'", nullptr, &ClassName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
-		ClassName.Split("'", &ClassName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
-	}
-	
-	const UClass* Class = FindClassByType(ClassName);
-	
-	if (!Class) {
-		Class = FindClassByType(Export->GetType().ToString());
-	}
-
-	if (!Class) return;
-
-	const FString Outer = GetOuterFromObjectOuter(ExportObject->TryGetField(TEXT("Outer")));
-	UObject* ObjectOuter = nullptr;
-
-	if (FUObjectExport* FoundExport = PropertySerializer->ExportsContainer->Find(Outer); FoundExport->JsonObject.IsValid()) {
-		if (FoundExport->Object == nullptr) {
-			SpawnExport(FoundExport);
-		}
-		
-		UObject* FoundObject = FoundExport->Object;
-		ObjectOuter = FoundObject;
-	}
-
-	if (!Outer.IsEmpty()) {
-		FString PotentialBPName;
-		Outer.Split("_C", &PotentialBPName, nullptr, ESearchCase::CaseSensitive, ESearchDir::FromEnd);
-		
-		if (FUObjectExport* FoundExport = PropertySerializer->ExportsContainer->Find(PotentialBPName); FoundExport->JsonObject.IsValid()) {
-			if (FoundExport->Object == nullptr) {
-				SpawnExport(FoundExport);
-			}
-		
-			UObject* FoundObject = FoundExport->Object;
-			ObjectOuter = FoundObject;
-		}
-	}
-
-	const TArray<FName> TreeSegments = Export->GetOuterTreeSegments(true);
-
-	if (TreeSegments.Num() > 0) {
-		if (FUObjectExport* FoundExport = PropertySerializer->ExportsContainer->FindByTreeSegment(TreeSegments); !IsEmpty(FoundExport->JsonObject->Values)) {
-			if (FoundExport->Object == nullptr) {
-				SpawnExport(FoundExport);
-			}
-		
-			UObject* FoundObject = FoundExport->Object;
-			ObjectOuter = FoundObject;
-		}
-	}
-
-	if (UObject** ConstructedObject = ConstructedObjects.Find(Outer)) {
-		ObjectOuter = *ConstructedObject;
-	}
-
-	if (Export->Object) return;
-	
-	if (ObjectOuter == nullptr) {
-		ObjectOuter = Parent;
-	}
-
-	EObjectFlags Flags = RF_Public | RF_Transactional;
-
-	if (Export->Has("Flags")) {
-		Flags = ParseObjectFlags(Export->GetString("Flags"));
-	}
-	
-	UObject* NewUObject = NewObject<UObject>(ObjectOuter, Class, Export->GetName(), Flags);
-
-	Export->Object = NewUObject;
-
-	DeserializeObjectProperties(Export->GetProperties(), Export->Object);
-}
-
 void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject>& Properties, UObject* Object) const {
 	if (Object == nullptr) return;
 
@@ -331,7 +293,7 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 
 	Object->PostEditImport();
 	
-	/* Volumes are not supported, yet. */
+	/* Volumes are not supported, yet. ;] */
 	if (UPostProcessComponent* PostProcessComponent = Cast<UPostProcessComponent>(Object)) {
 		PostProcessComponent->bUnbound = true;
 	}

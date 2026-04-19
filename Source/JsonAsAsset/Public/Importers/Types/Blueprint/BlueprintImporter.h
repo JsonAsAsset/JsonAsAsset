@@ -10,7 +10,7 @@ public:
 	
 	virtual bool Import() override;
 
-	void SetupConstructionScript();
+	void SetupConstructionScript() const;
 
 protected:
 	UBlueprint* Blueprint = nullptr;

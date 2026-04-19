@@ -27,7 +27,10 @@ public:
     void DeserializeExports(FUObjectExportContainer* Container, bool CreateObjects = true);
     void DeserializeExport(FUObjectExport* Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap);
 
+    /* New Generation */
     void SpawnExport(FUObjectExport* Export);
+    
+    bool bUseExperimentalSpawning = false;
 
 public:
     UPROPERTY()
@@ -57,6 +60,4 @@ public:
     TArray<FString> BlacklistedTypes;
 
     TArray<FString> PathsToNotDeserialize;
-    
-    bool bUseExperimentalSpawning = false;
 };

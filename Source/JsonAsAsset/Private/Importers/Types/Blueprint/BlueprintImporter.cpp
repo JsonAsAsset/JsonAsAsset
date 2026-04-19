@@ -3,15 +3,13 @@
 #include "Importers/Types/Blueprint/BlueprintImporter.h"
 
 #include "KismetCompilerModule.h"
-#include "Engine/SCS_Node.h"
 #include "Engine/SimpleConstructionScript.h"
-#include "Utilities/PrivateMemberAccessor.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Utilities/BlueprintUtilities.h"
 
 bool IBlueprintImporter::Import() {
-	UBlueprintGeneratedClass* BlueprintGeneratedClass = Create<UBlueprintGeneratedClass>();
+	const UBlueprintGeneratedClass* BlueprintGeneratedClass = Create<UBlueprintGeneratedClass>();
 	if (!BlueprintGeneratedClass) return false;
 
 	Blueprint = UBlueprint::GetBlueprintFromClass(BlueprintGeneratedClass);
@@ -28,7 +26,7 @@ bool IBlueprintImporter::Import() {
 	return OnAssetCreation(Blueprint);
 }
 
-void IBlueprintImporter::SetupConstructionScript() {
+void IBlueprintImporter::SetupConstructionScript() const {
 	if (!GetAssetDataAsValue().Has("SimpleConstructionScript")) return;
 
 	GetObjectSerializer()->bUseExperimentalSpawning = true;

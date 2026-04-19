@@ -273,33 +273,6 @@ inline bool DeserializeJSONObject(const FString& String, TSharedPtr<FJsonObject>
 	return false;
 }
 
-inline FString ReadPathFromObject(const TSharedPtr<FJsonObject>* PackageIndex) {
-	FString ObjectType, ObjectName, ObjectPath, Outer;
-	PackageIndex->Get()->GetStringField(TEXT("ObjectName")).Split("'", &ObjectType, &ObjectName);
-
-	ObjectPath = PackageIndex->Get()->GetStringField(TEXT("ObjectPath"));
-	ObjectPath.Split(".", &ObjectPath, nullptr);
-
-	const UJsonAsAssetSettings* Settings = GetSettings();
-
-	if (!Settings->AssetSettings.ProjectName.IsEmpty()) {
-		ObjectPath = ObjectPath.Replace(*(Settings->AssetSettings.ProjectName + "/Content"), TEXT("/Game"));
-	}
-
-	ObjectPath = ObjectPath.Replace(TEXT("Engine/Content"), TEXT("/Engine"));
-	ObjectName = ObjectName.Replace(TEXT("'"), TEXT(""));
-
-	if (ObjectName.Contains(".")) {
-		ObjectName.Split(".", nullptr, &ObjectName);
-	}
-
-	if (ObjectName.Contains(".")) {
-		ObjectName.Split(".", &Outer, &ObjectName);
-	}
-
-	return ObjectPath + "." + ObjectName;
-}
-
 inline TSharedPtr<FJsonObject> GetExportStartingWith(const FString& Start, const FString& Property, TArray<TSharedPtr<FJsonValue>> JsonObjects, const bool ExportProperties = false) {
 	for (const TSharedPtr<FJsonValue>& JsonObjectValue : JsonObjects) {
 		if (JsonObjectValue->Type == EJson::Object) {

@@ -27,8 +27,7 @@ bool CanImport(const FString& Type, const bool IsCloud, const UClass* Class) {
 		Class = FindClassByType(Type);
 	}
 
-	if (Class == nullptr)
-	{
+	if (Class == nullptr) {
 		return false;
 	}
 
@@ -42,8 +41,7 @@ bool CanImport(const FString& Type, const bool IsCloud, const UClass* Class) {
 		return true;
 	}
 	
-	if (Class->IsChildOf(UTexture::StaticClass()))
-	{
+	if (Class->IsChildOf(UTexture::StaticClass())) {
 		return false;
 	}
 

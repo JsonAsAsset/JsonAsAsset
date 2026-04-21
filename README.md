@@ -93,12 +93,16 @@ If an asset type isn't listed below, **it's not currently supported by the plugi
 | 🔴 **Animation** | PoseAsset, Skeleton, SkeletalMeshLODSettings, BlendSpace, BlendSpace1D, AimOffsetBlendSpace, AimOffsetBlendSpace1D |
 | ⚪ **Physics** | PhysicsAsset, PhysicalMaterial |
 | 🟤 **Sequencer** | CameraAnim |
+| ✨ **Effects** | ParticleSystem |
 | 🟩 **Landscape** | LandscapeGrassType, FoliageType_InstancedStaticMesh, FoliageType_Actor |
 
 #### The following asset types add onto a pre-existing asset
 |  | Asset Types |
 |-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | **🔴 Animation** | AnimSequence, AnimMontage **(Animation Curves)** |
+
+#### Partial Blueprint Importing
+If the parent class exists, it'll import the components and defaults of the blueprint.
 
 <a name="material-data-prerequisites"></a>
 #### 🟠 Material Data Prerequisites

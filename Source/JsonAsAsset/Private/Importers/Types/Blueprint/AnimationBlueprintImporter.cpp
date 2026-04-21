@@ -482,6 +482,7 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 			}
 		}
 
+#if ENGINE_UE4
 		/* UE5+ games use PhysicsBodyDefinitions for AnimGraphNode_AnimDynamics */
 		if (NodeProperties->HasField(TEXT("PhysicsBodyDefinitions"))) {
 			TSharedPtr<FJsonObject> PhysicsBodyDefinition = NodeProperties->GetArrayField(TEXT("PhysicsBodyDefinitions"))[0]->AsObject();
@@ -491,6 +492,53 @@ void IAnimationBlueprintImporter::HandleNodeDeserialization(FUObjectExportContai
 				}
 			}
 		}
+#else
+		/* UE5+ games use PhysicsBodyDefinitions for AnimGraphNode_AnimDynamics */
+		if (!NodeExport->HasProperty("PhysicsBodyDefinitions")) {
+			TSharedPtr<FJsonObject> PhysicsBodyDefinition = MakeShared<FJsonObject>();
+			auto& RootValues = NodeExport->JsonObject->Values;
+
+			auto MoveField = [&](const FString& Key) {
+				if (RootValues.Contains(Key)) {
+					if (Key == TEXT("LocalJointOffset")) {
+						TSharedPtr<FJsonObject> Original = RootValues[Key]->AsObject();
+
+						if (Original.IsValid()) {
+							TSharedPtr<FJsonObject> VecObj = MakeShared<FJsonObject>(*Original);
+
+							for (const auto& Pair : Original->Values) {
+								if (Pair.Value->Type == EJson::Number && Pair.Value->AsNumber() != 0.0) {
+									VecObj->SetNumberField(Pair.Key, -Pair.Value->AsNumber());
+								}
+								else {
+									VecObj->SetField(Pair.Key, Pair.Value);
+								}
+							}
+
+							PhysicsBodyDefinition->SetObjectField(Key, VecObj);
+							return;
+						}
+					}
+
+					PhysicsBodyDefinition->SetField(Key, RootValues[Key]);
+				}
+			};
+
+			/* Move all PhysicsBodyDefinition related fields */
+			MoveField(TEXT("BoundBone"));
+			MoveField(TEXT("BoxExtents"));
+			MoveField(TEXT("LocalJointOffset"));
+			MoveField(TEXT("ConstraintSetup"));
+			MoveField(TEXT("CollisionType"));
+			MoveField(TEXT("SphereCollisionRadius"));
+
+			/* Create array and assign */
+			TArray<TSharedPtr<FJsonValue>> PhysicsBodyDefinitionsArray;
+			PhysicsBodyDefinitionsArray.Add(MakeShared<FJsonValueObject>(PhysicsBodyDefinition));
+
+			NodeExport->JsonObject->SetArrayField(TEXT("PhysicsBodyDefinitions"), PhysicsBodyDefinitionsArray);
+		}
+#endif
 
 #if ENGINE_UE4
 		/* Looks like UE5 flipped axes on LocalJointOffset */

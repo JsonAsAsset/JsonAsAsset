@@ -17,6 +17,8 @@ bool Cloud::Status::IsOpened() {
 }
 ```
 
+Weird isn't it? I just prefer it.
+
 # Cloud ☁️
 
 Cloud Server's API is located at [Tectors/Core](https://github.com/Tectors/Core/tree/main/Source/Core.Cloud)

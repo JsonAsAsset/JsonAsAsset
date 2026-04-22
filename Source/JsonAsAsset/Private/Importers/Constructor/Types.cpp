@@ -67,6 +67,8 @@ TMap<FString, TArray<FString>> ImportTypes::Templated = {
 			TEXT("SoundClass"),
 			TEXT("SoundMix"),
 			TEXT("SoundSourceBus"),
+			TEXT("DialogueVoice"),
+			TEXT("DialogueWave"),
 			TEXT("SoundModulationParameterVolume"),
 			TEXT("SoundControlBusMix"),
 			TEXT("SoundModulationDestination"),

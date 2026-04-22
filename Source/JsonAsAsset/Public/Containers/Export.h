@@ -265,6 +265,10 @@ struct FUObjectExport : FUObjectJsonValueExport {
 		return IsJsonValid();
 	}
 
+	bool HasProperty(const FString& FieldName) const {
+		return GetPropertiesAsValue().Has(FieldName);
+	}
+	
 protected:
 	UClass* Class = nullptr;
 };

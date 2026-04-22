@@ -11,6 +11,10 @@ bool CanImport(const FString& Type, const bool IsCloud, const UClass* Class) {
 		if (!ImportTypes::Cloud::Allowed(Type)) {
 			return false;
 		}
+
+		if (Type == "SoundWave") {
+			return true;
+		}
 	}
     
 	if (FindFactoryForAssetType(Type)) {

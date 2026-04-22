@@ -49,8 +49,10 @@ void UObjectSerializer::SpawnExport(FUObjectExport* Export) {
 			if (OuterExport->Object == nullptr) {
 				SpawnExport(OuterExport);
 			}
-		
-			ObjectOuter = OuterExport->Object;
+
+			if (OuterExport->Object) {
+				ObjectOuter = OuterExport->Object;
+			}
 		}
 	}
 	
@@ -63,7 +65,9 @@ void UObjectSerializer::SpawnExport(FUObjectExport* Export) {
 				SpawnExport(OuterExport);
 			}
 		
-			ObjectOuter = OuterExport->Object;
+			if (OuterExport->Object) {
+				ObjectOuter = OuterExport->Object;
+			}
 		}
 	}
 
@@ -290,8 +294,6 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 			}
 		}
 	}
-
-	Object->PostEditImport();
 	
 	/* Volumes are not supported, yet. ;] */
 	if (UPostProcessComponent* PostProcessComponent = Cast<UPostProcessComponent>(Object)) {

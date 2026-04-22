@@ -7,7 +7,7 @@
 
 /* Handles everything needed to create a sound graph from JSON. */
 class ISoundGraph : public IImporter {
-protected:
+public:
 	/* Graph Functions */
 	static void ConnectEdGraphNode(UEdGraphNode* NodeToConnect, UEdGraphNode* NodeToConnectTo, int Pin);
 	static void ConnectSoundNode(const USoundNode* NodeToConnect, const USoundNode* NodeToConnectTo, int Pin);

@@ -174,7 +174,9 @@ void ISoundGraph::OnDownloadSoundWave(const FString& SavePath, FString AssetPtr,
 	auto AssetsImported = AssetTools.ImportAssetsAutomated(ImportData);
 	if (!AssetsImported.IsValidIndex(0)) {
 		USoundWave* SoundWave = Cast<USoundWave>(StaticLoadObject(USoundWave::StaticClass(), nullptr, *AssetPtr));
-		Node->SetSoundWave(SoundWave);
+		if (Node) {
+			Node->SetSoundWave(SoundWave);
+		}
 		
 		return;
 	}
@@ -194,7 +196,10 @@ void ISoundGraph::OnDownloadSoundWave(const FString& SavePath, FString AssetPtr,
 	}
 
 	ImportedWave->AssetImportData = nullptr;
-	Node->SetSoundWave(ImportedWave);
+
+	if (Node) {
+		Node->SetSoundWave(ImportedWave);
+	}
 
 	const FString Type = "SoundWave";
 	const FSlateBrush* IconBrush = FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail"));

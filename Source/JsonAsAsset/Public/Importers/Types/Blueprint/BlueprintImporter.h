@@ -11,6 +11,7 @@ public:
 	virtual bool Import() override;
 
 	void SetupConstructionScript() const;
+	void SetupWidgetTree();
 
 protected:
 	UBlueprint* Blueprint = nullptr;

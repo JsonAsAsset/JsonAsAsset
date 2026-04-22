@@ -394,7 +394,7 @@ inline FString GetAssetPath(const UObject* Object) {
 }
 
 inline void MoveToTransientPackageAndRename(UObject* Object) {
-	Object->Rename(nullptr, GetTransientPackage());
+	Object->Rename(nullptr, GetTransientPackage(), REN_DontCreateRedirectors);
 	Object->SetFlags(RF_Transient);
 }
 

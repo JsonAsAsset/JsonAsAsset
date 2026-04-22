@@ -3,6 +3,9 @@
 #include "Importers/Types/Blueprint/BlueprintImporter.h"
 
 #include "KismetCompilerModule.h"
+#include "WidgetBlueprint.h"
+#include "Animation/WidgetAnimation.h"
+#include "Blueprint/WidgetTree.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
@@ -22,6 +25,7 @@ bool IBlueprintImporter::Import() {
 	Export->Object = GeneratedClass;
 
 	SetupConstructionScript();
+	SetupWidgetTree();
 
 	return OnAssetCreation(Blueprint);
 }
@@ -51,6 +55,21 @@ void IBlueprintImporter::SetupConstructionScript() const {
 	GetObjectSerializer()->DeserializeObjectProperties(SimpleConstructionScriptExport->GetProperties(), SimpleConstructionScript);
 
 	SimpleConstructionScript->FixupRootNodeParentReferences();
+}
+
+void IBlueprintImporter::SetupWidgetTree() {
+	if (!GetAssetDataAsValue().Has("WidgetTree")) return;
+
+	GetObjectSerializer()->bUseExperimentalSpawning = true;
+
+	UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(Blueprint);
+	
+	FUObjectExport* WidgetTreeExport = AssetContainer->GetExportByObjectPath(GetAssetDataAsValue().GetObject("WidgetTree"));
+	WidgetTreeExport->Object = WidgetBlueprint->WidgetTree;
+
+	GetObjectSerializer()->SpawnExport(WidgetTreeExport, true);
+
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(WidgetBlueprint);
 }
 
 UObject* IBlueprintImporter::CreateAsset(UObject* CreatedAsset) {

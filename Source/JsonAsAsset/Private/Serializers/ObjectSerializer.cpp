@@ -22,8 +22,10 @@ void UObjectSerializer::SetupExports(const TArray<TSharedPtr<FJsonValue>>& InObj
 }
 
 /* New Generation */
-void UObjectSerializer::SpawnExport(FUObjectExport* Export) {
-	if (Export->Object != nullptr) return;
+void UObjectSerializer::SpawnExport(FUObjectExport* Export, bool bImportInPlace) {
+	if (!bImportInPlace) {
+		if (Export->Object != nullptr) return;
+	}
 
 	const UClass* Class = Export->GetClass();
 	if (!Class) return;
@@ -71,7 +73,7 @@ void UObjectSerializer::SpawnExport(FUObjectExport* Export) {
 		}
 	}
 
-	if (Export->Object || !ObjectOuter) return;
+	if (!ObjectOuter) return;
 
 	/* Default flags */
 	EObjectFlags Flags = RF_Public | RF_Transactional;
@@ -80,8 +82,11 @@ void UObjectSerializer::SpawnExport(FUObjectExport* Export) {
 	if (Export->Has("Flags")) {
 		Flags = ParseObjectFlags(Export->GetString("Flags"));
 	}
+
+	if (!Export->Object) {
+		Export->Object = NewObject<UObject>(ObjectOuter, Class, Export->GetName(), Flags);
+	}
 	
-	Export->Object = NewObject<UObject>(ObjectOuter, Class, Export->GetName(), Flags);
 	DeserializeObjectProperties(Export->GetProperties(), Export->Object);
 }
 

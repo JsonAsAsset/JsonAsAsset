@@ -28,7 +28,7 @@ public:
     void DeserializeExport(FUObjectExport* Export, TMap<TSharedPtr<FJsonObject>, UObject*>& ExportsMap);
 
     /* New Generation */
-    void SpawnExport(FUObjectExport* Export);
+    void SpawnExport(FUObjectExport* Export, bool bImportInPlace = false);
     
     bool bUseExperimentalSpawning = false;
 

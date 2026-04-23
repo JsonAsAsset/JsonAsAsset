@@ -3,12 +3,16 @@
 #include "Importers/Types/Blueprint/BlueprintImporter.h"
 
 #include "KismetCompilerModule.h"
+#include "MovieScene.h"
 #include "WidgetBlueprint.h"
+#include "Animation/MovieScene2DTransformTrack.h"
+#include "Animation/MovieSceneWidgetMaterialTrack.h"
 #include "Animation/WidgetAnimation.h"
 #include "Blueprint/WidgetTree.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
+#include "MVVM/ViewModels/ObjectBindingModel.h"
 #include "Utilities/BlueprintUtilities.h"
 
 UObject* IBlueprintImporter::CreateAsset(UObject* CreatedAsset) {
@@ -123,7 +127,7 @@ public:
 	}
 };
 
-void IBlueprintImporter::ConstructWidgetTree() const {
+void IBlueprintImporter::ConstructWidgetTree() {
 	if (!GetAssetDataAsValue().Has("WidgetTree")) return;
 
 	UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(Blueprint);
@@ -139,6 +143,10 @@ void IBlueprintImporter::ConstructWidgetTree() const {
 	}
 
 	WidgetBlueprint->Animations.Empty();
+	
+	FUObjectExport* ClassDefaultObjectExport = GetClassDefaultObject(GetContainer(), GetAssetDataAsValue());
+	ClassDefaultObjectExport->Object = WidgetBlueprint;
+	SetAsset(WidgetBlueprint);
 
 	MoveToTransientPackageAndRename(WidgetBlueprint->WidgetTree->RootWidget);
 	WidgetBlueprint->WidgetTree->RootWidget = nullptr;
@@ -154,6 +162,35 @@ void IBlueprintImporter::ConstructWidgetTree() const {
 			UWidgetAnimation* WidgetAnimation = Cast<UWidgetAnimation>(Object);
 		
 			WidgetBlueprint->Animations.Add(WidgetAnimation);
+
+			for (int32 Index = 0; Index < WidgetAnimation->MovieScene->GetPossessableCount(); ++Index) {
+				FMovieScenePossessable& Possessable = WidgetAnimation->MovieScene->GetPossessable(Index);
+
+				TArray<UWidget*> Widgets;
+				WidgetBlueprint->WidgetTree->GetAllWidgets(Widgets);
+
+				for (UWidget* Widget : Widgets)
+				{
+					if (Widget->GetName() == Possessable.GetName())
+					{
+						Possessable.SetPossessedObjectClass(Widget->GetClass());
+					}
+				}
+			}
+			
+			for (const FMovieSceneBinding& Binding : WidgetAnimation->MovieScene->GetBindings())
+			{
+				for (UMovieSceneTrack* Track : Binding.GetTracks())
+				{
+					Track->Modify();
+					Track->MarkAsChanged();
+
+					if (UMovieSceneWidgetMaterialTrack* MaterialTrack = Cast<UMovieSceneWidgetMaterialTrack>(Track))
+					{
+						MaterialTrack->SetDisplayName(FText::FromString(MaterialTrack->GetBrushPropertyNamePath()[0].ToString()));
+					}
+				}
+			}
 		}
 	});
 }

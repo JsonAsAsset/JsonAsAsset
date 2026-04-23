@@ -1,6 +1,7 @@
 ﻿/* Copyright JsonAsAsset Contributors 2024-2026 */
 
 #include "Serializers/Structs/FallbackStructSerializer.h"
+
 #include "Serializers/PropertySerializer.h"
 
 void FFallbackStructSerializer::Deserialize(UScriptStruct* Struct, void* StructValue, const TSharedPtr<FJsonObject> JsonValue) {

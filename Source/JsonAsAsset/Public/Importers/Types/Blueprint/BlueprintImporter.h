@@ -18,7 +18,7 @@ protected:
 	void ConstructScript() const;
 
 	/* Handles WidgetTree, the UI layout for Widget blueprints */
-	void ConstructWidgetTree() const;
+	void ConstructWidgetTree();
 };
 
 REGISTER_IMPORTER(IBlueprintImporter, (TArray<FString>{ 

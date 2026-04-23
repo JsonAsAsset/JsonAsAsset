@@ -1,6 +1,8 @@
 /* Copyright JsonAsAsset Contributors 2024-2026 */
 
 #include "Serializers/ObjectSerializer.h"
+
+#include "Animation/WidgetAnimation.h"
 #include "Engine/Compatibility.h"
 
 #include "Serializers/PropertySerializer.h"
@@ -26,7 +28,7 @@ void UObjectSerializer::SetupExports(const TArray<TSharedPtr<FJsonValue>>& InObj
 	Exports = InObjects;
 }
 
-UObject* UObjectSerializer::SpawnExport(FUObjectExport* Export, bool bOnlySerialize) {
+UObject* UObjectSerializer::SpawnExport(FUObjectExport* Export, const bool bOnlySerialize) {
 	if (!bOnlySerialize) {
 		if (Export->Object != nullptr) return nullptr;
 	}
@@ -88,7 +90,13 @@ UObject* UObjectSerializer::SpawnExport(FUObjectExport* Export, bool bOnlySerial
 	}
 
 	if (!Export->Object) {
-		Export->Object = NewObject<UObject>(ObjectOuter, Class, Export->GetName(), Flags);
+		FString ObjectName = Export->GetName().ToString();
+
+		if (Class->IsChildOf(UWidgetAnimation::StaticClass())) {
+			ObjectName.Split("_INST", &ObjectName, nullptr, ESearchCase::CaseSensitive);
+		}
+		
+		Export->Object = NewObject<UObject>(ObjectOuter, Class, FName(ObjectName), Flags);
 	}
 	
 	DeserializeObjectProperties(Export->GetProperties(), Export->Object);

@@ -4,6 +4,7 @@
 
 #include "KismetCompilerModule.h"
 #include "WidgetBlueprint.h"
+#include "Animation/WidgetAnimation.h"
 #include "Blueprint/WidgetTree.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "Kismet2/BlueprintEditorUtils.h"
@@ -127,12 +128,18 @@ void IBlueprintImporter::ConstructWidgetTree() const {
 
 	UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(Blueprint);
 	
-	WidgetBlueprint->WidgetTree->PostLoad();
-
 	for (UWidget* Widget : Cast<UWidgetTreeAccessor>(WidgetBlueprint->WidgetTree)->GetWidgets()) {
 		MoveToTransientPackageAndRename(Widget);
 	}
-	
+
+	WidgetBlueprint->WidgetTree->PostLoad();
+
+	for (UWidgetAnimation* WidgetAnimation : WidgetBlueprint->Animations) {
+		MoveToTransientPackageAndRename(WidgetAnimation);
+	}
+
+	WidgetBlueprint->Animations.Empty();
+
 	MoveToTransientPackageAndRename(WidgetBlueprint->WidgetTree->RootWidget);
 	WidgetBlueprint->WidgetTree->RootWidget = nullptr;
 	
@@ -141,4 +148,12 @@ void IBlueprintImporter::ConstructWidgetTree() const {
 	GetObjectSerializer()->SpawnExport(Export, true);
 
 	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(WidgetBlueprint);
+
+	GetContainer()->ExportsLoop(GetAssetDataAsValue().GetArray("Animations"), [this, WidgetBlueprint](FUObjectExport* DirectExport) {
+		if (UObject* Object = GetObjectSerializer()->SpawnExport(DirectExport)) {
+			UWidgetAnimation* WidgetAnimation = Cast<UWidgetAnimation>(Object);
+		
+			WidgetBlueprint->Animations.Add(WidgetAnimation);
+		}
+	});
 }

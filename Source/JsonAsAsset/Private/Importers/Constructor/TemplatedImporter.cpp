@@ -19,7 +19,7 @@ bool ITemplatedImporter<AssetType>::Import() {
 	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), Asset);
 	GetObjectSerializer()->Parent = Asset;
 
-	GetObjectSerializer()->DeserializeExports(AssetContainer);
+	GetObjectSerializer()->DeserializeExports(GetContainer());
 	
 	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), Asset);
 

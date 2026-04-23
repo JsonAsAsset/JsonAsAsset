@@ -23,7 +23,7 @@ public:
 
     /* Helper Functions ~~~~~~~~~~~~~~~> */
 public:
-
+    /* AssetExport ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~> */
     virtual FString GetAssetName() const;
     virtual FString GetAssetType() const;
     virtual UClass* GetAssetClass();
@@ -41,7 +41,11 @@ public:
 
     virtual UObject* GetAsset();
     virtual void SetAsset(UObject* InAsset);
+
+    FORCEINLINE FUObjectExportContainer* GetContainer() const;
     
+    /* AssetExport <~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
+
     template <class T>
     T* GetTypedAsset() const;
 

@@ -302,7 +302,7 @@ inline void CreateStateMachineGraph(
 			/* Use if needed */
 			FUObjectExport* DelegateExport = RootContainer->Find(DelegateExportName);
 
-			HandlePropertyBinding(DelegateExport, Importer->AssetContainer->JsonObjects, TransitionResult, Importer, AnimBlueprint);
+			HandlePropertyBinding(DelegateExport, Importer->GetContainer()->JsonObjects, TransitionResult, Importer, AnimBlueprint);
 
 			TransitionResult->NodeComment = DelegateExportName;
 			TransitionResult->bCommentBubbleVisible = true;

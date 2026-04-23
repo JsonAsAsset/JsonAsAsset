@@ -135,6 +135,12 @@ IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer* Container
 		return Importer;
 	}
 
+	FString ClassIconType = Type;
+
+	if (Type.Contains("GeneratedClass")) {
+		Type.Split("GeneratedClass", &ClassIconType, nullptr);
+	}
+
 	if (Successful) {
 		UE_LOG(LogJsonAsAsset, Log, TEXT("Successfully imported \"%s\" as \"%s\""), *Name, *Type);
 
@@ -143,7 +149,7 @@ IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer* Container
 			FText::FromString("Imported: " + Name),
 			FText::FromString(Type),
 			2.0f,
-			FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
+			FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + ClassIconType)), TEXT("ClassThumbnail")),
 			SNotificationItem::CS_Success,
 			false,
 			350.0f
@@ -154,7 +160,7 @@ IImporter* IImportReader::ReadExportAndImport(FUObjectExportContainer* Container
 			FText::FromString("Failed: " + Name),
 			FText::FromString(Type),
 			2.0f,
-			FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + Type)), TEXT("ClassThumbnail")),
+			FSlateIconFinder::FindCustomIconBrushForClass(FindObject<UClass>(nullptr, *("/Script/Engine." + ClassIconType)), TEXT("ClassThumbnail")),
 			SNotificationItem::CS_Fail,
 			false,
 			350.0f

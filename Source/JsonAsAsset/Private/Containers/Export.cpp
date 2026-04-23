@@ -3,6 +3,7 @@
 #include "Containers/Export.h"
 #include "Engine/EngineUtilities.h"
 #include "Settings/JsonAsAssetSettings.h"
+#include "Utilities/BlueprintUtilities.h"
 
 FString ReadPathFromObject(const FUObjectJsonValueExport& PackageIndex) {
 	FString ObjectType, ObjectName, ObjectPath, Outer;
@@ -29,4 +30,33 @@ FString ReadPathFromObject(const FUObjectJsonValueExport& PackageIndex) {
 	}
 
 	return ObjectPath + "." + ObjectName;
+}
+
+UClass* FUObjectExport::GetClass() {
+	if (Class) return Class;
+	
+	FString ClassName = GetString("Class");
+
+	if (Has("Template")) {
+		ClassName = ReadPathFromObject(GetObject("Template")).Replace(TEXT("Default__"), TEXT(""));
+	}
+
+	if (ClassName.Contains("'")) {
+		ClassName.Split("'", nullptr, &ClassName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+		ClassName.Split("'", &ClassName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
+	}
+
+	UClass* OutClass = FindClassByType(ClassName);
+	if (!OutClass) {
+		OutClass = FindClassByType(GetType().ToString());
+	}
+
+	if (Has("Next") || Has("SuperStruct")) {
+		OutClass = LoadClass(GetSuperStructJsonObject(GetProperties()));
+	}
+
+	if (!OutClass) return nullptr;
+
+	Class = OutClass;
+	return Class;
 }

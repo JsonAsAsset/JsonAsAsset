@@ -11,7 +11,12 @@
 
 /* ReSharper disable once CppDeclaratorNeverUsed */
 DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAssetObjectSerializer, All, All);
+
+#if UE5_2_BEYOND
+UE_DISABLE_OPTIMIZATION
+#else
 PRAGMA_DISABLE_OPTIMIZATION
+#endif
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -21,14 +26,13 @@ void UObjectSerializer::SetupExports(const TArray<TSharedPtr<FJsonValue>>& InObj
 	Exports = InObjects;
 }
 
-/* New Generation */
-void UObjectSerializer::SpawnExport(FUObjectExport* Export, bool bImportInPlace) {
-	if (!bImportInPlace) {
-		if (Export->Object != nullptr) return;
+UObject* UObjectSerializer::SpawnExport(FUObjectExport* Export, bool bOnlySerialize) {
+	if (!bOnlySerialize) {
+		if (Export->Object != nullptr) return nullptr;
 	}
 
 	const UClass* Class = Export->GetClass();
-	if (!Class) return;
+	if (!Class) return nullptr;
 
 	const FString Outer = GetOuterFromObjectOuter(Export->JsonObject->TryGetField(TEXT("Outer")));
 	UObject* ObjectOuter = nullptr;
@@ -73,7 +77,7 @@ void UObjectSerializer::SpawnExport(FUObjectExport* Export, bool bImportInPlace)
 		}
 	}
 
-	if (!ObjectOuter) return;
+	if (!ObjectOuter) return nullptr;
 
 	/* Default flags */
 	EObjectFlags Flags = RF_Public | RF_Transactional;
@@ -88,6 +92,8 @@ void UObjectSerializer::SpawnExport(FUObjectExport* Export, bool bImportInPlace)
 	}
 	
 	DeserializeObjectProperties(Export->GetProperties(), Export->Object);
+	
+	return Export->Object;
 }
 
 void UObjectSerializer::SetPropertySerializer(UPropertySerializer* NewPropertySerializer) {
@@ -300,6 +306,10 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 		}
 	}
 	
+	if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object)) {
+		StaticMeshComponent->PostEditImport();
+	}
+
 	/* Volumes are not supported, yet. ;] */
 	if (UPostProcessComponent* PostProcessComponent = Cast<UPostProcessComponent>(Object)) {
 		PostProcessComponent->bUnbound = true;
@@ -355,4 +365,8 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 	}
 }
 
+#if UE5_2_BEYOND
+UE_ENABLE_OPTIMIZATION
+#else
 PRAGMA_ENABLE_OPTIMIZATION
+#endif

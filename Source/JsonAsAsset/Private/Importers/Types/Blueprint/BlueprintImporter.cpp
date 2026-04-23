@@ -4,81 +4,19 @@
 
 #include "KismetCompilerModule.h"
 #include "WidgetBlueprint.h"
-#include "Animation/WidgetAnimation.h"
 #include "Blueprint/WidgetTree.h"
 #include "Engine/SimpleConstructionScript.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Utilities/BlueprintUtilities.h"
 
-bool IBlueprintImporter::Import() {
-	const UBlueprintGeneratedClass* BlueprintGeneratedClass = Create<UBlueprintGeneratedClass>();
-	if (!BlueprintGeneratedClass) return false;
-
-	Blueprint = UBlueprint::GetBlueprintFromClass(BlueprintGeneratedClass);
-	if (!Blueprint) return false;
-
-	FUObjectExport* Export = GetClassDefaultObject(AssetContainer, GetAssetDataAsValue());
-
-	UBlueprintGeneratedClass* GeneratedClass = Cast<UBlueprintGeneratedClass>(Blueprint->GeneratedClass);
-	GetObjectSerializer()->DeserializeObjectProperties(Export->GetProperties(), GeneratedClass->GetDefaultObject());
-	Export->Object = GeneratedClass;
-
-	SetupConstructionScript();
-	SetupWidgetTree();
-
-	return OnAssetCreation(Blueprint);
-}
-
-void IBlueprintImporter::SetupConstructionScript() const {
-	if (!GetAssetDataAsValue().Has("SimpleConstructionScript")) return;
-
-	GetObjectSerializer()->bUseExperimentalSpawning = true;
-	
-	UBlueprintGeneratedClass* GeneratedClass = Cast<UBlueprintGeneratedClass>(Blueprint->GeneratedClass);
-
-	if (GeneratedClass->SimpleConstructionScript != nullptr) {
-		MoveToTransientPackageAndRename(GeneratedClass->SimpleConstructionScript);
-		MoveToTransientPackageAndRename(Blueprint->SimpleConstructionScript);
-	}
-
-	GeneratedClass->SimpleConstructionScript = NewObject<USimpleConstructionScript>(GeneratedClass);
-	GeneratedClass->SimpleConstructionScript->SetFlags(RF_Transactional);
-
-	Blueprint->SimpleConstructionScript = GeneratedClass->SimpleConstructionScript;
-
-	USimpleConstructionScript* SimpleConstructionScript = GeneratedClass->SimpleConstructionScript;
-	
-	FUObjectExport* SimpleConstructionScriptExport = AssetContainer->GetExportByObjectPath(GetAssetDataAsValue().GetObject("SimpleConstructionScript"));
-	SimpleConstructionScriptExport->Object = SimpleConstructionScript;
-	
-	GetObjectSerializer()->DeserializeObjectProperties(SimpleConstructionScriptExport->GetProperties(), SimpleConstructionScript);
-
-	SimpleConstructionScript->FixupRootNodeParentReferences();
-}
-
-void IBlueprintImporter::SetupWidgetTree() {
-	if (!GetAssetDataAsValue().Has("WidgetTree")) return;
-
-	GetObjectSerializer()->bUseExperimentalSpawning = true;
-
-	UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(Blueprint);
-	
-	FUObjectExport* WidgetTreeExport = AssetContainer->GetExportByObjectPath(GetAssetDataAsValue().GetObject("WidgetTree"));
-	WidgetTreeExport->Object = WidgetBlueprint->WidgetTree;
-
-	GetObjectSerializer()->SpawnExport(WidgetTreeExport, true);
-
-	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(WidgetBlueprint);
-}
-
 UObject* IBlueprintImporter::CreateAsset(UObject* CreatedAsset) {
-	UClass* Class = LoadClass(GetSuperStructJsonObject(GetAssetData()));
+	UClass* Class = GetAssetClass();
 	
 	if (!Class) {
 		AppendNotification(
-			FText::FromString("Blueprint Class Missing"),
-			FText::FromString("The parent Blueprint's class could not be found. Ensure the class is defined."),
+			FText::FromString("Failed to Resolve Parent Class"),
+			FText::FromString("The Blueprint's parent class could not be found or loaded. Verify that the class is defined and available at import time."),
 			2.0f,
 			SNotificationItem::CS_Fail,
 			true,
@@ -99,20 +37,108 @@ UObject* IBlueprintImporter::CreateAsset(UObject* CreatedAsset) {
 				GeneratedClass
 			);
 
-	if (UBlueprint* ExistingBlueprint = LoadObject<UBlueprint>(nullptr, *GetPackage()->GetPathName())) {
-		FBlueprintEditorUtils::PropagateParentBlueprintDefaults(
-			ExistingBlueprint->GeneratedClass
-		);
+	/* Propagate blueprint defaults if it already exists */
+	if (const UBlueprint* ExistingBlueprint = LoadObject<UBlueprint>(nullptr, *GetPackage()->GetPathName())) {
+		UBlueprintGeneratedClass* BlueprintGeneratedClass = Cast<UBlueprintGeneratedClass>(ExistingBlueprint->GeneratedClass);
+		FBlueprintEditorUtils::PropagateParentBlueprintDefaults(BlueprintGeneratedClass);
 
-		return IImporter::CreateAsset(ExistingBlueprint->GeneratedClass);
+		/* Return GeneratedClass instead of UBlueprint* */
+		return IImporter::CreateAsset(BlueprintGeneratedClass);
 	}
 
-	return IImporter::CreateAsset(FKismetEditorUtilities::CreateBlueprint(
+	const UBlueprint* CreatedBlueprint = FKismetEditorUtilities::CreateBlueprint(
 		Class,
 		GetPackage(),
 		FName(*GetAssetName()),
 		GetBlueprintType(Class),
 		BlueprintClass,
 		GeneratedClass
-	)->GeneratedClass);
+	);
+
+	if (!CreatedBlueprint) return nullptr;
+
+	/* Return GeneratedClass instead of UBlueprint* */
+	return IImporter::CreateAsset(CreatedBlueprint->GeneratedClass);
+}
+
+bool IBlueprintImporter::Import() {
+	const UBlueprintGeneratedClass* BlueprintGeneratedClass = Create<UBlueprintGeneratedClass>();
+	if (!BlueprintGeneratedClass) return false;
+
+	/* Update Blueprint Reference for sub functions */
+	Blueprint = UBlueprint::GetBlueprintFromClass(BlueprintGeneratedClass);
+	if (!Blueprint) return false;
+
+	/* Deserialize Generated Class (blueprint defaults) */
+	UBlueprintGeneratedClass* GeneratedClass = Cast<UBlueprintGeneratedClass>(Blueprint->GeneratedClass);
+	FUObjectExport* ClassDefaultObjectExport = GetClassDefaultObject(GetContainer(), GetAssetDataAsValue());
+	ClassDefaultObjectExport->Object = GeneratedClass;
+
+	GetObjectSerializer()->DeserializeObjectProperties(ClassDefaultObjectExport->GetProperties(), GeneratedClass->GetDefaultObject());
+
+	/* Experimental (for now) spawning */
+	GetObjectSerializer()->bUseExperimentalSpawning = true;
+
+	ConstructScript();
+	ConstructWidgetTree();
+
+	return OnAssetCreation(Blueprint);
+}
+
+void IBlueprintImporter::ConstructScript() const {
+	if (!GetAssetDataAsValue().Has("SimpleConstructionScript")) return;
+	
+	UBlueprintGeneratedClass* GeneratedClass = Cast<UBlueprintGeneratedClass>(Blueprint->GeneratedClass);
+
+	/* Destroy Construction Script */
+	if (USimpleConstructionScript* PreviousSimpleConstructionScript = GeneratedClass->SimpleConstructionScript; PreviousSimpleConstructionScript != nullptr) {
+		MoveToTransientPackagesAndRename({
+			PreviousSimpleConstructionScript,
+			Blueprint->SimpleConstructionScript
+		});
+	}
+
+	FUObjectExport* Export = GetContainer()->GetExportByObjectPath(GetAssetDataAsValue().GetObject("SimpleConstructionScript"));
+
+	/* Spawn the new Construction Script */
+	USimpleConstructionScript* SimpleConstructionScript =
+		Cast<USimpleConstructionScript>(
+			GetObjectSerializer()->SpawnExport(Export)
+		);
+
+	/* Update SimpleConstructionScript on the Blueprint */
+	Blueprint->SimpleConstructionScript = SimpleConstructionScript;
+	GeneratedClass->SimpleConstructionScript = SimpleConstructionScript;
+
+	/* Engine Ensures */
+	SimpleConstructionScript->FixupRootNodeParentReferences();
+	SimpleConstructionScript->ValidateSceneRootNodes();
+}
+
+class UWidgetTreeAccessor final : public UWidgetTree {
+public:
+	TArray<TObjectPtr<UWidget>> GetWidgets() {
+		return AllWidgets;
+	}
+};
+
+void IBlueprintImporter::ConstructWidgetTree() const {
+	if (!GetAssetDataAsValue().Has("WidgetTree")) return;
+
+	UWidgetBlueprint* WidgetBlueprint = Cast<UWidgetBlueprint>(Blueprint);
+	
+	WidgetBlueprint->WidgetTree->PostLoad();
+
+	for (UWidget* Widget : Cast<UWidgetTreeAccessor>(WidgetBlueprint->WidgetTree)->GetWidgets()) {
+		MoveToTransientPackageAndRename(Widget);
+	}
+	
+	MoveToTransientPackageAndRename(WidgetBlueprint->WidgetTree->RootWidget);
+	WidgetBlueprint->WidgetTree->RootWidget = nullptr;
+	
+	FUObjectExport* Export = GetContainer()->GetExportByObjectPath(GetAssetDataAsValue().GetObject("WidgetTree"));
+	Export->Object = WidgetBlueprint->WidgetTree;
+	GetObjectSerializer()->SpawnExport(Export, true);
+
+	FBlueprintEditorUtils::MarkBlueprintAsStructurallyModified(WidgetBlueprint);
 }

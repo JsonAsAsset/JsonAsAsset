@@ -62,7 +62,7 @@ void IParticleSystemImporter::WipeEmitters() const {
 void IParticleSystemImporter::CreateEmitters(const TArray<FUObjectJsonValueExport>& Exports) {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
 
-	AssetContainer->ExportsLoop(Exports, [this, ParticleSystem](FUObjectExport* DirectExport) {
+	GetContainer()->ExportsLoop(Exports, [this, ParticleSystem](FUObjectExport* DirectExport) {
 		ParticleSystem->PreEditChange(nullptr);
 
 		CreateEmitter(DirectExport->GetClass(), DirectExport->GetName(), DirectExport);
@@ -82,7 +82,7 @@ UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, co
 	DeserializeExports(ParticleSystem, true);
 	
 	/* Create LODLevels ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	AssetContainer->ExportsLoop(
+	GetContainer()->ExportsLoop(
 		Export->GetPropertiesAsValue().GetArray("LODLevels"),
 		
 		[this, Emitter](const FUObjectExport* DirectExport) {
@@ -122,7 +122,7 @@ UParticleEmitter* IParticleSystemImporter::CreateEmitter(const UClass* Class, co
 	return Emitter;
 }
 
-void IParticleSystemImporter::CreateLODLevel(const FUObjectExport* Export, UParticleEmitter* Emitter) {
+void IParticleSystemImporter::CreateLODLevel(const FUObjectExport* Export, UParticleEmitter* Emitter) const {
 	const auto ParticleSystem = GetTypedAsset<UParticleSystem>();
 
 	const FUObjectJsonValueExport JsonValue = Export->GetPropertiesAsValue();
@@ -150,7 +150,7 @@ void IParticleSystemImporter::CreateLODLevel(const FUObjectExport* Export, UPart
 
 	/* Required Module */
 	if (JsonValue.Has("RequiredModule")) {
-		FUObjectExport* ModulePath = AssetContainer->GetExportByObjectPath(JsonValue.GetObject("RequiredModule"));
+		FUObjectExport* ModulePath = GetContainer()->GetExportByObjectPath(JsonValue.GetObject("RequiredModule"));
 
 		/* Create the module */
 		UParticleModuleRequired* RequiredModule = NewObject<UParticleModuleRequired>(ParticleSystem, UParticleModuleRequired::StaticClass(), ModulePath->GetName(), RF_Transactional);
@@ -162,7 +162,7 @@ void IParticleSystemImporter::CreateLODLevel(const FUObjectExport* Export, UPart
 
 	/* Spawn Module */
 	if (JsonValue.Has("SpawnModule")) {
-		FUObjectExport* ModulePath = AssetContainer->GetExportByObjectPath(JsonValue.GetObject("SpawnModule"));
+		FUObjectExport* ModulePath = GetContainer()->GetExportByObjectPath(JsonValue.GetObject("SpawnModule"));
 
 		/* Create the module */
 		UParticleModuleSpawn* SpawnModule = NewObject<UParticleModuleSpawn>(ParticleSystem, UParticleModuleSpawn::StaticClass(), ModulePath->GetName(), RF_Transactional);
@@ -174,7 +174,7 @@ void IParticleSystemImporter::CreateLODLevel(const FUObjectExport* Export, UPart
 
 	/* Type Data Module */
 	if (JsonValue.Has("TypeDataModule")) {
-		FUObjectExport* ModulePath = AssetContainer->GetExportByObjectPath(JsonValue.GetObject("TypeDataModule"));
+		FUObjectExport* ModulePath = GetContainer()->GetExportByObjectPath(JsonValue.GetObject("TypeDataModule"));
 
 		UParticleModuleTypeDataBase* TypeDataModule = NewObject<UParticleModuleTypeDataBase>(ParticleSystem, ModulePath->GetClass(), ModulePath->GetName(), RF_Transactional);
 		check(TypeDataModule);
@@ -184,7 +184,7 @@ void IParticleSystemImporter::CreateLODLevel(const FUObjectExport* Export, UPart
 	}
 
 	for (const FUObjectJsonValueExport& ModulePath : JsonValue.GetArray("Modules")) {
-		FUObjectExport* ModuleExport = AssetContainer->GetExportByObjectPath(ModulePath);
+		FUObjectExport* ModuleExport = GetContainer()->GetExportByObjectPath(ModulePath);
 		
 		UParticleModule* Module = NewObject<UParticleModule>(ParticleSystem, ModuleExport->GetClass(), ModuleExport->GetName(), RF_Transactional);
 		check(Module);
@@ -203,13 +203,13 @@ void IParticleSystemImporter::CreateLODLevel(const FUObjectExport* Export, UPart
 	Emitter->PostEditChange();
 }
 
-void IParticleSystemImporter::DeserializeModule(FUObjectExport* Export, UParticleModule* Module) {
+void IParticleSystemImporter::DeserializeModule(FUObjectExport* Export, UParticleModule* Module) const {
 	GetObjectSerializer()->Parent = Module;
 
 	Export->Object = Module;
 	
 	GetObjectSerializer()->WhitelistedTreeSegments = Export->GetOuterTreeSegments();
-	GetObjectSerializer()->DeserializeExports(AssetContainer, true);
+	GetObjectSerializer()->DeserializeExports(GetContainer(), true);
 
 	GetObjectSerializer()->DeserializeObjectProperties(
 		RemovePropertiesShared(Export->GetProperties(), {

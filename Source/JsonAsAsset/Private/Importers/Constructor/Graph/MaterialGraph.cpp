@@ -15,7 +15,7 @@
 TSharedPtr<FJsonObject> IMaterialGraph::FindMaterialData(const FString& Type, FUObjectExportContainer* Container) {
 	TSharedPtr<FJsonObject> EditorOnlyData;
 
-	for (FUObjectExport* Export : AssetContainer->Exports) {
+	for (FUObjectExport* Export : GetContainer()->Exports) {
 		FString ExportType = Export->GetType().ToString();
 
 		/* If an editor only data object is found, just set it */

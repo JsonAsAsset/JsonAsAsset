@@ -28,12 +28,6 @@
 	#define UE5_6_BEYOND 0
 #endif
 
-#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 6
-	#define UE5_6_BEYOND 1
-#else
-	#define UE5_6_BEYOND 0
-#endif
-
 #if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 5
 	#define UE5_5_BEYOND 1
 #else
@@ -44,6 +38,18 @@
 	#define UE5_3_BEYOND 1
 #else
 	#define UE5_3_BEYOND 0
+#endif
+
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 4
+	#define UE5_4_BEYOND 1
+#else
+	#define UE5_4_BEYOND 0
+#endif
+
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 1
+	#define UE5_1_BEYOND 1
+#else
+	#define UE5_1_BEYOND 0
 #endif
 
 #if ENGINE_MAJOR_VERSION == 4
@@ -208,7 +214,7 @@ inline int32 GetElementSize(FProperty* Property) {
 }
 
 inline const UObject* GetClassDefaultObject(UClass* Class) {
-#if UE5_6_BEYOND
+#if UE5_1_BEYOND
 	return GetDefault<UObject>(Class);
 #else
 	return Class->ClassDefaultObject;
@@ -216,7 +222,7 @@ inline const UObject* GetClassDefaultObject(UClass* Class) {
 }
 
 inline UClass* FindClassByType(const FString& Type) {
-#if UE5_6_BEYOND
+#if UE5_1_BEYOND
 	UClass* Class = FindFirstObject<UClass>(*Type);
 #else
 	UClass* Class = FindObject<UClass>(ANY_PACKAGE, *Type);

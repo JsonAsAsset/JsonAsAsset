@@ -218,7 +218,7 @@ inline FStructProperty* LoadStructProperty(const TSharedPtr<FJsonObject>& JsonOb
 
     FString ObjectPath = JsonObject->GetStringField(TEXT("ObjectPath"));
 
-#if UE5_6_BEYOND
+#if UE5_1_BEYOND
     const UStruct* StructDef = FindFirstObject<UStruct>(*StructName);
 #else
 	const UStruct* StructDef = FindObject<UStruct>(ANY_PACKAGE, *StructName);
@@ -394,8 +394,16 @@ inline FString GetAssetPath(const UObject* Object) {
 }
 
 inline void MoveToTransientPackageAndRename(UObject* Object) {
-	Object->Rename(nullptr, GetTransientPackage(), REN_DontCreateRedirectors);
-	Object->SetFlags(RF_Transient);
+	if (Object) {
+		Object->Rename(nullptr, GetTransientPackage(), REN_DontCreateRedirectors);
+		Object->SetFlags(RF_Transient);
+	}
+}
+
+inline void MoveToTransientPackagesAndRename(TArray<UObject*> Objects) {
+	for (UObject* Object : Objects) {
+		MoveToTransientPackageAndRename(Object);
+	}
 }
 
 inline EObjectFlags ParseObjectFlags(const FString& FlagsString) {

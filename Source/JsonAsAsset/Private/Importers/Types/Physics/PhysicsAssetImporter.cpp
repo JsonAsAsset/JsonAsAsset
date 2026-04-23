@@ -22,7 +22,7 @@ bool IPhysicsAssetImporter::Import() {
 	UPhysicsAsset* PhysicsAsset = Create<UPhysicsAsset>();
 
 	DeserializeExports(PhysicsAsset, false);
-	FUObjectExportContainer* ExportContainer = GetExportContainer();
+	FUObjectExportContainer* ExportContainer = GetContainer();
 
 	/* SkeletalBodySetups ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 	const FString SkeletalBodySetupsName = !GJsonAsAssetRuntime.IsOlderUE4Target() ? "SkeletalBodySetups" : "BodySetup";

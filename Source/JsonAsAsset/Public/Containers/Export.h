@@ -114,30 +114,7 @@ struct FUObjectExport : FUObjectJsonValueExport {
 		return FUObjectJsonValueExport(JsonObject);
 	}
 	
-	UClass* GetClass() {
-		if (Class) return Class;
-		
-		FString ClassName = GetString("Class");
-
-		if (Has("Template")) {
-			ClassName = ReadPathFromObject(GetObject("Template")).Replace(TEXT("Default__"), TEXT(""));
-		}
-	
-		if (ClassName.Contains("'")) {
-			ClassName.Split("'", nullptr, &ClassName, ESearchCase::IgnoreCase, ESearchDir::FromStart);
-			ClassName.Split("'", &ClassName, nullptr, ESearchCase::IgnoreCase, ESearchDir::FromStart);
-		}
-	
-		UClass* OutClass = FindClassByType(ClassName);
-		if (!OutClass) {
-			OutClass = FindClassByType(GetType().ToString());
-		}
-
-		if (!OutClass) return nullptr;
-
-		Class = OutClass;
-		return Class;
-	}
+	UClass* GetClass();
 	
 	FName NameOverride;
 

@@ -54,7 +54,7 @@ void USerializerContainer::DeserializeExports(UObject* Parent, const bool Create
 	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), Parent);
 	GetObjectSerializer()->Parent = Parent;
     
-	GetObjectSerializer()->DeserializeExports(AssetContainer, CreateObjects);
+	GetObjectSerializer()->DeserializeExports(GetContainer(), CreateObjects);
 	ApplyModifications();
 }
 
@@ -102,6 +102,10 @@ UObject* USerializerContainer::GetAsset() {
 
 void USerializerContainer::SetAsset(UObject* InAsset) {
 	AssetExport->Object = InAsset;
+}
+
+FUObjectExportContainer* USerializerContainer::GetContainer() const {
+	return AssetContainer;
 }
 
 template<typename T>

@@ -20,11 +20,12 @@ bool IDataTableImporter::Import() {
 	}
 
 	/* Find Table Row Struct */
-#if UE5_6_BEYOND
+#if UE5_1_BEYOND
 	UScriptStruct* TableRowStruct = FindFirstObject<UScriptStruct>(*TableStruct); {
 #else
 	UScriptStruct* TableRowStruct = FindObject<UScriptStruct>(ANY_PACKAGE, *TableStruct); {
 #endif
+		
 		if (TableRowStruct == nullptr) {
 			AppendNotification(
 				FText::FromString("DataTable Struct Missing: " + TableStruct),

@@ -56,4 +56,4 @@ protected:
 
 REGISTER_IMPORTER(IAnimationBlueprintImporter, (TArray<FString>{ 
 	TEXT("AnimBlueprintGeneratedClass")
-}), TEXT("Blueprint Assets"));
+}), TEXT("Blueprints"));

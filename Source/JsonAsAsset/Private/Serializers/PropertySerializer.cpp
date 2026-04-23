@@ -21,7 +21,12 @@
 #endif
 
 DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAssetPropertySerializer, Error, Log);
+
+#if UE5_2_BEYOND
+UE_DISABLE_OPTIMIZATION
+#else
 PRAGMA_DISABLE_OPTIMIZATION
+#endif
 
 UPropertySerializer::UPropertySerializer() {
 	FallbackStructSerializer = MakeShared<FFallbackStructSerializer>(this);
@@ -601,4 +606,8 @@ FStructSerializer* UPropertySerializer::GetStructSerializer(const UScriptStruct*
 	return StructSerializer && ensure(StructSerializer->IsValid()) ? StructSerializer->Get() : FallbackStructSerializer.Get();
 }
 
+#if UE5_2_BEYOND
+UE_ENABLE_OPTIMIZATION
+#else
 PRAGMA_ENABLE_OPTIMIZATION
+#endif

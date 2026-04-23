@@ -50,7 +50,7 @@ bool IUserDefinedStructImporter::Import() {
     }), UserDefinedStruct);
 
     /* Struct Metadata [Editor Only Data] */
-    CookedStructMetaData = AssetContainer->FindByType(FString("StructCookedMetaData"));
+    CookedStructMetaData = GetContainer()->FindByType(FString("StructCookedMetaData"));
     
     if (CookedStructMetaData && CookedStructMetaData->Has("StructMetaData")) {
         TArray<FUObjectJsonValueExport> ObjectMetaData = CookedStructMetaData->GetObject("StructMetaData").GetArray("ObjectMetaData");

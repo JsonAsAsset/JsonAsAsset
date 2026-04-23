@@ -11,7 +11,7 @@
 #include "Utilities/JsonUtilities.h"
 
 void ISoundGraph::ConstructNodes(USoundCue* SoundCue, TMap<FString, USoundNode*>& OutNodes) {
-	for (const FUObjectExport* Export : AssetContainer->Exports) {
+	for (const FUObjectExport* Export : GetContainer()->Exports) {
 		FString Name = Export->GetName().ToString();
 		FString Type = Export->GetType().ToString();
 
@@ -55,7 +55,7 @@ void ISoundGraph::SetupNodes(const USoundCue* SoundCueAsset, TMap<FString, USoun
 	}
 
 	/* Connections done here */
-	for (FUObjectExport* Export : AssetContainer->Exports) {
+	for (FUObjectExport* Export : GetContainer()->Exports) {
 		/* Make sure it has Properties and it's a SoundNode */
 		if (!Export->JsonObject->HasField(TEXT("Properties")) || !Export->GetType().ToString().StartsWith("SoundNode")) {
 			continue;

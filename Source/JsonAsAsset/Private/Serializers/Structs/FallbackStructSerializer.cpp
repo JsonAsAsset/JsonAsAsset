@@ -4,7 +4,7 @@
 
 #include "Serializers/PropertySerializer.h"
 
-void FFallbackStructSerializer::Deserialize(UScriptStruct* Struct, void* StructValue, const TSharedPtr<FJsonObject> JsonValue) {
+void FFallbackStructSerializer::Deserialize(UScriptStruct* Struct, void* StructValue, const TSharedPtr<FJsonObject> JsonValue, UObject* OptionalOuter) {
 	for (FProperty* Property = Struct->PropertyLink; Property; Property = Property->PropertyLinkNext) {
 		FString PropertyName = Property->GetName();
 		FString ValueName = PropertyName;
@@ -77,7 +77,7 @@ void FFallbackStructSerializer::Deserialize(UScriptStruct* Struct, void* StructV
 				const TSharedPtr<FJsonValue> ValueObject = JsonValue->Values.FindChecked(ValueName);
 
 				if (Property->ArrayDim == 1 || ValueObject->Type == EJson::Array) {
-					PropertySerializer->DeserializePropertyValue(Property, ValueObject.ToSharedRef(), PropertyValue);
+					PropertySerializer->DeserializePropertyValue(Property, ValueObject.ToSharedRef(), PropertyValue, OptionalOuter);
 				}
 			}
 		}

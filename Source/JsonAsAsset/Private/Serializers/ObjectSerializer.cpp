@@ -10,6 +10,10 @@
 #include "Utilities/JsonUtilities.h"
 #include "Components/ExponentialHeightFogComponent.h"
 #include "Components/PostProcessComponent.h"
+#include "Particles/ParticleEmitter.h"
+#include "Particles/ParticleLODLevel.h"
+#include "Particles/ParticleSystem.h"
+#include "Settings/Runtime.h"
 
 /* ReSharper disable once CppDeclaratorNeverUsed */
 DECLARE_LOG_CATEGORY_CLASS(LogJsonAsAssetObjectSerializer, All, All);
@@ -99,7 +103,37 @@ UObject* UObjectSerializer::SpawnExport(FUObjectExport* Export, const bool bOnly
 		Export->Object = NewObject<UObject>(ObjectOuter, Class, FName(ObjectName), Flags);
 	}
 	
+	if (UParticleSystem* ParticleSystem = Cast<UParticleSystem>(Export->Object)) {
+		ParticleSystem->PreEditChange(nullptr);
+	}
+	
 	DeserializeObjectProperties(Export->GetProperties(), Export->Object);
+
+	if (UParticleEmitter* ParticleEmitter = Cast<UParticleEmitter>(Export->Object)) {
+		ParticleEmitter->EmitterEditorColor = FColor::MakeRandomColor();
+		ParticleEmitter->EmitterEditorColor.A = 255;
+
+		ParticleEmitter->UpdateModuleLists();
+		ParticleEmitter->PostEditChange();
+		
+		/* Initialize epic detail mode to enabled if it's an older version of the engine */
+		if (!GJsonAsAssetRuntime.IsUE5()) {
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 2
+			if (ParticleEmitter->DetailModeBitmask & 1 << EParticleDetailMode::PDM_High) {
+				ParticleEmitter->DetailModeBitmask |= 1 << EParticleDetailMode::PDM_Epic;
+			}
+#endif
+		}
+	}
+
+	if (UParticleLODLevel* ParticleLODLevel = Cast<UParticleLODLevel>(Export->Object)) {
+		ParticleLODLevel->ConvertedModules = true;
+	}
+	
+	if (UParticleSystem* ParticleSystem = Cast<UParticleSystem>(Export->Object)) {
+		ParticleSystem->PostEditChange();
+		ParticleSystem->SetupSoloing();
+	}
 	
 	return Export->Object;
 }
@@ -287,7 +321,7 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 				void* StructPtr = StructProperty->ContainerPtrToValuePtr<void>(Object);
 
 				if (static_cast<FAnimNode_Base*>(StructPtr)) {
-					PropertySerializer->DeserializeStruct(StructProperty->Struct, Properties.ToSharedRef(), PropertyValue);
+					PropertySerializer->DeserializeStruct(StructProperty->Struct, Properties.ToSharedRef(), PropertyValue, Object);
 				}
 			}
 		}
@@ -309,7 +343,7 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 			const TSharedPtr<FJsonValue>& ValueObject = Properties->Values.FindChecked(PropertyName);
 
 			if (Property->ArrayDim == 1 || ValueObject->Type == EJson::Array) {
-				PropertySerializer->DeserializePropertyValue(Property, ValueObject.ToSharedRef(), PropertyValue);
+				PropertySerializer->DeserializePropertyValue(Property, ValueObject.ToSharedRef(), PropertyValue, Object);
 			}
 		}
 	}

@@ -21,23 +21,12 @@ UObject* IParticleSystemImporter::CreateAsset(UObject* CreatedAsset) {
 bool IParticleSystemImporter::Import() {
 	const auto ParticleSystem = Create<UParticleSystem>();
 
-	GetObjectSerializer()->WhitelistedTypesStartingWith.Add("Distribution");
-	
 	/* Ensure any default emitters are cleared */
 	WipeEmitters();
 
 	/* Emitters ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-	CreateEmitters(GetAssetDataAsValue().GetArray("Emitters"));
-
-	GetObjectSerializer()->DeserializeObjectProperties(
-		RemovePropertiesShared(GetAssetData(), {
-			"RequiredModule",
-			"Modules",
-			"TypeDataModule",
-			"SpawnModule",
-			"Emitters"
-		}
-	), ParticleSystem);
+	GetObjectSerializer()->bUseExperimentalSpawning = true;
+	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), ParticleSystem);
 
 	/* Handle edit changes, and add it to the content browser */
 	return OnAssetCreation(ParticleSystem);

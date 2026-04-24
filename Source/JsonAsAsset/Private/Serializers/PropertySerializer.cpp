@@ -40,7 +40,7 @@ UPropertySerializer::UPropertySerializer() {
 	StructSerializers.Add(TimespanStruct, MakeShared<FTimeSpanSerializer>());
 }
 
-void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TSharedRef<FJsonValue>& JsonValue, void* OutValue) {
+void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TSharedRef<FJsonValue>& JsonValue, void* OutValue, UObject* OptionalOuter) {
 	const FMapProperty* MapProperty = CastField<const FMapProperty>(Property);
 	const FSetProperty* SetProperty = CastField<const FSetProperty>(Property);
 	const FArrayProperty* ArrayProperty = CastField<const FArrayProperty>(Property);
@@ -50,7 +50,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 	if (BlacklistedPropertyNames.Contains(Property->GetName())) {
 		return;
 	}
-
+	
 	if (MapProperty) {
 		if (NewJsonValue->IsNull()) {
 			return;
@@ -106,7 +106,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			const TSharedPtr<FJsonValue>& Element = SetArray[i];
 			const uint32 AddedIndex = ArrayHelper.AddValue();
 			uint8* ValuePtr = ArrayHelper.GetRawPtr(AddedIndex);
-			DeserializePropertyValue(ElementProperty, Element.ToSharedRef(), ValuePtr);
+			DeserializePropertyValue(ElementProperty, Element.ToSharedRef(), ValuePtr, OptionalOuter);
 		}
 	}
 	else if (Property->IsA<FMulticastDelegateProperty>()) {
@@ -157,52 +157,49 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 
 		if (NewJsonValue->Type == EJson::Object) {
 			auto JsonValueAsObject = NewJsonValue->AsObject();
-			bool IsParticleModule = JsonValueAsObject->GetStringField(TEXT("ObjectName")).Contains(":ParticleModule");
 
-			if (!IsParticleModule) {
-				if (Importer == nullptr) {
-					Importer = new IImporter();
-				}
+			if (Importer == nullptr) {
+				Importer = new IImporter();
+			}
+			
+			Importer->SetParent(ObjectSerializer->Parent);
+			Importer->LoadExport(&JsonValueAsObject, Object);
+
+			if (Object != nullptr) {
+				bool bIsActorComponent = Object.Get()->IsA(UActorComponent::StaticClass());
 				
-				Importer->SetParent(ObjectSerializer->Parent);
-				Importer->LoadExport(&JsonValueAsObject, Object);
-
-				if (Object != nullptr) {
-					bool bIsActorComponent = Object.Get()->IsA(UActorComponent::StaticClass());
-					
-					if (!bIsActorComponent) {
-						ObjectProperty->SetObjectPropertyValue(OutValue, Object);
-					} else {
-						if (FUObjectExport* TargetExport = ExportsContainer->GetExportByObjectPath(JsonValueAsObject)) {
-							FUObjectJsonValueExport Properties = TargetExport->GetObject(TEXT("Properties"));
-
-							if (TargetExport->Has(TEXT("LODData"))) {
-								Properties.SetArray(TEXT("LODData"), TargetExport->GetArray(TEXT("LODData")));
-							}
-
-							if (ObjectProperty->NamePrivate != "AttachParent") {
-								ObjectSerializer->DeserializeObjectProperties(Properties.JsonObject, Object);
-							} else {
-								ObjectProperty->SetObjectPropertyValue(OutValue, Object);
-							}
-						}
-
-						if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object.Get())) {
-							StaticMeshComponent->PostEditImport();
-						}
-					}
-				}
-
-				if (!ObjectProperty->GetObjectPropertyValue(OutValue) && ObjectSerializer->bUseExperimentalSpawning) {
+				if (!bIsActorComponent) {
+					ObjectProperty->SetObjectPropertyValue(OutValue, Object);
+				} else {
 					if (FUObjectExport* TargetExport = ExportsContainer->GetExportByObjectPath(JsonValueAsObject)) {
 						FUObjectJsonValueExport Properties = TargetExport->GetObject(TEXT("Properties"));
 
 						if (TargetExport->Has(TEXT("LODData"))) {
 							Properties.SetArray(TEXT("LODData"), TargetExport->GetArray(TEXT("LODData")));
 						}
-						
-						ObjectSerializer->SpawnExport(TargetExport);
+
+						if (ObjectProperty->NamePrivate != "AttachParent") {
+							ObjectSerializer->DeserializeObjectProperties(Properties.JsonObject, Object);
+						} else {
+							ObjectProperty->SetObjectPropertyValue(OutValue, Object);
+						}
 					}
+
+					if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object.Get())) {
+						StaticMeshComponent->PostEditImport();
+					}
+				}
+			}
+
+			if (!ObjectProperty->GetObjectPropertyValue(OutValue) && ObjectSerializer->bUseExperimentalSpawning) {
+				if (FUObjectExport* TargetExport = ExportsContainer->GetExportByObjectPath(JsonValueAsObject)) {
+					FUObjectJsonValueExport Properties = TargetExport->GetObject(TEXT("Properties"));
+
+					if (TargetExport->Has(TEXT("LODData"))) {
+						Properties.SetArray(TEXT("LODData"), TargetExport->GetArray(TEXT("LODData")));
+					}
+					
+					ObjectSerializer->SpawnExport(TargetExport);
 				}
 			}
 
@@ -424,7 +421,7 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 		}
 
 		/* To serialize struct, we need its type and value pointer, because struct value doesn't contain type information */
-		DeserializeStruct(StructProperty->Struct, NewJsonValue->AsObject().ToSharedRef(), OutValue);
+		DeserializeStruct(StructProperty->Struct, NewJsonValue->AsObject().ToSharedRef(), OutValue, OptionalOuter);
 
 #if ENGINE_UE4
 		/* If we're importing from UE5 to UE4, adjust the material attribute nodes to adjust for attributes that don't exist */
@@ -458,14 +455,14 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			}
 		}
 #endif
-
+		
 		/* If there's a missing distribution, create it from the lookup table */
 		if (IsStructPropertyADistribution(StructProperty)) {
 			if (FRawDistribution* RawDistribution = static_cast<FRawDistribution*>(OutValue)) {
 				const bool IsFloat = IsFloatDistribution(StructProperty);
 
 				if (!GetDistribution(RawDistribution, IsFloat)) {
-					if (UDistribution* NewDistribution = DecookDistribution(ObjectSerializer->Parent, *RawDistribution, IsFloat)) {
+					if (UDistribution* NewDistribution = DecookDistribution(OptionalOuter, *RawDistribution, IsFloat)) {
 						SetDistribution(RawDistribution, NewDistribution, IsFloat);
 					}
 				}
@@ -600,9 +597,9 @@ bool UPropertySerializer::ShouldDeserializeProperty(FProperty* Property) const {
 	return true;
 }
 
-void UPropertySerializer::DeserializeStruct(UScriptStruct* Struct, const TSharedRef<FJsonObject>& Properties, void* OutValue) const {
+void UPropertySerializer::DeserializeStruct(UScriptStruct* Struct, const TSharedRef<FJsonObject>& Properties, void* OutValue, UObject* OptionalOuter) const {
 	FStructSerializer* StructSerializer = GetStructSerializer(Struct);
-	StructSerializer->Deserialize(Struct, OutValue, Properties);
+	StructSerializer->Deserialize(Struct, OutValue, Properties, OptionalOuter);
 }
 
 FStructSerializer* UPropertySerializer::GetStructSerializer(const UScriptStruct* Struct) const {

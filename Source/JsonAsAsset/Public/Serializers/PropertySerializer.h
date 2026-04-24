@@ -27,8 +27,8 @@ public:
 	/** Checks whenever we should serialize property in question at all */
 	bool ShouldDeserializeProperty(FProperty* Property) const;
 
-	void DeserializePropertyValue(FProperty* Property, const TSharedRef<FJsonValue>& Value, void* OutValue);
-	void DeserializeStruct(UScriptStruct* Struct, const TSharedRef<FJsonObject>& Value, void* OutValue) const;
+	void DeserializePropertyValue(FProperty* Property, const TSharedRef<FJsonValue>& Value, void* OutValue, UObject* OptionalOuter = nullptr);
+	void DeserializeStruct(UScriptStruct* Struct, const TSharedRef<FJsonObject>& Value, void* OutValue, UObject* OptionalOuter = nullptr) const;
 private:
 	FStructSerializer* GetStructSerializer(const UScriptStruct* Struct) const;
 	

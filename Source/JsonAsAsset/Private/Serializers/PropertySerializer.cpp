@@ -165,6 +165,22 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			Importer->SetParent(ObjectSerializer->Parent);
 			Importer->LoadExport(&JsonValueAsObject, Object);
 
+			if (!Object && ObjectSerializer->bUseExperimentalSpawning) {
+				if (FUObjectExport* TargetExport = ExportsContainer->GetExportByObjectPath(JsonValueAsObject)) {
+					FUObjectJsonValueExport Properties = TargetExport->GetObject(TEXT("Properties"));
+
+					if (TargetExport->Has(TEXT("LODData"))) {
+						Properties.SetArray(TEXT("LODData"), TargetExport->GetArray(TEXT("LODData")));
+					}
+					
+					ObjectSerializer->SpawnExport(TargetExport);
+
+					if (TargetExport->Object) {
+						Object = TargetExport->Object;
+					}
+				}
+			}
+
 			if (Object != nullptr) {
 				bool bIsActorComponent = Object.Get()->IsA(UActorComponent::StaticClass());
 				
@@ -188,18 +204,6 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 					if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object.Get())) {
 						StaticMeshComponent->PostEditImport();
 					}
-				}
-			}
-
-			if (!ObjectProperty->GetObjectPropertyValue(OutValue) && ObjectSerializer->bUseExperimentalSpawning) {
-				if (FUObjectExport* TargetExport = ExportsContainer->GetExportByObjectPath(JsonValueAsObject)) {
-					FUObjectJsonValueExport Properties = TargetExport->GetObject(TEXT("Properties"));
-
-					if (TargetExport->Has(TEXT("LODData"))) {
-						Properties.SetArray(TEXT("LODData"), TargetExport->GetArray(TEXT("LODData")));
-					}
-					
-					ObjectSerializer->SpawnExport(TargetExport);
 				}
 			}
 

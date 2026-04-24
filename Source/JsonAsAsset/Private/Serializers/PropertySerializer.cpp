@@ -557,8 +557,13 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			FString TextNamespace = Object->GetStringField(TEXT("Namespace"));
 			FString UniqueKey = Object->GetStringField(TEXT("Key"));
 			FString SourceString = Object->GetStringField(TEXT("SourceString"));
+			FString CultureInvariantString = Object->GetStringField(TEXT("CultureInvariantString"));
 
-			TextProperty->SetPropertyValue(OutValue, FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*SourceString, *TextNamespace, *UniqueKey));
+			if (Object->HasField(TEXT("CultureInvariantString"))) {
+				TextProperty->SetPropertyValue(OutValue, FText::FromString(*Object->GetStringField(TEXT("CultureInvariantString"))));
+			} else {
+				TextProperty->SetPropertyValue(OutValue, FInternationalization::ForUseOnlyByLocMacroAndGraphNodeTextLiterals_CreateText(*SourceString, *TextNamespace, *UniqueKey));
+			}
 		}
 	}
 	else if (CastField<const FFieldPathProperty>(Property)) {

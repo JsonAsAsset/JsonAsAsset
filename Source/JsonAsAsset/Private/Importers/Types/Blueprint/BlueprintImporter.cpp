@@ -150,8 +150,16 @@ void IBlueprintImporter::ConstructWidgetTree() {
 
 	MoveToTransientPackageAndRename(WidgetBlueprint->WidgetTree->RootWidget);
 	WidgetBlueprint->WidgetTree->RootWidget = nullptr;
+
+	FUObjectExport* Export;
+
+	if (GetAssetDataAsValue().Has("TemplateAsset")) {
+		FUObjectExport* TemplateAsset = GetContainer()->GetExportByObjectPath(GetAssetDataAsValue().GetObject("TemplateAsset"));
+		Export = GetContainer()->GetExportByObjectPath(TemplateAsset->GetPropertiesAsValue().GetObject("WidgetTree"));
+	} else {
+		Export = GetContainer()->GetExportByObjectPath(GetAssetDataAsValue().GetObject("WidgetTree"));
+	}
 	
-	FUObjectExport* Export = GetContainer()->GetExportByObjectPath(GetAssetDataAsValue().GetObject("WidgetTree"));
 	Export->Object = WidgetBlueprint->WidgetTree;
 	GetObjectSerializer()->SpawnExport(Export, true);
 

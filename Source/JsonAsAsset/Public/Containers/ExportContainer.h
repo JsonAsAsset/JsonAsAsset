@@ -144,8 +144,29 @@ public:
 	}
 
 	FUObjectExport* GetExportByObjectPath(const TSharedPtr<FJsonObject>& Object) {
-		if (!Object.IsValid() || !Object->HasField(TEXT("ObjectPath"))) {
+		if (!Object.IsValid()) {
 			return FUObjectExport::EmptyExport();
+		}
+
+		if (Object->HasField(TEXT("AssetPathName"))) {
+			FString AssetPathName = Object->GetStringField(TEXT("AssetPathName"));
+			
+			FString AssetName;
+			if (!AssetPathName.Split(TEXT("."), nullptr, &AssetName)) {
+				return FUObjectExport::EmptyExport();
+			}
+
+			for (FUObjectExport* Export : Exports) {
+				if (Export->GetName() == AssetName) {
+					return Export;
+				}
+			}
+
+			return FUObjectExport::EmptyExport();
+		} else {
+			if (!Object->HasField(TEXT("ObjectPath"))) {
+				return FUObjectExport::EmptyExport();
+			}
 		}
 
 		const FString ObjectPath = Object->GetStringField(TEXT("ObjectPath"));

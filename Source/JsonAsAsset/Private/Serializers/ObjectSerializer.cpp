@@ -83,7 +83,7 @@ UObject* UObjectSerializer::SpawnExport(FUObjectExport* Export, const bool bOnly
 		}
 	}
 
-	if (!ObjectOuter) return nullptr;
+	if (!ObjectOuter && !Export->Object) return nullptr;
 
 	/* Default flags */
 	EObjectFlags Flags = RF_Public | RF_Transactional;

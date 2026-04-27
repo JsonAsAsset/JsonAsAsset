@@ -14,7 +14,6 @@
 UObject* IImporter::CreateAsset(UObject* CreatedAsset) {
 	if (CreatedAsset) {
 		AssetExport->Object = CreatedAsset;
-		GetObjectSerializer()->Parent = CreatedAsset;
     
 		return CreatedAsset;
 	}

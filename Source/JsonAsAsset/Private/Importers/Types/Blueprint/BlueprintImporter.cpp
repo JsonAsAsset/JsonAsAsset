@@ -12,7 +12,11 @@
 #include "Engine/SimpleConstructionScript.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "Kismet2/KismetEditorUtilities.h"
+
+#if ENGINE_UE5
 #include "MVVM/ViewModels/ObjectBindingModel.h"
+#endif
+
 #include "Utilities/BlueprintUtilities.h"
 
 UObject* IBlueprintImporter::CreateAsset(UObject* CreatedAsset) {
@@ -122,7 +126,12 @@ void IBlueprintImporter::ConstructScript() const {
 
 class UWidgetTreeAccessor final : public UWidgetTree {
 public:
+
+#if ENGINE_UE5
 	TArray<TObjectPtr<UWidget>> GetWidgets() {
+#else
+	TArray<UWidget*> GetWidgets() {
+#endif
 		return AllWidgets;
 	}
 };
@@ -177,24 +186,21 @@ void IBlueprintImporter::ConstructWidgetTree() {
 				TArray<UWidget*> Widgets;
 				WidgetBlueprint->WidgetTree->GetAllWidgets(Widgets);
 
-				for (UWidget* Widget : Widgets)
-				{
-					if (Widget->GetName() == Possessable.GetName())
-					{
+				for (UWidget* Widget : Widgets) {
+					if (Widget->GetName() == Possessable.GetName()) {
+#if ENGINE_UE5
 						Possessable.SetPossessedObjectClass(Widget->GetClass());
+#endif
 					}
 				}
 			}
 			
-			for (const FMovieSceneBinding& Binding : WidgetAnimation->MovieScene->GetBindings())
-			{
-				for (UMovieSceneTrack* Track : Binding.GetTracks())
-				{
+			for (const FMovieSceneBinding& Binding : WidgetAnimation->MovieScene->GetBindings()) {
+				for (UMovieSceneTrack* Track : Binding.GetTracks()) {
 					Track->Modify();
 					Track->MarkAsChanged();
 
-					if (UMovieSceneWidgetMaterialTrack* MaterialTrack = Cast<UMovieSceneWidgetMaterialTrack>(Track))
-					{
+					if (UMovieSceneWidgetMaterialTrack* MaterialTrack = Cast<UMovieSceneWidgetMaterialTrack>(Track)) {
 						MaterialTrack->SetDisplayName(FText::FromString(MaterialTrack->GetBrushPropertyNamePath()[0].ToString()));
 					}
 				}

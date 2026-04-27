@@ -157,7 +157,7 @@ public:
 			}
 
 			for (FUObjectExport* Export : Exports) {
-				if (Export->GetName() == AssetName) {
+				if (Export->GetName().ToString() == AssetName) {
 					return Export;
 				}
 			}

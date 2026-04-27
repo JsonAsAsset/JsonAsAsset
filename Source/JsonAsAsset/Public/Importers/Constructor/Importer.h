@@ -191,6 +191,10 @@ void IImporter::LoadExport(const TSharedPtr<FJsonObject>* PackageIndex, TObjectP
 		LoadedObject = Cast<T>(StaticLoadObject(T::StaticClass(), nullptr, *(ObjectPath + "." + SplitObjectName + ":" + ObjectName)));
 	}
 
+	if (!Object && GetParent() && GetParent()->GetName() == ObjectName) {
+		LoadedObject = Cast<T>(GetParent());
+	}
+
 	Object = LoadedObject;
 
 	if (!Object && GetObjectSerializer() != nullptr && GetPropertySerializer() != nullptr && GetPropertySerializer()->ExportsContainer != nullptr) {

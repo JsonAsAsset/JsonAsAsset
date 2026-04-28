@@ -2,6 +2,7 @@
 
 #include "Serializers/ObjectSerializer.h"
 
+#include "Animation/AnimNodeBase.h"
 #include "Animation/WidgetAnimation.h"
 #include "Engine/Compatibility.h"
 
@@ -118,7 +119,7 @@ UObject* UObjectSerializer::SpawnExport(FUObjectExport* Export, const bool bOnly
 		
 		/* Initialize epic detail mode to enabled if it's an older version of the engine */
 		if (!GJsonAsAssetRuntime.IsUE5()) {
-#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 2
+#if ENGINE_UE5 && ENGINE_MINOR_VERSION >= 3
 			if (ParticleEmitter->DetailModeBitmask & 1 << EParticleDetailMode::PDM_High) {
 				ParticleEmitter->DetailModeBitmask |= 1 << EParticleDetailMode::PDM_Epic;
 			}

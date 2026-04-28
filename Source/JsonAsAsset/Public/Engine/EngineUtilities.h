@@ -438,7 +438,7 @@ inline EObjectFlags ParseObjectFlags(const FString& FlagsString) {
 		{ TEXT("RF_WillBeLoaded"), RF_WillBeLoaded },
 		{ TEXT("RF_HasExternalPackage"), RF_HasExternalPackage },
 #if ENGINE_UE5
-#if ENGINE_MINOR_VERSION > 2
+#if ENGINE_MINOR_VERSION > 3
 		{ TEXT("RF_HasPlaceholderType"), RF_HasPlaceholderType },
 		{ TEXT("RF_MirroredGarbage"), RF_MirroredGarbage },
 #endif

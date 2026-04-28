@@ -65,7 +65,7 @@ void FJsonAsAssetVersioning::Update() {
 			return;
 		}
 		
-		Reset(ConvertVersionStringToInt(FJMetadata::Version), ConvertVersionStringToInt(VersionName), JsonObject->GetStringField(TEXT("html_url")), JsonObject->GetStringField(TEXT("name")), FJMetadata::Version);
+		Reset(ConvertVersionStringToInt(FJMetadata::Version), ConvertVersionStringToInt(JsonObject->GetStringField("name")), JsonObject->GetStringField(TEXT("html_url")), JsonObject->GetStringField(TEXT("name")), FJMetadata::Version);
 
 		static bool IsNotificationShown = false;
 

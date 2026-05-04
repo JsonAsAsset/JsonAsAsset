@@ -56,6 +56,8 @@ bool IDataTableImporter::Import() {
 		DataTable->AddRow(*Pair.Key, *reinterpret_cast<const FTableRowBase*>(ScopedStruct->GetStructMemory()));
 	}
 
+	GetObjectSerializer()->SpawnExport(AssetExport, true);
+	
 	/* Handle edit changes, and add it to the content browser */
 	return OnAssetCreation(DataTable);
 }

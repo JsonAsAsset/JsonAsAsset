@@ -19,9 +19,8 @@ bool ITemplatedImporter<AssetType>::Import() {
 	GetObjectSerializer()->SetExportForDeserialization(GetAssetExport(), Asset);
 	GetObjectSerializer()->Parent = Asset;
 
-	GetObjectSerializer()->DeserializeExports(GetContainer());
-	
-	GetObjectSerializer()->DeserializeObjectProperties(GetAssetData(), Asset);
+	GetObjectSerializer()->bUseExperimentalSpawning = true;
+	GetObjectSerializer()->SpawnExport(AssetExport, true);
 
 	return OnAssetCreation(Asset);
 }

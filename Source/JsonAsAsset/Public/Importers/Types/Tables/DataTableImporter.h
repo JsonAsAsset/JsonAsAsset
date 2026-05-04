@@ -13,6 +13,7 @@ public:
 	virtual bool Import() override;
 };
 
-REGISTER_IMPORTER(IDataTableImporter, {
-	"DataTable"
-}, "Table Assets");
+REGISTER_IMPORTER(IDataTableImporter, (TArray<FString>{ 
+	TEXT("DataTable"),
+	TEXT("MirrorDataTable"),
+}), TEXT("Table Assets"));

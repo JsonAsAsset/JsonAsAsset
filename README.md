@@ -127,17 +127,42 @@ See [Unreal Engine Modding Projects](https://github.com/Buckminsterfullerene02/U
 
 We strongly recommend using the latest **commit** of JsonAsAsset to ensure compatibility with recent Unreal updates and access to the newest features.
 
+<details>
+  <summary>UE4</summary>
+  <br>
+  
+Some UE4 builds may fail to locate **UnrealBuildTool.exe** due to missing platform path definitions. You can fix this by manually adding a `PlatformPaths` entry to `BaseEngine.ini`.
+
+#### Steps
+
+1. Go to your Unreal Engine install directory:
+   ```
+   UE_[VERSION]/Engine/Config/
+   ```
+2. Open:
+   ```
+   BaseEngine.ini
+   ```
+3. Scroll to the very bottom of the file and add:
+   ```ini
+   [PlatformPaths]
+   UnrealBuildTool=Engine/Binaries/DotNet/UnrealBuildTool.exe
+   ```
+4. Save the file.
+</details>
+
 Follow these steps to install **JsonAsAsset**:
 
-1. **Visit the Releases Page:**  
-   Go to the [Releases page](/../../releases) for the plugin.
-3. **Download the Appropriate Release:**    
-   Download the release that matches your version of Unreal Engine.  
-   If a matching release isn't available, [**compile the plugin yourself**](https://dev.epicgames.com/community/learning/tutorials/qz93/unreal-engine-building-plugins).
-5. **Extract the Files:**  
-   Extract the downloaded files to your project's `Plugins` folder. If the folder doesn't exist, create it in the root directory of your project.
-7. **Open Your Project**  
-   Launch your Unreal Engine project.
+1. **Add JsonAsAsset as a Git Submodule:**   
+   Open a terminal in your Unreal project root (where your `.uproject` file is located), then run:
+   ```sh
+   git submodule add https://github.com/JsonAsAsset/JsonAsAsset.git Plugins/JsonAsAsset
+   git submodule update --init --recursive
+   ```
+2. **Compile JsonAsAsset:**   
+   Follow [**this tutorial**](https://dev.epicgames.com/community/learning/tutorials/qz93/unreal-engine-building-plugins) to build the plugin for your Unreal Engine version.
+3. **Launch Your Project:**   
+   Open your Unreal Engine project.
 
 <a name="cloud"></a>
 ### Set up the Cloud ✨

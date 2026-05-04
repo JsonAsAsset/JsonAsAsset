@@ -153,15 +153,27 @@ Some UE4 builds may fail to locate **UnrealBuildTool.exe** due to missing platfo
 
 Follow these steps to install **JsonAsAsset**:
 
-1. **Add JsonAsAsset as a Git Submodule:**   
-   Open a terminal in your Unreal project root (where your `.uproject` file is located), then run:
-   ```sh
-   git submodule add https://github.com/JsonAsAsset/JsonAsAsset.git Plugins/JsonAsAsset
-   git submodule update --init --recursive
-   ```
-2. **Compile JsonAsAsset:**   
+1. **Downloading JsonAsAsset:**   
+   There are two ways you can download JsonAsAsset. You can either stay up-to-date with the latest development changes (recommended if you want the newest features and fixes, but may occasionally require manual fixing), or download stable releases.
+
+   1. **Up-to-date (Git Submodule)**   
+      Open a terminal in your Unreal project root (where your `.uproject` file is located), then run:
+
+      ```sh
+      git submodule add https://github.com/JsonAsAsset/JsonAsAsset.git Plugins/JsonAsAsset
+      git submodule update --init --recursive
+      ```
+
+   2. **Stable Releases (Manual Download)**   
+      Go to the [Releases page](/../../releases) for the plugin.
+      Download the **Source code (zip)**, extract it into your project's `Plugins` folder (create it if it doesn't exist), so the final path looks like:
+
+      ```
+      Project/Plugins/JsonAsAsset/
+      ```
+3. **Compile JsonAsAsset:**   
    Follow [**this tutorial**](https://dev.epicgames.com/community/learning/tutorials/qz93/unreal-engine-building-plugins) to build the plugin for your Unreal Engine version.
-3. **Launch Your Project:**   
+4. **Launch Your Project:**   
    Open your Unreal Engine project.
 
 <a name="cloud"></a>

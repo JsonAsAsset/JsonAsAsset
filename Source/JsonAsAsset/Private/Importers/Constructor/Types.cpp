@@ -87,6 +87,7 @@ TMap<FString, TArray<FString>> ImportTypes::Templated = {
 		{
 			TEXT("TextureRenderTarget2D"),
 			TEXT("RuntimeVirtualTexture"),
+			TEXT("PaperSprite"),
 		}
 	},
 	{

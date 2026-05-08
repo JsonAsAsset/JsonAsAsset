@@ -135,6 +135,10 @@ UObject* UObjectSerializer::SpawnExport(FUObjectExport* Export, const bool bOnly
 		ParticleSystem->PostEditChange();
 		ParticleSystem->SetupSoloing();
 	}
+
+	if (UParticleModule* ParticleModule = Cast<UParticleModule>(Export->Object)) {
+		ParticleModule->PostLoad();
+	}
 	
 	return Export->Object;
 }
@@ -306,6 +310,10 @@ void UObjectSerializer::DeserializeExport(FUObjectExport* Export, TMap<TSharedPt
 void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject>& Properties, UObject* Object) const {
 	if (Object == nullptr) return;
 
+	if (Cast<UParticleSystem>(Object)) {
+		Object->PreEditChange(nullptr);
+	}
+
 	const UClass* ObjectClass = Object->GetClass();
 
 	for (FProperty* Property = ObjectClass->PropertyLink; Property; Property = Property->PropertyLinkNext) {
@@ -349,8 +357,12 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 		}
 	}
 	
-	if (UStaticMeshComponent* StaticMeshComponent = Cast<UStaticMeshComponent>(Object)) {
-		StaticMeshComponent->PostEditImport();
+	if (Cast<UStaticMeshComponent>(Object)
+		|| Cast<UParticleSystem>(Object)
+		|| Cast<UParticleLODLevel>(Object)
+		|| Cast<UParticleModule>(Object)
+		|| Cast<UParticleEmitter>(Object)) {
+		Object->PostEditImport();
 	}
 
 	/* Volumes are not supported, yet. ;] */

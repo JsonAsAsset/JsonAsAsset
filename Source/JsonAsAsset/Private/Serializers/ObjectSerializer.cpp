@@ -14,6 +14,7 @@
 #include "Particles/ParticleEmitter.h"
 #include "Particles/ParticleLODLevel.h"
 #include "Particles/ParticleSystem.h"
+#include "Particles/TypeData/ParticleModuleTypeDataGpu.h"
 #include "Settings/Runtime.h"
 
 /* ReSharper disable once CppDeclaratorNeverUsed */
@@ -364,6 +365,12 @@ void UObjectSerializer::DeserializeObjectProperties(const TSharedPtr<FJsonObject
 		|| Cast<UParticleEmitter>(Object)) {
 		Object->PostEditImport();
 	}
+
+#if 0 /* @REVISIT: Sometimes entire modules are cooked into GPU data */
+	if (UParticleModuleTypeDataGpu* ParticleModuleTypeDataGPU = Cast<UParticleModuleTypeDataGpu>(Object)) {
+		ParticleModuleTypeDataGPU->GetOutermost()->bIsCookedForEditor = true;
+	}
+#endif
 
 	/* Volumes are not supported, yet. ;] */
 	if (UPostProcessComponent* PostProcessComponent = Cast<UPostProcessComponent>(Object)) {

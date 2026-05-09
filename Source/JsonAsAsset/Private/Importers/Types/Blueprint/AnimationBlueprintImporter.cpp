@@ -23,14 +23,7 @@
 #include "UObject/UnrealTypePrivate.h"
 #endif
 
-bool GShowAnimationBlueprintImporterWarning = true;
-
 bool IAnimationBlueprintImporter::Import() {
-	if (GShowAnimationBlueprintImporterWarning) {
-		SpawnPrompt("Preface Warning", "None of this is final, this is completely a work in progress with flaws. None of it is perfect. If you find a issue, fix it.\n\nTo remove this warning, go to AnimationBlueprintImporter.cpp and set GShowAnimationBlueprintImporterWarning to false.");
-		GShowAnimationBlueprintImporterWarning = false;
-	}
-	
 	AnimBlueprint = GetSelectedAsset<UAnimBlueprint>(true);
 	if (!AnimBlueprint) {
 		const TSharedPtr<FJsonObject> SuperStruct = GetAssetData()->GetObjectField(TEXT("SuperStruct"));

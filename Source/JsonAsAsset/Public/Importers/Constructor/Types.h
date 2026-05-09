@@ -21,7 +21,9 @@ struct ImportTypes {
 	};
 
 	static inline TArray<FString> Experimental = {
-		"AnimBlueprintGeneratedClass"
+		"AnimBlueprintGeneratedClass",
+		"BlueprintGeneratedClass",
+		"WidgetBlueprintGeneratedClass"
 	};
 
 	static bool Allowed(const FString& ImporterType);

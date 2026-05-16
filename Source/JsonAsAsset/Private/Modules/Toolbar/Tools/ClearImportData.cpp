@@ -21,7 +21,6 @@ void TToolClearImportData::Execute() {
 		"Texture",
 		"Texture2D",
 		"TextureCube",
-		"FontFace",
 		"SoundWave",
 		"FontFace",
 	};

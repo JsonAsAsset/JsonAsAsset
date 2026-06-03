@@ -21,7 +21,7 @@ Weird isn't it? I just prefer it.
 
 # Cloud ☁️
 
-Cloud Server's API is located at [Tectors/Core](https://github.com/JsonAsAsset/Core/tree/main/Source/Core.Cloud)
+Cloud Server's API is located at [JsonAsAsset/Core](https://github.com/JsonAsAsset/Core/tree/main/Source/Core.Cloud)
 
 # Settings
 Link: [`Public/Settings/JsonAsAssetSettings.h`](https://github.com/JsonAsAsset/JsonAsAsset/blob/main/Source/JsonAsAsset/Public/Settings/JsonAsAssetSettings.h)

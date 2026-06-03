@@ -210,13 +210,16 @@ This is a known issue in our code that we haven't fully resolved yet. While prev
 
 Thanks go to these wonderful people:
 
+<a href="https://github.com/JsonAsAsset/JsonAsAsset/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=JsonAsAsset/JsonAsAsset" />
+</a>
+
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/Tectfy"><img src="https://github.com/Tectfy.png" width="100px"/><br/><sub><b>Tector</b></sub></a><br/>Creator</td>
-    <td align="center"><a href="https://github.com/GMatrixGames"><img src="https://github.com/GMatrixGames.png" width="90px"/><br/><sub><b>GMatrixGames</b></sub></a><br/>Collaborator</td>
-    <td align="center"><a href="https://github.com/zyloxmods"><img src="https://github.com/zyloxmods.png" width="80px"/><br/><sub><b>Zylox</b></sub></a><br/>Casual Maintainer</td>
+    <td align="center"><a href="https://github.com/Tectfy"><img src="https://github.com/Tectfy.png" width="150px"/><br/><sub><b>Tector</b></sub></a><br/>Creator</td>
+    <td align="center"><a href="https://github.com/GMatrixGames"><img src="https://github.com/GMatrixGames.png" width="130px"/><br/><sub><b>GMatrixGames</b></sub></a><br/>Co-Founder</td>
   </tr>
 </table>
 

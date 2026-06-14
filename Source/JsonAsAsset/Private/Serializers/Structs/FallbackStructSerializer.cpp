@@ -81,5 +81,13 @@ void FFallbackStructSerializer::Deserialize(UScriptStruct* Struct, void* StructV
 				}
 			}
 		}
+
+		if (Struct->IsChildOf(FRichCurveKey::StaticStruct())) {
+			FRichCurveKey* RichCurveKey = static_cast<FRichCurveKey*>(StructValue);
+			
+			if (RichCurveKey->TangentWeightMode == 183) {
+				RichCurveKey->TangentWeightMode = RCTWM_WeightedNone;
+			}
+		}
 	}
 }

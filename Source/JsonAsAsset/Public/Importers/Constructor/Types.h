@@ -10,7 +10,9 @@ struct ImportTypes {
 		static inline TArray<FString> Blacklisted = {
 			"AnimSequence",
 			"AnimMontage",
-			"AnimBlueprintGeneratedClass"
+			"AnimBlueprintGeneratedClass",
+			"BlueprintGeneratedClass",
+			"WidgetBlueprintGeneratedClass",
 		};
 
 		static inline TArray<FString> Extra = {

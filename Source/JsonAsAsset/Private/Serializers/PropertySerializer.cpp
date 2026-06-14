@@ -10,6 +10,8 @@
 /* Struct Serializers */
 #include "Distributions.h"
 #include "MovieSceneSection.h"
+#include "Components/BrushComponent.h"
+#include "Components/PostProcessComponent.h"
 #include "Engine/FontFace.h"
 #include "Decooking/ParticleSystemDecooking.h"
 #include "Serializers/Structs/DateTimeSerializer.h"
@@ -164,6 +166,12 @@ void UPropertySerializer::DeserializePropertyValue(FProperty* Property, const TS
 			
 			Importer->SetParent(ObjectSerializer->Parent);
 			Importer->LoadExport(&JsonValueAsObject, Object);
+
+			if (UObject* CurrentObject = ObjectProperty->GetObjectPropertyValue(OutValue)) {
+				if (!Object && CurrentObject->IsA(UActorComponent::StaticClass())) {
+					Object = CurrentObject;
+				}
+			}
 
 			if (!Object && ObjectSerializer->bUseExperimentalSpawning) {
 				if (FUObjectExport* TargetExport = ExportsContainer->GetExportByObjectPath(JsonValueAsObject)) {

@@ -17,6 +17,7 @@
 #include "MVVM/ViewModels/ObjectBindingModel.h"
 #endif
 
+#include "Engine/SCS_Node.h"
 #include "Utilities/BlueprintUtilities.h"
 
 UObject* IBlueprintImporter::CreateAsset(UObject* CreatedAsset) {
@@ -101,6 +102,10 @@ void IBlueprintImporter::ConstructScript() const {
 
 	/* Destroy Construction Script */
 	if (USimpleConstructionScript* PreviousSimpleConstructionScript = GeneratedClass->SimpleConstructionScript; PreviousSimpleConstructionScript != nullptr) {
+		for (USCS_Node* Node : PreviousSimpleConstructionScript->GetAllNodes()) {
+			MoveToTransientPackageAndRename(Node->ComponentTemplate);
+		}
+		
 		MoveToTransientPackagesAndRename({
 			PreviousSimpleConstructionScript,
 			Blueprint->SimpleConstructionScript

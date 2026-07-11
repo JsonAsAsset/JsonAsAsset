@@ -39,7 +39,7 @@ inline FString GetOuterFromObjectOuter(const TSharedPtr<FJsonValue>& Outer) {
 inline FString ReadPathFromObject(const FUObjectJsonValueExport& PackageIndex);
 
 /* A structure to hold data for a UObject export. */
-struct FUObjectExport : FUObjectJsonValueExport {
+struct JSONASASSET_API FUObjectExport : FUObjectJsonValueExport {
 	FUObjectExport(): Object(nullptr), Parent(nullptr), Package(nullptr), Position(-1) { };
 	
 	TSharedPtr<void> ExtraData;

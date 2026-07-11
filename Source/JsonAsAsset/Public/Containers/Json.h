@@ -5,7 +5,7 @@
 #include "Dom/JsonObject.h"
 #include "UObject/Object.h"
 
-struct FUObjectJsonValueExport {
+struct JSONASASSET_API FUObjectJsonValueExport {
 	FUObjectJsonValueExport() {
 		JsonObject = MakeShared<FJsonObject>();
 		Value = MakeShared<FJsonValueObject>(JsonObject);
